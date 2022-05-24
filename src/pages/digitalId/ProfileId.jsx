@@ -2,9 +2,19 @@ import React, { useState } from 'react';
 
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
+import ProfileTableItem from '../../partials/digitalId/ProfileTableItem';
+import ProfileIcon from '../../images/profile-icon.svg';
 
 function Profile () {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const data = {
+      id: '0',
+      image: ProfileIcon,
+      value: 'Passport',
+      property: 'Document type',
+      status: 'Stored'
+    };
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -24,6 +34,19 @@ function Profile () {
               {/* Title */}
               <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">Profile ✨</h1>
             </div>
+             {/* Table */}
+             <table className="table-auto w-full">
+                <tbody className="text-sm divide-y divide-slate-200">
+                  <ProfileTableItem
+                    key={data.id}
+                    id={data.id}
+                    image={data.image}
+                    value={data.value}
+                    property={data.property}
+                    status={data.status}
+                  />
+                </tbody>
+              </table>
           </div>
         </main>
 
