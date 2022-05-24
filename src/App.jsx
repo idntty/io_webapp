@@ -13,6 +13,10 @@ import './charts/ChartjsConfig';
 import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
 import Fintech from './pages/Fintech';
+import ProfileId from './pages/digitalId/ProfileId';
+import Validate from './pages/digitalId/Validate';
+import ValidationLog from './pages/digitalId/ValidationLog';
+import Verify from './pages/digitalId/Verify';
 import Customers from './pages/ecommerce/Customers';
 import Orders from './pages/ecommerce/Orders';
 import Invoices from './pages/ecommerce/Invoices';
@@ -96,6 +100,10 @@ function App() {
         <Route exact path="/" element={<Dashboard />} />
         <Route path="/dashboard/analytics" element={<Analytics />} />
         <Route path="/dashboard/fintech" element={<Fintech />} />
+        <Route path="/digitalId/profile-id" element={<ProfileId />} />
+        <Route path="/digitalId/validate" element={<Validate />} />
+        <Route path="/digitalId/validation-log" element={<ValidationLog />} />
+        <Route path="/digitalId/verify" element={<Verify />} />
         <Route path="/ecommerce/customers" element={<Customers />} />
         <Route path="/ecommerce/orders" element={<Orders />} />
         <Route path="/ecommerce/invoices" element={<Invoices />} />
