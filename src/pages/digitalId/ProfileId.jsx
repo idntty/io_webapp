@@ -35,8 +35,8 @@ function Profile () {
               <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">Profile ✨</h1>
             </div>
              {/* Table */}
-             <table className="table-auto w-full">
-                <tbody className="text-sm divide-y divide-slate-200">
+             <table className="w-[828px]">
+                <tbody className="text-sm">
                   <ProfileTableItem
                     key={data.id}
                     id={data.id}
