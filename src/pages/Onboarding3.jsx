@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import {generateSvgAvatar} from "../images/GenerateOnboardingSvg/GenerateSvg";
 
-import DigitalId from "../images/onboarding-digitalId.jpg";
 
 function Onboarding3() {
   const arrayBadges = ['judge', 'jelly', 'wasp', 'true', 'clog', 'forward', 'talent', 'ozone', 'belive', 'fresh', 'bulk', 'hobby']
@@ -112,7 +112,7 @@ function Onboarding3() {
         {/* Image */}
         <div className="flex flex-col items-center h-full w-full hidden md:block absolute top-0 bottom-0 right-0 md:w-1/2" aria-hidden="true">
           <div className="flex mt-40 flex-col items-center gap-2.5">
-            <img className="object-cover object-center" src={DigitalId} width="493px" height="493px" alt="Onboarding" />
+            <img className="object-cover object-center" src={generateSvgAvatar()} width="493px" height="493px" alt="Onboarding" />
             <span className="text-sm">Your generated Digital ID</span>
           </div>
         </div>
