@@ -13,7 +13,7 @@ function Profile () {
       image: ProfileIcon,
       value: 'Passport',
       property: 'Document type',
-      status: 'Stored'
+      status: 'Progress'
     };
 
   return (

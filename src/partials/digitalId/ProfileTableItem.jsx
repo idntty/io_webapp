@@ -8,8 +8,8 @@ function ProfileTableItem(props) {
 
   return (
     <>
-      <tr className="bg-[#F8FAFC] mix-blend-multiply">
-        <td className="px-2 py-3 whitespace-nowrap w-px">
+      <tr className="bg-[#eaf0f6]">
+        <td className="pl-2 pr-4 py-3 whitespace-nowrap w-px">
           <div className="flex items-center">
             <label className="inline-flex">
               <span className="sr-only">Select</span>
@@ -17,18 +17,18 @@ function ProfileTableItem(props) {
             </label>
           </div>
         </td>
-        <td className="px-2 first:pl-5 last:pr-5 py-3 w-60 whitespace-nowrap">
+        <td className="py-3 whitespace-nowrap">
           <div className="flex items-center">
             <div className="w-9 h-9 shrink-0 mr-2 sm:mr-4">
               <img className="rounded-full" src={props.image} width="40" height="40" alt={props.property} />
             </div>
-            <div className="flex flex-col"> 
+            <div className="flex flex-col w-60"> 
               <div className="font-semibold text-slate-800 text-base">{props.value}</div>
               <div className="font-normal text-xxs">{props.property}</div>
             </div>
           </div>
         </td>
-        <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
+        <td className="px-2 py-3 whitespace-nowrap w-px">
           {(props.status === 'Progress') ? (
             <div className="w-fit">
               <div className="text-xs inline-flex font-medium bg-amber-100 text-amber-600 rounded-full text-center px-2.5 py-1">{props.status}</div>
@@ -61,7 +61,7 @@ function ProfileTableItem(props) {
             </div>
           </div>
         </td>
-        <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
+        <td className="px-1 py-3 whitespace-nowrap w-px">
           {/* Menu button */}
           <div className="flex items-center">
             <button className="text-slate-400 hover:text-slate-500 rounded-full">
@@ -80,7 +80,7 @@ function ProfileTableItem(props) {
                 onClick={() => setDescriptionOpen(!descriptionOpen)}
                 aria-controls={`description-${props.id}`}
               >
-                <span className="sr-only">Menu</span>
+                <span className="sr-only">Show more</span>
                 <svg className="w-8 h-8 fill-current" viewBox="0 0 32 32">
                   <path d="M16 20l-5.4-5.4 1.4-1.4 4 4 4-4 1.4 1.4z" />
                 </svg>
@@ -88,16 +88,83 @@ function ProfileTableItem(props) {
             </div>
           </td>
       </tr>
-      <tr className={`${!descriptionOpen && 'hidden'} bg-[#F8FAFC] mix-blend-multiply` }>
+      <tr className={`${!descriptionOpen && 'hidden'} bg-[#eaf0f6]` }>
         <td colSpan="10" className="px-12 py-3.5">
           <div className="flex items-center gap-x-5">
-            <div>
+            <div className='isolate'>
               <label className="block text-sm font-medium mb-1" htmlFor="placeholder">Seed</label>
-              <input id="placeholder" className="form-input w-[396px]" type="text" placeholder="2342423423423234223" />
+              <input id="placeholder" className="form-input w-[396px] bg-white isolate" type="text" placeholder="2342423423423234223" />
             </div>
             <div>
               <span className="block text-sm font-medium mb-1">Transaction</span>
-              <a href="" className="w-[396px] underline">0x12831823791203192418234841238468</a>
+              <a href="" className="w-[396px] text-slate-400 font-normal text-sm underline">0x12831823791203192418234841238468</a>
+            </div>
+          </div>
+          {/* Progress validation bar */}
+          <div className="pt-[18px] pb-8">
+            <div className="h-full max-w-md w-full flex flex-row">
+              <div className="w-32 shrink-0">
+                <h2 className="text-xl leading-snug font-bold text-slate-800 xl:leading-7 mb-4 xl:mb-0">Today</h2>
+              </div>
+              <div>
+                <ul className="-my-2">
+                  {/* List item */}
+                  <li className="relative py-2">
+                    <div className="flex items-center mb-2.5">
+                      <div className="absolute left-0 h-full w-0.5 bg-slate-200 self-start ml-2.5 -translate-x-1/2 translate-y-3" aria-hidden="true"></div>
+                      <div className="absolute left-0 rounded-full bg-indigo-500" aria-hidden="true">
+                        <svg className="w-5 h-5 fill-current text-white" viewBox="0 0 20 20">
+                          <path d="M14.4 8.4L13 7l-4 4-2-2-1.4 1.4L9 13.8z" />
+                        </svg>
+                      </div>
+                      <h3 className="pl-9 whitespace-nowrap">
+                        <span className="text-validateLg font-bold text-slate-800">Validate by </span>
+                        <span className="font-bold text-validateLg underline text-indigo-500">0x7324ABC342342352345</span>
+                      </h3>
+                    </div>
+                    <div className="pl-9">
+                      <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">0x7324ABC342342352345</a>
+                      <span className="block text-xxs font-normal mb-1">Transactions ID</span>
+                    </div>
+                    <div className="pl-9">
+                      <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">7324ABC342342352345</a>
+                      <span className="block text-xxs font-normal mb-1">Validated data</span>
+                    </div>
+                    <div className="pl-9 pt-[14px]">
+                      <a className="text-sm font-medium text-indigo-500 hover:text-indigo-600" href="#0">
+                        Explore -&gt;
+                      </a>
+                    </div>
+                  </li>     
+                  {/* List item */}
+                  <li className="relative py-2">
+                    <div className="flex items-center mb-2.5">
+                      <div className="absolute left-0 rounded-full bg-indigo-500" aria-hidden="true">
+                        <svg className="w-5 h-5 fill-current text-white" viewBox="0 0 20 20">
+                          <path d="M14.4 8.4L13 7l-4 4-2-2-1.4 1.4L9 13.8z" />
+                        </svg>
+                      </div>
+                      <h3 className="pl-9 whitespace-nowrap">
+                        <span className="text-validateLg font-bold text-slate-800">Validate by </span>
+                        <span className="font-bold text-validateLg underline text-indigo-500">0x7324ABC342342352345</span>
+                      </h3>
+                    </div>
+                    <div className="pl-9">
+                      <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">0x7324ABC342342352345</a>
+                      <span className="block text-xxs font-normal mb-1">Transactions ID</span>
+                    </div>
+                    <div className="pl-9">
+                      <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">7324ABC342342352345</a>
+                      <span className="block text-xxs font-normal mb-1">Validated data</span>
+                    </div>
+                    <div className="pl-9 pt-[14px]">
+                      <a className="text-sm font-medium text-indigo-500 hover:text-indigo-600" href="#0">
+                        Explore -&gt;
+                      </a>
+                    </div>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </td>
