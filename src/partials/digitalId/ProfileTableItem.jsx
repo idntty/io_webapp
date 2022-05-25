@@ -18,7 +18,7 @@ function ProfileTableItem(props) {
           </div>
         </td>
         <td className="py-3 whitespace-nowrap">
-          <div className="flex items-center">
+          <div className="flex">
             <div className="w-9 h-9 shrink-0 mr-2 sm:mr-4">
               <img className="rounded-full" src={props.image} width="40" height="40" alt={props.property} />
             </div>
@@ -29,22 +29,24 @@ function ProfileTableItem(props) {
           </div>
         </td>
         <td className="px-2 py-3 whitespace-nowrap w-px">
-          {(props.status === 'Progress') ? (
-            <div className="w-fit">
-              <div className="text-xs inline-flex font-medium bg-amber-100 text-amber-600 rounded-full text-center px-2.5 py-1">{props.status}</div>
-            </div>) : 
-            (props.status === 'Stored') ? (
-            <div className="w-fit">
-              <div className="text-xs inline-flex font-medium bg-slate-700 text-slate-100 rounded-full text-center px-2.5 py-1">{props.status}</div>
-            </div>) :
-            (props.status === 'Completed') ? (
-            <div className="w-fit">
-              <div className="text-xs inline-flex font-medium bg-emerald-100 text-emerald-600 rounded-full text-center px-2.5 py-1">{props.status}</div>
-            </div>) : (
-            <div className="w-fit">
-              <div className="text-xs inline-flex font-medium bg-rose-100 text-rose-600 rounded-full text-center px-2.5 py-1">{props.status}</div>
-            </div>)
-          }
+          <div className="w-fit text-xs inline-flex font-medium px-2.5 py-1">
+            {(props.status === 'Progress') ? (
+                <div className="bg-amber-100 text-amber-600 rounded-full text-center px-2.5 py-1">
+                  {props.status}
+                </div>) : 
+              (props.status === 'Stored') ? (
+                <div className="bg-slate-700 text-slate-100 rounded-full text-center px-2.5 py-1">
+                  {props.status}
+                </div>) :
+              (props.status === 'Completed') ? (
+                <div className="bg-emerald-100 text-emerald-600 rounded-full text-center px-2.5 py-1">
+                  {props.status}
+                </div>) : (
+                <div className="bg-rose-100 text-rose-600 rounded-full text-center px-2.5 py-1">
+                  {props.status}
+                </div>)
+            }
+          </div>
         </td>
         <td className="px-2 py-3 whitespace-nowrap w-[340px] box-border">
           <div className="flex flex-wrap items-center -m-1.5 justify-center">
