@@ -119,15 +119,15 @@ function ProfileTableItem(props) {
                       </div>
                       <h3 className="pl-9 whitespace-nowrap">
                         <span className="text-validateLg font-bold text-slate-800">Validate by </span>
-                        <span className="font-bold text-validateLg underline text-indigo-500">0x7324ABC342342352345</span>
+                        <a href="" className="font-bold text-validateLg underline text-indigo-500">{props.transactions}</a>
                       </h3>
                     </div>
                     <div className="pl-9">
-                      <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">0x7324ABC342342352345</a>
+                      <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">{props.transactions}</a>
                       <span className="block text-xxs font-normal mb-1">Transactions ID</span>
                     </div>
                     <div className="pl-9">
-                      <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">7324ABC342342352345</a>
+                      <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">{props.validatedData}</a>
                       <span className="block text-xxs font-normal mb-1">Validated data</span>
                     </div>
                     <div className="pl-9 pt-[14px]">
@@ -146,15 +146,15 @@ function ProfileTableItem(props) {
                       </div>
                       <h3 className="pl-9 whitespace-nowrap">
                         <span className="text-validateLg font-bold text-slate-800">Validate by </span>
-                        <span className="font-bold text-validateLg underline text-indigo-500">0x7324ABC342342352345</span>
+                        <a href="" className="font-bold text-validateLg underline text-indigo-500">{props.transactions}</a>
                       </h3>
                     </div>
                     <div className="pl-9">
-                      <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">0x7324ABC342342352345</a>
+                      <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">{props.transactions}</a>
                       <span className="block text-xxs font-normal mb-1">Transactions ID</span>
                     </div>
                     <div className="pl-9">
-                      <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">7324ABC342342352345</a>
+                      <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">{props.validatedData}</a>
                       <span className="block text-xxs font-normal mb-1">Validated data</span>
                     </div>
                     <div className="pl-9 pt-[14px]">

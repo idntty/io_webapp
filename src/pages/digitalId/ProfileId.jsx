@@ -13,7 +13,9 @@ function Profile () {
       image: ProfileIcon,
       value: 'Passport',
       property: 'Document type',
-      status: 'Progress'
+      status: 'Progress',
+      transactions: '0x7234ABC342342352345',
+      validatedData: '7234ABC342342352345'
     };
 
   return (
@@ -44,6 +46,8 @@ function Profile () {
                     value={data.value}
                     property={data.property}
                     status={data.status}
+                    transactions={data.transactions}
+                    validatedData={data.validatedData}
                   />
                 </tbody>
               </table>
