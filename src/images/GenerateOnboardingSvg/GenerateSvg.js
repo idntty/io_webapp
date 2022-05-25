@@ -1,7 +1,5 @@
 function createBlob(options) {
 
-
-
     let points = [];
     let slice = (Math.PI * 2) / options.numPoints;
     let startAngle = 0;
@@ -15,7 +13,6 @@ function createBlob(options) {
         };
         points.push(point);
     }
-
 
     let size = points.length;
     let path = "M" + points[0].x + " " + points[0].y + " C";
@@ -37,8 +34,6 @@ function createBlob(options) {
 
     return path + "z";
 }
-
-
 
 export var generateSvgAvatar = (function () {
     return function (seed, raw) {
@@ -70,7 +65,6 @@ export var generateSvgAvatar = (function () {
 
         }
 
-
         let ph = "";
         let off = 4 + Number("0x"+pubKey.substring(0,1));
         let rotate = 0;
@@ -78,9 +72,6 @@ export var generateSvgAvatar = (function () {
             ph = ph + `<use xlink:href="#pattern-${pubKey}" mask="url(#mask)" class="segment" style="transform-origin:center center;transform: scaleY(1) rotate(${rotate}deg)"></use>,` + "\n";
             rotate = rotate + 360/off;
         }
-
-
-
 
         var svg = [
             '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" preserveAspectRatio="xMidYMid slice" viewBox="0 0 512 512">',
@@ -98,7 +89,6 @@ export var generateSvgAvatar = (function () {
             '</g>',
             '</svg>',
         ].join('');
-        // document.getElementById("myImg").src = raw ? svg : 'data:image/svg+xml;base64,' + btoa(svg);
         return raw ? svg : 'data:image/svg+xml;base64,' + btoa(svg);
     };
 

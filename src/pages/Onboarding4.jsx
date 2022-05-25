@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom';
 import {generateSvgAvatar} from "../images/GenerateOnboardingSvg/GenerateSvg";
 import Logo from "../images/logo.png";
 
-
-
 function Onboarding4() {
   return (
     <main className="bg-white">
