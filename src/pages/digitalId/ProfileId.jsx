@@ -4,6 +4,9 @@ import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
 import ProfileTableItem from '../../partials/digitalId/ProfileTableItem';
 import ProfileIcon from '../../images/profile-icon.svg';
+import Avatar01 from '../../images/avatar-01.jpg';
+import Avatar02 from '../../images/avatar-02.jpg';
+import Avatar03 from '../../images/avatar-03.jpg';
 
 function Profile () {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -14,8 +17,8 @@ function Profile () {
       value: 'Passport',
       property: 'Document type',
       status: 'Progress',
-      transactions: '0x7234ABC342342352345',
-      validatedData: '7234ABC342342352345'
+      transactions: ['0x7234ABC342342352345', '0x5745DEF342342352345'],
+      avatars: [Avatar01, Avatar02, Avatar03]
     };
 
   return (
@@ -47,13 +50,12 @@ function Profile () {
                     property={data.property}
                     status={data.status}
                     transactions={data.transactions}
-                    validatedData={data.validatedData}
+                    avatars={data.avatars}
                   />
                 </tbody>
               </table>
           </div>
         </main>
-
       </div>
     </div>
   )

@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import Avatar01 from '../../images/avatar-01.jpg';
-import Avatar02 from '../../images/avatar-02.jpg';
-import Avatar03 from '../../images/avatar-03.jpg';
 
 function ProfileTableItem(props) {
   const [descriptionOpen, setDescriptionOpen] = useState(false);
@@ -9,7 +6,7 @@ function ProfileTableItem(props) {
   return (
     <>
       <tr className="bg-[#eaf0f6]">
-        <td className="pl-2 pr-4 py-3 whitespace-nowrap w-px">
+        <td className="pl-4 pr-4 py-3 whitespace-nowrap w-px">
           <div className="flex items-center">
             <label className="inline-flex">
               <span className="sr-only">Select</span>
@@ -28,7 +25,7 @@ function ProfileTableItem(props) {
             </div>
           </div>
         </td>
-        <td className="px-2 py-3 whitespace-nowrap w-px">
+        <td className="py-3 whitespace-nowrap w-px">
           <div className="w-fit text-xs inline-flex font-medium px-2.5 py-1">
             {(props.status === 'Progress') ? (
                 <div className="bg-amber-100 text-amber-600 rounded-full text-center px-2.5 py-1">
@@ -51,9 +48,11 @@ function ProfileTableItem(props) {
         <td className="px-2 py-3 whitespace-nowrap w-[340px] box-border">
           <div className="flex flex-wrap items-center -m-1.5 justify-center">
             <div className="flex -space-x-3 -ml-0.5">
-              <img className="rounded-full border-2 border-slate-100 box-content" src={Avatar01} width="32" height="32" alt="Avatar" />
-              <img className="rounded-full border-2 border-slate-100 box-content" src={Avatar02} width="32" height="32" alt="Avatar" />
-              <img className="rounded-full border-2 border-slate-100 box-content" src={Avatar03} width="32" height="32" alt="Avatar" />
+              {(props.avatars) ? (
+                props.avatars.map((avatar, index) => (
+                  <img className="rounded-full border-2 border-slate-100 box-content" key={index} src={avatar} width="32" height="32" alt="Avatar" />
+                ))
+              ): null}
               <button className="flex justify-center items-center w-9 h-9 rounded-full bg-white border-2 border-slate-200 hover:border-slate-300 text-indigo-500 shadow-sm transition duration-150">
                   <span className="sr-only">Add avatar</span>
                   <svg className="w-4 h-4 fill-current" viewBox="0 0 16 16">
@@ -64,7 +63,7 @@ function ProfileTableItem(props) {
           </div>
         </td>
         <td className="px-1 py-3 whitespace-nowrap w-px">
-          {/* Menu button */}
+          {/* Button */}
           <div className="flex items-center">
             <button className="text-slate-400 hover:text-slate-500 rounded-full">
               <span className="sr-only">Link</span>
@@ -74,7 +73,7 @@ function ProfileTableItem(props) {
             </button>
           </div>
         </td>
-        <td className="py-3 whitespace-nowrap w-px">
+        <td className="py-3 whitespace-nowrap w-px pr-1.5">
             <div className="flex items-center">
               <button
                 className={`text-slate-400 hover:text-slate-500 transform ${descriptionOpen && 'rotate-180'}`}
@@ -93,9 +92,9 @@ function ProfileTableItem(props) {
       <tr className={`${!descriptionOpen && 'hidden'} bg-[#eaf0f6]` }>
         <td colSpan="10" className="px-12 py-3.5">
           <div className="flex items-center gap-x-5">
-            <div className='isolate'>
+            <div>
               <label className="block text-sm font-medium mb-1" htmlFor="placeholder">Seed</label>
-              <input id="placeholder" className="form-input w-[396px] bg-white isolate" type="text" placeholder="2342423423423234223" />
+              <input id="placeholder" className="form-input w-[396px] bg-white" type="text" placeholder="2342423423423234223" />
             </div>
             <div>
               <span className="block text-sm font-medium mb-1">Transaction</span>
@@ -111,60 +110,37 @@ function ProfileTableItem(props) {
               <div>
                 <ul className="-my-2">
                   {/* List item */}
-                  <li className="relative py-2">
-                    <div className="flex items-center mb-2.5">
-                      <div className="absolute left-0 h-full w-0.5 bg-slate-200 self-start ml-2.5 -translate-x-1/2 translate-y-3" aria-hidden="true"></div>
-                      <div className="absolute left-0 rounded-full bg-indigo-500" aria-hidden="true">
-                        <svg className="w-5 h-5 fill-current text-white" viewBox="0 0 20 20">
-                          <path d="M14.4 8.4L13 7l-4 4-2-2-1.4 1.4L9 13.8z" />
-                        </svg>
+                  {props.transactions.map((data, index) => (
+                    <li className="relative py-2" key={index}>
+                      <div className="flex items-center mb-2.5">
+                        {(props.transactions[index+1]) ? (
+                          <div className="absolute left-0 h-full w-0.5 bg-slate-200 self-start ml-2.5 -translate-x-1/2 translate-y-3" aria-hidden="true"></div>
+                        ) : null}
+                        <div className="absolute left-0 rounded-full bg-indigo-500" aria-hidden="true">
+                          <svg className="w-5 h-5 fill-current text-white" viewBox="0 0 20 20">
+                            <path d="M14.4 8.4L13 7l-4 4-2-2-1.4 1.4L9 13.8z" />
+                          </svg>
+                        </div>
+                        <h3 className="pl-9 whitespace-nowrap">
+                          <span className="text-validateLg font-bold text-slate-800">Validate by </span>
+                          <a href="" className="font-bold text-validateLg underline text-indigo-500">{data}</a>
+                        </h3>
                       </div>
-                      <h3 className="pl-9 whitespace-nowrap">
-                        <span className="text-validateLg font-bold text-slate-800">Validate by </span>
-                        <a href="" className="font-bold text-validateLg underline text-indigo-500">{props.transactions}</a>
-                      </h3>
-                    </div>
-                    <div className="pl-9">
-                      <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">{props.transactions}</a>
-                      <span className="block text-xxs font-normal mb-1">Transactions ID</span>
-                    </div>
-                    <div className="pl-9">
-                      <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">{props.validatedData}</a>
-                      <span className="block text-xxs font-normal mb-1">Validated data</span>
-                    </div>
-                    <div className="pl-9 pt-[14px]">
-                      <a className="text-sm font-medium text-indigo-500 hover:text-indigo-600" href="#0">
-                        Explore -&gt;
-                      </a>
-                    </div>
-                  </li>     
-                  {/* List item */}
-                  <li className="relative py-2">
-                    <div className="flex items-center mb-2.5">
-                      <div className="absolute left-0 rounded-full bg-indigo-500" aria-hidden="true">
-                        <svg className="w-5 h-5 fill-current text-white" viewBox="0 0 20 20">
-                          <path d="M14.4 8.4L13 7l-4 4-2-2-1.4 1.4L9 13.8z" />
-                        </svg>
+                      <div className="pl-9">
+                        <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">{data}</a>
+                        <span className="block text-xxs font-normal mb-1">Transactions ID</span>
                       </div>
-                      <h3 className="pl-9 whitespace-nowrap">
-                        <span className="text-validateLg font-bold text-slate-800">Validate by </span>
-                        <a href="" className="font-bold text-validateLg underline text-indigo-500">{props.transactions}</a>
-                      </h3>
-                    </div>
-                    <div className="pl-9">
-                      <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">{props.transactions}</a>
-                      <span className="block text-xxs font-normal mb-1">Transactions ID</span>
-                    </div>
-                    <div className="pl-9">
-                      <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">{props.validatedData}</a>
-                      <span className="block text-xxs font-normal mb-1">Validated data</span>
-                    </div>
-                    <div className="pl-9 pt-[14px]">
-                      <a className="text-sm font-medium text-indigo-500 hover:text-indigo-600" href="#0">
-                        Explore -&gt;
-                      </a>
-                    </div>
-                  </li>
+                      <div className="pl-9">
+                        <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">{data.slice(2, data.length)}</a>
+                        <span className="block text-xxs font-normal mb-1">Validated data</span>
+                      </div>
+                      <div className="pl-9 pt-[14px]">
+                        <a className="text-sm font-medium text-indigo-500 hover:text-indigo-600" href="#0">
+                          Explore -&gt;
+                        </a>
+                      </div>
+                    </li>     
+                  ))}
                 </ul>
               </div>
             </div>
