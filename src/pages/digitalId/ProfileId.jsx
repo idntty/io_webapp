@@ -2,24 +2,10 @@ import React, { useState } from 'react';
 
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
-import ProfileTableItem from '../../partials/digitalId/ProfileTableItem';
-import ProfileIcon from '../../images/profile-icon.svg';
-import Avatar01 from '../../images/avatar-01.jpg';
-import Avatar02 from '../../images/avatar-02.jpg';
-import Avatar03 from '../../images/avatar-03.jpg';
+import ProfileTable from '../../partials/digitalId/ProfileTable';
 
 function Profile () {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const data = {
-      id: '0',
-      image: ProfileIcon,
-      value: 'Passport',
-      property: 'Document type',
-      status: 'Progress',
-      transactions: ['0x7234ABC342342352345', '0x5745DEF342342352345'],
-      avatars: [Avatar01, Avatar02, Avatar03]
-    };
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -32,25 +18,31 @@ function Profile () {
         <main>
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
             {/* Page header */}
-            <div className="mb-8">
+            <div>
               {/* Title */}
-              <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">Profile ✨</h1>
+              <div>
+                <ul className="flex flex-wrap -m-1">
+                  <li className="m-1">
+                    <button className="inline-flex items-center justify-center text-sm font-medium leading-5 rounded-full px-3 py-1 border border-transparent shadow-sm bg-indigo-500 text-white duration-150 ease-in-out">
+                      View All
+                    </button>
+                  </li>
+                  <li className="m-1">
+                    <button className="inline-flex items-center justify-center text-sm font-medium leading-5 rounded-full px-3 py-1 border border-slate-200 hover:border-slate-300 shadow-sm bg-white text-slate-500 duration-150 ease-in-out">
+                      Validated
+                    </button>
+                  </li>
+                  <li className="m-1">
+                    <button className="inline-flex items-center justify-center text-sm font-medium leading-5 rounded-full px-3 py-1 border border-slate-200 hover:border-slate-300 shadow-sm bg-white text-slate-500 duration-150 ease-in-out">
+                      Blockchained
+                    </button>
+                  </li>
+                </ul>
+              </div>
             </div>
+            {/* Page content */}
              {/* Table */}
-             <table className="w-[828px]">
-                <tbody className="text-sm">
-                  <ProfileTableItem
-                    key={data.id}
-                    id={data.id}
-                    image={data.image}
-                    value={data.value}
-                    property={data.property}
-                    status={data.status}
-                    transactions={data.transactions}
-                    avatars={data.avatars}
-                  />
-                </tbody>
-              </table>
+             <ProfileTable/>
           </div>
         </main>
       </div>
