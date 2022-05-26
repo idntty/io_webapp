@@ -24,7 +24,6 @@ function Validate () {
           </div>
         </main>
       </div>
-    </div>
   )
 }
 

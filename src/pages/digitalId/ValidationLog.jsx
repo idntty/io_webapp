@@ -24,7 +24,6 @@ function ValidationLog () {
           </div>
         </main>
       </div>
-    </div>
   )
 }
 
