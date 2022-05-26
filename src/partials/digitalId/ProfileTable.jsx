@@ -147,7 +147,7 @@ function ProfileTable() {
       <h2 className="grow text-base font-semibold text-slate-800 truncate mb-2.5 mt-8">General 🖋️</h2>
       <div className="overflow-x-auto w-[828px]">
         <table className="w-[828px] table-auto w-full">
-          <tbody className="text-sm divide-slate-200 divide-y ">
+          <tbody className="divide-slate-200 divide-y">
             {userData.filter(data => data.category === 'General')
               .map(data => {
                 return (
