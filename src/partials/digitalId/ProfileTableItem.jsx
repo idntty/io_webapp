@@ -5,7 +5,7 @@ function ProfileTableItem(props) {
 
   return (
     <>
-      <tr className="bg-[#eaf0f6]">
+      <tr className={`${props.status !== 'Progress' || 'bg-[#eaf0f6]'}`}>
         <td className="pl-4 pr-4 py-3 whitespace-nowrap w-px">
           <div className="flex items-center">
             <label className="inline-flex">
@@ -89,7 +89,7 @@ function ProfileTableItem(props) {
             </div>
           </td>
       </tr>
-      <tr className={`${!descriptionOpen && 'hidden'} bg-[#eaf0f6]` }>
+      <tr className={`${!descriptionOpen && 'hidden'} ${props.status !== 'Progress' || 'bg-[#eaf0f6]'}` }>
         <td colSpan="10" className="px-12 py-3.5">
           <div className="flex items-center gap-x-5">
             <div>
