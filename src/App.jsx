@@ -79,6 +79,10 @@ import AvatarPage from './pages/component/AvatarPage';
 import TooltipPage from './pages/component/TooltipPage';
 import AccordionPage from './pages/component/AccordionPage';
 import IconsPage from './pages/component/IconsPage';
+import Onboarding1 from "./pages/Onboarding1";
+import Onboarding2 from "./pages/Onboarding2";
+import Onboarding3 from "./pages/Onboarding3";
+import Onboarding4 from "./pages/Onboarding4";
 
 function App() {
 
@@ -149,6 +153,10 @@ function App() {
         <Route path="/onboarding-02" element={<Onboarding02 />} />
         <Route path="/onboarding-03" element={<Onboarding03 />} />
         <Route path="/onboarding-04" element={<Onboarding04 />} />
+        <Route path="/onboarding-1" element={<Onboarding1 />} />
+        <Route path="/onboarding-2" element={<Onboarding2 />} />
+        <Route path="/onboarding-3" element={<Onboarding3 />} />
+        <Route path="/onboarding-4" element={<Onboarding4 />} />
         <Route path="/component/button" element={<ButtonPage />} />
         <Route path="/component/form" element={<FormPage />} />
         <Route path="/component/dropdown" element={<DropdownPage />} />
