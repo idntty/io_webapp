@@ -90,17 +90,17 @@ function Validate () {
                   </li>
                   <li className="m-1">
                     <button className="inline-flex items-center justify-center text-sm font-medium leading-5 rounded-full px-3 py-1 border border-slate-200 hover:border-slate-300 shadow-sm bg-white text-slate-500 duration-150 ease-in-out">
-                      Completed
+                      Correct
                     </button>
                   </li>
                   <li className="m-1">
                     <button className="inline-flex items-center justify-center text-sm font-medium leading-5 rounded-full px-3 py-1 border border-slate-200 hover:border-slate-300 shadow-sm bg-white text-slate-500 duration-150 ease-in-out">
-                      Pending
+                      Incorect
                     </button>
                   </li>
                   <li className="m-1">
                     <button className="inline-flex items-center justify-center text-sm font-medium leading-5 rounded-full px-3 py-1 border border-slate-200 hover:border-slate-300 shadow-sm bg-white text-slate-500 duration-150 ease-in-out">
-                      Canceled
+                      Missed
                     </button>
                   </li>
                 </ul>
