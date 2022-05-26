@@ -11,15 +11,15 @@ function ValidationSeasonItem({ length, item, index }) {
             </svg>
           </div>
           <h3 className="text-lg font-bold text-slate-800 pl-9">
-            {item.trunsText} {item.checked && <a className="cursor-pointer font-bold text-indigo-500 hover:text-indigo-600 underline hover:no-underline" >{`0x${item.seasonId}`}</a>}
+            {item.text} {item.checked && <a className="cursor-pointer font-bold text-indigo-500 hover:text-indigo-600 underline hover:no-underline" >{`0x${item.dataSeason}`}</a>}
           </h3>
         </div>
         <div className="block text-slate-800 w-fit pl-9">
-          <div className="text-base font-semibold underline mb-[-10px]">{`0x${item.seasonId}`}</div>
+          <div className="text-base font-semibold underline mb-[-10px]">{`0x${item.dataSeason}`}</div>
           <span className="font-normal text-[10px]">Transactions ID</span>
         </div>
         <div className="mb-3.5 block text-slate-800 w-fit pl-9">
-          <div className="text-base font-semibold underline mb-[-10px]">{item.seasonId}</div>
+          <div className="text-base font-semibold underline mb-[-10px]">{item.dataSeason}</div>
           <span className="font-normal text-[10px]">Validated data</span>
         </div>
         <a className="cursor-pointer pl-9 font-normal text-sm text-indigo-500 hover:text-indigo-600">Explore -&gt;</a>

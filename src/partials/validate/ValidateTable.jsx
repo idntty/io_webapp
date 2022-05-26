@@ -49,28 +49,28 @@ function ValidateTable({
   ];
 
   const [selectAll, setSelectAll] = useState(false);
-  const [isCheck, setIsCheck] = useState([]);
-  const [list, setList] = useState([]);
+  const [marked, setMarked] = useState([]);
+  const [selectedList, setSelectedList] = useState([]);
 
   useEffect(() => {
-    setList(validateData);
+    setSelectedList(validateData);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSelectAll = () => {
     setSelectAll(!selectAll);
-    setIsCheck(list.map(li => li.id));
+    setMarked(selectedList.map(li => li.id));
     if (selectAll) {
-      setIsCheck([]);
+      setMarked([]);
     }
   };
 
   const handleClick = e => {
     const { id, checked } = e.target;
     setSelectAll(false);
-    setIsCheck([...isCheck, id]);
+    setMarked([...marked, id]);
     if (!checked) {
-      setIsCheck(isCheck.filter(item => item !== id));
+      setMarked(marked.filter(item => item !== id));
     }
   };
 
@@ -108,7 +108,7 @@ function ValidateTable({
               </thead>
               {/* Table body */}
               <tbody className="text-sm divide-y divide-slate-200 border-b border-slate-200">
-              {list.map((data) => {
+              {selectedList.map((data) => {
                 return (
                     <ValidateTableItem
                         key={data.id}
@@ -119,7 +119,7 @@ function ValidateTable({
                         seed={data.seed}
                         check={data.check}
                         handleClick={handleClick}
-                        isChecked={isCheck.includes(data.id)}
+                        isChecked={marked.includes(data.id)}
                         setValidatePanelOpen={setValidatePanelOpen}
                     />
                 );

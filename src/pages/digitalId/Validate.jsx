@@ -5,7 +5,6 @@ import Header from '../../partials/Header';
 import ValidateTable from "../../partials/validate/ValidateTable";
 import ValidatePanel from "../../partials/validate/ValidatePanel";
 import ValidateRoadMap from "../../partials/validationlog/ValidateRoadMap";
-import {TransactionID} from "../../utils/TransactionID";
 import {Link} from "react-router-dom";
 import User06 from "../../images/user-28-06.jpg";
 import User08 from "../../images/user-28-08.jpg";
@@ -20,7 +19,7 @@ function Validate () {
     {
       id: '40',
       name: 'Today',
-      transid: TransactionID(),
+      data: '7234ABC342342352345',
       usersImges: [
         {
           img: User06,
@@ -41,21 +40,21 @@ function Validate () {
       ],
       items: [
         {
-          seasonId: TransactionID(),
+          dataSeason: '7234ABC342342352345',
           id: '555',
-          trunsText: 'Second name for',
+          text: 'Second name for',
           checked: true
         },
         {
-          seasonId: TransactionID(),
+          dataSeason: '7234ABC342342352345',
           id: '534',
-          trunsText: 'Gender name for',
+          text: 'Gender name for',
           checked: true
         },
         {
-          seasonId: TransactionID(),
+          dataSeason: '7234ABC342342352345',
           id: '567',
-          trunsText: 'Document ID name for',
+          text: 'Document ID name for',
           checked: true
         },
       ]
@@ -110,7 +109,7 @@ function Validate () {
                 <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">Digiatl ID validation log ✨</h1>
               </div>
               {validateItems.map(item => {
-                return <ValidateRoadMap trunsSeason={item} key={item.id}/>
+                return <ValidateRoadMap season={item} key={item.id}/>
               })}
             </div>
           </div>

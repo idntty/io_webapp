@@ -13,8 +13,13 @@ function ValidateTableItem(props) {
     }
   };
 
+  function openValidatePanel (event) {
+    event.stopPropagation()
+    props.setValidatePanelOpen(true)
+  }
+
   return (
-      <tr className="hover:bg-[#E2E8F0] cursor-pointer" onClick={(e) => { e.stopPropagation(); props.setValidatePanelOpen(true); }}>
+      <tr className="hover:bg-[#E2E8F0] cursor-pointer" onClick={(e) => openValidatePanel(e)}>
         <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
           <div className="flex items-center">
             <label className="inline-flex">

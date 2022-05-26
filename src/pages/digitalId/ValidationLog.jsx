@@ -9,7 +9,6 @@ import User09 from "../../images/user-28-09.jpg";
 import User06 from "../../images/user-28-06.jpg";
 import User03 from "../../images/user-28-03.jpg";
 import User01 from "../../images/user-28-01.jpg";
-import {TransactionID} from "../../utils/TransactionID";
 
 function ValidationLog () {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -18,7 +17,7 @@ function ValidationLog () {
     {
       id: '20',
       name: 'Today',
-      transid: TransactionID(),
+      data: '7234ABC342342352345',
       usersImges: [
         {
           img: User06,
@@ -39,21 +38,21 @@ function ValidationLog () {
       ],
       items: [
         {
-          seasonId: TransactionID(),
+          dataSeason: '7234ABC342342352345',
           id: '434',
-          trunsText: 'Second name',
+          text: 'Second name',
           checked: true
         },
         {
-          seasonId: TransactionID(),
+          dataSeason: '7234ABC342342352345',
           id: '476',
-          trunsText: 'First name by',
+          text: 'First name by',
           checked: true
         },
         {
-          seasonId: TransactionID(),
+          dataSeason: '7234ABC342342352345',
           id: '422',
-          trunsText: 'Document name by',
+          text: 'Document name by',
           checked: true
         },
       ]
@@ -61,7 +60,7 @@ function ValidationLog () {
     {
       id: '30',
       name: 'Last Week',
-      transid: TransactionID(),
+      data: '7234ABC342342352345',
       usersImges: [
         {
           img: User06,
@@ -82,21 +81,21 @@ function ValidationLog () {
       ],
       items: [
         {
-          seasonId: TransactionID(),
+          dataSeason: '7234ABC342342352345',
           id: '654',
-          trunsText: 'Gender name by',
+          text: 'Gender name by',
           checked: true
         },
         {
-          seasonId: TransactionID(),
+          dataSeason: '7234ABC342342352345',
           id: '617',
-          trunsText: 'Second name Updated',
+          text: 'Second name Updated',
           checked: false
         },
         {
-          seasonId: TransactionID(),
+          dataSeason: '7234ABC342342352345',
           id: '643',
-          trunsText: 'Gender name by',
+          text: 'Gender name by',
           checked: true
         },
       ]
@@ -126,7 +125,7 @@ function ValidationLog () {
                 <div className="xl:-translate-x-16 max-w-fit">
                   {/* PostsID */}
                   {logItems.map(item => {
-                    return <ValidateRoadMap trunsSeason={item} key={item.id} />
+                    return <ValidateRoadMap season={item} key={item.id} />
                   })}
                   {/* Post */}
                   <article className="pt-6">
