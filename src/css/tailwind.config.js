@@ -20,6 +20,7 @@ module.exports = {
         inter: ['Inter', 'sans-serif'],
       },
       fontSize: {
+        descriptionSize: ['0.75rem', { lineHeight: '1.25' }],
         xxs: ['0.625rem', { lineHeight: '0.75' }],
         xs: ['0.75rem', { lineHeight: '1.5' }],
         sm: ['0.875rem', { lineHeight: '1.5715' }],

@@ -1,11 +1,28 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import ProfileTableItem from './ProfileTableItem';
 import ProfileIcon from '../../images/profile-icon.svg';
 import Avatar01 from '../../images/avatar-01.jpg';
 import Avatar02 from '../../images/avatar-02.jpg';
 import Avatar03 from '../../images/avatar-03.jpg';
 
-function ProfileTable() {
+function ProfileTable({
+  selectedItems
+}) {
+
+  const [isCheck, setIsCheck] = useState([]);
+
+  useEffect(() => {
+    selectedItems(isCheck);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCheck]);
+
+  const handleClick = e => {
+    const { id, checked } = e.target;
+    setIsCheck([...isCheck, id]);
+    if (!checked) {
+      setIsCheck(isCheck.filter(item => item !== id));
+    }
+  };
 
   const userData = [
     {
@@ -160,6 +177,8 @@ function ProfileTable() {
                     status={data.status}
                     transactions={data.transactions}
                     avatars={data.avatars}
+                    handleClick={handleClick}
+                    isChecked={isCheck.includes(data.id)}
                   />
                 )
               })
@@ -184,6 +203,8 @@ function ProfileTable() {
                     status={data.status}
                     transactions={data.transactions}
                     avatars={data.avatars}
+                    handleClick={handleClick}
+                    isChecked={isCheck.includes(data.id)}
                   />
                 )
               })
@@ -208,6 +229,8 @@ function ProfileTable() {
                     status={data.status}
                     transactions={data.transactions}
                     avatars={data.avatars}
+                    handleClick={handleClick}
+                    isChecked={isCheck.includes(data.id)}
                   />
                 )
               })
