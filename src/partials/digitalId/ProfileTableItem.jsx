@@ -28,20 +28,20 @@ function ProfileTableItem(props) {
         <td className="py-3 whitespace-nowrap w-px">
           <div className="w-fit text-xs inline-flex font-medium px-2.5 py-1">
             {(props.status === 'Progress') ? (
-                <div className="bg-amber-100 text-amber-600 rounded-full text-center px-2.5 py-1">
-                  {props.status}
-                </div>) : 
-              (props.status === 'Stored') ? (
-                <div className="bg-slate-700 text-slate-100 rounded-full text-center px-2.5 py-1">
-                  {props.status}
-                </div>) :
-              (props.status === 'Completed') ? (
-                <div className="bg-emerald-100 text-emerald-600 rounded-full text-center px-2.5 py-1">
-                  {props.status}
-                </div>) : (
-                <div className="bg-rose-100 text-rose-600 rounded-full text-center px-2.5 py-1">
-                  {props.status}
-                </div>)
+              <div className="bg-amber-100 text-amber-600 rounded-full text-center px-2.5 py-1">
+                {props.status}
+              </div>) : 
+            (props.status === 'Stored') ? (
+              <div className="bg-slate-700 text-slate-100 rounded-full text-center px-2.5 py-1">
+                {props.status}
+              </div>) :
+            (props.status === 'Completed') ? (
+              <div className="bg-emerald-100 text-emerald-600 rounded-full text-center px-2.5 py-1">
+                {props.status}
+              </div>) : (
+              <div className="bg-rose-100 text-rose-600 rounded-full text-center px-2.5 py-1">
+                {props.status}
+              </div>)
             }
           </div>
         </td>
