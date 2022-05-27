@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
 import ProfileTable from '../../partials/digitalId/ProfileTable';
+import Image from '../../images/transactions-image-04.svg';
 
 function Profile () {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -46,6 +47,7 @@ function Profile () {
               </div>
               {/* Sidebar */}
               <div>
+                {/* Form */}
                 <div className="bg-white p-5 shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80">
                   <div className="flex flex-col gap-y-3">
                     <div>
@@ -61,9 +63,8 @@ function Profile () {
                       <input id="seed" className="form-input w-full" type="text" required />
                     </div>
                   </div>
-                  <div className="flex flex-row justify-between my-5 items-center">
+                  <div className="flex flex-row justify-between pt-[16px] pb-[23px] items-center border-b border-slate-200">
                     <span className="block text-sm font-medium">Store data on blockchain</span>
-                    {/* Start */}
                     <div className="flex items-center">
                       <div className="form-switch">
                         <input type="checkbox" id="switch-1" className="sr-only" checked={toggle} onChange={() => setToggle(!toggle)} />
@@ -73,7 +74,49 @@ function Profile () {
                       </div>
                     </div>
                   </div>
-                  {/* End */}
+                  {/* Buttons */}
+                  <div className="flex flex-row justify-end gap-x-2 pt-[18px] pb-[14px] items-end">
+                    <button className="btn-sm bg-white border-slate-200 hover:bg-slate-50 text-slate-600">Cansel</button>
+                    <button className="btn-sm bg-indigo-500 hover:bg-indigo-600 text-white">Send</button>
+                  </div>
+                </div>
+                {/* Details */}
+                <div className="drop-shadow-lg mt-11">
+                  {/* Top */}
+                  <div className="bg-white rounded-t-xl px-5 pb-2.5 text-center">
+                    <div className="mb-3 text-center">
+                      <img className="inline-flex w-12 h-12 rounded-full -mt-6" src={Image} width="48" height="48" alt="Transaction 04" />
+                    </div>
+                    <div className="mt-5 text-2xl font-semibold text-emerald-500 mb-1">0.012 IDN</div>
+                    <div className="text-sm font-medium text-slate-800 mb-3">Total amount fee</div>
+                  </div>
+                  {/* Divider */}
+                  <div className="flex justify-between items-center" aria-hidden="true">
+                    <svg className="w-5 h-5 fill-white" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M0 20c5.523 0 10-4.477 10-10S5.523 0 0 0h20v20H0Z" />
+                    </svg>
+                    <div className="grow w-full h-5 bg-white flex flex-col justify-center">
+                      <div className="h-px w-full border-t border-dashed border-slate-200" />
+                    </div>
+                    <svg className="w-5 h-5 fill-white rotate-180" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M0 20c5.523 0 10-4.477 10-10S5.523 0 0 0h20v20H0Z" />
+                    </svg>
+                  </div>
+
+                  <div className="bg-white rounded-b-xl p-5 pt-8 pb-10 text-sm space-y-3">
+                    <div className="flex justify-between space-x-1">
+                      <span className="italic">Validator:</span>
+                      <span className="font-medium text-slate-700 text-right">IT17 2207 1010 0504 0006 88</span>
+                    </div>
+                    <div className="flex justify-between space-x-1">
+                      <span className="italic">Recipient:</span>
+                      <span className="font-medium text-slate-700 text-right">IT17 2207 1010 0504 0006 88</span>
+                    </div>
+                    <div className="flex justify-between space-x-1">
+                      <span className="italic">Transacion::</span>
+                      <span className="font-medium text-slate-700 text-right">145 bytes</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
