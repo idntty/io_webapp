@@ -22,18 +22,22 @@ function Validate () {
       data: '7234ABC342342352345',
       usersImges: [
         {
+          size: 24,
           img: User06,
           imgId: "343"
         },
         {
+          size: 24,
           img: User08,
           imgId: "345"
         },
         {
+          size: 24,
           img: User09,
           imgId: "321"
         },
         {
+          size: 24,
           img: User05,
           imgId: "387"
         },
