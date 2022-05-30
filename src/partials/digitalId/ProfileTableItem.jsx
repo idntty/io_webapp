@@ -122,8 +122,8 @@ function ProfileTableItem(props) {
                           </svg>
                         </div>
                         <h3 className="pl-9 whitespace-nowrap">
-                          <span className="text-validateLg font-bold text-slate-800">Validate by </span>
-                          <a href="" className="font-bold text-validateLg underline text-indigo-500">{data}</a>
+                          <span className="text-validateSize font-bold text-slate-800">Validate by </span>
+                          <a href="" className="font-bold text-validateSize underline text-indigo-500">{data}</a>
                         </h3>
                       </div>
                       <div className="pl-9">
