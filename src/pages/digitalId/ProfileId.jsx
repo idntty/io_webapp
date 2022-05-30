@@ -1,60 +1,207 @@
 import React, { useState } from 'react';
-
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
 import ProfileTable from '../../partials/digitalId/ProfileTable';
 import Image from '../../images/transactions-image-04.svg';
+import ProfileIcon from '../../images/profile-icon.svg';
+import Avatar01 from '../../images/avatar-01.jpg';
+import Avatar02 from '../../images/avatar-02.jpg';
+import Avatar03 from '../../images/avatar-03.jpg';
 
 function Profile () {
-  const [leftSidebarOpen, setLeftSidebarOpen] = useState(false);
-  const [rightSidebarOpen, setRightSidebarOpen] = useState(true);
-  const [removeFormOpen, setRemoveFormOpen] = useState(false);
-  const [changeFormOpen, setChangeFormOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [buttonPanelOpen, setButtonPanelOpen] = useState(true);
+  const [removePanelOpen, setRemovePanelOpen] = useState(false);
+  const [changePanelOpen, setChangePanelOpen] = useState(false);
   const [toggle, setToggle] = useState(true);
-  const [formOpen, setFormOpen] = useState(false);
+  const [addPanelOpen, setAddPanelOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
 
   const handleSelectedItems = (selectedItems) => {
     setSelectedItems([...selectedItems]);
     if (selectedItems.length > 0) {
-      setRightSidebarOpen(false);
-      setChangeFormOpen(true);
+      setButtonPanelOpen(false);
+      setAddPanelOpen(false);
+      setChangePanelOpen(true);
+    }
+    if (removePanelOpen === true) {
+      setChangePanelOpen(false);
+    }
+    if (selectedItems.length === 0) {
+      setRemovePanelOpen(false);
+      setButtonPanelOpen(true);
+      setChangePanelOpen(false);
     }
   };
 
-  const openAddForm = () => {
-    setFormOpen(true);
-    setRightSidebarOpen(false);
+  const openAddPanel = () => {
+    setAddPanelOpen(true);
+    setButtonPanelOpen(false);
   }
 
-  const cancelAddForm = () => {
-    setFormOpen(false);
-    setRightSidebarOpen(true);
+  const cancelAddPanel = () => {
+    setAddPanelOpen(false);
+    setButtonPanelOpen(true);
   }
 
-  const openRemoveForm = () => {
-    setRemoveFormOpen(true);
-    setChangeFormOpen(false);
+  const openRemovePanel = () => {
+    setRemovePanelOpen(true);
+    setChangePanelOpen(false);
   }
 
-  const canselRemoveForm = () => {
-    setRemoveFormOpen(false);
-    setRightSidebarOpen(true);
+  const applyRemovePanel = () => {
+    setRemovePanelOpen(false);
+    setButtonPanelOpen(true);
   }
+
+  const userData = [
+    {
+      id: '0',
+      category: 'General',
+      validated: true,
+      blockchained: true,
+      image: ProfileIcon,
+      value: 'Dominik',
+      property: 'First name',
+      status: 'Completed',
+      transactions: ['0x7234ABC342342352345', '0x5745DEF342342352345'],
+      avatars: [Avatar01, Avatar02, Avatar03]
+    },
+    {
+      id: '1',
+      category: 'General',
+      validated: true,
+      blockchained: true,
+      image: ProfileIcon,
+      value: 'Lamakani',
+      property: 'Second name',
+      status: 'Progress',
+      transactions: ['0x7234ABC342342352345', '0x5745DEF342342352345'],
+      avatars: null
+    },
+    {
+      id: '2',
+      category: 'General',
+      validated: true,
+      blockchained: true,
+      image: ProfileIcon,
+      value: '05.10.1983',
+      property: 'Birthdate',
+      status: 'Incorrect',
+      transactions: ['0x7234ABC342342352345', '0x5745DEF342342352345'],
+      avatars: null
+    },
+    {
+      id: '3',
+      category: 'General',
+      validated: true,
+      blockchained: true,
+      image: ProfileIcon,
+      value: 'Male',
+      property: 'Gender',
+      status: 'Stored',
+      transactions: ['0x7234ABC342342352345', '0x5745DEF342342352345'],
+      avatars: null
+    },
+    {
+      id: '4',
+      category: 'Nationality',
+      validated: true,
+      blockchained: true,
+      image: ProfileIcon,
+      value: 'United Kindom',
+      property: 'Residence',
+      status: 'Completed',
+      transactions: ['0x7234ABC342342352345', '0x5745DEF342342352345'],
+      avatars: [Avatar01, Avatar02, Avatar03]
+    },
+    {
+      id: '5',
+      category: 'Nationality',
+      validated: true,
+      blockchained: true,
+      image: ProfileIcon,
+      value: 'Passport',
+      property: 'Document type',
+      status: 'Progress',
+      transactions: ['0x7234ABC342342352345', '0x5745DEF342342352345'],
+      avatars: [Avatar01, Avatar02, Avatar03]
+    },
+    {
+      id: '6',
+      category: 'Nationality',
+      validated: true,
+      blockchained: true,
+      image: ProfileIcon,
+      value: 'A123B3143',
+      property: 'Document ID',
+      status: 'Incorrect',
+      transactions: ['0x7234ABC342342352345', '0x5745DEF342342352345'],
+      avatars: null
+    },
+    {
+      id: '7',
+      category: 'Nationality',
+      validated: true,
+      blockchained: true,
+      image: ProfileIcon,
+      value: '05.10.2012',
+      property: 'Issue date',
+      status: 'Stored',
+      transactions: ['0x7234ABC342342352345', '0x5745DEF342342352345'],
+      avatars: null
+    },
+    {
+      id: '8',
+      category: 'Nationality',
+      validated: true,
+      blockchained: true,
+      image: ProfileIcon,
+      value: '05.10.2032',
+      property: 'Expiry date',
+      status: 'Stored',
+      transactions: ['0x7234ABC342342352345', '0x5745DEF342342352345'],
+      avatars: null
+    },
+    {
+      id: '9',
+      category: 'Social',
+      validated: true,
+      blockchained: true,
+      image: ProfileIcon,
+      value: '@lamakani',
+      property: 'Telegram',
+      status: 'Completed',
+      transactions: ['0x7234ABC342342352345', '0x5745DEF342342352345'],
+      avatars: null
+    },
+    {
+      id: '10',
+      category: 'Social',
+      validated: true,
+      blockchained: true,
+      image: ProfileIcon,
+      value: '@lamakani',
+      property: 'Telegram',
+      status: 'Progress',
+      transactions: ['0x7234ABC342342352345', '0x5745DEF342342352345'],
+      avatars: [Avatar01, Avatar02, Avatar03]
+    },
+  ]
+
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
-      <Sidebar sidebarOpen={leftSidebarOpen} setSidebarOpen={setLeftSidebarOpen} />
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       {/* Content area */}
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
         {/*  Site header */}
-        <Header sidebarOpen={leftSidebarOpen} setSidebarOpen={setLeftSidebarOpen} />
+        <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
         <main>
-          <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
+          <div className="pl-8 pr-[42px] py-8 w-full max-w-9xl mx-auto">
             <div className="mx-auto flex flex-col lg:flex-row lg:space-x-8">
               {/* Page header */}
               <div>
-                {/* Title */}
                 <div>
                   <ul className="flex flex-wrap -m-1">
                     <li className="m-1">
@@ -75,16 +222,16 @@ function Profile () {
                   </ul>
                 </div>
                 {/* Table */}
-                <ProfileTable selectedItems={handleSelectedItems}/>
+                <ProfileTable selectedItems={handleSelectedItems} userData={userData}/>
               </div>
-              {/* left Sidebar */}
+              {/* Left sidebar */}
               <div>
-                {/* Form with button*/}
-                <div className={`${!rightSidebarOpen && "hidden"}`}>
+                {/* Button panel*/}
+                <div className={`${!buttonPanelOpen && "hidden"} ml-2.5`}>
                   <div className="bg-white px-5 py-[43px] shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80">
                     <button
                       className="btn w-full bg-indigo-500 hover:bg-indigo-600 text-white"
-                      onClick={openAddForm}
+                      onClick={openAddPanel}
                     >
                       <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 16 16">
                         <path d="m2.457 8.516.969-.99 2.516 2.481 5.324-5.304.985.989-6.309 6.284z" />
@@ -93,9 +240,9 @@ function Profile () {
                     </button>
                   </div>
                 </div>
-                {/* Add Form */}
-                <div className={`${!formOpen && 'hidden'}`}>
-                  <div className="bg-white p-5 shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80">
+                <div className="ml-2.5">
+                  {/* Add panel */}
+                  <div className={`${!addPanelOpen && 'hidden'} bg-white p-5 shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-11`}>
                     <div className="flex flex-col gap-y-3">
                       <div>
                         <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Property <span className="text-rose-500">*</span></label>
@@ -125,26 +272,60 @@ function Profile () {
                     <div className="flex flex-row justify-end gap-x-2 pt-[18px] pb-[14px] items-end">
                       <button
                         className="btn-sm bg-white border-slate-200 hover:bg-slate-50 text-slate-600"
-                        onClick={cancelAddForm}
+                        onClick={cancelAddPanel}
                       >
                         Cansel
                       </button>
                       <button
                         className="btn-sm bg-indigo-500 hover:bg-indigo-600 text-white"
-                        onClick={cancelAddForm}
+                        onClick={cancelAddPanel}
                       >
                         Send
                       </button>
                     </div>
                   </div>
+                  {/* Remove panel */}
+                  <div className={`${!removePanelOpen && 'hidden'} bg-white p-5 pb-[190px] shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-12`}>
+                    <h2 className="grow text-base font-semibold text-slate-800 truncate mb-2.5">Summary</h2>
+                    <div className="flex flex-col">
+                      {userData.filter(({ id }) => selectedItems.includes(id)).map(item => (
+                        <span key={item.id} className="text-sm font-normal text-slate-600 py-3 border-b border-slate-200">{item.property}</span>
+                      ))}
+                    </div>
+                    <div className="flex flex-row justify-between pt-[16px] pb-[23px] items-center">
+                      <span className="block text-sm font-medium">On blockchain too</span>
+                      <div className="flex items-center">
+                        <div className="form-switch">
+                          <input type="checkbox" id="switch-1" className="sr-only" checked={toggle} onChange={() => setToggle(!toggle)} />
+                            <label className="bg-slate-400" htmlFor="switch-1">
+                            <span className="bg-white shadow-sm" aria-hidden="true"></span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-row justify-end gap-x-2 pt-[20px] pb-[16px] items-end">
+                      <button
+                        className="btn w-full bg-indigo-500 hover:bg-indigo-600 text-white px-[100px] justify-start"
+                        onClick={applyRemovePanel}
+                        >
+                        <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 16 16">
+                          <path d="m2.457 8.516.969-.99 2.516 2.481 5.324-5.304.985.989-6.309 6.284z" />
+                        </svg>
+                        <span className="ml-2">Apply</span>
+                      </button>
+                    </div>
+                    <div className="flex justify-center">
+                      <span className="text-descriptionSize text-slate-500 font-normal italic text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do Terms.</span>
+                    </div>
+                  </div>
                   {/* Details */}
-                  <div className="drop-shadow-lg mt-11">
+                  <div className={`${(removePanelOpen || addPanelOpen) || 'hidden'} drop-shadow-lg`}>
                     {/* Top */}
-                    <div className="bg-white rounded-t-xl px-5 pb-2.5 text-center">
+                    <div className="bg-white rounded-t-xl px-5 pb-4 text-center">
                       <div className="mb-3 text-center">
                         <img className="inline-flex w-12 h-12 rounded-full -mt-6" src={Image} width="48" height="48" alt="Transaction 04" />
                       </div>
-                      <div className="mt-5 text-2xl font-semibold text-emerald-500 mb-1">0.012 IDN</div>
+                      <div className="mt-[31px] text-2xl font-semibold text-emerald-500 mb-1">0.012 IDN</div>
                       <div className="text-sm font-medium text-slate-800 mb-3">Total amount fee</div>
                     </div>
                     {/* Divider */}
@@ -159,8 +340,8 @@ function Profile () {
                         <path d="M0 20c5.523 0 10-4.477 10-10S5.523 0 0 0h20v20H0Z" />
                       </svg>
                     </div>
-
-                    <div className="bg-white rounded-b-xl p-5 pt-8 pb-10 text-sm space-y-3">
+                    {/* Bottom */}
+                    <div className="bg-white rounded-b-xl p-5 pt-[22px] pb-10 text-sm space-y-3">
                       <div className="flex justify-between space-x-1">
                         <span className="italic">Validator:</span>
                         <span className="font-medium text-slate-700 text-right">IT17 2207 1010 0504 0006 88</span>
@@ -176,12 +357,12 @@ function Profile () {
                     </div>
                   </div>
                 </div>
-                {/* Field change form */}
-                <div className={`${!changeFormOpen && 'hidden'}`}>
+                {/* Change panel */}
+                <div className={`${!changePanelOpen && 'hidden'} ml-2.5`}>
                   <div className="flex flex-col bg-white px-5 pt-5 pb-6 shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 gap-y-[8px]">
                     <button
                       className="btn w-full bg-indigo-500 hover:bg-indigo-600 text-white px-[100px] justify-start"
-                      onClick={openRemoveForm}
+                      onClick={openRemovePanel}
                       >
                       <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 16 16">
                         <path d="m2.457 8.516.969-.99 2.516 2.481 5.324-5.304.985.989-6.309 6.284z" />
@@ -200,79 +381,6 @@ function Profile () {
                       </svg>
                       <span className="ml-2">Share</span>
                     </button>
-                  </div>
-                </div>
-                {/* Remove form */}
-                <div className={`${!removeFormOpen && 'hidden'}`}>
-                  <div className="bg-white p-5 pb-[190px] shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80">
-                    <h2 className="grow text-base font-semibold text-slate-800 truncate mb-2.5">Summary</h2>
-                    <div className="flex flex-col">
-                      <span className="text-sm font-normal text-slate-600 py-3 border-b border-slate-200">Second name</span>
-                      <span className="text-sm font-normal text-slate-600 py-3 border-b border-slate-200">Birthday</span>
-                    </div>
-                    <div className="flex flex-row justify-between pt-[16px] pb-[23px] items-center">
-                      <span className="block text-sm font-medium">On blockchain too</span>
-                      <div className="flex items-center">
-                        <div className="form-switch">
-                          <input type="checkbox" id="switch-1" className="sr-only" checked={toggle} onChange={() => setToggle(!toggle)} />
-                            <label className="bg-slate-400" htmlFor="switch-1">
-                            <span className="bg-white shadow-sm" aria-hidden="true"></span>
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    {/* Buttons */}
-                    <div className="flex flex-row justify-end gap-x-2 pt-[20px] pb-[16px] items-end">
-                      <button
-                        className="btn w-full bg-indigo-500 hover:bg-indigo-600 text-white px-[100px] justify-start"
-                        onClick={canselRemoveForm}
-                        >
-                        <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 16 16">
-                          <path d="m2.457 8.516.969-.99 2.516 2.481 5.324-5.304.985.989-6.309 6.284z" />
-                        </svg>
-                        <span className="ml-2">Apply</span>
-                      </button>
-                    </div>
-                    <div className="flex justify-center">
-                      <span className="text-descriptionSize text-slate-500 font-normal italic text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do Terms.</span>
-                    </div>
-                  </div>
-                  {/* Details */}
-                  <div className="drop-shadow-lg mt-12">
-                    {/* Top */}
-                    <div className="bg-white rounded-t-xl px-5 pb-2.5 text-center">
-                      <div className="mb-3 text-center">
-                        <img className="inline-flex w-12 h-12 rounded-full -mt-6" src={Image} width="48" height="48" alt="Transaction 04" />
-                      </div>
-                      <div className="mt-5 text-2xl font-semibold text-emerald-500 mb-1">0.012 IDN</div>
-                      <div className="text-sm font-medium text-slate-800 mb-3">Total amount fee</div>
-                    </div>
-                    {/* Divider */}
-                    <div className="flex justify-between items-center" aria-hidden="true">
-                      <svg className="w-5 h-5 fill-white" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M0 20c5.523 0 10-4.477 10-10S5.523 0 0 0h20v20H0Z" />
-                      </svg>
-                      <div className="grow w-full h-5 bg-white flex flex-col justify-center">
-                        <div className="h-px w-full border-t border-dashed border-slate-200" />
-                      </div>
-                      <svg className="w-5 h-5 fill-white rotate-180" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M0 20c5.523 0 10-4.477 10-10S5.523 0 0 0h20v20H0Z" />
-                      </svg>
-                    </div>
-                    <div className="bg-white rounded-b-xl p-5 pt-8 pb-10 text-sm space-y-3">
-                      <div className="flex justify-between space-x-1">
-                        <span className="italic">Validator:</span>
-                        <span className="font-medium text-slate-700 text-right">IT17 2207 1010 0504 0006 88</span>
-                      </div>
-                      <div className="flex justify-between space-x-1">
-                        <span className="italic">Recipient:</span>
-                        <span className="font-medium text-slate-700 text-right">IT17 2207 1010 0504 0006 88</span>
-                      </div>
-                      <div className="flex justify-between space-x-1">
-                        <span className="italic">Transacion::</span>
-                        <span className="font-medium text-slate-700 text-right">145 bytes</span>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
