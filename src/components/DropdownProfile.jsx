@@ -75,7 +75,7 @@ function DropdownProfile({
             <li>
               <Link
                 className="font-medium text-sm text-indigo-500 hover:text-indigo-600 flex items-center py-1 px-3"
-                to="/settings"
+                to="/"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
               >
                 Settings
@@ -84,7 +84,7 @@ function DropdownProfile({
             <li>
               <Link
                 className="font-medium text-sm text-indigo-500 hover:text-indigo-600 flex items-center py-1 px-3"
-                to="/signin"
+                to="/"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
               >
                 Sign Out
