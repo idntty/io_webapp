@@ -25,6 +25,9 @@ import Onboarding1 from "./pages/Onboarding1";
 import Onboarding2 from "./pages/Onboarding2";
 import Onboarding3 from "./pages/Onboarding3";
 import Onboarding4 from "./pages/Onboarding4";
+import ResetPassword from "./pages/ResetPassword";
+import Signup from "./pages/Signup";
+import Signin from "./pages/Signin";
 
 function App() {
 
@@ -54,6 +57,9 @@ function App() {
         <Route path="/component/button" element={<ButtonPage />} />
         <Route path="/component/badge" element={<BadgePage />} />
         <Route path="/component/accordion" element={<AccordionPage />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/signin" element={<Signin />} />
+        <Route path="/signup" element={<Signup />} />
       </Routes>
     </>
   );

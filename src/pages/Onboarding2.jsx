@@ -25,7 +25,7 @@ function Onboarding2() {
                   <img alt='logo' src={Logo} width="89" height="32"/>
                 </Link>
                 <div className="text-sm">
-                  Have an account? <Link className="font-medium text-indigo-500 hover:text-indigo-600" to="/onboarding-2">Sign In</Link>
+                  Have an account? <Link className="font-medium text-indigo-500 hover:text-indigo-600" to="/signin">Sign In</Link>
                 </div>
               </div>
 
