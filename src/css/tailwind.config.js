@@ -23,7 +23,6 @@ module.exports = {
         descriptionSize: ['0.75rem', { lineHeight: '1.25' }],
         xxs: ['0.625rem', { lineHeight: '0.75' }],
         xs: ['0.75rem', { lineHeight: '1.5' }],
-        descriptionSize: ['0.75rem', { lineHeight: '1.25' }],
         sm: ['0.875rem', { lineHeight: '1.5715' }],
         base: ['1rem', { lineHeight: '1.5', letterSpacing: '-0.01em' }],
         lg: ['1.125rem', { lineHeight: '1.5', letterSpacing: '-0.01em' }],
