@@ -5,7 +5,7 @@ function ProfileTableItem(props) {
 
   return (
     <>
-      <tr className="bg-[#eaf0f6]">
+      <tr className={`${props.status !== 'Progress' || 'bg-[#eaf0f6]'}`}>
         <td className="pl-4 pr-4 py-3 whitespace-nowrap w-px">
           <div className="flex items-center">
             <label className="inline-flex">
@@ -28,20 +28,20 @@ function ProfileTableItem(props) {
         <td className="py-3 whitespace-nowrap w-px">
           <div className="w-fit text-xs inline-flex font-medium px-2.5 py-1">
             {(props.status === 'Progress') ? (
-                <div className="bg-amber-100 text-amber-600 rounded-full text-center px-2.5 py-1">
-                  {props.status}
-                </div>) : 
-              (props.status === 'Stored') ? (
-                <div className="bg-slate-700 text-slate-100 rounded-full text-center px-2.5 py-1">
-                  {props.status}
-                </div>) :
-              (props.status === 'Completed') ? (
-                <div className="bg-emerald-100 text-emerald-600 rounded-full text-center px-2.5 py-1">
-                  {props.status}
-                </div>) : (
-                <div className="bg-rose-100 text-rose-600 rounded-full text-center px-2.5 py-1">
-                  {props.status}
-                </div>)
+              <div className="bg-amber-100 text-amber-600 rounded-full text-center px-2.5 py-1">
+                {props.status}
+              </div>) : 
+            (props.status === 'Stored') ? (
+              <div className="bg-slate-700 text-slate-100 rounded-full text-center px-2.5 py-1">
+                {props.status}
+              </div>) :
+            (props.status === 'Completed') ? (
+              <div className="bg-emerald-100 text-emerald-600 rounded-full text-center px-2.5 py-1">
+                {props.status}
+              </div>) : (
+              <div className="bg-rose-100 text-rose-600 rounded-full text-center px-2.5 py-1">
+                {props.status}
+              </div>)
             }
           </div>
         </td>
@@ -89,7 +89,7 @@ function ProfileTableItem(props) {
             </div>
           </td>
       </tr>
-      <tr className={`${!descriptionOpen && 'hidden'} bg-[#eaf0f6]` }>
+      <tr className={`${!descriptionOpen && 'hidden'} ${props.status !== 'Progress' || 'bg-[#eaf0f6]'}` }>
         <td colSpan="10" className="px-12 py-3.5">
           <div className="flex items-center gap-x-5">
             <div>
@@ -122,8 +122,8 @@ function ProfileTableItem(props) {
                           </svg>
                         </div>
                         <h3 className="pl-9 whitespace-nowrap">
-                          <span className="text-validateLg font-bold text-slate-800">Validate by </span>
-                          <a href="" className="font-bold text-validateLg underline text-indigo-500">{data}</a>
+                          <span className="text-validateSize font-bold text-slate-800">Validate by </span>
+                          <a href="" className="font-bold text-validateSize underline text-indigo-500">{data}</a>
                         </h3>
                       </div>
                       <div className="pl-9">
