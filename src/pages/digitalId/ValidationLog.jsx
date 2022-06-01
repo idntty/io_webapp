@@ -20,18 +20,22 @@ function ValidationLog () {
       data: '7234ABC342342352345',
       usersImges: [
         {
+          size: 24,
           img: User06,
           imgId: "249"
         },
         {
+          size: 24,
           img: User08,
           imgId: "212"
         },
         {
+          size: 24,
           img: User09,
           imgId: "217"
         },
         {
+          size: 24,
           img: User05,
           imgId: "276"
         },
@@ -63,18 +67,22 @@ function ValidationLog () {
       data: '7234ABC342342352345',
       usersImges: [
         {
+          size: 24,
           img: User06,
           imgId: "145"
         },
         {
+          size: 24,
           img: User08,
           imgId: "182"
         },
         {
+          size: 24,
           img: User09,
           imgId: "154"
         },
         {
+          size: 24,
           img: User05,
           imgId: "114"
         },
