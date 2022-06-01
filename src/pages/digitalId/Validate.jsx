@@ -73,7 +73,7 @@ function Validate () {
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
         {/*  Site header */}
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        <main>
+        <main className="relative">
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
             <div className="w-fit">
             {/* Page header */}
@@ -107,8 +107,8 @@ function Validate () {
                 </ul>
               </div>
               <ValidateTable setValidatePanelOpen={setValidatePanelOpen}/>
-              <div className="pb-8 border-b border-zinc-200 mt-12">
-                <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">Digiatl ID validation log ✨</h1>
+              <div className="pb-8 border-b border-zinc-200 mt-[50px]">
+                <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">Digital ID validation log ✨</h1>
               </div>
               {validateItems.map(item => {
                 return <ValidateRoadMap season={item} key={item.id}/>

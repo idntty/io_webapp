@@ -7,18 +7,19 @@ function TransactionPanel({
   setValidatePanelOpen
 }) {
 
-  const closeBtn = useRef(null);
-  const panelContent = useRef(null);
+  const panelContent = useRef()
 
   // close on click outside
   useEffect(() => {
-    const clickHandler = ({ target }) => {
-      if (!validatePanelOpen || panelContent.current.contains(target) || closeBtn.current.contains(target)) return;
+    const clickHandler = () => {
+      if (!validatePanelOpen || !panelContent.current) return;
       setValidatePanelOpen(false);
     };
     document.addEventListener('click', clickHandler);
-    return () => document.removeEventListener('click', clickHandler);
-  });
+    return () => {
+      document.removeEventListener('click', clickHandler)
+    };
+  }, []);
 
   // close if the esc key is pressed
   useEffect(() => {
@@ -28,7 +29,7 @@ function TransactionPanel({
     };
     document.addEventListener('keydown', keyHandler);
     return () => document.removeEventListener('keydown', keyHandler);
-  });
+  }, []);
 
   return (
       <div
@@ -36,9 +37,8 @@ function TransactionPanel({
           className={`absolute inset-0 sm:left-auto z-20 transition-transform duration-200 ease-in-out ${
               validatePanelOpen ? 'translate-x-' : 'translate-x-full'
           }`}>
-        <div className="sticky top-16 bg-gradient-to-b from-[#E2E8F0] via-slate-100 to-white  overflow-x-hidden overflow-y-auto no-scrollbar shrink-0 border-l border-slate-200 w-full sm:w-[390px] h-[calc(100vh-64px)]">
+        <div className="sticky top-16 bg-gradient-to-b from-[#E2E8F0] via-slate-100 to-white shrink-0 border-l border-slate-200 w-full sm:w-[390px] h-fit">
           <button
-              ref={closeBtn}
               onClick={() => setValidatePanelOpen(false)}
               className="absolute top-0 right-0 mt-6 mr-6 group p-2"
           >
@@ -83,19 +83,19 @@ function TransactionPanel({
                     <span className="font-medium text-slate-700 text-right">IT17 2207 1010 0504 0006 88</span>
                   </div>
                   <div className="flex justify-between space-x-1">
-                    <span className="italic">Transacion::</span>
+                    <span className="italic">Transaction:</span>
                     <span className="font-medium text-slate-700 text-right">145 bytes</span>
                   </div>
                 </div>
               </div>
               {/* Receipts */}
               <div className="mt-6">
-                <div className="text-sm font-semibold text-slate-800 mb-2">Receipts</div>
+                <div className="text-sm font-semibold text-slate-800 mb-2">Private Data</div>
                 <form className="rounded bg-slate-100 border border-dashed border-slate-300 text-center px-5 py-8">
                   <svg className="inline-flex w-4 h-4 fill-slate-400 mb-3" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
                     <path d="M8 4c-.3 0-.5.1-.7.3L1.6 10 3 11.4l4-4V16h2V7.4l4 4 1.4-1.4-5.7-5.7C8.5 4.1 8.3 4 8 4ZM1 2h14V0H1v2Z" />
                   </svg>
-                  <label htmlFor="upload" className="block text-sm text-slate-500 italic">Upload exported JSON data</label>
+                  <label htmlFor="upload" className="block text-sm text-slate-400 italic">Upload exported JSON data</label>
                   <input className="sr-only" id="upload" type="file" />
                 </form>
               </div>
@@ -108,7 +108,7 @@ function TransactionPanel({
                 </form>
               </div>
               {/* Download / Report */}
-              <div className="flex items-center space-x-3 mt-6">
+              <div className="flex items-center space-x-3 mt-[84px]">
                 <div className="w-1/2">
                   <button className="btn w-full border-slate-200 hover:border-slate-300 text-slate-600">
                     <svg className="w-4 h-4 fill-current text-slate-400 shrink-0 rotate-180" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">

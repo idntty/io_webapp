@@ -83,7 +83,7 @@ function ValidateTable({
               {/* Table header */}
               <thead className="bg-white text-xs font-semibold uppercase text-slate-500 border-t border-b-2 border-slate-200">
               <tr>
-                <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
+                <th className="first:pl-4 last:pr-5 py-3 whitespace-nowrap w-px">
                   <div className="flex items-center">
                     <label className="inline-flex">
                       <span className="sr-only">Select all</span>

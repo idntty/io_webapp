@@ -2,8 +2,8 @@ import React from "react";
 
 function ValidationSeasonItem({ length, item, index }) {
   return (
-      <li className="relative py-2">
-        <div className="flex items-center mb-1">
+      <li className="relative pt-2 pb-2.5">
+        <div className="flex items-center mb-2.5">
           {length-1!==index && <div className="absolute left-0 h-full w-0.5 bg-slate-200 self-start ml-2.5 -translate-x-1/2 translate-y-3" aria-hidden="true"></div>}
           <div className={`absolute left-0 rounded-full ${item.checked ? "bg-indigo-500" : "bg-[#FF0000]"}`} aria-hidden="true">
             <svg className="w-5 h-5 fill-current text-white" viewBox="0 0 20 20">
@@ -16,11 +16,11 @@ function ValidationSeasonItem({ length, item, index }) {
         </div>
         <div className="block text-slate-800 w-fit pl-9">
           <div className="text-base font-semibold underline mb-[-10px]">{`0x${item.dataSeason}`}</div>
-          <span className="font-normal text-[10px]">Transactions ID</span>
+          <span className="font-normal text-slate-600 text-[10px]">Transactions ID</span>
         </div>
         <div className="mb-3.5 block text-slate-800 w-fit pl-9">
           <div className="text-base font-semibold underline mb-[-10px]">{item.dataSeason}</div>
-          <span className="font-normal text-[10px]">Validated data</span>
+          <span className="font-normal text-slate-600 text-[10px]">Validated data</span>
         </div>
         <a className="cursor-pointer pl-9 font-normal text-sm text-indigo-500 hover:text-indigo-600">Explore -&gt;</a>
       </li>
