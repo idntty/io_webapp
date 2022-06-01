@@ -351,7 +351,7 @@ function Profile () {
                         <span className="font-medium text-slate-700 text-right">IT17 2207 1010 0504 0006 88</span>
                       </div>
                       <div className="flex justify-between space-x-1">
-                        <span className="italic">Transacion:</span>
+                        <span className="italic">Transaction:</span>
                         <span className="font-medium text-slate-700 text-right">145 bytes</span>
                       </div>
                     </div>
