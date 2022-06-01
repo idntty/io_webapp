@@ -28,7 +28,7 @@ function Onboarding4() {
               </div>
 
               {/* Progress bar */}
-              <div className="px-4 pt-12 pb-8">
+              <div className="px-4 pt-12 pb-[85px]">
                 <div className="max-w-md mx-auto w-full">
                   <div className="relative">
                     <div className="absolute left-0 top-1/2 -mt-px w-full h-0.5 bg-slate-200" aria-hidden="true"></div>
@@ -60,10 +60,12 @@ function Onboarding4() {
                     <path className="text-emerald-500" d="m28.5 41-8-8 3-3 5 5 12-12 3 3z" />
                   </svg>
                   <h1 className="text-3xl text-slate-800 font-bold mb-8">Nice to meet you, Ivan 🙌</h1>
-                  <Link className="btn bg-indigo-500 hover:bg-indigo-600 text-white" to="/">Go To Profile -&gt;</Link>
+                  <button className="btn px-6 bg-indigo-500 hover:bg-indigo-600 text-white">
+                    <Link to="/settings/account">Go To Profile -&gt;</Link>
+                  </button>
                 </div>
 
-                <div className="flex items-center justify-between mt-6">
+                <div className="flex items-center justify-between">
                   <div className="mr-1">
                     <label className="flex items-center">
                       <input type="checkbox" className="form-checkbox" />
@@ -72,7 +74,7 @@ function Onboarding4() {
                     <label className="flex items-center">
                       <input type="checkbox" className="form-checkbox" />
                       <div className="text-sm ml-2">
-                        <Link className="font-medium text-indigo-500 hover:text-indigo-600" to="/">I store my pharse</Link> very carefuly
+                        I <Link className="text-indigo-500 hover:text-indigo-600 underline" to="/">store my pharse</Link> very carefuly
                       </div>
                     </label>
                   </div>

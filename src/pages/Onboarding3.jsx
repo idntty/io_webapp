@@ -58,14 +58,14 @@ function Onboarding3() {
                 <div className="gap-0.5">
                   <h1 className="text-3xl text-slate-800 font-bold mb-12">Company information ✨</h1>
                   {/* htmlForm */}
-                  <div className="grid grid-cols-4 gap-2.5 mb-14">
+                  <div className="grid grid-cols-4 gap-y-2.5 gap-[18px] mb-14">
                     {arrayBadges.map(tag => (
                       <button key={tag} className="min-w-93px w-24 min-h-26px h-26px bg-slate-100 text-slate-500 cursor-pointer hover:bg-blue-100 hover:text-blue-600 rounded-full text-center px-2.5">
                         <span className="text-sm font-medium">{tag}</span>
                       </button>
                     ))}
                   </div>
-                  <div className="flex justify-center gap-x-5">
+                  <div className="flex pl-7 gap-x-5">
                     <button className="btn pl-9 pr-16 border-slate-200 hover:border-slate-300 text-slate-600">
                       <svg className="w-4 h-4 fill-current text-slate-400 shrink-0 mb-0.5" viewBox="0 0 16 16">
                         <path
@@ -84,7 +84,9 @@ function Onboarding3() {
                 </div>
                 <div className="flex items-center justify-between">
                   <Link className="text-sm underline hover:no-underline" to="/onboarding-2">&lt;- Back</Link>
-                  <Link className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-auto" to="/onboarding-4">Next Step -&gt;</Link>
+                  <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-auto">
+                    <Link to="/onboarding-4">Next Step -&gt;</Link>
+                  </button>
                 </div>
 
               </div>
