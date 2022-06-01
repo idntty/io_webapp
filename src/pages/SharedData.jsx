@@ -9,10 +9,10 @@ import SharedDataRoadMap from "../partials/shareddata/SharedDataRoadmap";
 function SharedData() {
 
   const sharedDataItems = {
-      data: '7234ABC3423423523457234ABC34234',
+      data: localStorage.getItem('digitalId'),
       items: [
         {
-          dataShared: '7234ABC3423423523457234ABC34234',
+          dataShared: localStorage.getItem('digitalId'),
           id: '923',
           text: 'United Kindom',
           typeItem: 'Residence',
@@ -35,7 +35,7 @@ function SharedData() {
           ],
         },
         {
-          dataShared: '7234ABC3423423523457234ABC34234',
+          dataShared: localStorage.getItem('digitalId'),
           id: '401',
           text: 'A123B3143',
           typeItem: 'Document ID',
@@ -54,6 +54,10 @@ function SharedData() {
         },
       ]
     };
+
+  function saveDigitalId() {
+    localStorage.setItem('svgAvatar', generateSvgAvatar())
+  }
   return (
     <main className="bg-white">
 
@@ -88,7 +92,7 @@ function SharedData() {
           <div className="flex mt-40 flex-col items-center gap-2.5">
             <img className="object-cover object-center" src={generateSvgAvatar()} width="493px" height="493px" alt="Onboarding" />
             <span className="text-sm">{sharedDataItems.data}</span>
-            <Link className="mt-12 btn bg-indigo-500 hover:bg-indigo-600 text-white" to="/">Get my digital ID</Link>
+            <Link onClick={()=>saveDigitalId()} className="mt-12 btn bg-indigo-500 hover:bg-indigo-600 text-white" to="/">Get my digital ID</Link>
           </div>
         </div>
 
