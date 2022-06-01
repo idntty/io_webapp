@@ -61,7 +61,7 @@ function Onboarding4() {
                   </svg>
                   <h1 className="text-3xl text-slate-800 font-bold mb-8">Nice to meet you, Ivan 🙌</h1>
                   <button className="btn px-6 bg-indigo-500 hover:bg-indigo-600 text-white">
-                    <Link to="/settings/account">Go To Profile -&gt;</Link>
+                    <Link to="/">Go To Profile -&gt;</Link>
                   </button>
                 </div>
 
