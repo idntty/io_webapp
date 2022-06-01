@@ -90,7 +90,7 @@ function ProfileTableItem(props) {
           </td>
       </tr>
       <tr className={`${!descriptionOpen && 'hidden'} ${props.status !== 'Progress' || 'bg-[#eaf0f6]'}` }>
-        <td colSpan="10" className="px-12 py-3.5">
+        <td colSpan="10" className="px-12 pt-3.5 pb-[14px]">
           <div className="flex items-center gap-x-5">
             <div>
               <label className="block text-sm font-medium mb-1" htmlFor="placeholder">Seed</label>
@@ -102,7 +102,7 @@ function ProfileTableItem(props) {
             </div>
           </div>
           {/* Progress validation bar */}
-          <div className="pt-[18px] pb-8">
+          <div className="pt-[18px]">
             <div className="h-full max-w-md w-full flex flex-row">
               <div className="w-32 shrink-0">
                 <h2 className="text-xl leading-snug font-bold text-slate-800 xl:leading-7 mb-4 xl:mb-0">Today</h2>

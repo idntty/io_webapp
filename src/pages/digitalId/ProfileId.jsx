@@ -285,14 +285,14 @@ function Profile () {
                     </div>
                   </div>
                   {/* Remove panel */}
-                  <div className={`${!removePanelOpen && 'hidden'} bg-white p-5 pb-[190px] shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-12`}>
-                    <h2 className="grow text-base font-semibold text-slate-800 truncate mb-2.5">Summary</h2>
+                  <div className={`${!removePanelOpen && 'hidden'} bg-white px-5 pt-4 pb-[190px] shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-12`}>
+                    <h2 className="grow text-base font-semibold text-slate-800 truncate mb-2">Summary</h2>
                     <div className="flex flex-col">
                       {userData.filter(({ id }) => selectedItems.includes(id)).map(item => (
                         <span key={item.id} className="text-sm font-normal text-slate-600 py-3 border-b border-slate-200">{item.property}</span>
                       ))}
                     </div>
-                    <div className="flex flex-row justify-between pt-[16px] pb-[23px] items-center">
+                    <div className="flex flex-row justify-between pt-[16px] pb-7 items-center">
                       <span className="block text-sm font-medium">On blockchain too</span>
                       <div className="flex items-center">
                         <div className="form-switch">
@@ -351,7 +351,7 @@ function Profile () {
                         <span className="font-medium text-slate-700 text-right">IT17 2207 1010 0504 0006 88</span>
                       </div>
                       <div className="flex justify-between space-x-1">
-                        <span className="italic">Transacion::</span>
+                        <span className="italic">Transacion:</span>
                         <span className="font-medium text-slate-700 text-right">145 bytes</span>
                       </div>
                     </div>
