@@ -60,11 +60,11 @@ function Onboarding2() {
                 <form>
                   <div className="space-y-4 mb-8">
                     <div>
-                      <label className="block text-sm font-medium mb-1" htmlFor="email">Email Address <span className="text-rose-500">*</span></label>
+                      <label className="block text-sm font-medium mb-1" htmlFor="email">First name <span className="text-rose-500">*</span></label>
                       <input id="email" className="form-input w-full" type="email" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1" htmlFor="name">Full Name <span className="text-rose-500">*</span></label>
+                      <label className="block text-sm font-medium mb-1" htmlFor="name">Last name <span className="text-rose-500">*</span></label>
                       <input id="name" className="form-input w-full" type="text" />
                     </div>
                     <div>
