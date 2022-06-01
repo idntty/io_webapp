@@ -123,17 +123,17 @@ function ValidationLog () {
               {/* Page header */}
               <div className="pb-8 border-b border-zinc-200">
                 {/* Title */}
-                <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">Digiatl ID transaction log ✨</h1>
+                <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">Digital ID transaction log ✨</h1>
               </div>
               {/*Psosts*/}
-              <div className="max-w-3xl m-auto mt-8">
+              <div className="max-w-3xl m-auto mt-6">
                 <div className="xl:-translate-x-16 max-w-fit">
                   {/* PostsID */}
                   {logItems.map(item => {
                     return <ValidateRoadMap season={item} key={item.id} />
                   })}
                   {/* Post */}
-                  <article className="pt-6">
+                  <article className="pt-3">
                     <div className="xl:flex">
                       <div className="w-32 shrink-0">
                         <h2 className="text-xl leading-snug font-bold text-slate-800 xl:leading-7 mb-4 xl:mb-0">Even earlier</h2>

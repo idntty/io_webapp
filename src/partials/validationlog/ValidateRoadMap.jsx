@@ -6,7 +6,7 @@ import ValidationUsersImg from "./ValidationUsersImg";
 function ValidateRoadMap({ season }) {
 
   return (
-      <article className="pt-6">
+      <article className="pt-3">
         <div className="xl:flex">
           <div className="w-32 shrink-0">
             <h2 className="text-xl leading-snug font-bold text-slate-800 xl:leading-7 mb-4 xl:mb-0">{season.name}</h2>
