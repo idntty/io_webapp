@@ -144,8 +144,8 @@ function Verify () {
                   </div>
                   {/* Content */}
                   <div className='flex flex-col gap-y-[9px]'>
-                    {item.fields.map((elem) => (
-                      <div className='flex gap-y-2'>
+                    {item.fields.map((elem, index) => (
+                      <div key={index} className='flex gap-y-2'>
                         <div className='flex flex-col'>
                           <div className='flex flex-row items-center'>
                             <span className='font-semibold text-slate-800 text-base w-[204px]'>{elem.value}</span>
