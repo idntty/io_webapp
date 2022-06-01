@@ -30,7 +30,7 @@ function Onboarding2() {
               </div>
 
               {/* Progress bar */}
-              <div className="px-4 pt-12 pb-8">
+              <div className="px-4 pt-12 pb-[59px]">
                 <div className="max-w-md mx-auto w-full">
                   <div className="relative">
                     <div className="absolute left-0 top-1/2 -mt-px w-full h-0.5 bg-slate-200" aria-hidden="true"></div>
@@ -54,7 +54,7 @@ function Onboarding2() {
             </div>
 
             <div className="px-4 py-8">
-              <div className="max-w-sm mx-auto">
+              <div className="max-w-[344px] mx-auto">
                 <h1 className="text-3xl text-slate-800 font-bold mb-6">Create your Account ✨</h1>
                 {/* Form */}
                 <form>
@@ -86,7 +86,9 @@ function Onboarding2() {
                         <span className="text-sm ml-2">Email me about product news.</span>
                       </label>
                     </div>
-                    <Link className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-3 whitespace-nowrap" to="/onboarding-3">Sign Up</Link>
+                    <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-3 whitespace-nowrap">
+                      <Link to="/signup">Sign Up</Link>
+                    </button>
                   </div>
                 </form>
                 {/* Footer */}
