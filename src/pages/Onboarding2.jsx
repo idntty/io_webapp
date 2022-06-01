@@ -94,7 +94,7 @@ function Onboarding2() {
                 {/* Footer */}
                 <div className="pt-5 mt-6 border-t border-slate-200">
                   <div className="text-sm">
-                    Have an account? <Link className="font-medium text-indigo-500 hover:text-indigo-600" to="/signin">Sign In</Link>
+                    Have an account? <Link className="font-medium text-indigo-500 hover:text-indigo-600" to="/onboarding-2">Sign In</Link>
                   </div>
                 </div>
               </div>

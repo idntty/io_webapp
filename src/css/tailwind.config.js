@@ -20,10 +20,13 @@ module.exports = {
         inter: ['Inter', 'sans-serif'],
       },
       fontSize: {
+        descriptionSize: ['0.75rem', { lineHeight: '1.25' }],
+        xxs: ['0.625rem', { lineHeight: '0.75' }],
         xs: ['0.75rem', { lineHeight: '1.5' }],
         sm: ['0.875rem', { lineHeight: '1.5715' }],
         base: ['1rem', { lineHeight: '1.5', letterSpacing: '-0.01em' }],
         lg: ['1.125rem', { lineHeight: '1.5', letterSpacing: '-0.01em' }],
+        validateSize: ['1.125rem', { lineHeight: '1.875', letterSpacing: '-0.014em' }],
         xl: ['1.25rem', { lineHeight: '1.5', letterSpacing: '-0.01em' }],
         '2xl': ['1.5rem', { lineHeight: '1.33', letterSpacing: '-0.01em' }],
         '3xl': ['1.88rem', { lineHeight: '1.33', letterSpacing: '-0.01em' }],
