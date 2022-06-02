@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 
 import Image from '../../images/transactions-image-04.svg';
 
@@ -7,37 +7,12 @@ function TransactionPanel({
   setValidatePanelOpen
 }) {
 
-  const panelContent = useRef()
-
-  // close on click outside
-  useEffect(() => {
-    const clickHandler = () => {
-      if (!validatePanelOpen || !panelContent.current) return;
-      setValidatePanelOpen(false);
-    };
-    document.addEventListener('click', clickHandler);
-    return () => {
-      document.removeEventListener('click', clickHandler)
-    };
-  }, []);
-
-  // close if the esc key is pressed
-  useEffect(() => {
-    const keyHandler = ({ keyCode }) => {
-      if (!validatePanelOpen || keyCode !== 27) return;
-      setValidatePanelOpen(false);
-    };
-    document.addEventListener('keydown', keyHandler);
-    return () => document.removeEventListener('keydown', keyHandler);
-  }, []);
-
   return (
       <div
-          ref={panelContent}
           className={`absolute inset-0 sm:left-auto z-20 transition-transform duration-200 ease-in-out ${
               validatePanelOpen ? 'translate-x-' : 'translate-x-full'
           }`}>
-        <div className="sticky top-16 bg-gradient-to-b from-[#E2E8F0] via-slate-100 to-white shrink-0 border-l border-slate-200 w-full sm:w-[390px] h-fit">
+        <div className="top-16 bg-gradient-to-b from-[#e4eaf0] to-white shrink-0 border-l border-slate-200 w-full sm:w-[390px] h-fit">
           <button
               onClick={() => setValidatePanelOpen(false)}
               className="absolute top-0 right-0 mt-6 mr-6 group p-2"
@@ -90,8 +65,8 @@ function TransactionPanel({
               </div>
               {/* Receipts */}
               <div className="mt-6">
-                <div className="text-sm font-semibold text-slate-800 mb-2">Private Data</div>
-                <form className="rounded bg-slate-100 border border-dashed border-slate-300 text-center px-5 py-8">
+                <div className="text-sm font-medium text-slate-800 mb-2">Private Data</div>
+                <form className="rounded bg-slate-50 border border-dashed border-slate-300 text-center px-5 py-8">
                   <svg className="inline-flex w-4 h-4 fill-slate-400 mb-3" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
                     <path d="M8 4c-.3 0-.5.1-.7.3L1.6 10 3 11.4l4-4V16h2V7.4l4 4 1.4-1.4-5.7-5.7C8.5 4.1 8.3 4 8 4ZM1 2h14V0H1v2Z" />
                   </svg>
@@ -101,10 +76,10 @@ function TransactionPanel({
               </div>
               {/* Notes */}
               <div className="mt-6">
-                <div className="text-sm font-semibold text-slate-800 mb-2">Notes</div>
+                <div className="text-sm font-medium text-slate-800 mb-2">Notes</div>
                 <form>
                   <label className="sr-only" htmlFor="notes">Write a note</label>
-                  <textarea id="notes" className="form-textarea w-full focus:border-slate-300" rows="4" placeholder="Write a note…" defaultValue={""} />
+                  <textarea id="notes" className="resize-none form-textarea w-full focus:border-slate-300" rows="4" placeholder="Write a note…" defaultValue={""} />
                 </form>
               </div>
               {/* Download / Report */}
@@ -114,7 +89,7 @@ function TransactionPanel({
                     <svg className="w-4 h-4 fill-current text-slate-400 shrink-0 rotate-180" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
                       <path d="M8 4c-.3 0-.5.1-.7.3L1.6 10 3 11.4l4-4V16h2V7.4l4 4 1.4-1.4-5.7-5.7C8.5 4.1 8.3 4 8 4ZM1 2h14V0H1v2Z" />
                     </svg>
-                    <span className="ml-2">Validate</span>
+                    <span className="ml-2 text-sm font-medium">Validate</span>
                   </button>
                 </div>
                 <div className="w-1/2">
@@ -122,7 +97,7 @@ function TransactionPanel({
                     <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 16 16">
                       <path d="M7.001 3h2v4h-2V3Zm1 7a1 1 0 1 1 0-2 1 1 0 0 1 0 2ZM15 16a1 1 0 0 1-.6-.2L10.667 13H1a1 1 0 0 1-1-1V1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1ZM2 11h9a1 1 0 0 1 .6.2L14 13V2H2v9Z" />
                     </svg>
-                    <span className="ml-2">Invalidate</span>
+                    <span className="ml-2 text-sm font-medium">Invalidate</span>
                   </button>
                 </div>
               </div>

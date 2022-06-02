@@ -19,7 +19,7 @@ function ValidateTableItem(props) {
   }
 
   return (
-      <tr className="hover:bg-[#E2E8F0] cursor-pointer" onClick={(e) => openValidatePanel(e)}>
+      <tr className="hover:bg-[#eaf0f6] cursor-pointer" onClick={(e) => openValidatePanel(e)}>
         <td className="px-2 first:pl-4 last:pr-5 py-3 whitespace-nowrap w-px">
           <div className="flex items-center">
             <label className="inline-flex">
