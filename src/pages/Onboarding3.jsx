@@ -1,9 +1,16 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import {generateSvgAvatar} from "../images/GenerateOnboardingSvg/GenerateSvg";
 import Logo from "../images/logo.png";
 
 function Onboarding3() {
+
+  useEffect(()=>{
+    return ()=>{
+      localStorage.setItem('svgAvatar', generateSvgAvatar())
+    }
+  }, [])
+
   const arrayBadges = ['judge', 'jelly', 'wasp', 'true', 'clog', 'forward', 'talent', 'ozone', 'belive', 'fresh', 'bulk', 'hobby']
   return (
     <main className="bg-white">
