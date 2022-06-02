@@ -21,7 +21,7 @@ function Signin() {
             <div className="flex-1">
               <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
                 {/* Logo */}
-                <Link className="block" to="/">
+                <Link className="block" to="/dashboard">
                   <svg width="32" height="32" viewBox="0 0 32 32">
                     <defs>
                       <linearGradient x1="28.538%" y1="20.229%" x2="100%" y2="108.156%" id="logo-a">
@@ -60,13 +60,13 @@ function Signin() {
                   <div className="mr-1">
                     <Link className="text-sm underline hover:no-underline" to="/reset-password">Forgot Password?</Link>
                   </div>
-                  <Link className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-3" to="/">Sign In</Link>
+                  <Link className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-3" to="/dashboard">Sign In</Link>
                 </div>
               </form>
               {/* Footer */}
               <div className="pt-5 mt-6 border-t border-slate-200">
                 <div className="text-sm">
-                  Don’t you have an account? <Link className="font-medium text-indigo-500 hover:text-indigo-600" to="/signup">Sign Up</Link>
+                  Don’t you have an account? <Link className="font-medium text-indigo-500 hover:text-indigo-600" to="/">Sign Up</Link>
                 </div>
                 {/* Warning */}
                 <div className="mt-5">

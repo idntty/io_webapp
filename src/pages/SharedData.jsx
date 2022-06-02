@@ -55,9 +55,6 @@ function SharedData() {
       ]
     };
 
-  function saveDigitalId() {
-    localStorage.setItem('svgAvatar', generateSvgAvatar())
-  }
   return (
     <main className="bg-white">
 
@@ -92,7 +89,7 @@ function SharedData() {
           <div className="flex mt-40 flex-col items-center gap-2.5">
             <img className="object-cover object-center" src={generateSvgAvatar()} width="493px" height="493px" alt="Onboarding" />
             <span className="text-sm">{sharedDataItems.data}</span>
-            <Link onClick={()=>saveDigitalId()} className="mt-12 btn bg-indigo-500 hover:bg-indigo-600 text-white" to="/">Get my digital ID</Link>
+            <Link className="mt-12 btn bg-indigo-500 hover:bg-indigo-600 text-white" to="/dashboard">Get my digital ID</Link>
           </div>
         </div>
 
