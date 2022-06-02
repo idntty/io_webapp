@@ -21,7 +21,7 @@ function Onboarding1() {
               {/* Header */}
               <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
                 {/* Logo */}
-                <Link className="block" to="/">
+                <Link className="block" to="/dashboard">
                   <img alt='logo' src={Logo} width="89" height="32"/>
                 </Link>
                 <div className="text-sm">
@@ -36,7 +36,7 @@ function Onboarding1() {
                     <div className="absolute left-0 top-1/2 -mt-px w-full h-0.5 bg-slate-200" aria-hidden="true"></div>
                     <ul className="relative flex justify-between w-full">
                       <li>
-                        <Link className="flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold bg-indigo-500 text-white" to="/onboarding-1">1</Link>
+                        <Link className="flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold bg-indigo-500 text-white" to="/">1</Link>
                       </li>
                       <li>
                         <Link className="flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold bg-slate-100 text-slate-500" to="/onboarding-2">2</Link>

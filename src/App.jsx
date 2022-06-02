@@ -27,12 +27,14 @@ import Onboarding3 from "./pages/Onboarding3";
 import Onboarding4 from "./pages/Onboarding4";
 import SharedData from "./pages/SharedData";
 import ResetPassword from "./pages/ResetPassword";
-import Signup from "./pages/Signup";
 import Signin from "./pages/Signin";
 
 function App() {
 
   const location = useLocation();
+  useEffect(()=> {
+    localStorage.setItem('svgAvatar', '')
+  },[])
 
   useEffect(() => {
     document.querySelector('html').style.scrollBehavior = 'auto'
@@ -43,7 +45,8 @@ function App() {
   return (
     <>
       <Routes>
-        <Route exact path="/" element={<Dashboard />} />
+        <Route exact path="/" element={<Onboarding1 />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboard/analytics" element={<Analytics />} />
         <Route path="/dashboard/fintech" element={<Fintech />} />
         <Route path="/digitalId/profile-id" element={<ProfileId />} />
@@ -51,7 +54,6 @@ function App() {
         <Route path="/digitalId/validation-log" element={<ValidationLog />} />
         <Route path="/digitalId/verify" element={<Verify />} />
         <Route path="/messages" element={<Messages />} />
-        <Route path="/onboarding-1" element={<Onboarding1 />} />
         <Route path="/onboarding-2" element={<Onboarding2 />} />
         <Route path="/onboarding-3" element={<Onboarding3 />} />
         <Route path="/onboarding-4" element={<Onboarding4 />} />
@@ -61,7 +63,6 @@ function App() {
         <Route path="/component/accordion" element={<AccordionPage />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/signin" element={<Signin />} />
-        <Route path="/signup" element={<Signup />} />
       </Routes>
     </>
   );
