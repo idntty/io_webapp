@@ -1,13 +1,15 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import {generateSvgAvatar} from "../images/GenerateOnboardingSvg/GenerateSvg";
 import Logo from "../images/logo.png";
 
 function Onboarding4() {
 
-  function saveDigitalId() {
-    localStorage.setItem('svgAvatar', generateSvgAvatar())
-  }
+  useEffect(()=>{
+    return ()=>{
+      localStorage.setItem('svgAvatar', generateSvgAvatar())
+    }
+  }, [])
 
   return (
     <main className="bg-white">
@@ -65,7 +67,7 @@ function Onboarding4() {
                     <path className="text-emerald-500" d="m28.5 41-8-8 3-3 5 5 12-12 3 3z" />
                   </svg>
                   <h1 className="text-3xl text-slate-800 font-bold mb-8">Nice to meet you, Ivan 🙌</h1>
-                  <button onClick={()=>saveDigitalId()} className="btn px-6 bg-indigo-500 hover:bg-indigo-600 text-white">
+                  <button className="btn px-6 bg-indigo-500 hover:bg-indigo-600 text-white">
                     <Link to="/dashboard">Go To Profile -&gt;</Link>
                   </button>
                 </div>
