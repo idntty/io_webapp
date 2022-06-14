@@ -1,11 +1,54 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
+import { observer } from "mobx-react-lite";
+import { registrationStore } from "../store/registrationStore";
 
 import OnboardingImage from '../images/onboarding-image.jpg';
 import OnboardingDecoration from '../images/auth-decoration.png';
 import Logo from "../images/logo.png";
 
-function Onboarding2() {
+const Onboarding2 = observer(()=>{
+  const [dataRegistration, setDataRegistration] = useState(
+      {
+        first_name: '',
+        last_name: '',
+        gender: '',
+        date_birth: '',
+      }
+  )
+  const [fillingForm, setFillingForm] = useState(false)
+
+  const saveValueChange = (event)=>{
+    const newValue=event.target.value;
+    setDataRegistration({
+      ...dataRegistration,
+      [event.target.id]: newValue
+    })
+  }
+
+  const saveStoreRegistration = ()=>{
+    Object.keys(dataRegistration).forEach(item=>{
+      let element=document.getElementById(item)
+      if(dataRegistration[item]) {
+        element.style.borderColor=""
+      } else {
+        element.style.borderColor="red"
+      }
+    })
+    if(Object.keys(dataRegistration).find(item=>!dataRegistration[item])) {
+      return
+    } else {
+      setFillingForm(true)
+    }
+    registrationStore.saveDataRegistration(dataRegistration)
+  }
+
+  useEffect(()=>{
+    if(fillingForm===true) {
+      document.getElementById("signup").click()
+    }
+  },[fillingForm])
+
   return (
     <main className="bg-white">
 
@@ -60,23 +103,24 @@ function Onboarding2() {
                 <form>
                   <div className="space-y-4 mb-8">
                     <div>
-                      <label className="block text-sm font-medium mb-1" htmlFor="email">First name <span className="text-rose-500">*</span></label>
-                      <input id="email" className="form-input w-full" type="email" />
+                      <label className="block text-sm font-medium mb-1" htmlFor="first_name">First name <span className="text-rose-500">*</span></label>
+                      <input id="first_name" onChange={(event)=>saveValueChange(event)} className="form-input w-full" type="text" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1" htmlFor="name">Last name <span className="text-rose-500">*</span></label>
-                      <input id="name" className="form-input w-full" type="text" />
+                      <label className="block text-sm font-medium mb-1" htmlFor="last_name">Last name <span className="text-rose-500">*</span></label>
+                      <input id="last_name" onChange={(event)=>saveValueChange(event)} className="form-input w-full" type="text" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1" htmlFor="role">Gender <span className="text-rose-500">*</span></label>
-                      <select id="role" className="form-select w-full">
+                      <label className="block text-sm font-medium mb-1" htmlFor="gender">Gender <span className="text-rose-500">*</span></label>
+                      <select id="gender" onChange={(event)=>saveValueChange(event)} className="form-select w-full">
+                        <option className="hidden"></option>
                         <option>male</option>
                         <option>feemale</option>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1" htmlFor="password">Date of birth <span className="text-rose-500">*</span></label>
-                      <input id="password" className="form-input w-full" type="password" autoComplete="on" />
+                      <label className="block text-sm font-medium mb-1" htmlFor="date_birth">Date of birth <span className="text-rose-500">*</span></label>
+                      <input id="date_birth" onChange={(event)=>saveValueChange(event)} className="form-input w-full" type="date" autoComplete="on" />
                     </div>
                   </div>
                   <div className="flex items-center justify-between mt-6">
@@ -86,8 +130,8 @@ function Onboarding2() {
                         <span className="text-sm ml-2">Email me about product news.</span>
                       </label>
                     </div>
-                    <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-3 whitespace-nowrap">
-                      <Link to="/onboarding-3">Sign Up</Link>
+                    <button onClick={()=>saveStoreRegistration()} className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-3 whitespace-nowrap">
+                      <Link id="signup" to={fillingForm && "/onboarding-3"} >Sign Up</Link>
                     </button>
                   </div>
                 </form>
@@ -114,6 +158,6 @@ function Onboarding2() {
 
     </main>
   );
-}
+});
 
 export default Onboarding2;
