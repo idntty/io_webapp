@@ -3,7 +3,7 @@ function prepareUrl(url) {
   return `/api/${url}`;
 }
 
-function handleRequest(attempts = 3, method, url, body) {
+function handleRequest(method, url, attempts, body) {
   return new Promise((resolve, reject) => {
     (function internalRequest() {
       return request(method, url, body)
@@ -44,7 +44,26 @@ function request(method, url, body) {
   return fetch(url, requestOptions);
 };
 
+function get(url, attempts = 1) {
+  return handleRequest('get', url, attempts);
+}
+
+function del(url, attempts = 1) {
+  return handleRequest('del', url, attempts);
+}
+
+function post(url, body, attempts = 1) {
+  return handleRequest('post', url, attempts, body);
+}
+
+function put(url, body, attempts = 1) {
+  return handleRequest('put', url, attempts, body);
+}
+
 export const fetchWrapper = {
-  handleRequest,
-  baseUrl: '',
+  get,
+  del,
+  post,
+  put,
+  baseUrl: ''
 };
