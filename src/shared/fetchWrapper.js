@@ -23,15 +23,15 @@ function handleRequest(method, url, attempts, body) {
 function request(method, url, body) {
   let controller = new AbortController;
   let requestOptions = {};
-  if (method === 'get' || method === 'del'){
+  if (method === 'GET' || method === 'DELETE'){
     requestOptions = {
-      method: `${method.toUpperCase()}`,
+      method: method,
       signal: controller.signal,
     }
   };
-  if (method === 'post' || method === 'put'){
+  if (method === 'POST' || method === 'PUT'){
     requestOptions = {
-      method: `${method.toUpperCase()}`,
+      method: method,
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -45,19 +45,19 @@ function request(method, url, body) {
 };
 
 function get(url, attempts = 1) {
-  return handleRequest('get', url, attempts);
+  return handleRequest('GET', url, attempts);
 }
 
 function del(url, attempts = 1) {
-  return handleRequest('del', url, attempts);
+  return handleRequest('DELETE', url, attempts);
 }
 
 function post(url, body, attempts = 1) {
-  return handleRequest('post', url, attempts, body);
+  return handleRequest('POST', url, attempts, body);
 }
 
 function put(url, body, attempts = 1) {
-  return handleRequest('put', url, attempts, body);
+  return handleRequest('PUT', url, attempts, body);
 }
 
 export const fetchWrapper = {
