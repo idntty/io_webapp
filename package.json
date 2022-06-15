@@ -4,15 +4,20 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "node './src/bufferFix/BufferFix'"
   },
   "dependencies": {
+    "@liskhq/lisk-client": "^5.2.2",
+    "@liskhq/lisk-passphrase": "^3.1.1",
     "@tailwindcss/forms": "^0.4.0",
+    "buffer": "^6.0.3",
     "chart.js": "^3.5.0",
     "chartjs-adapter-moment": "^1.0.0",
     "mobx": "^6.6.0",
     "mobx-react-lite": "^3.4.0",
     "moment": "^2.29.1",
+    "node-libs-browser": "^2.2.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-flatpickr": "^3.10.7",
