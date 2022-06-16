@@ -44,6 +44,9 @@ function request(method, url, token, body) {
       signal: controller.signal,
     }
   };
+  if (!token) {
+    requestOptions.headers.Authorization = null;
+  }
   setTimeout(() => controller.abort(), 3000);
   return fetch(url, requestOptions);
 };
