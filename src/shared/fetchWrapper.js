@@ -11,8 +11,8 @@ function handleRequest(method, url, attempts, body) {
         .catch(err => --attempts > 0 ? internalRequest() : reject(err))
     })()
   })
-   .then((res) => res.json())
-   .catch(() => [])
+    .then((res) => res.json())
+    .catch(() => [])
 };
 
 /**
@@ -23,9 +23,13 @@ function handleRequest(method, url, attempts, body) {
 function request(method, url, body) {
   let controller = new AbortController;
   let requestOptions = {};
+  if (!registrationStore.tokenKey) return Promise.reject();
   if (method === 'GET' || method === 'DELETE'){
     requestOptions = {
       method: method,
+      headers: {
+        Authorization: `Token ${registrationStore.tokenKey}`,
+      },
       signal: controller.signal,
     }
   };
@@ -33,6 +37,7 @@ function request(method, url, body) {
     requestOptions = {
       method: method,
       headers: {
+        Authorization: `Token ${registrationStore.tokenKey}`,
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
