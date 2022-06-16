@@ -3,10 +3,10 @@ function prepareUrl(url) {
   return `/api/${url}`;
 }
 
-function handleRequest(method, url, attempts, body) {
+function handleRequest(method, url, attempts, token, body) {
   return new Promise((resolve, reject) => {
     (function internalRequest() {
-      return request(method, url, body)
+      return request(method, url, token, body)
         .then(resolve)
         .catch(err => --attempts > 0 ? internalRequest() : reject(err))
     })()
@@ -20,15 +20,14 @@ function handleRequest(method, url, attempts, body) {
  * @param {string} url - endpoint url.
  * @param {object} body - request body.
  */
-function request(method, url, body) {
+function request(method, url, token, body) {
   let controller = new AbortController;
   let requestOptions = {};
-  if (!registrationStore.tokenKey) return Promise.reject();
   if (method === 'GET' || method === 'DELETE'){
     requestOptions = {
       method: method,
       headers: {
-        Authorization: `Token ${registrationStore.tokenKey}`,
+        Authorization: `Token ${token}`,
       },
       signal: controller.signal,
     }
@@ -37,7 +36,7 @@ function request(method, url, body) {
     requestOptions = {
       method: method,
       headers: {
-        Authorization: `Token ${registrationStore.tokenKey}`,
+        Authorization: `Token ${token}`,
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
@@ -50,19 +49,35 @@ function request(method, url, body) {
 };
 
 function get(url, attempts = 1) {
-  return handleRequest('GET', url, attempts);
+  return handleRequest('GET', url, attempts, null);
+}
+
+function getAuth(url, attempts = 1) {
+  return handleRequest('GET', url, attempts, registrationStore.tokenKey);
 }
 
 function del(url, attempts = 1) {
-  return handleRequest('DELETE', url, attempts);
+  return handleRequest('DELETE', url, attempts, null);
+}
+
+function delAuth(url, attempts = 1) {
+  return handleRequest('DELETE', url, attempts, registrationStore.tokenKey);
 }
 
 function post(url, body, attempts = 1) {
-  return handleRequest('POST', url, attempts, body);
+  return handleRequest('POST', url, attempts, null, body);
+}
+
+function postAuth(url, body, attempts = 1) {
+  return handleRequest('POST', url, attempts, registrationStore.tokenKey, body);
 }
 
 function put(url, body, attempts = 1) {
-  return handleRequest('PUT', url, attempts, body);
+  return handleRequest('PUT', url, attempts, null, body);
+}
+
+function putAuth(url, body, attempts = 1) {
+  return handleRequest('PUT', url, attempts, registrationStore.tokenKey, body);
 }
 
 export const fetchWrapper = {
@@ -70,5 +85,9 @@ export const fetchWrapper = {
   del,
   post,
   put,
+  getAuth,
+  delAuth,
+  postAuth,
+  putAuth,
   baseUrl: ''
 };
