@@ -35,13 +35,10 @@ function createBlob(options) {
     return path + "z";
 }
 
-export var generateSvgAvatar = (function () {
-    return function (seed, raw) {
-        let pubKey = localStorage.getItem('svgKey') || Math.floor(Math.random()*65535*65535).toString(16) + Math.floor(Math.random()*65535*65535).toString(16) + Math.floor(Math.random()*65535*65535).toString(16) + Math.floor(Math.random()*65535*65535).toString(16) + Math.floor(Math.random()*65535*65535).toString(16) + Math.floor(Math.random()*65535*65535).toString(16) + Math.floor(Math.random()*65535*65535).toString(16) + Math.floor(Math.random()*65535*65535).toString(16);
+export var generateSvgAvatar = ( function () {
+    return function (publicKey, seed, raw) {
+        let pubKey = publicKey || Math.floor(Math.random()*65535*65535).toString(16) + Math.floor(Math.random()*65535*65535).toString(16) + Math.floor(Math.random()*65535*65535).toString(16) + Math.floor(Math.random()*65535*65535).toString(16) + Math.floor(Math.random()*65535*65535).toString(16) + Math.floor(Math.random()*65535*65535).toString(16) + Math.floor(Math.random()*65535*65535).toString(16) + Math.floor(Math.random()*65535*65535).toString(16);
         //pubKey = "73f47d4929d7b2b6598ca4999d52567f9bb5aef3e353e0a66b468096db6e4e88"
-        if (!localStorage.getItem('svgKey')) {
-            localStorage.setItem('svgKey', `${pubKey}`)
-        }
         let particles = [];
         let gradients = ['#000000'];
         let defs = [];

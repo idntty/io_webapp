@@ -25,12 +25,6 @@ const Onboarding4 = observer(()=>{
     }
   },[checkBoxesSelected])
 
-  useEffect(()=>{
-    return ()=>{
-      localStorage.setItem('svgAvatar', generateSvgAvatar())
-    }
-  }, [])
-
   return (
     <main className="bg-white">
 
@@ -86,7 +80,7 @@ const Onboarding4 = observer(()=>{
                     <circle className="text-emerald-100" cx="32" cy="32" r="32" />
                     <path className="text-emerald-500" d="m28.5 41-8-8 3-3 5 5 12-12 3 3z" />
                   </svg>
-                  <h1 className="text-3xl text-slate-800 font-bold mb-8">{`Nice to meet you, ${registrationStore.accountData().first_name} 🙌`}</h1>
+                  <h1 className="text-3xl text-slate-800 font-bold mb-8">{registrationStore.accountData.first_name ? `Nice to meet you, ${registrationStore.accountData.first_name} 🙌` : 'Please, go back step 2'}</h1>
                   <button onClick={()=>validateCheckBox()} className="btn px-6 bg-indigo-500 hover:bg-indigo-600 text-white">
                     <Link id="link-dashboard" to={checkBoxesSelected && "/dashboard"}>Go To Profile -&gt;</Link>
                   </button>
@@ -117,7 +111,7 @@ const Onboarding4 = observer(()=>{
         {/* Image */}
         <div className="flex flex-col items-center h-full w-full hidden md:block absolute top-0 bottom-0 right-0 md:w-1/2" aria-hidden="true">
           <div className="flex mt-40 flex-col items-center gap-2.5">
-            <img className="object-cover object-center" src={generateSvgAvatar()} width="493px" height="493px" alt="Onboarding" />
+            <img className="object-cover object-center" src={generateSvgAvatar(registrationStore.pubKey)} width="493px" height="493px" alt="Onboarding" />
             <span className="text-sm">Your generated Digital ID</span>
           </div>
         </div>

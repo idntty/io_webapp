@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 
 import Sidebar from '../partials/Sidebar';
 import Header from '../partials/Header';
@@ -19,9 +19,6 @@ import DashboardCard10 from '../partials/dashboard/DashboardCard10';
 import DashboardCard11 from '../partials/dashboard/DashboardCard11';
 
 function Dashboard() {
-  useEffect(() => {
-    localStorage.setItem('svgKey', '')
-  }, [])
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (

@@ -1,11 +1,20 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Link } from 'react-router-dom';
 
 import OnboardingImage from '../images/onboarding-image.jpg';
 import OnboardingDecoration from '../images/auth-decoration.png';
 import Logo from "../images/logo.png";
+import {observer} from "mobx-react-lite";
+import {passphrase} from "@liskhq/lisk-client";
+import {registrationStore} from "../store/registrationStore";
 
-function Onboarding1() {
+const Onboarding1 = observer(()=>{
+  let phrase = passphrase.Mnemonic.generateMnemonic()
+  registrationStore.savePassPhrase(phrase)
+  useEffect(()=>{
+
+  },[])
+
   return (
     <main className="bg-white">
 
@@ -127,6 +136,6 @@ function Onboarding1() {
 
     </main>
   );
-}
+})
 
 export default Onboarding1;
