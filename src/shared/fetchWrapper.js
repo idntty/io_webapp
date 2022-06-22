@@ -1,12 +1,14 @@
+import {registrationStore} from '../store/store';
+
 function prepareUrl(url) {
   if (url.startsWith('http')) return url;
-  return `/api/${url}`;
+  return `http://3.125.47.101/api/${url}`;
 }
 
-function handleRequest(method, url, attempts, token, body) {
+function handleRequest(method, url, headers, attempts, token, body) {
   return new Promise((resolve, reject) => {
     (function internalRequest() {
-      return request(method, url, token, body)
+      return request(method, url, headers, token, body)
         .then(resolve)
         .catch(err => --attempts > 0 ? internalRequest() : reject(err))
     })()
@@ -17,17 +19,21 @@ function handleRequest(method, url, attempts, token, body) {
 
 /**
  * Request
+ * @param {string} method - method name
  * @param {string} url - endpoint url.
+ * @param {string} token - auth token
  * @param {object} body - request body.
+ * @param {object} headers - request headers
  */
-function request(method, url, token, body) {
+function request(method, url, headers = {}, token, body) {
   let controller = new AbortController;
   let requestOptions = {};
   if (method === 'GET' || method === 'DELETE'){
     requestOptions = {
       method: method,
       headers: {
-        Authorization: `Token ${token}`,
+        authorization: `IDNTTY ${token}`,
+        ...headers
       },
       signal: controller.signal,
     }
@@ -36,9 +42,10 @@ function request(method, url, token, body) {
     requestOptions = {
       method: method,
       headers: {
-        Authorization: `Token ${token}`,
+        authorization: `IDNTTY ${token}`,
         Accept: 'application/json',
         'Content-Type': 'application/json',
+        ...headers
       },
       body: JSON.stringify(body),
       signal: controller.signal,
@@ -48,39 +55,39 @@ function request(method, url, token, body) {
     requestOptions.headers.Authorization = null;
   }
   setTimeout(() => controller.abort(), 3000);
-  return fetch(url, requestOptions);
+  return fetch(prepareUrl(url), requestOptions);
 };
 
-function get(url, attempts = 1) {
-  return handleRequest('GET', url, attempts, null);
+function get(url, headers, attempts = 1) {
+  return handleRequest('GET', url, headers, attempts, null);
 }
 
-function getAuth(url, attempts = 1) {
-  return handleRequest('GET', url, attempts, registrationStore.tokenKey);
+function getAuth(url, headers, attempts = 1) {
+  return handleRequest('GET', url, headers, attempts, registrationStore.tokenKey);
 }
 
-function del(url, attempts = 1) {
-  return handleRequest('DELETE', url, attempts, null);
+function del(url, headers, attempts = 1) {
+  return handleRequest('DELETE', url, headers, attempts, null);
 }
 
-function delAuth(url, attempts = 1) {
-  return handleRequest('DELETE', url, attempts, registrationStore.tokenKey);
+function delAuth(url, headers, attempts = 1) {
+  return handleRequest('DELETE', url, headers, attempts, registrationStore.tokenKey);
 }
 
-function post(url, body, attempts = 1) {
-  return handleRequest('POST', url, attempts, null, body);
+function post(url, headers, body, attempts = 1) {
+  return handleRequest('POST', url, headers, attempts, null, body);
 }
 
-function postAuth(url, body, attempts = 1) {
-  return handleRequest('POST', url, attempts, registrationStore.tokenKey, body);
+function postAuth(url, headers, body, attempts = 1) {
+  return handleRequest('POST', url, headers, attempts, registrationStore.tokenKey, body);
 }
 
-function put(url, body, attempts = 1) {
-  return handleRequest('PUT', url, attempts, null, body);
+function put(url, headers, body, attempts = 1) {
+  return handleRequest('PUT', url, headers, attempts, null, body);
 }
 
-function putAuth(url, body, attempts = 1) {
-  return handleRequest('PUT', url, attempts, registrationStore.tokenKey, body);
+function putAuth(url, headers, body, attempts = 1) {
+  return handleRequest('PUT', url, headers, attempts, registrationStore.tokenKey, body);
 }
 
 export const fetchWrapper = {
