@@ -16,6 +16,33 @@ function Profile () {
   const [toggle, setToggle] = useState(true);
   const [addPanelOpen, setAddPanelOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [hintOpen, setHintOpen] = useState(false);
+  
+  const defaultValues = {
+    property: '',
+    value: '',
+    seed: '',
+    blockchained: true,
+  };
+  const initialPropertyValues = ['First name', 'Second name', 'Birthdate', 'Gender', 'Residence', 'Document type', 'Document ID', 'Issue date', 'Expiry date']; 
+  const [propertyValues, setPropertyValues] = useState(initialPropertyValues);
+  const [currentValues, setCurrentValues] = useState(defaultValues); 
+
+  const openHint = () => {
+    setHintOpen(true);
+  }
+
+  const changeCurrentValues = (text, field) => {
+    setCurrentValues((prevState)=> ({
+      ...prevState,
+      [field]: text,
+    }));
+  }
+
+  const closeHint = (text) => {
+    currentValues.property = text;
+    setHintOpen(false);
+  }
 
   const handleSelectedItems = (selectedItems) => {
     setSelectedItems([...selectedItems]);
@@ -53,6 +80,12 @@ function Profile () {
     setRemovePanelOpen(false);
     setButtonPanelOpen(true);
   }
+
+  const handleInput = (text) => {
+    setPropertyValues(initialPropertyValues);
+    let reg = new RegExp(`^${text}`, 'img');
+    setPropertyValues((prevState) => prevState.filter((element) => element.match(reg)));
+  };
 
   const userData = [
     {
@@ -246,15 +279,42 @@ function Profile () {
                     <div className="flex flex-col gap-y-3">
                       <div>
                         <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Property <span className="text-rose-500">*</span></label>
-                        <input id="property" className="form-input w-full" type="text" required />
+                        <input
+                          id="property"
+                          className="form-input w-full"
+                          type="text"
+                          required
+                          onClick={openHint}
+                          onInput={(e) => handleInput(e.target.value)}
+                          onChange={(e) => changeCurrentValues(e.target.value, 'property')}
+                        />
+                        <div className={`flex flex-col gap-y-2 py-2 pl-2 border border-t-0 border-slate-200 rounded ${hintOpen || 'hidden'}`}>
+                          <ul>
+                            {propertyValues.map((element, index) => (
+                              <li key={index} onClick={() => closeHint(element)}>{element}</li>
+                            ))}
+                          </ul>
+                        </div>
                       </div>
                       <div>
                         <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Value <span className="text-rose-500">*</span></label>
-                        <input id="value" className="form-input w-full" type="text" required />
+                        <input
+                          id="value"
+                          className="form-input w-full"
+                          type="text"
+                          required
+                          onChange={(event) => changeCurrentValues(event.target.value, 'property')}
+                        />
                       </div>
                       <div>
                         <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Seed <span className="text-rose-500">*</span></label>
-                        <input id="seed" className="form-input w-full" type="text" required />
+                        <input
+                          id="seed"
+                          className="form-input w-full"
+                          type="text"
+                          required
+                          onChange={(event) => changeCurrentValues(event.target.value, 'property')}
+                        />
                       </div>
                     </div>
                     <div className="flex flex-row justify-between pt-[16px] pb-[23px] items-center border-b border-slate-200">
