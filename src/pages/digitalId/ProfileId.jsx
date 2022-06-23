@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
 import ProfileTable from '../../partials/digitalId/ProfileTable';
@@ -21,26 +21,29 @@ function Profile () {
   const defaultValues = {
     property: '',
     value: '',
-    seed: '',
-    blockchained: true,
+    seed: Math.floor(Math.random() * 90000000000000000000)
   };
+
   const initialPropertyValues = ['First name', 'Second name', 'Birthdate', 'Gender', 'Residence', 'Document type', 'Document ID', 'Issue date', 'Expiry date']; 
   const [propertyValues, setPropertyValues] = useState(initialPropertyValues);
   const [currentValues, setCurrentValues] = useState(defaultValues); 
 
   const openHint = () => {
-    setHintOpen(true);
+    if (!currentValues.property) {
+      setPropertyValues(initialPropertyValues);
+      setHintOpen(true);
+    }
   }
 
-  const changeCurrentValues = (text, field) => {
+  const changeCurrentValues = (value, field) => {
     setCurrentValues((prevState)=> ({
       ...prevState,
-      [field]: text,
-    }));
+      [field]: value.charAt(0).toUpperCase()+value.slice(1),
+    }))
   }
 
-  const closeHint = (text) => {
-    currentValues.property = text;
+  const closeHint = (element) => {
+    changeCurrentValues(element, 'property');
     setHintOpen(false);
   }
 
@@ -66,7 +69,17 @@ function Profile () {
     setButtonPanelOpen(false);
   }
 
+  const sendValues = () => {
+    if (!userData.some((element) => element.property === currentValues.property) && (currentValues.seed.toString().length === 20)) {
+      setAddPanelOpen(false);
+      setButtonPanelOpen(true);
+      setCurrentValues(defaultValues);
+      setHintOpen(false);
+    }
+  }
+
   const cancelAddPanel = () => {
+    setCurrentValues(defaultValues);
     setAddPanelOpen(false);
     setButtonPanelOpen(true);
   }
@@ -81,10 +94,17 @@ function Profile () {
     setButtonPanelOpen(true);
   }
 
-  const handleInput = (text) => {
+  const handleInput = (text, field) => {
+    changeCurrentValues(text, field);
     setPropertyValues(initialPropertyValues);
-    let reg = new RegExp(`^${text}`, 'img');
-    setPropertyValues((prevState) => prevState.filter((element) => element.match(reg)));
+    setHintOpen(true);
+    if (text) {
+      let reg = new RegExp(`^${text}`, 'img');
+      setPropertyValues((prevState) => prevState.filter((element) => element.match(reg)));
+      if (propertyValues.length === 0) {
+        setHintOpen(false);
+      }
+    }
   };
 
   const userData = [
@@ -285,8 +305,8 @@ function Profile () {
                           type="text"
                           required
                           onClick={openHint}
-                          onInput={(e) => handleInput(e.target.value)}
-                          onChange={(e) => changeCurrentValues(e.target.value, 'property')}
+                          onInput={(e) => handleInput(e.target.value, 'property')}
+                          value={currentValues.property}
                         />
                         <div className={`flex flex-col gap-y-2 py-2 pl-2 border border-t-0 border-slate-200 rounded ${hintOpen || 'hidden'}`}>
                           <ul>
@@ -303,7 +323,9 @@ function Profile () {
                           className="form-input w-full"
                           type="text"
                           required
-                          onChange={(event) => changeCurrentValues(event.target.value, 'property')}
+                          onClick={() => setHintOpen(false)}
+                          onChange={(e) => changeCurrentValues(e.target.value, 'value')}
+                          value={currentValues.value}
                         />
                       </div>
                       <div>
@@ -313,7 +335,9 @@ function Profile () {
                           className="form-input w-full"
                           type="text"
                           required
-                          onChange={(event) => changeCurrentValues(event.target.value, 'property')}
+                          onClick={() => setHintOpen(false)}
+                          onChange={(e) => changeCurrentValues(e.target.value, 'seed')}
+                          value={currentValues.seed}
                         />
                       </div>
                     </div>
@@ -321,7 +345,7 @@ function Profile () {
                       <span className="block text-sm font-medium">Store data on blockchain</span>
                       <div className="flex items-center">
                         <div className="form-switch">
-                          <input type="checkbox" id="switch-1" className="sr-only" checked={toggle} onChange={() => setToggle(!toggle)} />
+                          <input type="checkbox" id="blockcheined" className="sr-only" checked={toggle} onChange={() => setToggle(!toggle)} />
                             <label className="bg-slate-400" htmlFor="switch-1">
                             <span className="bg-white shadow-sm" aria-hidden="true"></span>
                           </label>
@@ -338,7 +362,7 @@ function Profile () {
                       </button>
                       <button
                         className="btn-sm bg-indigo-500 hover:bg-indigo-600 text-white"
-                        onClick={cancelAddPanel}
+                        onClick={sendValues}
                       >
                         Send
                       </button>
