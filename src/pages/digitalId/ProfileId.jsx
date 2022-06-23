@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
 import ProfileTable from '../../partials/digitalId/ProfileTable';
@@ -16,7 +16,6 @@ function Profile () {
   const [toggle, setToggle] = useState(true);
   const [addPanelOpen, setAddPanelOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [hintOpen, setHintOpen] = useState(false);
   
   const defaultValues = {
     property: '',
@@ -25,13 +24,12 @@ function Profile () {
   };
 
   const initialPropertyValues = ['First name', 'Second name', 'Birthdate', 'Gender', 'Residence', 'Document type', 'Document ID', 'Issue date', 'Expiry date']; 
-  const [propertyValues, setPropertyValues] = useState(initialPropertyValues);
-  const [currentValues, setCurrentValues] = useState(defaultValues); 
+  const [propertyValues, setPropertyValues] = useState([]);
+  const [currentValues, setCurrentValues] = useState(defaultValues);
 
   const openHint = () => {
     if (!currentValues.property) {
       setPropertyValues(initialPropertyValues);
-      setHintOpen(true);
     }
   }
 
@@ -44,7 +42,7 @@ function Profile () {
 
   const closeHint = (element) => {
     changeCurrentValues(element, 'property');
-    setHintOpen(false);
+    setPropertyValues([]);
   }
 
   const handleSelectedItems = (selectedItems) => {
@@ -74,7 +72,6 @@ function Profile () {
       setAddPanelOpen(false);
       setButtonPanelOpen(true);
       setCurrentValues(defaultValues);
-      setHintOpen(false);
     }
   }
 
@@ -97,13 +94,9 @@ function Profile () {
   const handleInput = (text, field) => {
     changeCurrentValues(text, field);
     setPropertyValues(initialPropertyValues);
-    setHintOpen(true);
     if (text) {
       let reg = new RegExp(`^${text}`, 'img');
       setPropertyValues((prevState) => prevState.filter((element) => element.match(reg)));
-      if (propertyValues.length === 0) {
-        setHintOpen(false);
-      }
     }
   };
 
@@ -300,15 +293,16 @@ function Profile () {
                       <div>
                         <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Property <span className="text-rose-500">*</span></label>
                         <input
+                          autoComplete='off'
                           id="property"
                           className="form-input w-full"
                           type="text"
                           required
-                          onClick={openHint}
                           onInput={(e) => handleInput(e.target.value, 'property')}
                           value={currentValues.property}
+                          onClick={openHint}
                         />
-                        <div className={`flex flex-col gap-y-2 py-2 pl-2 border border-t-0 border-slate-200 rounded ${hintOpen || 'hidden'}`}>
+                        <div className={`flex flex-col gap-y-2 py-2 pl-2 border border-t-0 border-slate-200 rounded ${(propertyValues.length > 0) || 'hidden'}`}>
                           <ul>
                             {propertyValues.map((element, index) => (
                               <li key={index} onClick={() => closeHint(element)}>{element}</li>
@@ -319,11 +313,12 @@ function Profile () {
                       <div>
                         <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Value <span className="text-rose-500">*</span></label>
                         <input
+                          autoComplete='off'
                           id="value"
                           className="form-input w-full"
                           type="text"
                           required
-                          onClick={() => setHintOpen(false)}
+                          onClick={() => setPropertyValues([])}
                           onChange={(e) => changeCurrentValues(e.target.value, 'value')}
                           value={currentValues.value}
                         />
@@ -331,11 +326,12 @@ function Profile () {
                       <div>
                         <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Seed <span className="text-rose-500">*</span></label>
                         <input
+                          autoComplete='off'
                           id="seed"
                           className="form-input w-full"
                           type="text"
                           required
-                          onClick={() => setHintOpen(false)}
+                          onClick={() => setPropertyValues([])}
                           onChange={(e) => changeCurrentValues(e.target.value, 'seed')}
                           value={currentValues.seed}
                         />
