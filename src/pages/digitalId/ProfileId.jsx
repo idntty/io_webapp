@@ -16,6 +16,34 @@ function Profile () {
   const [toggle, setToggle] = useState(true);
   const [addPanelOpen, setAddPanelOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
+  
+  const defaultValues = {
+    property: '',
+    value: '',
+    seed: Math.floor(Math.random() * 90000000000000000000)
+  };
+
+  const initialPropertyValues = ['First name', 'Second name', 'Birthdate', 'Gender', 'Residence', 'Document type', 'Document ID', 'Issue date', 'Expiry date']; 
+  const [propertyValues, setPropertyValues] = useState([]);
+  const [currentValues, setCurrentValues] = useState(defaultValues);
+
+  const openHint = () => {
+    if (!currentValues.property) {
+      setPropertyValues(initialPropertyValues);
+    }
+  }
+
+  const changeCurrentValues = (value, field) => {
+    setCurrentValues((prevState)=> ({
+      ...prevState,
+      [field]: value.charAt(0).toUpperCase()+value.slice(1),
+    }))
+  }
+
+  const closeHint = (element) => {
+    changeCurrentValues(element, 'property');
+    setPropertyValues([]);
+  }
 
   const handleSelectedItems = (selectedItems) => {
     setSelectedItems([...selectedItems]);
@@ -39,7 +67,16 @@ function Profile () {
     setButtonPanelOpen(false);
   }
 
+  const sendValues = () => {
+    if (!userData.some((element) => element.property === currentValues.property) && (currentValues.seed.toString().length === 20)) {
+      setAddPanelOpen(false);
+      setButtonPanelOpen(true);
+      setCurrentValues(defaultValues);
+    }
+  }
+
   const cancelAddPanel = () => {
+    setCurrentValues(defaultValues);
     setAddPanelOpen(false);
     setButtonPanelOpen(true);
   }
@@ -53,6 +90,15 @@ function Profile () {
     setRemovePanelOpen(false);
     setButtonPanelOpen(true);
   }
+
+  const handleInput = (text, field) => {
+    changeCurrentValues(text, field);
+    setPropertyValues(initialPropertyValues);
+    if (text) {
+      let reg = new RegExp(`^${text}`, 'img');
+      setPropertyValues((prevState) => prevState.filter((element) => element.match(reg)));
+    }
+  };
 
   const userData = [
     {
@@ -246,22 +292,56 @@ function Profile () {
                     <div className="flex flex-col gap-y-3">
                       <div>
                         <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Property <span className="text-rose-500">*</span></label>
-                        <input id="property" className="form-input w-full" type="text" required />
+                        <input
+                          autoComplete='off'
+                          id="property"
+                          className="form-input w-full"
+                          type="text"
+                          required
+                          onInput={(e) => handleInput(e.target.value, 'property')}
+                          value={currentValues.property}
+                          onClick={openHint}
+                        />
+                        <div className={`flex flex-col gap-y-2 py-2 pl-2 border border-t-0 border-slate-200 rounded ${(propertyValues.length > 0) || 'hidden'}`}>
+                          <ul>
+                            {propertyValues.map((element, index) => (
+                              <li key={index} onClick={() => closeHint(element)}>{element}</li>
+                            ))}
+                          </ul>
+                        </div>
                       </div>
                       <div>
                         <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Value <span className="text-rose-500">*</span></label>
-                        <input id="value" className="form-input w-full" type="text" required />
+                        <input
+                          autoComplete='off'
+                          id="value"
+                          className="form-input w-full"
+                          type="text"
+                          required
+                          onClick={() => setPropertyValues([])}
+                          onChange={(e) => changeCurrentValues(e.target.value, 'value')}
+                          value={currentValues.value}
+                        />
                       </div>
                       <div>
                         <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Seed <span className="text-rose-500">*</span></label>
-                        <input id="seed" className="form-input w-full" type="text" required />
+                        <input
+                          autoComplete='off'
+                          id="seed"
+                          className="form-input w-full"
+                          type="text"
+                          required
+                          onClick={() => setPropertyValues([])}
+                          onChange={(e) => changeCurrentValues(e.target.value, 'seed')}
+                          value={currentValues.seed}
+                        />
                       </div>
                     </div>
                     <div className="flex flex-row justify-between pt-[16px] pb-[23px] items-center border-b border-slate-200">
                       <span className="block text-sm font-medium">Store data on blockchain</span>
                       <div className="flex items-center">
                         <div className="form-switch">
-                          <input type="checkbox" id="switch-1" className="sr-only" checked={toggle} onChange={() => setToggle(!toggle)} />
+                          <input type="checkbox" id="blockcheined" className="sr-only" checked={toggle} onChange={() => setToggle(!toggle)} />
                             <label className="bg-slate-400" htmlFor="switch-1">
                             <span className="bg-white shadow-sm" aria-hidden="true"></span>
                           </label>
@@ -278,7 +358,7 @@ function Profile () {
                       </button>
                       <button
                         className="btn-sm bg-indigo-500 hover:bg-indigo-600 text-white"
-                        onClick={cancelAddPanel}
+                        onClick={sendValues}
                       >
                         Send
                       </button>
