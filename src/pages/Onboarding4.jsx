@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {generateSvgAvatar} from "../images/GenerateOnboardingSvg/GenerateSvg";
 import Logo from "../images/logo.png";
 import {observer} from "mobx-react-lite";
-import { registrationStore } from "../store/registrationStore";
+import { registrationStore } from "../store/store";
 
 const Onboarding4 = observer(()=>{
 

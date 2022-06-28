@@ -2,15 +2,15 @@ import React, { useState} from 'react';
 import { Link } from 'react-router-dom';
 import {generateSvgAvatar} from "../images/GenerateOnboardingSvg/GenerateSvg";
 import Logo from "../images/logo.png";
-import {registrationStore} from "../store/registrationStore";
+import {registrationStore} from "../store/store";
 import { passphrase } from "@liskhq/lisk-client";
 
 function Onboarding3() {
-  const [passPhrase, setPassPhrase] = useState(registrationStore.passPhraseStore.replace(/\s+/g, ' ').split(' ').map((item, index) => ({str:item, id:index })))
+  const [passPhrase, setPassPhrase] = useState(registrationStore.passPhrase.replace(/\s+/g, ' ').split(' ').map((item, index) => ({str:item, id:index })))
   function generatePassPhrase() {
     let phrase = passphrase.Mnemonic.generateMnemonic()
     registrationStore.savePassPhrase(phrase)
-    let newPassPhrase = registrationStore.passPhraseStore.split(' ').map((item, index) => ({str:item, id:index }))
+    let newPassPhrase = registrationStore.passPhrase.split(' ').map((item, index) => ({str:item, id:index }))
     setPassPhrase(newPassPhrase)
   }
 

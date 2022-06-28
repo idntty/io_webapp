@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import {observer} from "mobx-react-lite";
 import { Link } from 'react-router-dom';
 import Transition from '../utils/Transition';
-import {registrationStore} from "../store/registrationStore";
+import {registrationStore} from "../store/store";
 import {generateSvgAvatar} from "../images/GenerateOnboardingSvg/GenerateSvg";
 import UserAvatar from '../images/user-avatar-32.png';
 

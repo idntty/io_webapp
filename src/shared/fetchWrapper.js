@@ -32,7 +32,7 @@ function request(method, url, headers = {}, token, body) {
     requestOptions = {
       method: method,
       headers: {
-        authorization: `IDNTTY ${token}`,
+        Authorization: `IDNTTY ${token}`,
         ...headers
       },
       signal: controller.signal,
@@ -42,7 +42,7 @@ function request(method, url, headers = {}, token, body) {
     requestOptions = {
       method: method,
       headers: {
-        authorization: `IDNTTY ${token}`,
+        Authorization: `IDNTTY ${token}`,
         Accept: 'application/json',
         'Content-Type': 'application/json',
         ...headers

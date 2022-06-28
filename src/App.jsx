@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import {
   Routes,
   Route,
-  useLocation
+  useLocation,
 } from 'react-router-dom';
 
 import './css/style.scss';

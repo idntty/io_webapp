@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import { observer } from "mobx-react-lite";
-import { registrationStore } from "../store/registrationStore";
+import { registrationStore } from "../store/store";
 
 import OnboardingImage from '../images/onboarding-image.jpg';
 import OnboardingDecoration from '../images/auth-decoration.png';
