@@ -26,7 +26,7 @@ class Store {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
     }, [...this.encryptAccountData])
-        .then((result) => console.log(result))
+        .catch(()=>{})
   }
 
   savePassPhrase(phrase) {
