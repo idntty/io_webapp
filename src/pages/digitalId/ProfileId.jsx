@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { userDataStore } from '../../store/userDataStore';
+import { registrationStore } from '../../store/store';
 import Sidebar from '../../partials/Sidebar';
+import { observer } from 'mobx-react-lite';
 import Header from '../../partials/Header';
 import ProfileTable from '../../partials/digitalId/ProfileTable';
 import Image from '../../images/transactions-image-04.svg';
@@ -8,7 +11,7 @@ import Avatar01 from '../../images/avatar-01.jpg';
 import Avatar02 from '../../images/avatar-02.jpg';
 import Avatar03 from '../../images/avatar-03.jpg';
 
-function Profile () {
+const Profile = observer (() => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [buttonPanelOpen, setButtonPanelOpen] = useState(true);
   const [removePanelOpen, setRemovePanelOpen] = useState(false);
@@ -16,6 +19,10 @@ function Profile () {
   const [toggle, setToggle] = useState(true);
   const [addPanelOpen, setAddPanelOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
+
+  /*useEffect(() => {
+    userDataStore.getUserData();
+  }, []);*/
   
   const defaultValues = {
     property: '',
@@ -269,6 +276,15 @@ function Profile () {
                 </div>
                 {/* Table */}
                 <ProfileTable selectedItems={handleSelectedItems} userData={userData}/>
+                {/* Test user data */}
+                <div className='bg-slate-500'>
+                  {userDataStore.userData.map((elem, index) => (
+                    <div key={index} className='flex flex-col gap-y-2'>
+                      <span>{elem.label}</span>
+                      <span>{elem.value.split(':')[1]}</span>
+                    </div>
+                  )) }
+                </div>
               </div>
               {/* Left sidebar */}
               <div>
@@ -470,6 +486,6 @@ function Profile () {
       </div>
     </div>
   )
-}
+})
 
-export default Profile;
+export default Profile
