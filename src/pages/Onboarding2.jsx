@@ -11,9 +11,9 @@ const Onboarding2 = observer(()=>{
   const [dataRegistration, setDataRegistration] = useState(
       {
         first_name: '',
-        last_name: '',
+        second_name: '',
         gender: '',
-        date_birth: '',
+        birthdate: '',
       }
   )
   const [fillingForm, setFillingForm] = useState(false)
@@ -107,8 +107,8 @@ const Onboarding2 = observer(()=>{
                       <input id="first_name" onChange={(event)=>saveValueChange(event)} className="form-input w-full" type="text" />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1" htmlFor="last_name">Last name <span className="text-rose-500">*</span></label>
-                      <input id="last_name" onChange={(event)=>saveValueChange(event)} className="form-input w-full" type="text" />
+                      <label className="block text-sm font-medium mb-1" htmlFor="second_name">Last name <span className="text-rose-500">*</span></label>
+                      <input id="second_name" onChange={(event)=>saveValueChange(event)} className="form-input w-full" type="text" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1" htmlFor="gender">Gender <span className="text-rose-500">*</span></label>
@@ -119,8 +119,8 @@ const Onboarding2 = observer(()=>{
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium mb-1" htmlFor="date_birth">Date of birth <span className="text-rose-500">*</span></label>
-                      <input id="date_birth" onChange={(event)=>saveValueChange(event)} className="form-input w-full" type="date" autoComplete="on" />
+                      <label className="block text-sm font-medium mb-1" htmlFor="birthdate">Date of birth <span className="text-rose-500">*</span></label>
+                      <input id="birthdate" onChange={(event)=>saveValueChange(event)} className="form-input w-full" type="date" autoComplete="on" />
                     </div>
                   </div>
                   <div className="flex items-center justify-between mt-6">

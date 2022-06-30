@@ -21,6 +21,14 @@ class Store {
     }))
   };
 
+  fetchCreateNewAccount() {
+    fetchWrapper.postAuth('http://3.125.47.101/api/data/account', {
+      networkIdentifier: this.nodeInfo.networkIdentifier,
+      lastBlockID: this.nodeInfo.lastBlockID
+    }, [...this.encryptAccountData])
+        .catch(()=>{})
+  }
+
   savePassPhrase(phrase) {
     this._passPhrase = phrase
   }
@@ -37,7 +45,6 @@ class Store {
 
   fetchNodeInfoSuccess(info) {
     this._nodeInfo = info.data;
-    console.log(info)
   }
 
   fetchNodeInfoFailed(err) {
@@ -51,6 +58,17 @@ class Store {
   get accountData() {
     return this._accountData
   };
+
+  get encryptAccountData() {
+    return Object.keys(this.accountData).map((label) => {
+      let value = cryptography.encryptMessageWithPassphrase(cryptography.getRandomBytes(32).toString('hex') + ":" + this.accountData[label], this.passPhrase, this.pubKey);
+      return {
+        "label": label,
+        "value": value.encryptedMessage,
+        "value_nonce": value.nonce,
+      }
+    })
+  }
 
   get nodeInfo() {
     return this._nodeInfo;
@@ -69,7 +87,7 @@ class Store {
   }
 
   get tokenKey() {
-    const stringToSign = this.nodeInfo.networkIdentifier.concat(this.nodeInfo.lastBlockID);
+    const stringToSign = this.nodeInfo.networkIdentifier + this.nodeInfo.lastBlockID;
     if(!stringToSign)
       return '';
     const sign = cryptography.signDataWithPassphrase(Buffer.from(stringToSign, 'hex'), this.passPhrase).toString('hex')
