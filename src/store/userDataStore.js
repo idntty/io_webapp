@@ -13,10 +13,11 @@ class UserDataStore{
     })
   }
 
-  get userData(){
+  get data(){
     return this._data.map((elem) => ({
       ...elem,
-      value: cryptography.decryptMessageWithPassphrase(elem.value, elem.value_nonce, registrationStore.passPhrase, registrationStore.pubKey)
+      label: elem.label.charAt(0).toUpperCase()+elem.label.slice(1).split('_').join(' '),
+      value: cryptography.decryptMessageWithPassphrase(elem.value, elem.value_nonce, registrationStore.passPhrase, registrationStore.pubKey).split(':')[1]
     }))
   }
 }
