@@ -20,7 +20,7 @@ class Store {
     reaction(() => this.tokenKey, () => fetchWrapper.getAuth('http://3.125.47.101/api/data/account', {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
-    }).then((res) => this.userInfoFetchChange(res)))
+    }).then((res) => this.userDataFetchChange(res)))
   };
 
   fetchCreateNewAccount() {
@@ -30,7 +30,7 @@ class Store {
     }, [...this.encryptAccountData]).catch(()=>{})
   };
 
-  userInfoFetchChange(res) {
+  userDataFetchChange(res) {
     this._userData = res;
   }
 
