@@ -21,7 +21,7 @@ class Store {
     }))
   };
 
-  postAuth() {
+  fetchCreateNewAccount() {
     fetchWrapper.postAuth('http://3.125.47.101/api/data/account', {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID

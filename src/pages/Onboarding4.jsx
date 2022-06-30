@@ -9,12 +9,12 @@ const Onboarding4 = observer(()=>{
 
   const [checkBoxesSelected, setCheckBoxesSelected] = useState(false)
 
-  function postAuthData () {
+  function createAccount () {
     let checkBoxes=[...document.getElementsByClassName("form-checkbox")]
     if(checkBoxes.find(item=>item.checked===false)) {
       return
     } else {
-      registrationStore.postAuth()
+      registrationStore.fetchCreateNewAccount()
       setCheckBoxesSelected(true)
 
     }
@@ -82,7 +82,7 @@ const Onboarding4 = observer(()=>{
                     <path className="text-emerald-500" d="m28.5 41-8-8 3-3 5 5 12-12 3 3z" />
                   </svg>
                   <h1 className="text-3xl text-slate-800 font-bold mb-8">{registrationStore.accountData.first_name ? `Nice to meet you, ${registrationStore.accountData.first_name} 🙌` : 'Please, go back step 2'}</h1>
-                  <button onClick={()=>postAuthData()} className="btn px-6 bg-indigo-500 hover:bg-indigo-600 text-white">
+                  <button onClick={()=>createAccount()} className="btn px-6 bg-indigo-500 hover:bg-indigo-600 text-white">
                     <Link id="link-dashboard" to={checkBoxesSelected && "/dashboard"}>Go To Profile -&gt;</Link>
                   </button>
                 </div>
