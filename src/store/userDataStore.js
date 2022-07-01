@@ -4,7 +4,7 @@ import { registrationStore } from './store';
 
 class UserDataStore{
   _data = []
-  
+
   constructor() {
     makeAutoObservable(this);
 
@@ -13,12 +13,17 @@ class UserDataStore{
     })
   }
 
-  get data(){
-    return this._data.map((elem) => ({
-      ...elem,
-      label: elem.label.charAt(0).toUpperCase()+elem.label.slice(1).split('_').join(' '),
-      value: cryptography.decryptMessageWithPassphrase(elem.value, elem.value_nonce, registrationStore.passPhrase, registrationStore.pubKey).split(':')[1]
-    }))
+  get data() {
+    return this._data;
+  }
+  get decryptData(){
+    const labelMap = new Map;
+    this._data.forEach(elem => 
+      labelMap.set(elem.label.charAt(0).toUpperCase()+elem.label.slice(1).split('_').join(' '), 
+      cryptography.decryptMessageWithPassphrase(elem.value, elem.value_nonce, registrationStore.passPhrase, registrationStore.pubKey).split(':')[1]
+      )
+    )
+    return labelMap;
   }
 }
 
