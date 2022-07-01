@@ -66,7 +66,7 @@ const Profile = observer (() => {
   }
 
   const sendValues = () => {
-    if (!userDataStore.data.some((element) => element.property === currentValues.property) && (currentValues.seed.toString().length === 20)) {
+    if (!userDataStore.decryptData.has(currentValues.property) && (currentValues.seed.toString().length === 20)) {
       setAddPanelOpen(false);
       setButtonPanelOpen(true);
       setCurrentValues(defaultValues);
@@ -97,6 +97,19 @@ const Profile = observer (() => {
       setPropertyValues((prevState) => prevState.filter((element) => element.match(reg)));
     }
   };
+
+  const filterByLabel = (map) => {
+    let newArray = [];
+    map.forEach((value, key) => {
+      if (selectedItems.includes(key)){
+        newArray.push({
+          'key': key,
+          'value': value
+      });
+      }
+    });
+    return newArray;
+  }
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -131,7 +144,7 @@ const Profile = observer (() => {
                   </ul>
                 </div>
                 {/* Table */}
-                <ProfileTable selectedItems={handleSelectedItems} userData={userDataStore.data}/>
+                <ProfileTable selectedItems={handleSelectedItems} userData={userDataStore.decryptData}/>
               </div>
               {/* Left sidebar */}
               <div>
@@ -231,8 +244,8 @@ const Profile = observer (() => {
                   <div className={`${!removePanelOpen && 'hidden'} bg-white px-5 pt-4 pb-[190px] shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-12`}>
                     <h2 className="grow text-base font-semibold text-slate-800 truncate mb-2">Summary</h2>
                     <div className="flex flex-col">
-                      {userDataStore.data.filter(({ label }) => selectedItems.includes(label)).map(item => (
-                        <span key={item.label} className="text-sm font-normal text-slate-600 py-3 border-b border-slate-200">{item.label}</span>
+                      {filterByLabel(userDataStore.decryptData).map((elem) => (
+                        <span key={elem.key} className="text-sm font-normal text-slate-600 py-3 border-b border-slate-200">{elem.key}</span>
                       ))}
                     </div>
                     <div className="flex flex-row justify-between pt-[16px] pb-7 items-center">
