@@ -66,7 +66,7 @@ const Profile = observer (() => {
   }
 
   const sendValues = () => {
-    if (!userDataStore.data.some((element) => element.property === currentValues.property) && (currentValues.seed.toString().length === 20)) {
+    if (!userDataStore.decryptedData.some((element) => element.property === currentValues.property) && (currentValues.seed.toString().length === 20)) {
       setAddPanelOpen(false);
       setButtonPanelOpen(true);
       setCurrentValues(defaultValues);
@@ -131,7 +131,7 @@ const Profile = observer (() => {
                   </ul>
                 </div>
                 {/* Table */}
-                <ProfileTable selectedItems={handleSelectedItems} userData={userDataStore.data}/>
+                <ProfileTable selectedItems={handleSelectedItems} userData={userDataStore.decryptedData}/>
               </div>
               {/* Left sidebar */}
               <div>
@@ -231,7 +231,7 @@ const Profile = observer (() => {
                   <div className={`${!removePanelOpen && 'hidden'} bg-white px-5 pt-4 pb-[190px] shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-12`}>
                     <h2 className="grow text-base font-semibold text-slate-800 truncate mb-2">Summary</h2>
                     <div className="flex flex-col">
-                      {userDataStore.data.filter(({ label }) => selectedItems.includes(label)).map(item => (
+                      {userDataStore.decryptedData.filter(({ label }) => selectedItems.includes(label)).map(item => (
                         <span key={item.label} className="text-sm font-normal text-slate-600 py-3 border-b border-slate-200">{item.label}</span>
                       ))}
                     </div>
