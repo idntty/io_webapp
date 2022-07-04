@@ -10,6 +10,8 @@ class Store {
 
   _nodeInfo = {}
 
+  _userData = {}
+
   constructor() {
     makeAutoObservable(this);
 
@@ -18,15 +20,18 @@ class Store {
     reaction(() => this.tokenKey, () => fetchWrapper.getAuth('http://3.125.47.101/api/data/account', {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
-    }))
+    }).then((res) => this.userDataFetchChange(res)))
   };
 
   fetchCreateNewAccount() {
     fetchWrapper.postAuth('http://3.125.47.101/api/data/account', {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
-    }, [...this.encryptAccountData])
-        .catch(()=>{})
+    }, [...this.encryptAccountData]).catch(()=>{})
+  };
+
+  userDataFetchChange(res) {
+    this._userData = res;
   }
 
   savePassPhrase(phrase) {
@@ -49,6 +54,10 @@ class Store {
 
   fetchNodeInfoFailed(err) {
     console.log(err)
+  }
+
+  get userData() {
+    return this._userData;
   }
 
   get passPhrase() {
