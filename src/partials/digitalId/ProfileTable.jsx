@@ -38,7 +38,7 @@ function ProfileTable({
   const generalData = userData.filter(elem => data.general.includes(elem.label)),
         nationalityData = userData.filter(elem => data.nationality.includes(elem.label)),
         sosialData = userData.filter(elem => data.nationality.includes(elem.label)),
-        otherData = userData.filter((elem) => 
+        otherData = userData.filter((elem) =>
           !data.general.includes(elem.label) && !data.nationality.includes(elem.label) && !data.social.includes(elem.label));
 
   return (
@@ -53,7 +53,7 @@ function ProfileTable({
                 return (
                   <ProfileTableItem
                     key={data.label}
-                    id={data.label}
+                    id={data.key}
                     image={defaultData.image}
                     value={data.value.charAt(0).toUpperCase()+data.value.slice(1)}
                     property={data.label}
@@ -61,7 +61,7 @@ function ProfileTable({
                     transactions={defaultData.transactions}
                     avatars={defaultData.avatars}
                     handleClick={handleClick}
-                    isChecked={isCheck.includes(data.label)}
+                    isChecked={isCheck.includes(data.key)}
                   />
                 )
               })}
@@ -115,7 +115,7 @@ function ProfileTable({
                   handleClick={handleClick}
                   isChecked={isCheck.includes(data.label)}
                 />
-              ) 
+              )
             })}
             </tbody>
           </table>
