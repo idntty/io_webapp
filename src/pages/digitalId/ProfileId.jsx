@@ -14,6 +14,7 @@ const Profile = observer (() => {
   const [changePanelOpen, setChangePanelOpen] = useState(false);
   const [toggle, setToggle] = useState(true);
   const [addPanelOpen, setAddPanelOpen] = useState(false);
+  const [updatePanelOpen, setUpdatePanelOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
 
   const defaultValues = {
@@ -32,15 +33,28 @@ const Profile = observer (() => {
     }
   }
 
-  const changeCurrentValues = (value, field) => {
+  const addCurrentValues = (value, field) => {
     setCurrentValues((prevState)=> ({
       ...prevState,
       [field]: value.charAt(0).toUpperCase()+value.slice(1),
     }))
+    console.log(currentValues);
   }
 
+  const changeCurrentValue = (value, field, id) => {
+    setCurrentValues((prevState) => 
+      prevState.map((elem) => (
+        elem.id === id ? {
+          ...elem,
+          [field]: value.charAt(0).toUpperCase()+value.slice(1),
+        } : elem
+      ))
+    )
+    console.log(currentValues);
+  };
+
   const closeHint = (element) => {
-    changeCurrentValues(element, 'property');
+    addCurrentValues(element, 'property');
     setPropertyValues([]);
   }
 
@@ -85,9 +99,22 @@ const Profile = observer (() => {
     setButtonPanelOpen(true);
   }
 
+  const cancelUpdatePanel = () => {
+    setUpdatePanelOpen(false);
+    setButtonPanelOpen(true);
+  }
+
   const openRemovePanel = () => {
     setRemovePanelOpen(true);
     setChangePanelOpen(false);
+  }
+
+  const openUpdatePanel = () => {
+    setCurrentValues(selectedUserData);
+    setUpdatePanelOpen(true);
+    setChangePanelOpen(false);
+    console.log(currentValues);
+    console.log(selectedUserData)
   }
 
   const applyRemovePanel = () => {
@@ -97,7 +124,7 @@ const Profile = observer (() => {
   }
 
   const handleInput = (text, field) => {
-    changeCurrentValues(text, field);
+    addCurrentValues(text, field);
     setPropertyValues(initialPropertyValues);
     if (text) {
       let reg = new RegExp(`^${text}`, 'img');
@@ -105,6 +132,8 @@ const Profile = observer (() => {
     }
   };
 
+  let selectedUserData = userDataStore.decryptedData.filter(({ key }) => selectedItems.includes(key));
+ 
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
@@ -189,7 +218,7 @@ const Profile = observer (() => {
                           type="text"
                           required
                           onClick={() => setPropertyValues([])}
-                          onChange={(e) => changeCurrentValues(e.target.value, 'value')}
+                          onChange={(e) => addCurrentValues(e.target.value, 'value')}
                           value={currentValues.value}
                         />
                       </div>
@@ -202,7 +231,7 @@ const Profile = observer (() => {
                           type="text"
                           required
                           onClick={() => setPropertyValues([])}
-                          onChange={(e) => changeCurrentValues(e.target.value, 'seed')}
+                          onChange={(e) => addCurrentValues(e.target.value, 'seed')}
                           value={currentValues.seed}
                         />
                       </div>
@@ -231,6 +260,78 @@ const Profile = observer (() => {
                         onClick={sendValues}
                       >
                         Send
+                      </button>
+                    </div>
+                  </div>
+                  {/* Update panel */}
+                  <div className={`${!updatePanelOpen && 'hidden'} bg-white p-5 shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-11`}>
+                    {currentValues.map((item, index) => ( 
+                      <div key={item.key} className="flex flex-col gap-y-3">
+                        <div>
+                          <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Property <span className="text-rose-500">*</span></label>
+                          <input
+                            id={`${item.key}property`}
+                            className="form-input w-full"
+                            type="text"
+                            required
+                            onChange={(e) => changeCurrentValue(e.target.value, 'property', item.id)}
+                            value={item.label}
+                            disabled='disabled'
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Value <span className="text-rose-500">*</span></label>
+                          <input
+                            autoComplete='off'
+                            id={`${item.key}value`}
+                            className="form-input w-full"
+                            type="text"
+                            required
+                            onChange={(e) => changeCurrentValue(e.target.value, 'value', item.id)}
+                            value={item.value}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Seed <span className="text-rose-500">*</span></label>
+                          <input
+                            autoComplete='off'
+                            id={`${item.key}seed`}
+                            className="form-input w-full"
+                            type="text"
+                            required
+                            onChange={(e) => changeCurrentValue(e.target.value, 'seed', item.id)}
+                            value={item.seed || Math.floor(Math.random() * 90000000000000000000)}
+                          />
+                        </div>
+                        {(currentValues[index+1]) ? (
+                        <div className="mt-2 mb-3.5 items-center border-b border-slate-200"></div>
+                        ) : null}
+                      </div>
+                    ))}
+                    <div className="flex flex-row justify-between pt-[16px] pb-[23px] items-center border-b border-slate-200">
+                      <span className="block text-sm font-medium">Store data on blockchain</span>
+                      <div className="flex items-center">
+                        <div className="form-switch">
+                          <input type="checkbox" id="blockcheined" className="sr-only" checked={toggle} onChange={() => setToggle(!toggle)} />
+                            <label className="bg-slate-400" htmlFor="switch-1">
+                            <span className="bg-white shadow-sm" aria-hidden="true"></span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Buttons */}
+                    <div className="flex flex-row justify-end gap-x-2 pt-[18px] pb-[14px] items-end">
+                      <button
+                        className="btn-sm bg-white border-slate-200 hover:bg-slate-50 text-slate-600"
+                        onClick={cancelUpdatePanel}
+                      >
+                        Cansel
+                      </button>
+                      <button
+                        className="btn-sm bg-indigo-500 hover:bg-indigo-600 text-white"
+                        onClick={sendValues}
+                      >
+                        Apply
                       </button>
                     </div>
                   </div>
@@ -319,7 +420,10 @@ const Profile = observer (() => {
                       </svg>
                       <span className="ml-2">Remove</span>
                     </button>
-                    <button className="btn w-full border-slate-200 hover:border-slate-300 text-slate-600 px-[100px] justify-start">
+                    <button
+                      className="btn w-full border-slate-200 hover:border-slate-300 text-slate-600 px-[100px] justify-start"
+                      onClick={openUpdatePanel}
+                      >
                       <svg className="w-4 h-4 fill-rose-500 shrink-0" viewBox="0 0 16 16">
                         <path d="M14.682 2.318A4.485 4.485 0 0 0 11.5 1 4.377 4.377 0 0 0 8 2.707 4.383 4.383 0 0 0 4.5 1a4.5 4.5 0 0 0-3.182 7.682L8 15l6.682-6.318a4.5 4.5 0 0 0 0-6.364Zm-1.4 4.933L8 12.247l-5.285-5A2.5 2.5 0 0 1 4.5 3c1.437 0 2.312.681 3.5 2.625C9.187 3.681 10.062 3 11.5 3a2.5 2.5 0 0 1 1.785 4.251h-.003Z" />
                       </svg>
