@@ -25,51 +25,54 @@ const Profile = observer (() => {
 
   const initialPropertyValues = ['First name', 'Second name', 'Birthdate', 'Gender', 'Residence', 'Document type', 'Document ID', 'Issue date', 'Expiry date'];
   const [propertyValues, setPropertyValues] = useState([]);
-  const [currentValues, setCurrentValues] = useState(defaultValues);
+  const [updatedValues, setUpdatedValues] = useState(defaultValues);
+  const [addedValues, setAddedValues] = useState(defaultValues);
 
   const openHint = () => {
-    if (!currentValues.property) {
+    if (!addedValues.property) {
       setPropertyValues(initialPropertyValues);
     }
   }
 
-  const addCurrentValues = (value, field) => {
-    setCurrentValues((prevState)=> ({
+  const changeAddedValues = (value, field) => {
+    setAddedValues((prevState)=> ({
       ...prevState,
       [field]: value.charAt(0).toUpperCase()+value.slice(1),
     }))
-    console.log(currentValues);
-  }
+    console.log(addedValues);
+  };
 
-  const changeCurrentValue = (value, field, id) => {
-    setCurrentValues((prevState) => 
+  const changeUpdatedValues = (value, field, key) => {
+    setUpdatedValues((prevState) => 
       prevState.map((elem) => (
-        elem.id === id ? {
+        elem.key === key ? {
           ...elem,
           [field]: value.charAt(0).toUpperCase()+value.slice(1),
         } : elem
       ))
     )
-    console.log(currentValues);
+    console.log(updatedValues);
   };
 
   const closeHint = (element) => {
-    addCurrentValues(element, 'property');
+    changeAddedValues(element, 'property');
     setPropertyValues([]);
   }
 
   const handleSelectedItems = (selectedItems) => {
     setSelectedItems([...selectedItems]);
+    setUpdatedValues(userDataStore.decryptedData.filter(({ key }) => selectedItems.includes(key)));
     if (selectedItems.length > 0) {
       setButtonPanelOpen(false);
       setAddPanelOpen(false);
       setChangePanelOpen(true);
     }
-    if (removePanelOpen === true) {
+    if (removePanelOpen === true || updatePanelOpen === true) {
       setChangePanelOpen(false);
     }
     if (selectedItems.length === 0) {
       setRemovePanelOpen(false);
+      setUpdatePanelOpen(false);
       setButtonPanelOpen(true);
       setChangePanelOpen(false);
     }
@@ -81,10 +84,10 @@ const Profile = observer (() => {
   }
 
   const sendValues = () => {
-    if (!userDataStore.decryptedData.some((element) => element.property === currentValues.property) && (currentValues.seed.toString().length === 20)) {
+    if (!userDataStore.decryptedData.some((element) => element.property === addedValues.property) && (addedValues.seed.toString().length === 20)) {
       setAddPanelOpen(false);
       setButtonPanelOpen(true);
-      setCurrentValues(defaultValues);
+      setAddedValues(defaultValues);
     }
   }
 
@@ -94,7 +97,7 @@ const Profile = observer (() => {
   }
 
   const cancelAddPanel = () => {
-    setCurrentValues(defaultValues);
+    setAddedValues(defaultValues);
     setAddPanelOpen(false);
     setButtonPanelOpen(true);
   }
@@ -110,11 +113,9 @@ const Profile = observer (() => {
   }
 
   const openUpdatePanel = () => {
-    setCurrentValues(selectedUserData);
     setUpdatePanelOpen(true);
     setChangePanelOpen(false);
-    console.log(currentValues);
-    console.log(selectedUserData)
+    console.log(updatedValues);
   }
 
   const applyRemovePanel = () => {
@@ -124,7 +125,7 @@ const Profile = observer (() => {
   }
 
   const handleInput = (text, field) => {
-    addCurrentValues(text, field);
+    changeAddedValues(text, field);
     setPropertyValues(initialPropertyValues);
     if (text) {
       let reg = new RegExp(`^${text}`, 'img');
@@ -132,8 +133,6 @@ const Profile = observer (() => {
     }
   };
 
-  let selectedUserData = userDataStore.decryptedData.filter(({ key }) => selectedItems.includes(key));
- 
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
@@ -198,7 +197,7 @@ const Profile = observer (() => {
                           type="text"
                           required
                           onInput={(e) => handleInput(e.target.value, 'property')}
-                          value={currentValues.property}
+                          value={addedValues.property}
                           onClick={openHint}
                         />
                         <div className={`flex flex-col gap-y-2 py-2 pl-2 border border-t-0 border-slate-200 rounded ${(propertyValues.length > 0) || 'hidden'}`}>
@@ -218,8 +217,8 @@ const Profile = observer (() => {
                           type="text"
                           required
                           onClick={() => setPropertyValues([])}
-                          onChange={(e) => addCurrentValues(e.target.value, 'value')}
-                          value={currentValues.value}
+                          onChange={(e) => changeAddedValues(e.target.value, 'value')}
+                          value={addedValues.value}
                         />
                       </div>
                       <div>
@@ -231,8 +230,8 @@ const Profile = observer (() => {
                           type="text"
                           required
                           onClick={() => setPropertyValues([])}
-                          onChange={(e) => addCurrentValues(e.target.value, 'seed')}
-                          value={currentValues.seed}
+                          onChange={(e) => changeAddedValues(e.target.value, 'seed')}
+                          value={addedValues.seed}
                         />
                       </div>
                     </div>
@@ -265,16 +264,16 @@ const Profile = observer (() => {
                   </div>
                   {/* Update panel */}
                   <div className={`${!updatePanelOpen && 'hidden'} bg-white p-5 shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-11`}>
-                    {currentValues.map((item, index) => ( 
-                      <div key={item.key} className="flex flex-col gap-y-3">
+                    {updatedValues.map((item, index) => ( 
+                      <div key={index} className="flex flex-col gap-y-3">
                         <div>
                           <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Property <span className="text-rose-500">*</span></label>
                           <input
-                            id={`${item.key}property`}
+                            id={`${item.key}:property`}
                             className="form-input w-full"
                             type="text"
                             required
-                            onChange={(e) => changeCurrentValue(e.target.value, 'property', item.id)}
+                            onChange={(e) => changeUpdatedValues(e.target.value, 'property', item.key)}
                             value={item.label}
                             disabled='disabled'
                           />
@@ -283,11 +282,11 @@ const Profile = observer (() => {
                           <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Value <span className="text-rose-500">*</span></label>
                           <input
                             autoComplete='off'
-                            id={`${item.key}value`}
+                            id={`${item.key}:value`}
                             className="form-input w-full"
                             type="text"
                             required
-                            onChange={(e) => changeCurrentValue(e.target.value, 'value', item.id)}
+                            onChange={(e) => changeUpdatedValues(e.target.value, 'value', item.key)}
                             value={item.value}
                           />
                         </div>
@@ -295,15 +294,15 @@ const Profile = observer (() => {
                           <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Seed <span className="text-rose-500">*</span></label>
                           <input
                             autoComplete='off'
-                            id={`${item.key}seed`}
+                            id={`${item.key}:seed`}
                             className="form-input w-full"
                             type="text"
                             required
-                            onChange={(e) => changeCurrentValue(e.target.value, 'seed', item.id)}
+                            onChange={(e) => changeUpdatedValues(e.target.value, 'seed', item.key)}
                             value={item.seed || Math.floor(Math.random() * 90000000000000000000)}
                           />
                         </div>
-                        {(currentValues[index+1]) ? (
+                        {(updatedValues[index+1]) ? (
                         <div className="mt-2 mb-3.5 items-center border-b border-slate-200"></div>
                         ) : null}
                       </div>
