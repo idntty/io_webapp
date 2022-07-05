@@ -17,14 +17,14 @@ class Store {
 
     this.fetchNodeInfo()
 
-    reaction(() => this.tokenKey, () => fetchWrapper.getAuth('http://3.125.47.101/api/data/account', {
+    reaction(() => this.tokenKey, () => fetchWrapper.getAuth('http://3.125.47.101/api/data/private', {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
     }).then((res) => this.userDataFetchChange(res)))
   };
 
   fetchCreateNewAccount() {
-    fetchWrapper.postAuth('http://3.125.47.101/api/data/account', {
+    fetchWrapper.postAuth('http://3.125.47.101/api/data/private', {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
     }, [...this.encryptAccountData]).catch(()=>{})
