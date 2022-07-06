@@ -81,7 +81,7 @@ const Onboarding4 = observer(()=>{
                     <circle className="text-emerald-100" cx="32" cy="32" r="32" />
                     <path className="text-emerald-500" d="m28.5 41-8-8 3-3 5 5 12-12 3 3z" />
                   </svg>
-                  <h1 className="text-3xl text-slate-800 font-bold mb-8">{registrationStore.accountData.first_name ? `Nice to meet you, ${registrationStore.accountData.first_name} 🙌` : 'Please, go back step 2'}</h1>
+                  <h1 className="text-3xl text-slate-800 font-bold mb-8">{registrationStore.accountData.find(item=>item.key="first_name").key ? `Nice to meet you, ${registrationStore.accountData.find(item=>item.key="first_name").value} 🙌` : 'Please, go back step 2'}</h1>
                   <button onClick={()=>createAccount()} className="btn px-6 bg-indigo-500 hover:bg-indigo-600 text-white">
                     <Link id="link-dashboard" to={checkBoxesSelected && "/dashboard"}>Go To Profile -&gt;</Link>
                   </button>

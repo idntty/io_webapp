@@ -40,7 +40,12 @@ const Onboarding2 = observer(()=>{
     } else {
       setFillingForm(true)
     }
-    registrationStore.saveDataRegistration(dataRegistration)
+    registrationStore.saveDataRegistration(Object.keys(dataRegistration).map(item=>{
+      return{
+        key: `${item}`,
+        value: dataRegistration[item]
+      }
+    }))
   }
 
   useEffect(()=>{
