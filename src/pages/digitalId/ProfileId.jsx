@@ -18,7 +18,7 @@ const Profile = observer (() => {
   const [selectedItems, setSelectedItems] = useState([]);
   
   const defaultValues = {
-    property: '',
+    label: '',
     value: '',
     seed: Math.floor(Math.random() * 90000000000000000000) 
   };
@@ -29,7 +29,7 @@ const Profile = observer (() => {
   const [addedValues, setAddedValues] = useState(defaultValues);
 
   const openHint = () => {
-    if (!addedValues.property) {
+    if (!addedValues.label) {
       setPropertyValues(initialPropertyValues);
     }
   }
@@ -63,7 +63,7 @@ const Profile = observer (() => {
   };
 
   const closeHint = (element) => {
-    changeAddedValues(element, 'property');
+    changeAddedValues(element, 'label');
     setPropertyValues([]);
   }
 
@@ -96,17 +96,51 @@ const Profile = observer (() => {
     setButtonPanelOpen(false);
   }
 
-  const sendValues = () => {
-    if (!userDataStore.decryptedData.some((element) => element.property === addedValues.property) && (addedValues.seed.toString().length === 20)) {
+  const sendAddedData = () => {
+    if (!userDataStore.decryptedData.some((element) => element.label === addedValues.label) && (addedValues.seed.toString().length === 20)) {
       setAddPanelOpen(false);
       setButtonPanelOpen(true);
       setAddedValues(defaultValues);
+      addDataParameters();
     }
   }
 
-  const deletePropertyData = () => {
+  const sendUpdatedData = () => {
+    setUpdatePanelOpen(false);
+    changeDataParameters();
+    setChangePanelOpen(true);
+  }
+
+  const deleteDataParameters = () => {
     const changeData = userDataStore.decryptedData.filter(item=>!selectedItems.includes(item.key))
     registrationStore.pushAccountData(changeData)
+  }
+
+  const changeDataParameters = () => {
+    const updatedData = (function changeValue() {
+      let newArr = []
+      userDataStore.decryptedData.map(elem => {
+        updatedValues.forEach(item => {
+          if (elem.label === item.label) {
+            newArr.push({
+              ...elem,
+              'value': item.value, 
+              'seed': item.seed,
+            })
+          }
+        })
+        if (!newArr.find(element => element.label === elem.label)) {
+          newArr.push(elem);
+        }
+      })
+      return newArr
+    })();
+    console.log(updatedData);
+  }
+
+  const addDataParameters = () => {
+    addedValues.label = addedValues.label.toLowerCase().split(' ').join('_');
+    console.log(registrationStore.userData.data.concat(addedValues));
   }
 
   const cancelAddPanel = () => {
@@ -131,10 +165,10 @@ const Profile = observer (() => {
     console.log(updatedValues);
   }
 
-  const applyRemovePanel = () => {
+  const applyDataDeletion = () => {
     setRemovePanelOpen(false);
     setButtonPanelOpen(true);
-    deletePropertyData()
+    deleteDataParameters()
   }
 
   const handleInput = (text, field) => {
@@ -205,12 +239,12 @@ const Profile = observer (() => {
                         <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Property <span className="text-rose-500">*</span></label>
                         <input
                           autoComplete='off'
-                          id="property"
+                          id="label"
                           className="form-input w-full"
                           type="text"
                           required
-                          onInput={(e) => handleInput(e.target.value, 'property')}
-                          value={addedValues.property}
+                          onInput={(e) => handleInput(e.target.value, 'label')}
+                          value={addedValues.label}
                           onClick={openHint}
                         />
                         <div className={`flex flex-col gap-y-2 py-2 pl-2 border border-t-0 border-slate-200 rounded ${(propertyValues.length > 0) || 'hidden'}`}>
@@ -269,7 +303,7 @@ const Profile = observer (() => {
                       </button>
                       <button
                         className="btn-sm bg-indigo-500 hover:bg-indigo-600 text-white"
-                        onClick={sendValues}
+                        onClick={sendAddedData}
                       >
                         Send
                       </button>
@@ -283,11 +317,11 @@ const Profile = observer (() => {
                           <div>
                             <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Property <span className="text-rose-500">*</span></label>
                             <input
-                              id={`${item.key}:property`}
+                              id={`${item.key}:label`}
                               className="form-input w-full"
                               type="text"
                               required
-                              onChange={(e) => changeUpdatedValues(e.target.value, 'property', item.key)}
+                              onChange={(e) => changeUpdatedValues(e.target.value, 'label', item.key)}
                               value={item.label}
                               disabled='disabled'
                             />
@@ -344,9 +378,9 @@ const Profile = observer (() => {
                       </button>
                       <button
                         className="btn-sm bg-indigo-500 hover:bg-indigo-600 text-white"
-                        onClick={sendValues}
+                        onClick={sendUpdatedData}
                       >
-                        Apply
+                        Send
                       </button>
                     </div>
                   </div>
@@ -372,7 +406,7 @@ const Profile = observer (() => {
                     <div className="flex flex-row justify-end gap-x-2 pt-[20px] pb-[16px] items-end">
                       <button
                         className="btn w-full bg-indigo-500 hover:bg-indigo-600 text-white px-[100px] justify-start"
-                        onClick={applyRemovePanel}
+                        onClick={applyDataDeletion}
                         >
                         <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 16 16">
                           <path d="m2.457 8.516.969-.99 2.516 2.481 5.324-5.304.985.989-6.309 6.284z" />

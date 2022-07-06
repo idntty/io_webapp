@@ -48,7 +48,7 @@ class Store {
   }
 
   saveDataRegistration(data) {
-    this._accountData = data;
+    this._accountData = [data];
   };
 
   fetchNodeInfo() {
