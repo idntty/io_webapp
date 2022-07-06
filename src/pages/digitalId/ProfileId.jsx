@@ -76,7 +76,7 @@ const Profile = observer (() => {
 
   const deletePropertyData = () => {
     const changeData = registrationStore.userData.data.filter(item=>!selectedItems.includes(item.label))
-    registrationStore.pushChangeAccountData(changeData)
+    registrationStore.pushAccountData(changeData)
   }
 
   const cancelAddPanel = () => {
