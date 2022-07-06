@@ -74,10 +74,10 @@ class Store {
   };
 
   encryptAccountData(data) {
-    return Object.keys(data).map((label) => {
-      let value = cryptography.encryptMessageWithPassphrase(cryptography.getRandomBytes(32).toString('hex') + ":" + this.accountData[label], this.passPhrase, this.pubKey);
+    return data.map((item) => {
+      let value = cryptography.encryptMessageWithPassphrase(cryptography.getRandomBytes(32).toString('hex') + ":" + item.value, this.passPhrase, this.pubKey);
       return {
-        "label": label,
+        "label": item.key,
         "value": value.encryptedMessage,
         "value_nonce": value.nonce,
       }
