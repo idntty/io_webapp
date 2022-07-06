@@ -23,7 +23,7 @@ class Store {
     }).then((res) => this.userDataFetchChange(res)))
   };
 
-  pushNewCreateAccount() {
+  pushNewAccount() {
     fetchWrapper.postAuth('http://3.125.47.101/api/data/private', {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
@@ -37,7 +37,7 @@ class Store {
     }).then((res) => this.userDataFetchChange(res))
   }
 
-  pushChangeAccountData(data) {
+  pushAccountData(data) {
     fetchWrapper.postAuth('http://3.125.47.101/api/data/private', {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
