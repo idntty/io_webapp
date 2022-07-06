@@ -11,7 +11,7 @@ const labelMap = {
   nationality: "Nationality",
   national_id: "National id",
   national_doctype: "National doctype",
-  national_doc_id: "National doc id",  
+  national_doc_id: "National doc id",
   national_doc_issue_date: "National doc issue date",
   national_doc_expiry_date: "National doc expiry date",
   telephone: "Telephone",
@@ -40,10 +40,10 @@ class UserDataStore{
       this._data = data.data;
     })
   }
-
   get decryptedData(){
     return this._data.map((elem) => ({
       ...elem,
+      key: elem.label,
       label: labelMap[elem.label],
       value: cryptography.decryptMessageWithPassphrase(elem.value, elem.value_nonce, registrationStore.passPhrase, registrationStore.pubKey).split(':')[1]
     }))

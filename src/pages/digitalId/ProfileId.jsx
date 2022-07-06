@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { userDataStore } from '../../store/userDataStore';
+import { registrationStore } from "../../store/store";
 import Sidebar from '../../partials/Sidebar';
 import { observer } from 'mobx-react-lite';
 import Header from '../../partials/Header';
@@ -14,14 +15,14 @@ const Profile = observer (() => {
   const [toggle, setToggle] = useState(true);
   const [addPanelOpen, setAddPanelOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
-  
+
   const defaultValues = {
     property: '',
     value: '',
     seed: Math.floor(Math.random() * 90000000000000000000)
   };
 
-  const initialPropertyValues = ['First name', 'Second name', 'Birthdate', 'Gender', 'Residence', 'Document type', 'Document ID', 'Issue date', 'Expiry date']; 
+  const initialPropertyValues = ['First name', 'Second name', 'Birthdate', 'Gender', 'Residence', 'Document type', 'Document ID', 'Issue date', 'Expiry date'];
   const [propertyValues, setPropertyValues] = useState([]);
   const [currentValues, setCurrentValues] = useState(defaultValues);
 
@@ -73,6 +74,11 @@ const Profile = observer (() => {
     }
   }
 
+  const deletePropertyData = () => {
+    const changeData = registrationStore.userData.data.filter(item=>!selectedItems.includes(item.label))
+    registrationStore.fetchChangeAccountData(changeData)
+  }
+
   const cancelAddPanel = () => {
     setCurrentValues(defaultValues);
     setAddPanelOpen(false);
@@ -87,6 +93,7 @@ const Profile = observer (() => {
   const applyRemovePanel = () => {
     setRemovePanelOpen(false);
     setButtonPanelOpen(true);
+    deletePropertyData()
   }
 
   const handleInput = (text, field) => {
@@ -231,7 +238,7 @@ const Profile = observer (() => {
                   <div className={`${!removePanelOpen && 'hidden'} bg-white px-5 pt-4 pb-[190px] shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-12`}>
                     <h2 className="grow text-base font-semibold text-slate-800 truncate mb-2">Summary</h2>
                     <div className="flex flex-col">
-                      {userDataStore.decryptedData.filter(({ label }) => selectedItems.includes(label)).map(item => (
+                      {userDataStore.decryptedData.filter(({ key }) => selectedItems.includes(key)).map(item => (
                         <span key={item.label} className="text-sm font-normal text-slate-600 py-3 border-b border-slate-200">{item.label}</span>
                       ))}
                     </div>

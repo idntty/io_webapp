@@ -30,8 +30,27 @@ class Store {
     }, [...this.encryptAccountData]).catch(()=>{})
   };
 
+  fetchNewAccountData() {
+    fetchWrapper.getAuth('http://3.125.47.101/api/data/private', {
+      networkIdentifier: this.nodeInfo.networkIdentifier,
+      lastBlockID: this.nodeInfo.lastBlockID
+    }).then((res) => this.userDataFetchChange(res))
+  }
+
+  fetchChangeAccountData(data) {
+    fetchWrapper.postAuth('http://3.125.47.101/api/data/private', {
+      networkIdentifier: this.nodeInfo.networkIdentifier,
+      lastBlockID: this.nodeInfo.lastBlockID
+    }, [...data])
+        .then(()=>this.fetchNewAccountData())
+  }
+
   userDataFetchChange(res) {
     this._userData = res;
+  }
+
+  get userData() {
+    return this._userData
   }
 
   savePassPhrase(phrase) {
@@ -54,10 +73,6 @@ class Store {
 
   fetchNodeInfoFailed(err) {
     console.log(err)
-  }
-
-  get userData() {
-    return this._userData;
   }
 
   get passPhrase() {
