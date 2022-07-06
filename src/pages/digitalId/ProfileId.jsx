@@ -16,16 +16,16 @@ const Profile = observer (() => {
   const [addPanelOpen, setAddPanelOpen] = useState(false);
   const [updatePanelOpen, setUpdatePanelOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
-
+  
   const defaultValues = {
     property: '',
     value: '',
-    seed: Math.floor(Math.random() * 90000000000000000000)
+    seed: Math.floor(Math.random() * 90000000000000000000) 
   };
 
   const initialPropertyValues = ['First name', 'Second name', 'Birthdate', 'Gender', 'Residence', 'Document type', 'Document ID', 'Issue date', 'Expiry date'];
   const [propertyValues, setPropertyValues] = useState([]);
-  const [updatedValues, setUpdatedValues] = useState(defaultValues);
+  const [updatedValues, setUpdatedValues] = useState([defaultValues]);
   const [addedValues, setAddedValues] = useState(defaultValues);
 
   const openHint = () => {
@@ -35,9 +35,13 @@ const Profile = observer (() => {
   }
 
   const changeAddedValues = (value, field) => {
-    setAddedValues((prevState)=> ({
+    setAddedValues((prevState) => (
+      field !== 'seed' ? {
       ...prevState,
-      [field]: value.charAt(0).toUpperCase()+value.slice(1),
+      [field]: value
+    } : {
+      ...prevState,
+      [field]: +value,
     }))
     console.log(addedValues);
   };
@@ -45,9 +49,13 @@ const Profile = observer (() => {
   const changeUpdatedValues = (value, field, key) => {
     setUpdatedValues((prevState) => 
       prevState.map((elem) => (
-        elem.key === key ? {
+        (elem.key === key && field !== 'seed') ? {
           ...elem,
-          [field]: value.charAt(0).toUpperCase()+value.slice(1),
+          [field]: value,
+        } : 
+        (elem.key === key) ? {
+          ...elem,
+          [field]: +value,
         } : elem
       ))
     )
@@ -61,7 +69,12 @@ const Profile = observer (() => {
 
   const handleSelectedItems = (selectedItems) => {
     setSelectedItems([...selectedItems]);
-    setUpdatedValues(userDataStore.decryptedData.filter(({ key }) => selectedItems.includes(key)));
+    setUpdatedValues(userDataStore.decryptedData.filter(({ key }) => selectedItems.includes(key))
+      .map(elem => (
+        (!elem.seed) ? {
+        ...elem,
+        seed: Math.floor(Math.random() * 90000000000000000000)
+      }: elem)));
     if (selectedItems.length > 0) {
       setButtonPanelOpen(false);
       setAddPanelOpen(false);
@@ -104,7 +117,7 @@ const Profile = observer (() => {
 
   const cancelUpdatePanel = () => {
     setUpdatePanelOpen(false);
-    setButtonPanelOpen(true);
+    setChangePanelOpen(true);
   }
 
   const openRemovePanel = () => {
@@ -227,7 +240,7 @@ const Profile = observer (() => {
                           autoComplete='off'
                           id="seed"
                           className="form-input w-full"
-                          type="text"
+                          type="number"
                           required
                           onClick={() => setPropertyValues([])}
                           onChange={(e) => changeAddedValues(e.target.value, 'seed')}
@@ -265,48 +278,51 @@ const Profile = observer (() => {
                   {/* Update panel */}
                   <div className={`${!updatePanelOpen && 'hidden'} bg-white p-5 shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-11`}>
                     {updatedValues.map((item, index) => ( 
-                      <div key={index} className="flex flex-col gap-y-3">
-                        <div>
-                          <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Property <span className="text-rose-500">*</span></label>
-                          <input
-                            id={`${item.key}:property`}
-                            className="form-input w-full"
-                            type="text"
-                            required
-                            onChange={(e) => changeUpdatedValues(e.target.value, 'property', item.key)}
-                            value={item.label}
-                            disabled='disabled'
-                          />
+                        <div key={index} className="flex flex-col gap-y-3">
+                          
+                          <div>
+                            <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Property <span className="text-rose-500">*</span></label>
+                            <input
+                              id={`${item.key}:property`}
+                              className="form-input w-full"
+                              type="text"
+                              required
+                              onChange={(e) => changeUpdatedValues(e.target.value, 'property', item.key)}
+                              value={item.label}
+                              disabled='disabled'
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Value <span className="text-rose-500">*</span></label>
+                            <input
+                              autoComplete='off'
+                              id={`${item.key}:value`}
+                              className="form-input w-full"
+                              type="text"
+                              required
+                              onChange={(e) => changeUpdatedValues(e.target.value, 'value', item.key)}
+                              value={item.value}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Seed <span className="text-rose-500">*</span></label>
+                            <input
+                              autoComplete='off'
+                              id={`${item.key}:seed`}
+                              className="form-input w-full"
+                              type="number"
+                              required
+                              onChange={(e) => changeUpdatedValues(e.target.value, 'seed', item.key)}
+                              value={item.seed}
+                            />
+                          </div>
+                          {(updatedValues[index+1]) ? (
+                          <div className="mt-2 mb-3.5 items-center border-b border-slate-200"></div>
+                          ) : null}
                         </div>
-                        <div>
-                          <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Value <span className="text-rose-500">*</span></label>
-                          <input
-                            autoComplete='off'
-                            id={`${item.key}:value`}
-                            className="form-input w-full"
-                            type="text"
-                            required
-                            onChange={(e) => changeUpdatedValues(e.target.value, 'value', item.key)}
-                            value={item.value}
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Seed <span className="text-rose-500">*</span></label>
-                          <input
-                            autoComplete='off'
-                            id={`${item.key}:seed`}
-                            className="form-input w-full"
-                            type="text"
-                            required
-                            onChange={(e) => changeUpdatedValues(e.target.value, 'seed', item.key)}
-                            value={item.seed || Math.floor(Math.random() * 90000000000000000000)}
-                          />
-                        </div>
-                        {(updatedValues[index+1]) ? (
-                        <div className="mt-2 mb-3.5 items-center border-b border-slate-200"></div>
-                        ) : null}
-                      </div>
+                      
                     ))}
+                      
                     <div className="flex flex-row justify-between pt-[16px] pb-[23px] items-center border-b border-slate-200">
                       <span className="block text-sm font-medium">Store data on blockchain</span>
                       <div className="flex items-center">
