@@ -14,7 +14,7 @@ const Onboarding4 = observer(()=>{
     if(checkBoxes.find(item=>item.checked===false)) {
       return
     } else {
-      registrationStore.fetchCreateNewAccount()
+      registrationStore.pushNewCreateAccount()
       setCheckBoxesSelected(true)
 
     }
