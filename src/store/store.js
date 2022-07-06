@@ -4,7 +4,7 @@ import {getNodeInfo} from '../api/node';
 import {fetchWrapper} from '../shared/fetchWrapper';
 
 class Store {
-  _accountData = {}
+  _accountData = []
 
   _passPhrase='rocket north inform swift improve fringe sweet crew client canyon bean autumn'
 
@@ -17,17 +17,7 @@ class Store {
 
     this.fetchNodeInfo()
 
-    reaction(() => this.tokenKey, () => fetchWrapper.getAuth('http://3.125.47.101/api/data/private', {
-      networkIdentifier: this.nodeInfo.networkIdentifier,
-      lastBlockID: this.nodeInfo.lastBlockID
-    }).then((res) => this.userDataFetchChange(res)))
-  };
-
-  pushNewAccount() {
-    fetchWrapper.postAuth('http://3.125.47.101/api/data/private', {
-      networkIdentifier: this.nodeInfo.networkIdentifier,
-      lastBlockID: this.nodeInfo.lastBlockID
-    }, [...this.encryptAccountData]).catch(()=>{})
+    reaction(() => this.tokenKey, () => this.fetchNewAccountData())
   };
 
   fetchNewAccountData() {
@@ -37,11 +27,11 @@ class Store {
     }).then((res) => this.userDataFetchChange(res))
   }
 
-  pushAccountData(data) {
+  pushAccountData(data=this.accountData) {
     fetchWrapper.postAuth('http://3.125.47.101/api/data/private', {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
-    }, [...data])
+    }, [...this.encryptAccountData(data)])
         .then(()=>this.fetchNewAccountData())
   }
 
@@ -83,8 +73,8 @@ class Store {
     return this._accountData
   };
 
-  get encryptAccountData() {
-    return Object.keys(this.accountData).map((label) => {
+  encryptAccountData(data) {
+    return Object.keys(data).map((label) => {
       let value = cryptography.encryptMessageWithPassphrase(cryptography.getRandomBytes(32).toString('hex') + ":" + this.accountData[label], this.passPhrase, this.pubKey);
       return {
         "label": label,

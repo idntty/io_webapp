@@ -8,6 +8,7 @@ import ProfileTable from '../../partials/digitalId/ProfileTable';
 import Image from '../../images/transactions-image-04.svg';
 
 const Profile = observer (() => {
+  console.log(registrationStore.accountData)
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [buttonPanelOpen, setButtonPanelOpen] = useState(true);
   const [removePanelOpen, setRemovePanelOpen] = useState(false);
@@ -75,8 +76,10 @@ const Profile = observer (() => {
   }
 
   const deletePropertyData = () => {
-    const changeData = registrationStore.userData.data.filter(item=>!selectedItems.includes(item.label))
-    registrationStore.pushAccountData(changeData)
+    const newDataPush = {}
+    const changeData = userDataStore.decryptedData.filter(item=>!selectedItems.includes(item.key))
+    changeData.forEach(pushData=>newDataPush[pushData.key]=pushData.value)
+    registrationStore.pushAccountData(newDataPush)
   }
 
   const cancelAddPanel = () => {
