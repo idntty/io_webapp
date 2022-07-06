@@ -31,13 +31,13 @@ function ProfileTable({
 
   const data = {
     general:["First name","Second name", "Gender", "Birthdate", "Place of birth"],
-    nationality:["Nationality", "National id", "National doctype", "National doc id", "National doc issue date", "National doc expiry date"],
+    nationality:["Nationality", "National ID", "National doctype", "National doc ID", "National doc issue date", "National doc expiry date"],
     social:["Telephone", "Twitter", "Facebook", "Instagram", "Youtube", "Wechat", "Tiktok", "Linkedin", "Vk", "Github", "Telegram", "Qq", "Snapchat", "Reddit"]
   }
 
   const generalData = userData.filter(elem => data.general.includes(elem.label)),
         nationalityData = userData.filter(elem => data.nationality.includes(elem.label)),
-        sosialData = userData.filter(elem => data.nationality.includes(elem.label)),
+        sosialData = userData.filter(elem => data.social.includes(elem.label)),
         otherData = userData.filter((elem) =>
           !data.general.includes(elem.label) && !data.nationality.includes(elem.label) && !data.social.includes(elem.label));
 
