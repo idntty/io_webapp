@@ -114,25 +114,27 @@ const Profile = observer (() => {
     registrationStore.pushAccountData(changeData);
   }
 
-  const changeDataParameters = () => {
-    const updatedData = (function changeValue() {
-      let newArr = []
-      userDataStore.decryptedData.map(elem => {
-        updatedValues.forEach(item => {
-          if (elem.label === item.label) {
-            newArr.push({
-              ...elem,
-              'value': item.value, 
-              'seed': item.seed,
-            })
-          }
-        })
-        if (!newArr.find(element => element.label === elem.label)) {
-          newArr.push(elem);
+  const changeInitialArray = () => {
+    let newArr = [];
+    userDataStore.decryptedData.map(elem => {
+      updatedValues.forEach(item => {
+        if (elem.label === item.label) {
+          newArr.push({
+            ...elem,
+            'value': item.value, 
+            'seed': item.seed,
+          })
         }
       })
-      return newArr
-    })();
+      if (!newArr.find(element => element.label === elem.label)) {
+        newArr.push(elem);
+      }
+    })
+    return newArr;
+  }
+
+  const changeDataParameters = () => {
+    const updatedData = changeInitialArray();
     registrationStore.pushAccountData(updatedData);
   }
 
