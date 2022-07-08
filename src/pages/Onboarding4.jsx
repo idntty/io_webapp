@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import { Link } from 'react-router-dom';
 import {generateSvgAvatar} from "../images/GenerateOnboardingSvg/GenerateSvg";
 import Logo from "../images/logo.png";
@@ -7,23 +7,23 @@ import { registrationStore } from "../store/store";
 
 const Onboarding4 = observer(()=>{
 
-  const [checkBoxesSelected, setCheckBoxesSelected] = useState(false)
+  const [checkBoxesSelected, setCheckBoxesSelected] = useState([])
 
   function createAccount () {
-    let checkBoxes=[...document.getElementsByClassName("form-checkbox")]
-    if(checkBoxes.find(item=>item.checked===false)) {
-      return
-    } else {
+    if(checkBoxesSelected.length===2) {
       registrationStore.pushAccountData()
-      setCheckBoxesSelected(true)
     }
   }
 
-  useEffect(()=>{
-    if(checkBoxesSelected===true) {
-      document.getElementById("link-dashboard").click()
+  function saveCheckBoxesValues(e) {
+    const { id, checked } = e.target
+    setCheckBoxesSelected([...checkBoxesSelected, id])
+    if (!checked) {
+      setCheckBoxesSelected(checkBoxesSelected.filter(item=>item!==id))
     }
-  },[checkBoxesSelected])
+  }
+
+  const firstNameAccount = registrationStore.accountData.length && registrationStore.accountData.find(item=>item.key==="first_name").value
 
   return (
     <main className="bg-white">
@@ -80,20 +80,20 @@ const Onboarding4 = observer(()=>{
                     <circle className="text-emerald-100" cx="32" cy="32" r="32" />
                     <path className="text-emerald-500" d="m28.5 41-8-8 3-3 5 5 12-12 3 3z" />
                   </svg>
-                  <h1 className="text-3xl text-slate-800 font-bold mb-8">{registrationStore.accountData.find(item=>item.key="first_name").key ? `Nice to meet you, ${registrationStore.accountData.find(item=>item.key="first_name").value} 🙌` : 'Please, go back step 2'}</h1>
+                  <h1 className="text-3xl text-slate-800 font-bold mb-8">{firstNameAccount ? `Nice to meet you, ${firstNameAccount} 🙌` : 'Please, go back step 2'}</h1>
                   <button onClick={()=>createAccount()} className="btn px-6 bg-indigo-500 hover:bg-indigo-600 text-white">
-                    <Link id="link-dashboard" to={checkBoxesSelected && "/dashboard"}>Go To Profile -&gt;</Link>
+                    <Link id="link-dashboard" to={checkBoxesSelected.length===2 && "/dashboard"}>Go To Profile -&gt;</Link>
                   </button>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <div className="mr-1">
                     <label className="flex items-center">
-                      <input type="checkbox" className="form-checkbox" />
+                      <input id="checkbox-1" onChange={(e)=>saveCheckBoxesValues(e)} type="checkbox" className="form-checkbox" />
                       <span className="text-sm ml-2">I understand that Idntty cannot recover pass phrase</span>
                     </label>
                     <label className="flex items-center">
-                      <input type="checkbox" className="form-checkbox" />
+                      <input id="checkbox-2" onChange={(e)=>saveCheckBoxesValues(e)} type="checkbox" className="form-checkbox" />
                       <div className="text-sm ml-2">
                         I <Link className="text-indigo-500 hover:text-indigo-600 underline" to="/">store my pharse</Link> very carefuly
                       </div>

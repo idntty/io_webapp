@@ -6,19 +6,18 @@ import {registrationStore} from "../store/store";
 import { passphrase } from "@liskhq/lisk-client";
 
 function Onboarding3() {
-  const [passPhrase, setPassPhrase] = useState(registrationStore.passPhrase.replace(/\s+/g, ' ').split(' ').map((item, index) => ({str:item, id:index })))
+  const [passPhrase, setPassPhrase] = useState(convertPhraseToArray(registrationStore.passPhrase))
   function generatePassPhrase() {
     let phrase = passphrase.Mnemonic.generateMnemonic()
     registrationStore.savePassPhrase(phrase)
-    let newPassPhrase = registrationStore.passPhrase.split(' ').map((item, index) => ({str:item, id:index }))
-    setPassPhrase(newPassPhrase)
+    setPassPhrase(convertPhraseToArray(registrationStore.passPhrase))
   }
 
   function savePassPhraseInStore (copiedPhrase) {
-    let phrasePaste = copiedPhrase.trim().replace(/\s+/g, ' ').split(' ')
+    let phrasePaste = convertPhraseToArray(copiedPhrase.trim())
     if(phrasePaste.length===12) {
-      registrationStore.savePassPhrase(copiedPhrase)
-      setPassPhrase(phrasePaste.map((item, index) => ({str:item, id:index })))
+      registrationStore.savePassPhrase(copiedPhrase.trim())
+      setPassPhrase(phrasePaste)
     } else {
       return false
     }
@@ -26,6 +25,10 @@ function Onboarding3() {
 
   function pastePassPhrase() {
     navigator.clipboard.readText().then(res=>savePassPhraseInStore(res))
+  }
+
+  function convertPhraseToArray(phrase) {
+    return phrase.split(' ').map((item, index) => ({str:item, id:index }))
   }
 
 
