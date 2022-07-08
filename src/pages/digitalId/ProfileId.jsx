@@ -7,6 +7,14 @@ import Header from '../../partials/Header';
 import ProfileTable from '../../partials/digitalId/ProfileTable';
 import Image from '../../images/transactions-image-04.svg';
 
+const defaultValues = {
+  label: '',
+  value: '',
+  seed: parseInt(Math.floor(Math.random() * 90000000000000000000), 10) 
+};
+
+const initialPropertyValues = ['First name', 'Second name', 'Birthdate', 'Gender', 'National doctype', 'National doc id', 'National doc issue date', 'National doc expiry date'];
+
 const Profile = observer (() => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [buttonPanelOpen, setButtonPanelOpen] = useState(true);
@@ -16,14 +24,6 @@ const Profile = observer (() => {
   const [addPanelOpen, setAddPanelOpen] = useState(false);
   const [updatePanelOpen, setUpdatePanelOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
-  
-  const defaultValues = {
-    label: '',
-    value: '',
-    seed: Math.floor(Math.random() * 90000000000000000000) 
-  };
-
-  const initialPropertyValues = ['First name', 'Second name', 'Birthdate', 'Gender', 'National doctype', 'National doc id', 'National doc issue date', 'National doc expiry date'];
   const [propertyValues, setPropertyValues] = useState([]);
   const [updatedValues, setUpdatedValues] = useState([defaultValues]);
   const [addedValues, setAddedValues] = useState(defaultValues);
@@ -35,26 +35,18 @@ const Profile = observer (() => {
   }
 
   const changeAddedValues = (value, field) => {
-    setAddedValues((prevState) => (
-      field !== 'seed' ? {
+    setAddedValues((prevState) => ({
       ...prevState,
       [field]: value
-    } : {
-      ...prevState,
-      [field]: +value,
     }))
   };
 
   const changeUpdatedValues = (value, field, key) => {
     setUpdatedValues((prevState) => 
       prevState.map((elem) => (
-        (elem.key === key && field !== 'seed') ? {
-          ...elem,
-          [field]: value,
-        } : 
         (elem.key === key) ? {
           ...elem,
-          [field]: +value,
+          [field]: value,
         } : elem
       ))
     )
@@ -71,7 +63,7 @@ const Profile = observer (() => {
       .map(elem => (
         (!elem.seed) ? {
         ...elem,
-        seed: Math.floor(Math.random() * 90000000000000000000)
+        seed: parseInt(Math.floor(Math.random() * 90000000000000000000), 10) 
       }: elem)));
     if (selectedItems.length > 0) {
       setButtonPanelOpen(false);
@@ -95,7 +87,9 @@ const Profile = observer (() => {
   }
 
   const sendAddedData = () => {
-    if (!userDataStore.decryptedData.some((element) => element.label === addedValues.label) && (addedValues.seed.toString().length === 20)) {
+    const checkingAddedData = !userDataStore.decryptedData
+      some((element) => element.label === addedValues.label) && (addedValues.seed.length === 20);
+    if (checkingAddedData) {
       setAddPanelOpen(false);
       setButtonPanelOpen(true);
       setAddedValues(defaultValues);
@@ -245,11 +239,12 @@ const Profile = observer (() => {
                           onInput={(e) => handleInput(e.target.value, 'label')}
                           value={addedValues.label}
                           onClick={openHint}
+                          onBlur={() => setPropertyValues([])}
                         />
                         <div className={`flex flex-col gap-y-2 py-2 pl-2 border border-t-0 border-slate-200 rounded ${(propertyValues.length > 0) || 'hidden'}`}>
                           <ul>
                             {propertyValues.map((element, index) => (
-                              <li key={index} onClick={() => closeHint(element)}>{element}</li>
+                              <li className='hover:text-indigo-600 cursor-pointer' key={index} onClick={() => closeHint(element)}>{element}</li>
                             ))}
                           </ul>
                         </div>
