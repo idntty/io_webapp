@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import { Link } from 'react-router-dom';
 import { observer } from "mobx-react-lite";
 import { registrationStore } from "../store/store";
@@ -24,35 +24,21 @@ const Onboarding2 = observer(()=>{
       ...dataRegistration,
       [event.target.id]: newValue
     })
+    if(!Object.keys(dataRegistration).find(item=>!dataRegistration[item])) {
+      setFillingForm(true)
+    }
   }
 
   const saveStoreRegistration = ()=>{
-    Object.keys(dataRegistration).forEach(item=>{
-      let element=document.getElementById(item)
-      if(dataRegistration[item]) {
-        element.style.borderColor=""
-      } else {
-        element.style.borderColor="red"
-      }
-    })
-    if(Object.keys(dataRegistration).find(item=>!dataRegistration[item])) {
-      return
-    } else {
-      setFillingForm(true)
+    if(fillingForm) {
+      registrationStore.saveDataRegistration(Object.keys(dataRegistration).map(item=>{
+        return{
+          key: `${item}`,
+          value: dataRegistration[item]
+        }
+      }))
     }
-    registrationStore.saveDataRegistration(Object.keys(dataRegistration).map(item=>{
-      return{
-        key: `${item}`,
-        value: dataRegistration[item]
-      }
-    }))
   }
-
-  useEffect(()=>{
-    if(fillingForm===true) {
-      document.getElementById("signup").click()
-    }
-  },[fillingForm])
 
   return (
     <main className="bg-white">
