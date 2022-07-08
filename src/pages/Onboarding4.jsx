@@ -16,7 +16,6 @@ const Onboarding4 = observer(()=>{
     } else {
       registrationStore.pushAccountData()
       setCheckBoxesSelected(true)
-
     }
   }
 
