@@ -31,13 +31,13 @@ function ProfileTable({
 
   const data = {
     general:["First name","Second name", "Gender", "Birthdate", "Place of birth"],
-    nationality:["Nationality", "National id", "National doctype", "National doc id", "National doc issue date", "National doc expiry date"],
+    nationality:["Nationality", "National ID", "National doctype", "National doc ID", "National doc issue date", "National doc expiry date"],
     social:["Telephone", "Twitter", "Facebook", "Instagram", "Youtube", "Wechat", "Tiktok", "Linkedin", "Vk", "Github", "Telegram", "Qq", "Snapchat", "Reddit"]
   }
 
   const generalData = userData.filter(elem => data.general.includes(elem.label)),
         nationalityData = userData.filter(elem => data.nationality.includes(elem.label)),
-        sosialData = userData.filter(elem => data.nationality.includes(elem.label)),
+        sosialData = userData.filter(elem => data.social.includes(elem.label)),
         otherData = userData.filter((elem) =>
           !data.general.includes(elem.label) && !data.nationality.includes(elem.label) && !data.social.includes(elem.label));
 
@@ -79,7 +79,7 @@ function ProfileTable({
                 return (
                   <ProfileTableItem
                     key={data.label}
-                    id={data.label}
+                    id={data.key}
                     image={defaultData.image}
                     value={data.value.charAt(0).toUpperCase()+data.value.slice(1)}
                     property={data.label}
@@ -87,7 +87,7 @@ function ProfileTable({
                     transactions={defaultData.transactions}
                     avatars={defaultData.avatars}
                     handleClick={handleClick}
-                    isChecked={isCheck.includes(data.label)}
+                    isChecked={isCheck.includes(data.key)}
                   />
                 )
               })}
@@ -105,7 +105,7 @@ function ProfileTable({
               return (
                 <ProfileTableItem
                   key={data.label}
-                  id={data.label}
+                  id={data.key}
                   image={defaultData.image}
                   value={data.value.charAt(0).toUpperCase()+data.value.slice(1)}
                   property={data.label}
@@ -113,7 +113,7 @@ function ProfileTable({
                   transactions={defaultData.transactions}
                   avatars={defaultData.avatars}
                   handleClick={handleClick}
-                  isChecked={isCheck.includes(data.label)}
+                  isChecked={isCheck.includes(data.key)}
                 />
               )
             })}
@@ -130,8 +130,8 @@ function ProfileTable({
             {otherData.map(data => {
               return (
                 <ProfileTableItem
-                  key={data.label}
-                  id={data.label}
+                  key={data.key}
+                  id={data.key}
                   image={defaultData.image}
                   value={data.value}
                   property={data.label}
@@ -139,7 +139,7 @@ function ProfileTable({
                   transactions={defaultData.transactions}
                   avatars={defaultData.avatars}
                   handleClick={handleClick}
-                  isChecked={isCheck.includes(data.label)}
+                  isChecked={isCheck.includes(data.key)}
                 />
               )
             })}

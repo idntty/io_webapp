@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 import OnboardingImage from '../images/onboarding-image.jpg';
@@ -11,9 +11,6 @@ import {registrationStore} from "../store/store";
 const Onboarding1 = observer(()=>{
   let phrase = passphrase.Mnemonic.generateMnemonic()
   registrationStore.savePassPhrase(phrase)
-  useEffect(()=>{
-
-  },[])
 
   return (
     <main className="bg-white">
