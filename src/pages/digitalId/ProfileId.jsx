@@ -10,10 +10,10 @@ import Image from '../../images/transactions-image-04.svg';
 const defaultValues = {
   label: '',
   value: '',
-  seed: parseInt(Math.floor(Math.random() * 90000000000000000000), 10) 
+  seed: String(Math.floor(Math.random() * 90000000000000000000), 10) 
 };
 
-const initialPropertyValues = ['First name', 'Second name', 'Birthdate', 'Gender', 'National doctype', 'National doc id', 'National doc issue date', 'National doc expiry date'];
+const initialPropertyValues = ['First name', 'Second name', 'Birthdate', 'Gender', 'National doctype', 'National doc ID', 'National doc issue date', 'National doc expiry date'];
 
 const Profile = observer (() => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -52,10 +52,16 @@ const Profile = observer (() => {
     )
   };
 
-  const closeHint = (element) => {
+  const selectHint = (element) => {
     changeAddedValues(element, 'label');
     setPropertyValues([]);
   }
+
+  const closeHint = (eventTarget) => {
+    if (!eventTarget || eventTarget.tabIndex !== -1) {
+      setPropertyValues([]);
+    }
+  };
 
   const handleSelectedItems = (selectedItems) => {
     setSelectedItems([...selectedItems]);
@@ -63,7 +69,7 @@ const Profile = observer (() => {
       .map(elem => (
         (!elem.seed) ? {
         ...elem,
-        seed: parseInt(Math.floor(Math.random() * 90000000000000000000), 10) 
+        seed: String(Math.floor(Math.random() * 90000000000000000000), 10) 
       }: elem)));
     if (selectedItems.length > 0) {
       setButtonPanelOpen(false);
@@ -88,7 +94,7 @@ const Profile = observer (() => {
 
   const sendAddedData = () => {
     const checkingAddedData = !userDataStore.decryptedData
-      some((element) => element.label === addedValues.label) && (addedValues.seed.length === 20);
+      .some((element) => element.label === addedValues.label) && (addedValues.seed.length === 20);
     if (checkingAddedData) {
       setAddPanelOpen(false);
       setButtonPanelOpen(true);
@@ -226,57 +232,55 @@ const Profile = observer (() => {
                 </div>
                 <div className="ml-2.5">
                   {/* Add panel */}
-                  <div className={`${!addPanelOpen && 'hidden'} bg-white p-5 shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-11`}>
-                    <div className="flex flex-col gap-y-3">
-                      <div>
-                        <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Property <span className="text-rose-500">*</span></label>
-                        <input
-                          autoComplete='off'
-                          id="label"
-                          className="form-input w-full"
-                          type="text"
-                          required
-                          onInput={(e) => handleInput(e.target.value, 'label')}
-                          value={addedValues.label}
-                          onClick={openHint}
-                          onBlur={() => setPropertyValues([])}
-                        />
-                        <div className={`flex flex-col gap-y-2 py-2 pl-2 border border-t-0 border-slate-200 rounded ${(propertyValues.length > 0) || 'hidden'}`}>
-                          <ul>
-                            {propertyValues.map((element, index) => (
-                              <li className='hover:text-indigo-600 cursor-pointer' key={index} onClick={() => closeHint(element)}>{element}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Value <span className="text-rose-500">*</span></label>
-                        <input
-                          autoComplete='off'
-                          id="value"
-                          className="form-input w-full"
-                          type="text"
-                          required
-                          onClick={() => setPropertyValues([])}
-                          onChange={(e) => changeAddedValues(e.target.value, 'value')}
-                          value={addedValues.value}
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Seed <span className="text-rose-500">*</span></label>
-                        <input
-                          autoComplete='off'
-                          id="seed"
-                          className="form-input w-full"
-                          type="number"
-                          required
-                          onClick={() => setPropertyValues([])}
-                          onChange={(e) => changeAddedValues(e.target.value, 'seed')}
-                          value={addedValues.seed}
-                        />
-                      </div>
+                  <div className={`${!addPanelOpen && 'hidden'} relative flex flex-col bg-white p-5 shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-11`}>
+                    <div className='relative z-20'>
+                      <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Property <span className="text-rose-500">*</span></label>
+                      <input
+                        autoComplete='off'
+                        id="label"
+                        className="form-input w-full"
+                        type="text"
+                        required
+                        onInput={(e) => handleInput(e.target.value, 'label')}
+                        value={addedValues.label}
+                        onClick={openHint}
+                        onBlur={(e) => closeHint(e.relatedTarget)}
+                      />
+                      <div tabIndex='-1' className={`absolute w-full box-border bg-white flex flex-col gap-y-2 py-2 pl-2 border border-t-0 border-slate-200 rounded ${(propertyValues.length > 0) || 'hidden'}`}>
+                        <ul>
+                          {propertyValues.map((element, index) => (
+                            <li className='hover:text-indigo-600 cursor-pointer' key={index} onClick={() => selectHint(element)}>{element}</li>
+                          ))}
+                        </ul>
+                     </div>
                     </div>
-                    <div className="flex flex-row justify-between pt-[16px] pb-[23px] items-center border-b border-slate-200">
+                    <div className='my-3 z-10'>
+                      <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Value <span className="text-rose-500">*</span></label>
+                      <input
+                        autoComplete='off'
+                        id="value"
+                        className="form-input w-full"
+                        type="text"
+                        required
+                        onClick={() => setPropertyValues([])}
+                        onChange={(e) => changeAddedValues(e.target.value, 'value')}
+                        value={addedValues.value}
+                      />
+                    </div>
+                    <div className='z-10'>
+                      <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Seed <span className="text-rose-500">*</span></label>
+                      <input
+                        autoComplete='off'
+                        id="seed"
+                        className="form-input w-full"
+                        type="number"
+                        required
+                        onClick={() => setPropertyValues([])}
+                        onChange={(e) => changeAddedValues(e.target.value, 'seed')}
+                        value={addedValues.seed}
+                      />
+                    </div>
+                    <div className="flex flex-row z-10 justify-between pt-[18px] pb-[23px] items-center border-b border-slate-200">
                       <span className="block text-sm font-medium">Store data on blockchain</span>
                       <div className="flex items-center">
                         <div className="form-switch">
@@ -288,7 +292,7 @@ const Profile = observer (() => {
                       </div>
                     </div>
                     {/* Buttons */}
-                    <div className="flex flex-row justify-end gap-x-2 pt-[18px] pb-[14px] items-end">
+                    <div className="flex flex-row z-10 justify-end gap-x-2 pt-[18px] pb-[14px] items-end">
                       <button
                         className="btn-sm bg-white border-slate-200 hover:bg-slate-50 text-slate-600"
                         onClick={cancelAddPanel}
