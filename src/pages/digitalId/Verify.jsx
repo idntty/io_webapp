@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
+import { sharedDataStore } from '../../store/sharedDataStore';
+import { observer } from 'mobx-react-lite';
 
-const Verify = (() => {
+const Verify = observer(() => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [descriptionOpen, setDescriptionOpen] = useState(false);
+
+ /*useEffect(() => {
+    sharedDataStore.fetchSharedData();
+  }, []);*/
 
   const verifiedData = [
     {
@@ -160,6 +166,11 @@ const Verify = (() => {
                 </div> 
               ))}
             </div>
+            {sharedDataStore.decryptedData.map((elem, index) => (
+              <div key={index}>
+                {elem}
+              </div>
+            ))}
           </div>
         </main>
       </div>

@@ -12,13 +12,20 @@ class Store {
 
   _userData = {}
 
+  _keysArray = []
+
   constructor() {
     makeAutoObservable(this);
 
     this.fetchNodeInfo()
 
-    reaction(() => this.tokenKey, () => this.fetchNewAccountData())
+    reaction(() => this.tokenKey, () => this.fetchData())
   };
+
+  fetchData() {
+    this.fetchNewAccountData();
+    this.fetchLinksArray();
+  }
 
   fetchNewAccountData() {
     fetchWrapper.getAuth('http://3.125.47.101/api/data/private', {
@@ -35,12 +42,27 @@ class Store {
         .then(()=>this.fetchNewAccountData())
   }
 
+  fetchLinksArray() {
+    fetchWrapper.getAuth('https://ccab53ea-d042-47b3-b9b4-79b913f47b3d.mock.pstmn.io/data/shared', {
+      networkIdentifier: this.nodeInfo.networkIdentifier,
+      lastBlockID: this.nodeInfo.lastBlockID
+    }).then((res) => this.keysArrayFetchChange(res))
+  }
+
   userDataFetchChange(res) {
     this._userData = res;
   }
 
+  keysArrayFetchChange(res) {
+    this._keysArray = res.data;
+  }
+
+  get keysArray() {
+    return this._keysArray;
+  }
+
   get userData() {
-    return this._userData
+    return this._userData;
   }
 
   savePassPhrase(phrase) {
