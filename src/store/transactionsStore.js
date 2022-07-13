@@ -38,7 +38,7 @@ class TransactionsStore {
         transaction: item.asset.features.map(asset=>{
           return {
             transaction_id: item.id,
-            address: item.asset.recipientAddress,
+            address: registrationStore.accountMadeTransaction,
             value: asset.value,
             label: labelMap[asset.label],
           }

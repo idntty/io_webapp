@@ -39,11 +39,15 @@ class Store {
   }
 
   fetchTransactionsInfo() {
-    fetchWrapper.getAuth(`http://3.125.47.101/api/account/transactions/b444b7ff3118cf2a30cbd54cfcdb8fd5d805017a?moduleID=1001&assetID=11`, {
+    fetchWrapper.getAuth(`http://3.125.47.101/api/account/transactions/${this.accountMadeTransaction}?moduleID=1001&assetID=11`, {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
     })
         .then((res)=>this.saveInfoTransactions(res))
+  }
+
+  get accountMadeTransaction() {
+    return "b444b7ff3118cf2a30cbd54cfcdb8fd5d805017a"
   }
 
   userDataFetchChange(res) {
