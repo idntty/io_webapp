@@ -1,4 +1,3 @@
-import { cryptography } from "@liskhq/lisk-client";
 import { makeAutoObservable, reaction } from "mobx";
 import { fetchWrapper } from "../shared/fetchWrapper";
 import { registrationStore } from './store';
@@ -45,32 +44,23 @@ class SharedDataStore{
   }
 
   fetchSharedData() {
-    this._keysArray.map((elem) => {
-      fetchWrapper.get(`http://3.125.47.101/api/data/shared/${elem}`).then((res) => this.changeSharedData(res));
-    })
+    this._keysArray.forEach((elem) => fetchWrapper.get(`http://3.125.47.101/api/data/shared/${elem}`).then((res) => this.changeSharedData(res)))
   };
 
   changeSharedData(incomingData) {
     this._sharedData.push({
       data: incomingData.data,
-    });
-    console.log(this._sharedData);
+    })
   }
 
   get sharedData() {
-    return this._sharedData;
-  }
-
-  get decryptedData() {
-    return this._sharedData.map((elem) =>
-      elem.data.map((item) => ({
-        key: item.label,
+    return this._sharedData.map(elem => ({
+      data: elem.data.map(item => ({
         label: labelMap[item.label],
-        value: cryptography.decryptMessageWithPassphrase(item.value, item.value_nonce, registrationStore.passPhrase, registrationStore.pubKey).split(':')[1]
-      })
-    ))  
-  }
+        value: item.value,
+      }))
+  }));
+  };
 }
 
 export const sharedDataStore = new SharedDataStore();
-console.log(sharedDataStore.sharedData);

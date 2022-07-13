@@ -19,12 +19,12 @@ class Store {
 
     this.fetchNodeInfo()
 
-    reaction(() => this.tokenKey, () => this.fetchData())
+    reaction(() => this.tokenKey, () => this.getData())
   };
 
-  fetchData() {
+  getData() {
     this.fetchNewAccountData();
-    this.fetchLinksArray();
+    this.fetchKeysArray();
   }
 
   fetchNewAccountData() {
@@ -42,7 +42,7 @@ class Store {
         .then(()=>this.fetchNewAccountData())
   }
 
-  fetchLinksArray() {
+  fetchKeysArray() {
     fetchWrapper.getAuth('https://ccab53ea-d042-47b3-b9b4-79b913f47b3d.mock.pstmn.io/data/shared', {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
