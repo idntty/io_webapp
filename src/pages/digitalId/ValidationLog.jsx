@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 
 import ValidateRoadMap from "../../partials/validationlog/ValidateRoadMap";
-import {validationLogStore} from "../../store/validationLogStore";
+import {transactionsStore} from "../../store/transactionsStore";
 import {observer} from "mobx-react-lite";
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
@@ -28,7 +28,7 @@ const ValidationLog = observer(()=>{
               <div className="max-w-3xl m-auto mt-6">
                 <div className="xl:-translate-x-16 max-w-fit">
                   {/* PostsID */}
-                  {validationLogStore.transactionData.map(item=>{
+                  {transactionsStore.transactionsData.map(item=>{
                     return <ValidateRoadMap season={item} key={item.id}/>
                   })}
                 </div>

@@ -12,7 +12,7 @@ class Store {
 
   _userData = {}
 
-  _transactionInfo = {}
+  _transactionsInfo = {}
 
   constructor() {
     makeAutoObservable(this);
@@ -20,7 +20,7 @@ class Store {
     this.fetchNodeInfo()
 
     reaction(() => this.tokenKey, () => this.fetchNewAccountData())
-    reaction(() => this.tokenKey, () => this.fetchTransactionInfo())
+    reaction(() => this.tokenKey, () => this.fetchTransactionsInfo())
   };
 
   fetchNewAccountData() {
@@ -38,12 +38,12 @@ class Store {
         .then(()=>this.fetchNewAccountData())
   }
 
-  fetchTransactionInfo() {
+  fetchTransactionsInfo() {
     fetchWrapper.getAuth(`http://3.125.47.101/api/account/transactions/b444b7ff3118cf2a30cbd54cfcdb8fd5d805017a?moduleID=1001&assetID=11`, {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
     })
-        .then((res)=>this.saveInfoTransaction(res))
+        .then((res)=>this.saveInfoTransactions(res))
   }
 
   userDataFetchChange(res) {
@@ -54,8 +54,8 @@ class Store {
     return this._userData
   }
 
-  get transactionInfo() {
-    return this._transactionInfo
+  get transactionsInfo() {
+    return this._transactionsInfo
   }
 
   savePassPhrase(phrase) {
@@ -66,8 +66,8 @@ class Store {
     this._accountData = data;
   };
 
-  saveInfoTransaction(transaction) {
-    this._transactionInfo = transaction
+  saveInfoTransactions(transaction) {
+    this._transactionsInfo = transaction
   }
 
   fetchNodeInfo() {

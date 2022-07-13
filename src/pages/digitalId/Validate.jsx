@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {observer} from "mobx-react-lite";
 
-import {validationLogStore} from "../../store/validationLogStore";
+import {transactionsStore} from "../../store/transactionsStore";
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
 import ValidateTable from "../../partials/validate/ValidateTable";
@@ -58,7 +58,7 @@ const Validate = observer(()=>{
               <div className="pb-8 border-b border-zinc-200 mt-[50px]">
                 <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">Digital ID validation log ✨</h1>
               </div>
-              {validationLogStore.transactionData.map(item => {
+              {transactionsStore.transactionsData.map(item => {
                 return <ValidateRoadMap season={item} key={item.id}/>
               })}
             </div>

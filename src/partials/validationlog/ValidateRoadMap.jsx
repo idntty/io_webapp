@@ -1,6 +1,7 @@
 import React from "react";
 
 import ValidationSeasonItem from "./ValidationSeasonItem";
+import ValidationUsersImg from "./ValidationUsersImg";
 
 function ValidateRoadMap({ season }) {
 
@@ -14,13 +15,19 @@ function ValidateRoadMap({ season }) {
             <header>
               <div className="flex flex-nowrap items-center space-x-2 mb-6">
                 {/* Avatars */}
+                <div className="flex shrink-0 -space-x-3 -ml-px">
+                  {season.users_images.map(pic => {
+                    return <ValidationUsersImg image={pic} key={pic.image}/>
+                  })}
+                </div>
+                <div className="text-slate-400">·</div>
               </div>
             </header>
             {/* List */}
             <ul className="-my-2">
               {/* List item(s) */}
-              {season.assets.map((item, index) => {
-                return <ValidationSeasonItem key={item.label} length={season.assets.length} item={item} index={index}/>
+              {season.transaction.map((item, index) => {
+                return <ValidationSeasonItem key={item.label} length={season.transaction.length} item={item} index={index}/>
               })}
             </ul>
           </div>
