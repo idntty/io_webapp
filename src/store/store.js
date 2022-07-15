@@ -22,7 +22,6 @@ class Store {
     this.fetchNodeInfo()
 
     reaction(() => this.tokenKey, () => this.getData())
-    reaction(() => this.tokenKey, () => this.fetchNewAccountData())
     reaction(() => this.tokenKey, () => this.fetchTransactionsInfo())
   };
 
@@ -32,14 +31,14 @@ class Store {
   }
 
   fetchNewAccountData() {
-    fetchWrapper.getAuth('http://3.125.47.101/api/data/private', {
+    fetchWrapper.getAuth('data/private', {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
     }).then((res) => this.userDataFetchChange(res))
   }
 
   pushAccountData(data=this.accountData) {
-    fetchWrapper.postAuth('http://3.125.47.101/api/data/private', {
+    fetchWrapper.postAuth('data/private', {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
     }, [...this.encryptAccountData(data)])
@@ -47,20 +46,17 @@ class Store {
   }
 
   fetchKeysArray() {
-    fetchWrapper.getAuth(
-      'https://ccab53ea-d042-47b3-b9b4-79b913f47b3d.mock.pstmn.io/data/shared',
-      {
-        networkIdentifier: this.nodeInfo.networkIdentifier,
-        lastBlockID: this.nodeInfo.lastBlockID
-      }).then((res) => this.keysArrayFetchChange(res))
+    fetchWrapper.getAuth('data/shared/', {
+      networkIdentifier: this.nodeInfo.networkIdentifier,
+      lastBlockID: this.nodeInfo.lastBlockID
+    }).then((res) => this.keysArrayFetchChange(res))
   }
 
   fetchTransactionsInfo() {
     fetchWrapper.getAuth(`http://3.125.47.101/api/account/transactions/${this.accountMadeTransaction}?moduleID=1001&assetID=11`, {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
-    })
-        .then((res)=>this.saveInfoTransactions(res))
+    }).then((res)=>this.saveInfoTransactions(res))
   }
 
   get accountMadeTransaction() {
@@ -119,7 +115,7 @@ class Store {
 
   get accountData() {
     return this._accountData
-  }
+  };
 
   encryptAccountData(data) {
     return data.map((item) => {
@@ -155,7 +151,6 @@ class Store {
     const sign = cryptography.signDataWithPassphrase(Buffer.from(stringToSign, 'hex'), this.passPhrase).toString('hex')
     return this.pubKey + ':' +sign
   }
-
 };
 
 export const registrationStore = new Store();
