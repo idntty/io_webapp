@@ -1,69 +1,17 @@
 import React, { useState } from 'react';
+import {observer} from "mobx-react-lite";
 
+import {transactionsStore} from "../../store/transactionsStore";
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
 import ValidateTable from "../../partials/validate/ValidateTable";
 import ValidatePanel from "../../partials/validate/ValidatePanel";
 import ValidateRoadMap from "../../partials/validationlog/ValidateRoadMap";
 import {Link} from "react-router-dom";
-import User06 from "../../images/user-28-06.jpg";
-import User08 from "../../images/user-28-08.jpg";
-import User09 from "../../images/user-28-09.jpg";
-import User05 from "../../images/user-28-05.jpg";
 
-function Validate () {
+const Validate = observer(()=>{
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [validatePanelOpen, setValidatePanelOpen] = useState(true);
-
-  const validateItems = [
-    {
-      id: '40',
-      name: 'Today',
-      data: '7234ABC342342352345',
-      usersImges: [
-        {
-          size: 24,
-          img: User06,
-          imgId: "343"
-        },
-        {
-          size: 24,
-          img: User08,
-          imgId: "345"
-        },
-        {
-          size: 24,
-          img: User09,
-          imgId: "321"
-        },
-        {
-          size: 24,
-          img: User05,
-          imgId: "387"
-        },
-      ],
-      items: [
-        {
-          dataSeason: '7234ABC342342352345',
-          id: '555',
-          text: 'Second name for',
-          checked: true
-        },
-        {
-          dataSeason: '7234ABC342342352345',
-          id: '534',
-          text: 'Gender name for',
-          checked: true
-        },
-        {
-          dataSeason: '7234ABC342342352345',
-          id: '567',
-          text: 'Document ID name for',
-          checked: true
-        },
-      ]
-    },
-  ];
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -110,7 +58,7 @@ function Validate () {
               <div className="pb-8 border-b border-zinc-200 mt-[50px]">
                 <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">Digital ID validation log ✨</h1>
               </div>
-              {validateItems.map(item => {
+              {transactionsStore.transactionsData.map(item => {
                 return <ValidateRoadMap season={item} key={item.id}/>
               })}
             </div>
@@ -120,6 +68,6 @@ function Validate () {
       </div>
     </div>
   )
-}
+})
 
 export default Validate;
