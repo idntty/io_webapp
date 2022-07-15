@@ -47,10 +47,13 @@ class Store {
   }
 
   fetchKeysArray() {
-    fetchWrapper.getAuth('https://ccab53ea-d042-47b3-b9b4-79b913f47b3d.mock.pstmn.io/data/shared', {
-      networkIdentifier: this.nodeInfo.networkIdentifier,
-      lastBlockID: this.nodeInfo.lastBlockID
-    }).then((res) => this.keysArrayFetchChange(res))
+    fetchWrapper.getAuth(
+      'https://ccab53ea-d042-47b3-b9b4-79b913f47b3d.mock.pstmn.io/data/shared',
+      {
+        networkIdentifier: this.nodeInfo.networkIdentifier,
+        lastBlockID: this.nodeInfo.lastBlockID
+      }).then((res) => this.keysArrayFetchChange(res))
+  }
 
   fetchTransactionsInfo() {
     fetchWrapper.getAuth(`http://3.125.47.101/api/account/transactions/${this.accountMadeTransaction}?moduleID=1001&assetID=11`, {
@@ -116,7 +119,7 @@ class Store {
 
   get accountData() {
     return this._accountData
-  };
+  }
 
   encryptAccountData(data) {
     return data.map((item) => {
