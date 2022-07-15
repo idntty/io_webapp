@@ -1,82 +1,12 @@
 import React, { useState } from 'react';
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
+import { sharedDataStore } from '../../store/sharedDataStore';
+import { observer } from 'mobx-react-lite';
 
-const Verify = (() => {
+const Verify = observer(() => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [descriptionOpen, setDescriptionOpen] = useState(false);
-
-  const verifiedData = [
-    {
-      "date": "31.05.2022 10:48",
-      "fields": [
-        {
-          "name": "Residence",
-          "value": "United Kindom",
-          "hash1": "7234ABC3423423523457234ABC34234",
-          "hash2": "7234ABC3423423523457234ABC34234"
-        },
-        {
-          "name": "Document ID",
-          "value": "A1321313",
-          "hash1": "7234ABC3423423523457234ABC34234",
-          "hash2": "7234ABC3423423523457234ABC34234"
-        },
-        {
-          "name": 'Document ID',
-          "value": 'A3451313',
-          "hash1": '9584ABC3423423523457234ABC34234',
-          "hash2": '9584ABC3423423523457234ABC34234'
-        }
-      ]
-    },
-    {
-      "date": "31.05.2022 10:48",
-      "fields": [
-        {
-          "name": 'Residence',
-          "value": 'Holland',
-          "hash1": '1024ABC3423423523457234ABC34234',
-          "hash2": '1024ABC3423423523457234ABC34234'
-        },
-        {
-          "name": 'Document ID',
-          "value": 'B3451313',
-          "hash1": '7893ABC3423423523457234ABC34234',
-          "hash2": '7893ABC3423423523457234ABC34234'
-        },
-        {
-          "name": 'Document ID',
-          "value": 'A3451313',
-          "hash1": '7286ABC3423423523457234ABC34234',
-          "hash2": '7286ABC3423423523457234ABC34234'
-        },
-      ]
-    },
-    {
-      "date": "31.05.2022 10:48",
-      "fields": [
-        {
-          "name": 'Residence',
-          "value": 'China',
-          "hash1": '0000ABC3423423523457234ABC34234',
-          "hash2": '0000ABC3423423523457234ABC34234'
-        },
-        {
-          "name": 'Document ID',
-          "value": 'C3451313',
-          "hash1": '1230ABC3423423523457234ABC34234',
-          "hash2": '1230ABC3423423523457234ABC34234'
-        },
-        {
-          "name": 'Document ID',
-          "value": 'D3451313',
-          "hash1": '4483ABC3423423523457234ABC34234',
-          "hash2": '4483ABC3423423523457234ABC34234'
-        },
-      ]
-    }
-  ];
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -112,13 +42,10 @@ const Verify = (() => {
             </div>
             {/* Block */}
             <div className="flex flex-col gap-y-4">
-              {verifiedData.map((item, index) => (
+              {sharedDataStore.sharedData.map((item, index) => (
                 <div key={index} className="w-[1095px] pl-5 pr-[13px] pb-8 bg-white border border-slate-200 rounded shadow-[0_4px_6px_-1px_rgba(5,23,42,0.08)]">
                   {/* Header */}
-                  <div className="flex justify-between items-center h-[42px]">
-                    <span className="font-normal text-descriptionSize text-slate-500" >
-                      Yesterday at {item.date.slice(-5)} AM
-                    </span>
+                  <div className="flex justify-end items-center h-[42px]">
                     {/* Buttons */}
                     <div className="flex gap-x-[6px]">
                       <div className="flex items-center">
@@ -131,9 +58,8 @@ const Verify = (() => {
                       </div>
                       <div className="flex items-center">
                         <button
-                            className={`text-slate-400 hover:text-slate-500 transform ${descriptionOpen && 'rotate-180'}`}
-                            aria-expanded={descriptionOpen}
-                            onClick={() => setDescriptionOpen(!descriptionOpen)}
+                          className={`text-slate-400 hover:text-slate-500 transform ${descriptionOpen && 'rotate-180'}`}
+                          aria-expanded={descriptionOpen}
                         >
                           <svg className="w-8 h-8 fill-current" viewBox="0 0 32 32">
                             <path d="M16 20l-5.4-5.4 1.4-1.4 4 4 4-4 1.4 1.4z" />
@@ -144,15 +70,13 @@ const Verify = (() => {
                   </div>
                   {/* Content */}
                   <div className='flex flex-col gap-y-[9px]'>
-                    {item.fields.map((elem, index) => (
+                    {item.data.map((elem, index) => (
                       <div key={index} className='flex gap-y-2'>
                         <div className='flex flex-col'>
                           <div className='flex flex-row items-center'>
-                            <span className='font-semibold text-slate-800 text-base w-[204px]'>{elem.value}</span>
-                            <span className='font-semibold text-descriptionSize text-slate-600 underline w-80'>{elem.hash1}</span>
-                            <span className='font-semibold text-descriptionSize text-slate-600 underline w-80'>{elem.hash2}</span>
+                            <span className='font-inter font-semibold text-slate-800 text-base w-[204px]'>{elem.label}</span>
+                            <span className='font-inter truncate font-semibold text-descriptionSize text-slate-600 underline w-[770px]'>{elem.value}</span>
                           </div>
-                          <span className='font-normal text-xxs'>{elem.name}</span>
                         </div>
                       </div>
                     ))}

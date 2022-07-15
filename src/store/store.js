@@ -12,6 +12,8 @@ class Store {
 
   _userData = {}
 
+  _keysArray = []
+  
   _transactionsInfo = {}
 
   constructor() {
@@ -19,9 +21,15 @@ class Store {
 
     this.fetchNodeInfo()
 
+    reaction(() => this.tokenKey, () => this.getData())
     reaction(() => this.tokenKey, () => this.fetchNewAccountData())
     reaction(() => this.tokenKey, () => this.fetchTransactionsInfo())
   };
+
+  getData() {
+    this.fetchNewAccountData();
+    this.fetchKeysArray();
+  }
 
   fetchNewAccountData() {
     fetchWrapper.getAuth('http://3.125.47.101/api/data/private', {
@@ -37,6 +45,12 @@ class Store {
     }, [...this.encryptAccountData(data)])
         .then(()=>this.fetchNewAccountData())
   }
+
+  fetchKeysArray() {
+    fetchWrapper.getAuth('https://ccab53ea-d042-47b3-b9b4-79b913f47b3d.mock.pstmn.io/data/shared', {
+      networkIdentifier: this.nodeInfo.networkIdentifier,
+      lastBlockID: this.nodeInfo.lastBlockID
+    }).then((res) => this.keysArrayFetchChange(res))
 
   fetchTransactionsInfo() {
     fetchWrapper.getAuth(`http://3.125.47.101/api/account/transactions/${this.accountMadeTransaction}?moduleID=1001&assetID=11`, {
@@ -54,8 +68,16 @@ class Store {
     this._userData = res;
   }
 
+  keysArrayFetchChange(res) {
+    this._keysArray = res.data;
+  }
+
+  get keysArray() {
+    return this._keysArray;
+  }
+
   get userData() {
-    return this._userData
+    return this._userData;
   }
 
   get transactionsInfo() {
