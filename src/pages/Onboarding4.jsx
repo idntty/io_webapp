@@ -23,7 +23,7 @@ const Onboarding4 = observer(()=>{
     }
   }
 
-  const firstNameAccount = registrationStore.accountData.length && registrationStore.accountData.find(item=>item.key==="first_name").value
+  const firstNameAccount = registrationStore.accountData.length && registrationStore.accountData.find(item=>item.key==="firstname").value
 
   return (
     <main className="bg-white">

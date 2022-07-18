@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { userDataStore } from '../../store/userDataStore';
 import { registrationStore } from "../../store/store";
 import Sidebar from '../../partials/Sidebar';
 import { observer } from 'mobx-react-lite';
@@ -10,7 +9,7 @@ import Image from '../../images/transactions-image-04.svg';
 const defaultValues = {
   label: '',
   value: '',
-  seed: String(Math.floor(Math.random() * 90000000000000000000), 10) 
+  seed: String(Math.floor(Math.random() * 90000000000000000000), 10)
 };
 
 const initialPropertyValues = ['First name', 'Second name', 'Birthdate', 'Gender', 'National doctype', 'National doc ID', 'National doc issue date', 'National doc expiry date'];
@@ -42,7 +41,7 @@ const Profile = observer (() => {
   };
 
   const changeUpdatedValues = (value, field, key) => {
-    setUpdatedValues((prevState) => 
+    setUpdatedValues((prevState) =>
       prevState.map((elem) => (
         (elem.key === key) ? {
           ...elem,
@@ -65,11 +64,11 @@ const Profile = observer (() => {
 
   const handleSelectedItems = (selectedItems) => {
     setSelectedItems([...selectedItems]);
-    setUpdatedValues(userDataStore.decryptedData.filter(({ key }) => selectedItems.includes(key))
+    setUpdatedValues(registrationStore.decryptedUserData.filter(({ key }) => selectedItems.includes(key))
       .map(elem => (
         (!elem.seed) ? {
         ...elem,
-        seed: String(Math.floor(Math.random() * 90000000000000000000), 10) 
+        seed: String(Math.floor(Math.random() * 90000000000000000000), 10)
       }: elem)));
     if (selectedItems.length > 0) {
       setButtonPanelOpen(false);
@@ -93,7 +92,7 @@ const Profile = observer (() => {
   }
 
   const sendAddedData = () => {
-    const checkingAddedData = !userDataStore.decryptedData
+    const checkingAddedData = !registrationStore.decryptedUserData
       .some((element) => element.label === addedValues.label) && (addedValues.seed.length === 20);
     if (checkingAddedData) {
       setAddPanelOpen(false);
@@ -110,18 +109,18 @@ const Profile = observer (() => {
   }
 
   const deleteDataParameters = () => {
-    const changeData = userDataStore.decryptedData.filter(item=>!selectedItems.includes(item.key))
+    const changeData = registrationStore.decryptedUserData.filter(item=>!selectedItems.includes(item.key))
     registrationStore.pushAccountData(changeData);
   }
 
   const changeInitialArray = () => {
     let newArr = [];
-    userDataStore.decryptedData.map(elem => {
+    registrationStore.decryptedUserData.map(elem => {
       updatedValues.forEach(item => {
         if (elem.label === item.label) {
           newArr.push({
             ...elem,
-            'value': item.value, 
+            'value': item.value,
             'seed': item.seed,
           })
         }
@@ -140,7 +139,7 @@ const Profile = observer (() => {
 
   const addDataParameters = () => {
     addedValues.key = addedValues.label.toLowerCase().split(' ').join('_');
-    registrationStore.pushAccountData(userDataStore.decryptedData.concat(addedValues));
+    registrationStore.pushAccountData(registrationStore.decryptedUserData.concat(addedValues));
   }
 
   const cancelAddPanel = () => {
@@ -212,7 +211,7 @@ const Profile = observer (() => {
                   </ul>
                 </div>
                 {/* Table */}
-                <ProfileTable selectedItems={handleSelectedItems} userData={userDataStore.decryptedData}/>
+                <ProfileTable selectedItems={handleSelectedItems} userData={registrationStore.decryptedUserData}/>
               </div>
               {/* Left sidebar */}
               <div>
@@ -309,7 +308,7 @@ const Profile = observer (() => {
                   </div>
                   {/* Update panel */}
                   <div className={`${!updatePanelOpen && 'hidden'} bg-white p-5 shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-11`}>
-                    {updatedValues.map((item, index) => ( 
+                    {updatedValues.map((item, index) => (
                       <div key={index} className="flex flex-col gap-y-3">
                         <div>
                           <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Property <span className="text-rose-500">*</span></label>
@@ -383,7 +382,7 @@ const Profile = observer (() => {
                   <div className={`${!removePanelOpen && 'hidden'} bg-white px-5 pt-4 pb-[190px] shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-12`}>
                     <h2 className="grow text-base font-semibold text-slate-800 truncate mb-2">Summary</h2>
                     <div className="flex flex-col">
-                      {userDataStore.decryptedData.filter(({ key }) => selectedItems.includes(key)).map(item => (
+                      {registrationStore.decryptedUserData.filter(({ key }) => selectedItems.includes(key)).map(item => (
                         <span key={item.label} className="text-sm font-normal text-slate-600 py-3 border-b border-slate-200">{item.label}</span>
                       ))}
                     </div>

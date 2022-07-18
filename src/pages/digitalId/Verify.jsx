@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
-import { sharedDataStore } from '../../store/sharedDataStore';
+import {registrationStore} from "../../store/store";
 import { observer } from 'mobx-react-lite';
 
 const Verify = observer(() => {
@@ -42,7 +42,7 @@ const Verify = observer(() => {
             </div>
             {/* Block */}
             <div className="flex flex-col gap-y-4">
-              {sharedDataStore.sharedData.map((item, index) => (
+              {registrationStore.sharedData.map((item, index) => (
                 <div key={index} className="w-[1095px] pl-5 pr-[13px] pb-8 bg-white border border-slate-200 rounded shadow-[0_4px_6px_-1px_rgba(5,23,42,0.08)]">
                   {/* Header */}
                   <div className="flex justify-end items-center h-[42px]">
@@ -81,7 +81,7 @@ const Verify = observer(() => {
                       </div>
                     ))}
                   </div>
-                </div> 
+                </div>
               ))}
             </div>
           </div>

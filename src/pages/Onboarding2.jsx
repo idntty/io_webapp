@@ -10,8 +10,8 @@ import Logo from "../images/logo.png";
 const Onboarding2 = observer(()=>{
   const [dataRegistration, setDataRegistration] = useState(
       {
-        first_name: '',
-        second_name: '',
+        firstname: '',
+        secondname: '',
         gender: '',
         birthdate: '',
       }
@@ -95,11 +95,11 @@ const Onboarding2 = observer(()=>{
                   <div className="space-y-4 mb-8">
                     <div>
                       <label className="block text-sm font-medium mb-1" htmlFor="first_name">First name <span className="text-rose-500">*</span></label>
-                      <input id="first_name" onChange={(event)=>saveValueChange(event)} className="form-input w-full" type="text" />
+                      <input id="firstname" onChange={(event)=>saveValueChange(event)} className="form-input w-full" type="text" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1" htmlFor="second_name">Last name <span className="text-rose-500">*</span></label>
-                      <input id="second_name" onChange={(event)=>saveValueChange(event)} className="form-input w-full" type="text" />
+                      <input id="secondname" onChange={(event)=>saveValueChange(event)} className="form-input w-full" type="text" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1" htmlFor="gender">Gender <span className="text-rose-500">*</span></label>
