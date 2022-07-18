@@ -30,11 +30,11 @@ class Store {
 
     this.fetchNodeInfo()
 
-    reaction(()=>this.keysArray, ()=>this.fetchSharedData())
+    reaction(() => this.keysArray, () => this.fetchSharedData())
     onBecomeObserved(this, "decryptedUserData", () => this.fetchNewAccountData())
-    onBecomeObserved(this, "transactionsInfo", ()=>this.fetchTransactionsInfo())
-    onBecomeUnobserved(this, "transactionsInfo", ()=>this.unobservedTransactionsInfo())
-    onBecomeObserved(this, "sharedData", ()=>this.fetchKeysArray())
+    onBecomeObserved(this, "transactionsInfo", () => this.fetchTransactionsInfo())
+    onBecomeUnobserved(this, "transactionsInfo", () => this.unobservedTransactionsInfo())
+    onBecomeObserved(this, "sharedData", () => this.fetchKeysArray())
   };
 
   fetchNewAccountData() {

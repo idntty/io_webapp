@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
 import OnboardingImage from '../images/onboarding-image.jpg';
 import OnboardingDecoration from '../images/auth-decoration.png';
 import Logo from "../images/logo.png";
@@ -8,9 +7,9 @@ import {observer} from "mobx-react-lite";
 import {passphrase} from "@liskhq/lisk-client";
 import {registrationStore} from "../store/store";
 
-const Onboarding1 = observer(()=>{
-  let phrase = passphrase.Mnemonic.generateMnemonic()
-  registrationStore.savePassPhrase(phrase)
+const Onboarding1 = observer(() => {
+  let phrase = passphrase.Mnemonic.generateMnemonic();
+  registrationStore.savePassPhrase(phrase);
 
   return (
     <main className="bg-white">
@@ -31,7 +30,7 @@ const Onboarding1 = observer(()=>{
                   <img alt='logo' src={Logo} width="89" height="32"/>
                 </Link>
                 <div className="text-sm">
-                  Have an account? <Link className="font-medium text-indigo-500 hover:text-indigo-600" to="/signin">Sign In</Link>
+                  Have an account? <Link className="font-medium text-indigo-500 hover:text-indigo-600" to="/signIn">Sign In</Link>
                 </div>
               </div>
 

@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import {observer} from "mobx-react-lite";
-
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
 import ValidateTable from "../../partials/validate/ValidateTable";
 import ValidatePanel from "../../partials/validate/ValidatePanel";
-import ValidateRoadMap from "../../partials/validationlog/ValidateRoadMap";
+import ValidateRoadMap from "../../partials/validationLog/ValidateRoadMap";
 import {Link} from "react-router-dom";
 import {registrationStore} from "../../store/store";
 
-const Validate = observer(()=>{
+const Validate = observer(() => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [validatePanelOpen, setValidatePanelOpen] = useState(true);
 
