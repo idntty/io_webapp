@@ -4,7 +4,7 @@ import {generateSvgAvatar} from "../images/GenerateOnboardingSvg/GenerateSvg";
 import User06 from "../images/user-28-06.jpg";
 import User08 from "../images/user-28-08.jpg";
 import User09 from "../images/user-28-09.jpg";
-import SharedDataRoadMap from "../partials/shareddata/SharedDataRoadmap";
+import SharedDataRoadMap from "../partials/sharedData/SharedDataRoadmap";
 
 function SharedData() {
 

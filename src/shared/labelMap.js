@@ -23,5 +23,5 @@ export const labelMap = {
   telegram: "Telegram",
   qq: "Qq",
   snapchat: "Snapchat",
-  reddit: "Reddit"
+  reddit: "Reddit",
 };

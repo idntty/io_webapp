@@ -14,7 +14,7 @@ function ProfileTable({
     status: 'Stored',
     transactions: ['0x7234ABC342342352345', '0x5745DEF342342352345'],
     avatars: null
-  }
+  };
 
   useEffect(() => {
     selectedItems(isCheck);
@@ -35,10 +35,10 @@ function ProfileTable({
     social:["Telephone", "Twitter", "Facebook", "Instagram", "Youtube", "Wechat", "Tiktok", "Linkedin", "Vk", "Github", "Telegram", "Qq", "Snapchat", "Reddit"]
   }
 
-  const generalData = userData.filter(elem => data.general.includes(elem.label)),
-        nationalityData = userData.filter(elem => data.nationality.includes(elem.label)),
-        sosialData = userData.filter(elem => data.social.includes(elem.label)),
-        otherData = userData.filter((elem) =>
+  const generalData = userData.filter(elem => data.general.includes(elem.label));
+  const nationalityData = userData.filter(elem => data.nationality.includes(elem.label));
+  const sosialData = userData.filter(elem => data.social.includes(elem.label));
+  const otherData = userData.filter((elem) =>
           !data.general.includes(elem.label) && !data.nationality.includes(elem.label) && !data.social.includes(elem.label));
 
   return (
