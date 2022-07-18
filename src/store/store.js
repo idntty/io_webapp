@@ -38,14 +38,14 @@ class Store {
   };
 
   fetchNewAccountData() {
-    fetchWrapper.getAuth('http://3.125.47.101/api/data/private', {
+    fetchWrapper.getAuth('data/private', {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
     }).then((res) => this.userDataFetchChange(res))
   }
 
   pushAccountData(data=this.accountData) {
-    fetchWrapper.postAuth('http://3.125.47.101/api/data/private', {
+    fetchWrapper.postAuth('data/private', {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
     }, [...this.encryptAccountData(data)])
@@ -54,7 +54,7 @@ class Store {
 
   fetchKeysArray() {
     fetchWrapper.getAuth(
-      'https://ccab53ea-d042-47b3-b9b4-79b913f47b3d.mock.pstmn.io/data/shared',
+      'data/shared',
       {
         networkIdentifier: this.nodeInfo.networkIdentifier,
         lastBlockID: this.nodeInfo.lastBlockID
@@ -62,7 +62,7 @@ class Store {
   }
 
   fetchTransactionsInfo() {
-    fetchWrapper.getAuth(`http://3.125.47.101/api/account/transactions/${this.accountMadeTransaction}?moduleID=1001&assetID=11`, {
+    fetchWrapper.getAuth(`account/transactions/${this.accountMadeTransaction}?moduleID=1001&assetID=11`, {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
     })
@@ -70,7 +70,7 @@ class Store {
   }
 
   fetchSharedData() {
-    this._keysArray.forEach((elem) => fetchWrapper.get(`http://3.125.47.101/api/data/shared/${elem}`).then((res) => this.changeSharedData(res)))
+    this._keysArray.forEach((elem) => fetchWrapper.get(`data/shared/${elem}`).then((res) => this.changeSharedData(res)))
   };
 
   unobservedTransactionsInfo() {
