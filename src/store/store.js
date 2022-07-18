@@ -53,20 +53,17 @@ class Store {
   }
 
   fetchKeysArray() {
-    fetchWrapper.getAuth(
-      'data/shared',
-      {
-        networkIdentifier: this.nodeInfo.networkIdentifier,
-        lastBlockID: this.nodeInfo.lastBlockID
-      }).then((res) => this.keysArrayFetchChange(res))
+    fetchWrapper.getAuth('data/shared/', {
+      networkIdentifier: this.nodeInfo.networkIdentifier,
+      lastBlockID: this.nodeInfo.lastBlockID
+    }).then((res) => this.keysArrayFetchChange(res))
   }
 
   fetchTransactionsInfo() {
     fetchWrapper.getAuth(`account/transactions/${this.accountMadeTransaction}?moduleID=1001&assetID=11`, {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
-    })
-        .then((res)=>this.saveInfoTransactions(res))
+    }).then((res)=>this.saveInfoTransactions(res))
   }
 
   fetchSharedData() {
@@ -131,7 +128,7 @@ class Store {
 
   get accountData() {
     return this._accountData
-  }
+  };
 
   get sharedData() {
     return this._sharedData.map(elem => ({
@@ -207,7 +204,6 @@ class Store {
     const sign = cryptography.signDataWithPassphrase(Buffer.from(stringToSign, 'hex'), this.passPhrase).toString('hex')
     return this.pubKey + ':' +sign
   }
-
 };
 
 export const registrationStore = new Store();
