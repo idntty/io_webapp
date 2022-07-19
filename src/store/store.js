@@ -26,22 +26,26 @@ class Store {
   _transactionsInfo = []
 
   constructor() {
-    makeAutoObservable(this);
-
-    this.fetchNodeInfo()
+    makeAutoObservable(this,{});
 
     reaction(() => this.keysArray, () => this.fetchSharedData())
     onBecomeObserved(this, "decryptedUserData", () => this.fetchNewAccountData())
-    onBecomeObserved(this, "transactionsInfo", () => this.fetchTransactionsInfo())
-    onBecomeUnobserved(this, "transactionsInfo", () => this.unobservedTransactionsInfo())
-    onBecomeObserved(this, "sharedData", () => this.fetchKeysArray())
+    onBecomeObserved(this, "sharedData", ()=>this.fetchKeysArray())
+    onBecomeUnobserved(this, "sharedData", ()=>this.unobservedSharedData())
+    onBecomeObserved(this, "transactionsInfo", ()=>this.fetchTransactionsInfo())
+    onBecomeUnobserved(this, "transactionsInfo", ()=>this.unobservedTransactionsInfo())
   };
 
   fetchNewAccountData() {
-    fetchWrapper.getAuth('data/private', {
-      networkIdentifier: this.nodeInfo.networkIdentifier,
-      lastBlockID: this.nodeInfo.lastBlockID
-    }).then((res) => this.userDataFetchChange(res))
+    getNodeInfo()
+        .then((info)=>{
+          this.fetchNodeInfoSuccess(info)
+          fetchWrapper.getAuth('data/private', {
+            networkIdentifier: this.nodeInfo.networkIdentifier,
+            lastBlockID: this.nodeInfo.lastBlockID
+          }).then((res) => this.userDataFetchChange(res))
+        })
+        .catch((err) => this.fetchNodeInfoFailed(err))
   }
 
   pushAccountData(data=this.accountData) {
@@ -53,14 +57,19 @@ class Store {
   }
 
   fetchKeysArray() {
-    fetchWrapper.getAuth('data/shared/', {
-      networkIdentifier: this.nodeInfo.networkIdentifier,
-      lastBlockID: this.nodeInfo.lastBlockID
-    }).then((res) => this.keysArrayFetchChange(res))
+    getNodeInfo()
+        .then((info)=>{
+          this.fetchNodeInfoSuccess(info)
+          fetchWrapper.getAuth('data/shared/', {
+            networkIdentifier: this.nodeInfo.networkIdentifier,
+            lastBlockID: this.nodeInfo.lastBlockID
+          }).then((res) => this.keysArrayFetchChange(res))
+        })
+        .catch((err) => this.fetchNodeInfoFailed(err))
   }
 
   fetchTransactionsInfo() {
-    fetchWrapper.getAuth(`account/transactions/${this.accountMadeTransaction}?moduleID=1001&assetID=11`, {
+    fetchWrapper.get(`account/transactions/${this.accountMadeTransaction}?moduleID=1001&assetID=11`, {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
     }).then((res)=>this.saveInfoTransactions(res))
@@ -74,18 +83,14 @@ class Store {
     this._transactionsInfo=[]
   }
 
+  unobservedSharedData() {
+    this._sharedData=[]
+  }
+
   changeSharedData(incomingData) {
     this._sharedData.push({
       data: incomingData.data,
     })
-  }
-
-  get accountMadeTransaction() {
-    return "b444b7ff3118cf2a30cbd54cfcdb8fd5d805017a"
-  }
-
-  get keysArray() {
-    return this._keysArray;
   }
 
   savePassPhrase(phrase) {
@@ -108,12 +113,6 @@ class Store {
     this._keysArray = res.data;
   }
 
-  fetchNodeInfo() {
-    getNodeInfo()
-      .then((info) => this.fetchNodeInfoSuccess(info))
-      .catch((err) => this.fetchNodeInfoFailed(err))
-  }
-
   fetchNodeInfoSuccess(info) {
     this._nodeInfo = info.data;
   }
@@ -121,14 +120,6 @@ class Store {
   fetchNodeInfoFailed(err) {
     console.log(err)
   }
-
-  get passPhrase() {
-    return 'rocket north inform swift improve fringe sweet crew client canyon bean autumn'
-  }
-
-  get accountData() {
-    return this._accountData
-  };
 
   get sharedData() {
     return this._sharedData.map(elem => ({
@@ -180,6 +171,22 @@ class Store {
       }
     })
   }
+
+  get accountMadeTransaction() {
+    return "b444b7ff3118cf2a30cbd54cfcdb8fd5d805017a"
+  }
+
+  get keysArray() {
+    return this._keysArray;
+  }
+
+  get passPhrase() {
+    return 'rocket north inform swift improve fringe sweet crew client canyon bean autumn'
+  }
+
+  get accountData() {
+    return this._accountData
+  };
 
   get nodeInfo() {
     return this._nodeInfo;
