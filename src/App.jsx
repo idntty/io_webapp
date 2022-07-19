@@ -27,7 +27,7 @@ import Onboarding3 from "./pages/Onboarding3";
 import Onboarding4 from "./pages/Onboarding4";
 import SharedData from "./pages/SharedData";
 import ResetPassword from "./pages/ResetPassword";
-import Signin from "./pages/Signin";
+import SignIn from "./pages/SignIn";
 
 function App() {
 
@@ -62,7 +62,7 @@ function App() {
         <Route path="/component/badge" element={<BadgePage />} />
         <Route path="/component/accordion" element={<AccordionPage />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/signin" element={<Signin />} />
+        <Route path="/signIn" element={<SignIn />} />
       </Routes>
     </>
   );

@@ -1,6 +1,6 @@
 import React from "react";
 
-import ValidationUsersImg from "../validationlog/ValidationUsersImg";
+import ValidationUsersImg from "../validationLog/ValidationUsersImg";
 
 function SharedDataRoadMap({ data }) {
 

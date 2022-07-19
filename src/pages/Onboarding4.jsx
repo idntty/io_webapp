@@ -5,25 +5,25 @@ import Logo from "../images/logo.png";
 import {observer} from "mobx-react-lite";
 import { registrationStore } from "../store/store";
 
-const Onboarding4 = observer(()=>{
+const Onboarding4 = observer(() => {
 
-  const [checkBoxesSelected, setCheckBoxesSelected] = useState([])
+  const [checkBoxesSelected, setCheckBoxesSelected] = useState([]);
 
-  function createAccount () {
-    if(checkBoxesSelected.length===2) {
-      registrationStore.pushAccountData()
+  function createAccount() {
+    if(checkBoxesSelected.length === 2) {
+      registrationStore.pushAccountData();
     }
-  }
+  };
 
   function saveCheckBoxesValues(e) {
-    const { id, checked } = e.target
-    setCheckBoxesSelected([...checkBoxesSelected, id])
+    const { id, checked } = e.target;
+    setCheckBoxesSelected([...checkBoxesSelected, id]);
     if (!checked) {
-      setCheckBoxesSelected(checkBoxesSelected.filter(item=>item!==id))
+      setCheckBoxesSelected(checkBoxesSelected.filter(item => item !== id));
     }
-  }
+  };
 
-  const firstNameAccount = registrationStore.accountData.length && registrationStore.accountData.find(item=>item.key==="firstname").value
+  const firstNameAccount = registrationStore.accountData.length && registrationStore.accountData.find(item => item.key === "firstname").value;
 
   return (
     <main className="bg-white">
@@ -44,7 +44,7 @@ const Onboarding4 = observer(()=>{
                   <img alt='logo' src={Logo} width="89" height="32"/>
                 </Link>
                 <div className="text-sm">
-                  Have an account? <Link className="font-medium text-indigo-500 hover:text-indigo-600" to="/signin">Sign In</Link>
+                  Have an account? <Link className="font-medium text-indigo-500 hover:text-indigo-600" to="/signIn">Sign In</Link>
                 </div>
               </div>
 
@@ -81,7 +81,7 @@ const Onboarding4 = observer(()=>{
                     <path className="text-emerald-500" d="m28.5 41-8-8 3-3 5 5 12-12 3 3z" />
                   </svg>
                   <h1 className="text-3xl text-slate-800 font-bold mb-8">{firstNameAccount ? `Nice to meet you, ${firstNameAccount} 🙌` : 'Please, go back step 2'}</h1>
-                  <button onClick={()=>createAccount()} className="btn px-6 bg-indigo-500 hover:bg-indigo-600 text-white">
+                  <button onClick={createAccount} className="btn px-6 bg-indigo-500 hover:bg-indigo-600 text-white">
                     <Link id="link-dashboard" to={checkBoxesSelected.length===2 && "/dashboard"}>Go To Profile -&gt;</Link>
                   </button>
                 </div>

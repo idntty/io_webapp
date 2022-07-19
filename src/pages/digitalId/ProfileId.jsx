@@ -3,13 +3,13 @@ import { registrationStore } from "../../store/store";
 import Sidebar from '../../partials/Sidebar';
 import { observer } from 'mobx-react-lite';
 import Header from '../../partials/Header';
-import ProfileTable from '../../partials/digitalId/ProfileTable';
+import ProfileTable from '../../partials/profile/ProfileTable';
 import Image from '../../images/transactions-image-04.svg';
 
 const defaultValues = {
   label: '',
   value: '',
-  seed: String(Math.floor(Math.random() * 90000000000000000000), 10)
+  seed: String(Math.floor(Math.random() * 90000000000000000000), 10),
 };
 
 const initialPropertyValues = ['First name', 'Second name', 'Birthdate', 'Gender', 'National doctype', 'National doc ID', 'National doc issue date', 'National doc expiry date'];
@@ -31,12 +31,12 @@ const Profile = observer (() => {
     if (!addedValues.label) {
       setPropertyValues(initialPropertyValues);
     }
-  }
+  };
 
   const changeAddedValues = (value, field) => {
     setAddedValues((prevState) => ({
       ...prevState,
-      [field]: value
+      [field]: value,
     }))
   };
 
@@ -68,7 +68,7 @@ const Profile = observer (() => {
       .map(elem => (
         (!elem.seed) ? {
         ...elem,
-        seed: String(Math.floor(Math.random() * 90000000000000000000), 10)
+        seed: String(Math.floor(Math.random() * 90000000000000000000), 10),
       }: elem)));
     if (selectedItems.length > 0) {
       setButtonPanelOpen(false);
@@ -89,7 +89,7 @@ const Profile = observer (() => {
   const openAddPanel = () => {
     setAddPanelOpen(true);
     setButtonPanelOpen(false);
-  }
+  };
 
   const sendAddedData = () => {
     const checkingAddedData = !registrationStore.decryptedUserData
@@ -100,18 +100,18 @@ const Profile = observer (() => {
       setAddedValues(defaultValues);
       addDataParameters();
     }
-  }
+  };
 
   const sendUpdatedData = () => {
     setUpdatePanelOpen(false);
     changeDataParameters();
     setChangePanelOpen(true);
-  }
+  };
 
   const deleteDataParameters = () => {
     const changeData = registrationStore.decryptedUserData.filter(item=>!selectedItems.includes(item.key))
     registrationStore.pushAccountData(changeData);
-  }
+  };
 
   const changeInitialArray = () => {
     let newArr = [];
@@ -130,44 +130,44 @@ const Profile = observer (() => {
       }
     })
     return newArr;
-  }
+  };
 
   const changeDataParameters = () => {
     const updatedData = changeInitialArray();
     registrationStore.pushAccountData(updatedData);
-  }
+  };
 
   const addDataParameters = () => {
     addedValues.key = addedValues.label.toLowerCase().split(' ').join('_');
     registrationStore.pushAccountData(registrationStore.decryptedUserData.concat(addedValues));
-  }
+  };
 
   const cancelAddPanel = () => {
     setAddedValues(defaultValues);
     setAddPanelOpen(false);
     setButtonPanelOpen(true);
-  }
+  };
 
   const cancelUpdatePanel = () => {
     setUpdatePanelOpen(false);
     setChangePanelOpen(true);
-  }
+  };
 
   const openRemovePanel = () => {
     setRemovePanelOpen(true);
     setChangePanelOpen(false);
-  }
+  };
 
   const openUpdatePanel = () => {
     setUpdatePanelOpen(true);
     setChangePanelOpen(false);
-  }
+  };
 
   const applyDataDeletion = () => {
     setRemovePanelOpen(false);
     setButtonPanelOpen(true);
     deleteDataParameters()
-  }
+  };
 
   const handleInput = (text, field) => {
     changeAddedValues(text, field);

@@ -28,7 +28,7 @@ class Store {
   constructor() {
     makeAutoObservable(this,{});
 
-    reaction(()=>this.keysArray, ()=>this.fetchSharedData())
+    reaction(() => this.keysArray, () => this.fetchSharedData())
     onBecomeObserved(this, "decryptedUserData", () => this.fetchNewAccountData())
     onBecomeObserved(this, "sharedData", ()=>this.fetchKeysArray())
     onBecomeUnobserved(this, "sharedData", ()=>this.unobservedSharedData())
