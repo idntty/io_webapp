@@ -28,6 +28,8 @@ class Store {
   constructor() {
     makeAutoObservable(this,{});
 
+    this.fetchNodeInfo()
+
     reaction(() => this.keysArray, () => this.fetchSharedData())
     onBecomeObserved(this, "decryptedUserData", () => this.fetchNewAccountData())
     onBecomeObserved(this, "sharedData", ()=>this.fetchKeysArray())
@@ -100,6 +102,12 @@ class Store {
   saveDataRegistration(data) {
     this._accountData = data;
   };
+
+  fetchNodeInfo() {
+    getNodeInfo()
+        .then((info)=>this.fetchNodeInfoSuccess(info))
+        .catch((err) => this.fetchNodeInfoFailed(err))
+  }
 
   saveInfoTransactions(transaction) {
     this._transactionsInfo = transaction.data
