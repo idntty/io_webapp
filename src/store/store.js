@@ -23,6 +23,8 @@ class Store {
 
   _sharedData = []
 
+  _personalAccount = {}
+
   _transactionsInfo = []
 
   constructor() {
@@ -71,10 +73,21 @@ class Store {
   }
 
   fetchTransactionsInfo() {
-    fetchWrapper.get(`account/transactions/${this.accountMadeTransaction}?moduleID=1001&assetID=11`, {
+    fetchWrapper.get(`account/transactions/${this.accountMadeTransaction}`, {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
     }).then((res) => this.saveInfoTransactions(res))
+  }
+
+  fetchPersonalAccount() {
+    fetchWrapper.get(`account/${this.accountMadeTransaction}`, {
+      networkIdentifier: this.nodeInfo.networkIdentifier,
+      lastBlockID: this.nodeInfo.lastBlockID
+    }).then((res)=>this.savePersonalAccount(res))
+  }
+
+  savePersonalAccount(res) {
+    this._personalAccount=res.data
   }
 
   fetchSharedData() {
@@ -151,7 +164,7 @@ class Store {
         transaction: item.asset.features.map(asset => {
           return {
             transaction_id: item.id,
-            address: this.accountMadeTransaction,
+            address: item.asset.recipientAddress && "b444b7ff3118cf2a30cbd54cfcdb8fd5d805017a",
             value: asset.value,
             label: labelMap[asset.label],
           }
@@ -181,7 +194,11 @@ class Store {
   }
 
   get accountMadeTransaction() {
-    return "b444b7ff3118cf2a30cbd54cfcdb8fd5d805017a"
+    return "71ccaeefe22050abc9b36ce0c1744316c11c49e1"
+  }
+
+  get personalAccount() {
+    return this._personalAccount
   }
 
   get keysArray() {
