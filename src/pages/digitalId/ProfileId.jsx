@@ -26,6 +26,7 @@ const Profile = observer (() => {
   const [propertyValues, setPropertyValues] = useState([]);
   const [updatedValues, setUpdatedValues] = useState([defaultValues]);
   const [addedValues, setAddedValues] = useState(defaultValues);
+  const [fillingUpdateForm, setFillingUpdateForm] = useState(false);
 
   const openHint = () => {
     if (!addedValues.label) {
@@ -61,6 +62,15 @@ const Profile = observer (() => {
       setPropertyValues([]);
     }
   };
+
+  const checkFillingUpdateForm = (eventTarget) => {
+    if (eventTarget && eventTarget.id === 'sendingUpdatedValues') {
+      const checkingCondition = updatedValues.every(item => !Object.keys(item).find(elem => !item[elem]));
+      if (checkingCondition) {
+        setFillingUpdateForm(true);
+      }
+    }
+  }
 
   const handleSelectedItems = (selectedItems) => {
     setSelectedItems([...selectedItems]);
@@ -103,9 +113,12 @@ const Profile = observer (() => {
   };
 
   const sendUpdatedData = () => {
-    setUpdatePanelOpen(false);
-    changeDataParameters();
-    setChangePanelOpen(true);
+    if (fillingUpdateForm) {
+      setUpdatePanelOpen(false);
+      changeDataParameters();
+      setChangePanelOpen(true);
+      setFillingUpdateForm(false);
+    }
   };
 
   const deleteDataParameters = () => {
@@ -138,7 +151,7 @@ const Profile = observer (() => {
   };
 
   const addDataParameters = () => {
-    addedValues.key = addedValues.label.toLowerCase().split(' ').join('_');
+    addedValues.key = addedValues.label.toLowerCase().split(' ').join('');
     registrationStore.pushAccountData(registrationStore.decryptedUserData.concat(addedValues));
   };
 
@@ -149,6 +162,12 @@ const Profile = observer (() => {
   };
 
   const cancelUpdatePanel = () => {
+    setUpdatedValues(registrationStore.decryptedUserData.filter(({ key }) => selectedItems.includes(key))
+      .map(elem => (
+        (!elem.seed) ? {
+        ...elem,
+        seed: String(Math.floor(Math.random() * 90000000000000000000), 10),
+      }: elem)));
     setUpdatePanelOpen(false);
     setChangePanelOpen(true);
   };
@@ -301,6 +320,7 @@ const Profile = observer (() => {
                       <button
                         className="btn-sm bg-indigo-500 hover:bg-indigo-600 text-white"
                         onClick={sendAddedData}
+                        id='sendingAddedValues'
                       >
                         Send
                       </button>
@@ -331,6 +351,7 @@ const Profile = observer (() => {
                             type="text"
                             required
                             onChange={(e) => changeUpdatedValues(e.target.value, 'value', item.key)}
+                            onBlur={(e) => checkFillingUpdateForm(e.relatedTarget)}
                             value={item.value}
                           />
                         </div>
@@ -343,6 +364,7 @@ const Profile = observer (() => {
                             type="number"
                             required
                             onChange={(e) => changeUpdatedValues(e.target.value, 'seed', item.key)}
+                            onBlur={(e) => checkFillingUpdateForm(e.relatedTarget)}
                             value={item.seed}
                           />
                         </div>
@@ -373,6 +395,7 @@ const Profile = observer (() => {
                       <button
                         className="btn-sm bg-indigo-500 hover:bg-indigo-600 text-white"
                         onClick={sendUpdatedData}
+                        id='sendingUpdatedValues'
                       >
                         Send
                       </button>
