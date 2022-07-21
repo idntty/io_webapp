@@ -39,7 +39,6 @@ const Profile = observer (() => {
       ...prevState,
       [field]: value,
     }))
-    console.log(addedValues)
   };
 
   const changeUpdatedValues = (value, field, key) => {
@@ -66,14 +65,12 @@ const Profile = observer (() => {
   };
 
   const checkFillingUpdateForm = (eventTarget) => {
-    console.log(eventTarget);
     if (eventTarget && eventTarget.id === 'sendingUpdatedValues') {
       const checkingCondition = updatedValues.every(item => !Object.keys(item).find(elem => !item[elem]));
       if (checkingCondition) {
         setFillingUpdateForm(true);
       }
     }
-    console.log(updatedValues);
   }
 
   const handleSelectedItems = (selectedItems) => {
