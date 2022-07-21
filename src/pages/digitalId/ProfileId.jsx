@@ -55,7 +55,6 @@ const Profile = observer (() => {
   const selectHint = (element) => {
     changeAddedValues(element, 'label');
     setPropertyValues([]);
-    changeAddedValues();
   }
 
   const closeHint = (eventTarget) => {
