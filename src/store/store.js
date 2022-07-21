@@ -32,49 +32,49 @@ class Store {
 
     reaction(() => this.keysArray, () => this.fetchSharedData())
     onBecomeObserved(this, "decryptedUserData", () => this.fetchNewAccountData())
-    onBecomeObserved(this, "sharedData", ()=>this.fetchKeysArray())
-    onBecomeUnobserved(this, "sharedData", ()=>this.unobservedSharedData())
-    onBecomeObserved(this, "transactionsInfo", ()=>this.fetchTransactionsInfo())
-    onBecomeUnobserved(this, "transactionsInfo", ()=>this.unobservedTransactionsInfo())
+    onBecomeObserved(this, "sharedData", () => this.fetchKeysArray())
+    onBecomeUnobserved(this, "sharedData", () => this.unobservedSharedData())
+    onBecomeObserved(this, "transactionsInfo", () => this.fetchTransactionsInfo())
+    onBecomeUnobserved(this, "transactionsInfo", () => this.unobservedTransactionsInfo())
   };
 
   fetchNewAccountData() {
     getNodeInfo()
-        .then((info)=>{
-          this.fetchNodeInfoSuccess(info)
-          fetchWrapper.getAuth('data/private', {
-            networkIdentifier: this.nodeInfo.networkIdentifier,
-            lastBlockID: this.nodeInfo.lastBlockID
-          }).then((res) => this.userDataFetchChange(res))
-        })
-        .catch((err) => this.fetchNodeInfoFailed(err))
+      .then((info)=>{
+        this.fetchNodeInfoSuccess(info)
+        fetchWrapper.getAuth('data/private', {
+          networkIdentifier: this.nodeInfo.networkIdentifier,
+          lastBlockID: this.nodeInfo.lastBlockID
+        }).then((res) => this.userDataFetchChange(res))
+      })
+      .catch((err) => this.fetchNodeInfoFailed(err))
   }
 
-  pushAccountData(data=this.accountData) {
+  pushAccountData(data = this.accountData) {
     fetchWrapper.postAuth('data/private', {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
     }, [...this.encryptAccountData(data)])
-        .then(()=>this.fetchNewAccountData())
+      .then(() => this.fetchNewAccountData())
   }
 
   fetchKeysArray() {
     getNodeInfo()
-        .then((info)=>{
-          this.fetchNodeInfoSuccess(info)
-          fetchWrapper.getAuth('data/shared/', {
-            networkIdentifier: this.nodeInfo.networkIdentifier,
-            lastBlockID: this.nodeInfo.lastBlockID
-          }).then((res) => this.keysArrayFetchChange(res))
-        })
-        .catch((err) => this.fetchNodeInfoFailed(err))
+      .then((info)=>{
+        this.fetchNodeInfoSuccess(info)
+        fetchWrapper.getAuth('data/shared/', {
+          networkIdentifier: this.nodeInfo.networkIdentifier,
+          lastBlockID: this.nodeInfo.lastBlockID
+        }).then((res) => this.keysArrayFetchChange(res))
+      })
+      .catch((err) => this.fetchNodeInfoFailed(err))
   }
 
   fetchTransactionsInfo() {
     fetchWrapper.get(`account/transactions/${this.accountMadeTransaction}?moduleID=1001&assetID=11`, {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
-    }).then((res)=>this.saveInfoTransactions(res))
+    }).then((res) => this.saveInfoTransactions(res))
   }
 
   fetchSharedData() {
@@ -82,11 +82,11 @@ class Store {
   };
 
   unobservedTransactionsInfo() {
-    this._transactionsInfo=[]
+    this._transactionsInfo = []
   }
 
   unobservedSharedData() {
-    this._sharedData=[]
+    this._sharedData = []
   }
 
   changeSharedData(incomingData) {
@@ -105,8 +105,8 @@ class Store {
 
   fetchNodeInfo() {
     getNodeInfo()
-        .then((info)=>this.fetchNodeInfoSuccess(info))
-        .catch((err) => this.fetchNodeInfoFailed(err))
+      .then((info)=>this.fetchNodeInfoSuccess(info))
+      .catch((err) => this.fetchNodeInfoFailed(err))
   }
 
   saveInfoTransactions(transaction) {
@@ -139,16 +139,16 @@ class Store {
   };
 
   get transactionsInfo() {
-    return this._transactionsInfo.map(item=>{
+    return this._transactionsInfo.map(item => {
       return {
         id: item.id,
-        users_images: usersImages.map(image=>{
+        users_images: usersImages.map(image => {
           return {
             image: image,
             size: 24
           }
         }),
-        transaction: item.asset.features.map(asset=>{
+        transaction: item.asset.features.map(asset => {
           return {
             transaction_id: item.id,
             address: this.accountMadeTransaction,

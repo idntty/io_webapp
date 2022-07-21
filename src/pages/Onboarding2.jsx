@@ -108,7 +108,7 @@ const Onboarding2 = observer(() => {
                       <select onBlur={checkFillingForm} id="gender" onChange={(event)=>saveValueChange(event)} className="form-select w-full">
                         <option className="hidden"></option>
                         <option>male</option>
-                        <option>feemale</option>
+                        <option>female</option>
                       </select>
                     </div>
                     <div>
