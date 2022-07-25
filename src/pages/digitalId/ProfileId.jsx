@@ -6,15 +6,15 @@ import Header from '../../partials/Header';
 import ProfileTable from '../../partials/profile/ProfileTable';
 import Image from '../../images/transactions-image-04.svg';
 
-const defaultValues = {
-  label: '',
-  value: '',
-  seed: String(Math.floor(Math.random() * 90000000000000000000), 10),
-};
-
 const initialPropertyValues = ['First name', 'Second name', 'Birthdate', 'Gender', 'National doctype', 'National doc ID', 'National doc issue date', 'National doc expiry date'];
 
 const Profile = observer (() => {
+  const defaultValues = {
+    label: '',
+    value: '',
+    seed: String(Math.floor(Math.random() * 90000000000000000000), 10),
+  };
+  
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [buttonPanelOpen, setButtonPanelOpen] = useState(true);
   const [removePanelOpen, setRemovePanelOpen] = useState(false);
@@ -26,7 +26,6 @@ const Profile = observer (() => {
   const [propertyValues, setPropertyValues] = useState([]);
   const [updatedValues, setUpdatedValues] = useState([defaultValues]);
   const [addedValues, setAddedValues] = useState(defaultValues);
-  const [fillingUpdateForm, setFillingUpdateForm] = useState(false);
 
   const openHint = () => {
     if (!addedValues.label) {
@@ -62,15 +61,6 @@ const Profile = observer (() => {
       setPropertyValues([]);
     }
   };
-
-  const checkFillingUpdateForm = (eventTarget) => {
-    if (eventTarget && eventTarget.id === 'sendingUpdatedValues') {
-      const checkingCondition = updatedValues.every(item => !Object.keys(item).find(elem => !item[elem]));
-      if (checkingCondition) {
-        setFillingUpdateForm(true);
-      }
-    }
-  }
 
   const handleSelectedItems = (selectedItems) => {
     setSelectedItems([...selectedItems]);
@@ -113,12 +103,9 @@ const Profile = observer (() => {
   };
 
   const sendUpdatedData = () => {
-    if (fillingUpdateForm) {
-      setUpdatePanelOpen(false);
-      changeDataParameters();
-      setChangePanelOpen(true);
-      setFillingUpdateForm(false);
-    }
+    setUpdatePanelOpen(false);
+    changeDataParameters();
+    setChangePanelOpen(true);
   };
 
   const deleteDataParameters = () => {
@@ -320,7 +307,6 @@ const Profile = observer (() => {
                       <button
                         className="btn-sm bg-indigo-500 hover:bg-indigo-600 text-white"
                         onClick={sendAddedData}
-                        id='sendingAddedValues'
                       >
                         Send
                       </button>
@@ -351,7 +337,6 @@ const Profile = observer (() => {
                             type="text"
                             required
                             onChange={(e) => changeUpdatedValues(e.target.value, 'value', item.key)}
-                            onBlur={(e) => checkFillingUpdateForm(e.relatedTarget)}
                             value={item.value}
                           />
                         </div>
@@ -364,7 +349,6 @@ const Profile = observer (() => {
                             type="number"
                             required
                             onChange={(e) => changeUpdatedValues(e.target.value, 'seed', item.key)}
-                            onBlur={(e) => checkFillingUpdateForm(e.relatedTarget)}
                             value={item.seed}
                           />
                         </div>
@@ -395,7 +379,6 @@ const Profile = observer (() => {
                       <button
                         className="btn-sm bg-indigo-500 hover:bg-indigo-600 text-white"
                         onClick={sendUpdatedData}
-                        id='sendingUpdatedValues'
                       >
                         Send
                       </button>
