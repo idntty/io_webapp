@@ -11,7 +11,7 @@ function ValidateRoadMap({ season }) {
           <div className="w-32 shrink-0">
             <h2 className="text-xl leading-snug font-bold text-slate-800 xl:leading-7 mb-4 xl:mb-0">{''}</h2>
           </div>
-          <div className="grow pb-6">
+          <div className="grow pb-6 border-b border-slate-200">
             <header>
               <div className="flex flex-nowrap items-center space-x-2 mb-6">
                 {/* Avatars */}
