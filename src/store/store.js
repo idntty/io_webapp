@@ -31,8 +31,6 @@ class Store {
 
     this.fetchNodeInfo()
 
-    this.generatePassPhrase()
-
     reaction(() => this.keysArray, () => this.fetchSharedData())
     onBecomeObserved(this, "decryptedUserData", () => this.fetchNewAccountData())
     onBecomeObserved(this, "sharedData", () => this.fetchKeysArray())
@@ -82,6 +80,7 @@ class Store {
 
   generatePassPhrase() {
     this._passPhrase = passphrase.Mnemonic.generateMnemonic()
+    sessionStorage.setItem('passPhrase', this._passPhrase)
   }
 
   fetchSharedData() {
@@ -104,6 +103,7 @@ class Store {
 
   savePastPassPhrase(phrase) {
     this._passPhrase = phrase
+    sessionStorage.setItem('passPhrase', this._passPhrase)
   }
 
   saveDataRegistration(data) {
@@ -196,10 +196,6 @@ class Store {
       this._passPhrase = sessionStorage.getItem('passPhrase')
     }
     return this._passPhrase
-  }
-
-  get convertPassPhraseToArray() {
-    return this._passPhrase.split(' ').map((item, index) => ({str:item, id:index}))
   }
 
   get accountData() {

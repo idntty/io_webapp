@@ -13,13 +13,15 @@ const Onboarding3 = observer(()=>{
   function savePassPhraseInStore (copiedPhrase) {
     if (copiedPhrase.split(' ').length === 12) {
       registrationStore.savePastPassPhrase(copiedPhrase.trim());
-    } else {
-      return false
     }
   };
 
   function pastePassPhrase() {
-    navigator.clipboard.readText().then(res => savePassPhraseInStore(res))
+    navigator.clipboard.readText().then(res => savePassPhraseInStore(res));
+  };
+
+  function convertPassPhraseToArray() {
+    return registrationStore.passPhrase.split(' ').map((item, index) => ({str:item, id:index}));
   };
 
   return (
@@ -76,7 +78,7 @@ const Onboarding3 = observer(()=>{
                   <h1 className="text-3xl text-slate-800 font-bold mb-12">Company information ✨</h1>
                   {/* htmlForm */}
                   <div className="grid grid-cols-4 gap-y-2.5 gap-[18px] mb-14">
-                    {registrationStore.convertPassPhraseToArray.map(tag => (
+                    {convertPassPhraseToArray().map(tag => (
                       <button key={tag.id} className="min-w-93px w-24 min-h-26px h-26px bg-slate-100 text-slate-500 cursor-pointer hover:bg-blue-100 hover:text-blue-600 rounded-full text-center px-2.5">
                         <span className="text-sm font-medium">{tag.str}</span>
                       </button>
