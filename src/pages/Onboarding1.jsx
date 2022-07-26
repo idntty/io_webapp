@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import OnboardingImage from '../images/onboarding-image.jpg';
 import OnboardingDecoration from '../images/auth-decoration.png';
 import Logo from "../images/logo.png";
-import {observer} from "mobx-react-lite";
-import {registrationStore} from "../store/store";
+import { observer } from "mobx-react-lite";
+import { registrationStore } from "../store/store";
 
 const Onboarding1 = observer(() => {
   registrationStore.generatePassPhrase()
@@ -61,7 +61,7 @@ const Onboarding1 = observer(() => {
 
                 <h1 className="text-3xl text-slate-800 font-bold mb-12">Tell us about your company ✨</h1>
                 {/* Form */}
-                <form>
+                <div>
                   <div className="sm:flex space-y-3 sm:space-y-0 sm:space-x-4 mb-8">
                     <label className="flex-1 relative block cursor-pointer">
                       <input type="radio" name="radio-buttons" className="peer sr-only" defaultChecked />
@@ -111,7 +111,7 @@ const Onboarding1 = observer(() => {
                       <Link to="/onboarding-2">Next Step -&gt;</Link>
                     </button>
                   </div>
-                </form>
+                </div>
 
               </div>
             </div>
