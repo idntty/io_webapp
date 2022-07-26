@@ -27,7 +27,7 @@ class Store {
   _transactionsInfo = []
 
   constructor() {
-    makeAutoObservable(this,{});
+    makeAutoObservable(this, {});
 
     this.fetchNodeInfo()
 
@@ -76,12 +76,12 @@ class Store {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
     }).then((res) => this.saveInfoTransactions(res))
-  }
+  };
 
   generatePassPhrase() {
-    this._passPhrase = passphrase.Mnemonic.generateMnemonic()
-    sessionStorage.setItem('passPhrase', this._passPhrase)
-  }
+    this._passPhrase = passphrase.Mnemonic.generateMnemonic();
+    sessionStorage.setItem('passPhrase', this._passPhrase);
+  };
 
   fetchSharedData() {
     this._keysArray.forEach((elem) => fetchWrapper.get(`data/shared/${elem}`).then((res) => this.changeSharedData(res)))
@@ -89,11 +89,11 @@ class Store {
 
   unobservedTransactionsInfo() {
     this._transactionsInfo = []
-  }
+  };
 
   unobservedSharedData() {
     this._sharedData = []
-  }
+  };
 
   changeSharedData(incomingData) {
     this._sharedData.push({
@@ -102,9 +102,9 @@ class Store {
   }
 
   savePastPassPhrase(phrase) {
-    this._passPhrase = phrase
-    sessionStorage.setItem('passPhrase', this._passPhrase)
-  }
+    this._passPhrase = phrase;
+    sessionStorage.setItem('passPhrase', this._passPhrase);
+  };
 
   saveDataRegistration(data) {
     this._accountData = data;
@@ -133,7 +133,7 @@ class Store {
   }
 
   fetchNodeInfoFailed(err) {
-    console.log(err)
+    console.log(err);
   }
 
   get sharedData() {
