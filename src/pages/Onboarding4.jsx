@@ -12,6 +12,7 @@ const Onboarding4 = observer(() => {
   function createAccount() {
     if(checkBoxesSelected.length === 2) {
       registrationStore.pushAccountData();
+      sessionStorage.setItem('passPhrase', registrationStore.passPhrase)
     }
   };
 

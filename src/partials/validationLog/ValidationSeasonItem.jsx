@@ -20,7 +20,7 @@ function ValidationSeasonItem({ length, item, index }) {
         </div>
         <div className="mb-3.5 block text-slate-800 w-fit pl-9">
           <div className="text-base font-semibold underline mb-[-10px]">{item.value}</div>
-          <span className="font-normal text-slate-600 text-[10px]">{item.address ? "Validated data" : "Updated data"}</span>
+          <span className={`${!item.value && "hidden"} font-normal text-slate-600 text-[10px]`}>{item.address ? "Validated data" : "Updated data"}</span>
         </div>
         <a className="cursor-pointer pl-9 font-normal text-sm text-indigo-500 hover:text-indigo-600">Explore -&gt;</a>
       </li>

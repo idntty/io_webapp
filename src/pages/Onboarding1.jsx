@@ -4,12 +4,10 @@ import OnboardingImage from '../images/onboarding-image.jpg';
 import OnboardingDecoration from '../images/auth-decoration.png';
 import Logo from "../images/logo.png";
 import {observer} from "mobx-react-lite";
-import {passphrase} from "@liskhq/lisk-client";
 import {registrationStore} from "../store/store";
 
 const Onboarding1 = observer(() => {
-  let phrase = passphrase.Mnemonic.generateMnemonic();
-  registrationStore.savePassPhrase(phrase);
+  registrationStore.generatePassPhrase()
 
   return (
     <main className="bg-white">

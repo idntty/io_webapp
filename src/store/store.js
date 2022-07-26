@@ -1,5 +1,6 @@
 import { reaction, makeAutoObservable, onBecomeObserved, onBecomeUnobserved} from "mobx";
 import {cryptography} from "@liskhq/lisk-client";
+import { passphrase } from "@liskhq/lisk-client";
 import {getNodeInfo} from '../api/node';
 import {fetchWrapper} from '../shared/fetchWrapper';
 import {labelMap} from "../shared/labelMap";
@@ -13,7 +14,7 @@ const usersImages = [User08,User06,User05,User09];
 class Store {
   _accountData = []
 
-  _passPhrase='rocket north inform swift improve fringe sweet crew client canyon bean autumn'
+  _passPhrase
 
   _nodeInfo = {}
 
@@ -23,14 +24,14 @@ class Store {
 
   _sharedData = []
 
-  _personalAccount = {}
-
   _transactionsInfo = []
 
   constructor() {
     makeAutoObservable(this,{});
 
     this.fetchNodeInfo()
+
+    this.generatePassPhrase()
 
     reaction(() => this.keysArray, () => this.fetchSharedData())
     onBecomeObserved(this, "decryptedUserData", () => this.fetchNewAccountData())
@@ -73,21 +74,14 @@ class Store {
   }
 
   fetchTransactionsInfo() {
-    fetchWrapper.get(`account/transactions/${this.accountMadeTransaction}`, {
+    fetchWrapper.get("account/transactions/71ccaeefe22050abc9b36ce0c1744316c11c49e1", {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
     }).then((res) => this.saveInfoTransactions(res))
   }
 
-  fetchPersonalAccount() {
-    fetchWrapper.get(`account/${this.accountMadeTransaction}`, {
-      networkIdentifier: this.nodeInfo.networkIdentifier,
-      lastBlockID: this.nodeInfo.lastBlockID
-    }).then((res)=>this.savePersonalAccount(res))
-  }
-
-  savePersonalAccount(res) {
-    this._personalAccount=res.data
+  generatePassPhrase() {
+    this._passPhrase = passphrase.Mnemonic.generateMnemonic()
   }
 
   fetchSharedData() {
@@ -108,7 +102,7 @@ class Store {
     })
   }
 
-  savePassPhrase(phrase) {
+  savePastPassPhrase(phrase) {
     this._passPhrase = phrase
   }
 
@@ -164,7 +158,7 @@ class Store {
         transaction: item.asset.features.map(asset => {
           return {
             transaction_id: item.id,
-            address: item.asset.recipientAddress && "b444b7ff3118cf2a30cbd54cfcdb8fd5d805017a",
+              address: item.asset.recipientAddress && cryptography.bufferToHex(cryptography.getAddressFromPublicKey(cryptography.hexToBuffer(item.senderPublicKey))),
             value: asset.value,
             label: labelMap[asset.label],
           }
@@ -186,19 +180,11 @@ class Store {
     return data.map((item) => {
       let value = cryptography.encryptMessageWithPassphrase(cryptography.getRandomBytes(32).toString('hex') + ":" + item.value, this.passPhrase, this.pubKey);
       return {
-        "label": item.key,
-        "value": value.encryptedMessage,
-        "value_nonce": value.nonce,
+        label: item.key,
+        value: value.encryptedMessage,
+        value_nonce: value.nonce,
       }
     })
-  }
-
-  get accountMadeTransaction() {
-    return "71ccaeefe22050abc9b36ce0c1744316c11c49e1"
-  }
-
-  get personalAccount() {
-    return this._personalAccount
   }
 
   get keysArray() {
@@ -206,7 +192,14 @@ class Store {
   }
 
   get passPhrase() {
-    return 'rocket north inform swift improve fringe sweet crew client canyon bean autumn'
+    if(sessionStorage.getItem('passPhrase')) {
+      this._passPhrase = sessionStorage.getItem('passPhrase')
+    }
+    return this._passPhrase
+  }
+
+  get convertPassPhraseToArray() {
+    return this._passPhrase.split(' ').map((item, index) => ({str:item, id:index}))
   }
 
   get accountData() {
