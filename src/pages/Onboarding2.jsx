@@ -31,12 +31,12 @@ const Onboarding2 = observer(() => {
     }
   };
 
-  const saveStoreRegistration = ()=>{
+  const saveStoreRegistration = () => {
     if (fillingForm) {
       registrationStore.saveDataRegistration(Object.keys(dataRegistration).map(item => {
         return{
           key: `${item}`,
-          value: dataRegistration[item]
+          value: dataRegistration[item],
         }
       }))
     }
@@ -93,7 +93,7 @@ const Onboarding2 = observer(() => {
               <div className="max-w-[344px] mx-auto">
                 <h1 className="text-3xl text-slate-800 font-bold mb-6">Create your Account ✨</h1>
                 {/* Form */}
-                <form>
+                <div>
                   <div className="space-y-4 mb-8">
                     <div>
                       <label className="block text-sm font-medium mb-1" htmlFor="first_name">First name <span className="text-rose-500">*</span></label>
@@ -127,7 +127,7 @@ const Onboarding2 = observer(() => {
                       <Link id="signup" to={fillingForm && "/onboarding-3"} >Sign Up</Link>
                     </button>
                   </div>
-                </form>
+                </div>
                 {/* Footer */}
                 <div className="pt-5 mt-6 border-t border-slate-200">
                   <div className="text-sm">
