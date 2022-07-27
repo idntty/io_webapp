@@ -295,7 +295,7 @@ const Profile = observer (() => {
                         autoComplete='off'
                         id="seed"
                         className="form-input w-full"
-                        type="number"
+                        type="text"
                         required
                         onClick={() => setPropertyValues([])}
                         onChange={(e) => changeAddedValues(e.target.value, 'seed')}
@@ -363,7 +363,7 @@ const Profile = observer (() => {
                             autoComplete='off'
                             id={`${item.key}:seed`}
                             className="form-input w-full"
-                            type="number"
+                            type="text"
                             required
                             onChange={(e) => changeUpdatedValues(e.target.value, 'seed', item.key)}
                             value={item.seed}
