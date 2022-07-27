@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { registrationStore } from "../../store/store";
 import Sidebar from '../../partials/Sidebar';
 import { observer } from 'mobx-react-lite';
@@ -26,6 +26,20 @@ const Profile = observer (() => {
   const [propertyValues, setPropertyValues] = useState([]);
   const [updatedValues, setUpdatedValues] = useState([defaultValues]);
   const [addedValues, setAddedValues] = useState(defaultValues);
+  const [isCheck, setIsCheck] = useState([]);
+
+  useEffect(() => {
+    handleSelectedItems(isCheck);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isCheck]);
+
+  const handleClick = e => {
+    const { id, checked } = e.target;
+    setIsCheck([...isCheck, id]);
+    if (!checked || !id) {
+      setIsCheck(isCheck.filter(item => item !== id));
+    }
+  };
 
   const openHint = () => {
     if (!addedValues.label) {
@@ -106,6 +120,7 @@ const Profile = observer (() => {
     setUpdatePanelOpen(false);
     changeDataParameters();
     setChangePanelOpen(true);
+    setIsCheck([]);
   };
 
   const deleteDataParameters = () => {
@@ -157,6 +172,7 @@ const Profile = observer (() => {
       }: elem)));
     setUpdatePanelOpen(false);
     setChangePanelOpen(true);
+    setIsCheck([]);
   };
 
   const openRemovePanel = () => {
@@ -172,7 +188,8 @@ const Profile = observer (() => {
   const applyDataDeletion = () => {
     setRemovePanelOpen(false);
     setButtonPanelOpen(true);
-    deleteDataParameters()
+    deleteDataParameters();
+    setIsCheck([]);
   };
 
   const handleInput = (text, field) => {
@@ -217,7 +234,7 @@ const Profile = observer (() => {
                   </ul>
                 </div>
                 {/* Table */}
-                <ProfileTable selectedItems={handleSelectedItems} userData={registrationStore.decryptedUserData}/>
+                <ProfileTable isCheck={isCheck} handleClick={handleClick} userData={registrationStore.decryptedUserData}/>
               </div>
               {/* Left sidebar */}
               <div>
