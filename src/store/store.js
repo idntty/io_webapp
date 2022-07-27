@@ -183,6 +183,7 @@ class Store {
         label: item.key,
         value: value.encryptedMessage,
         value_nonce: value.nonce,
+        seed: item.seed,
       }
     })
   }
