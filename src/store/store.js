@@ -169,6 +169,7 @@ class Store {
 
   get decryptedUserData(){
     return this._userData.map((elem) => ({
+      ...elem,
       key: elem.label,
       label: labelMap[elem.label],
       value: cryptography.decryptMessageWithPassphrase(elem.value, elem.value_nonce, registrationStore.passPhrase, registrationStore.pubKey).split(':')[1]
