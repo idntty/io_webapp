@@ -3,30 +3,16 @@ import ProfileTableItem from './ProfileTableItem';
 import ProfileIcon from '../../images/profile-icon.svg';
 
 function ProfileTable({
-  selectedItems,
-  userData
+  userData,
+  handleClick,
+  isCheck,
 }) {
-
-  const [isCheck, setIsCheck] = useState([]);
 
   const defaultData = {
     image: ProfileIcon,
     status: 'Stored',
     transactions: ['0x7234ABC342342352345', '0x5745DEF342342352345'],
     avatars: null
-  };
-
-  useEffect(() => {
-    selectedItems(isCheck);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isCheck]);
-
-  const handleClick = e => {
-    const { id, checked } = e.target;
-    setIsCheck([...isCheck, id]);
-    if (!checked) {
-      setIsCheck(isCheck.filter(item => item !== id));
-    }
   };
 
   const data = {
