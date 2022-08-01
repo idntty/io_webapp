@@ -38,6 +38,13 @@ module.exports = {
     client: {
       progress: true,
     },
+    proxy: {
+      '/api/**': {
+        target: 'http://3.125.47.101',
+        secure: false,
+        changeOrigin: true
+      }
+    }
   },
 
   module: {

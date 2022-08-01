@@ -2,7 +2,7 @@ import {registrationStore} from '../store/store';
 
 function prepareUrl(url) {
   if (url.startsWith('http')) return url;
-  return `http://3.125.47.101/api/${url}`;
+  return `${window.location.origin}/api/${url}`;
 }
 
 function handleRequest(method, url, headers, attempts, token, body) {
