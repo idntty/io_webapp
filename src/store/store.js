@@ -121,8 +121,10 @@ class Store {
   }
 
   userDataFetchChange(res) {
-    this._userData = res.data;
-  }
+    if (res.data) {
+      this._userData = res.data;
+    }
+  };
 
   keysArrayFetchChange(res) {
     this._keysArray = res.data;
@@ -167,12 +169,12 @@ class Store {
     })
   }
 
-  get decryptedUserData(){
+  get decryptedUserData() {
     return this._userData.map((elem) => ({
       ...elem,
       key: elem.label,
       label: labelMap[elem.label],
-      value: cryptography.decryptMessageWithPassphrase(elem.value, elem.value_nonce, registrationStore.passPhrase, registrationStore.pubKey).split(':')[1]
+      value: cryptography.decryptMessageWithPassphrase(elem.value, elem.value_nonce, this.passPhrase, this.pubKey).split(':')[1]
     }))
   }
 

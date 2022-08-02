@@ -234,7 +234,9 @@ const Profile = observer (() => {
                   </ul>
                 </div>
                 {/* Table */}
-                <ProfileTable isCheck={isCheck} handleClick={handleClick} userData={registrationStore.decryptedUserData}/>
+                <div className='w-[828px]'>
+                  <ProfileTable isCheck={isCheck} handleClick={handleClick} userData={registrationStore.decryptedUserData}/>
+                </div>
               </div>
               {/* Left sidebar */}
               <div>
