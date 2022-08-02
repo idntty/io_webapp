@@ -158,7 +158,7 @@ class Store {
         transaction: item.asset.features.map(asset => {
           return {
             transaction_id: item.id,
-              address: item.asset.recipientAddress && cryptography.bufferToHex(cryptography.getAddressFromPublicKey(cryptography.hexToBuffer(item.senderPublicKey))),
+            address: item.asset.recipientAddress && cryptography.bufferToHex(cryptography.getAddressFromPublicKey(cryptography.hexToBuffer(item.senderPublicKey))),
             value: asset.value,
             label: labelMap[asset.label],
           }
@@ -216,7 +216,7 @@ class Store {
   }
 
   get address() {
-    return cryptography.bufferToHex(this.addressAndPubKey.address)
+    return this.addressAndPubKey.address.toString('hex')
   }
 
   get tokenKey() {
