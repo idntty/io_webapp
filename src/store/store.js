@@ -55,7 +55,7 @@ class Store {
     fetchWrapper.postAuth('data/private', {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
-    }, [...this.encryptUserData(data)])
+    }, [...this.encryptAccountData(data)])
       .then(() => this.fetchNewAccountData())
   }
 
@@ -180,7 +180,7 @@ class Store {
     }))
   }
 
-  encryptUserData(data) {
+  encryptAccountData(data) {
     return data.map((item) => {
       let value = cryptography.encryptMessageWithPassphrase(cryptography.getRandomBytes(32).toString('hex') + ":" + item.value, this.passPhrase, this.pubKey);
       return {
