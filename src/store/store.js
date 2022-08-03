@@ -70,7 +70,7 @@ class Store {
   }
 
   fetchTransactionsInfo() {
-    fetchWrapper.get("account/transactions/71ccaeefe22050abc9b36ce0c1744316c11c49e1", {
+    fetchWrapper.get(`account/transactions/${this.address}`, {
       networkIdentifier: this.nodeInfo.networkIdentifier,
       lastBlockID: this.nodeInfo.lastBlockID
     }).then((res) => this.saveInfoTransactions(res))
@@ -80,6 +80,15 @@ class Store {
     this._passPhrase = passphrase.Mnemonic.generateMnemonic();
     sessionStorage.setItem('passPhrase', this._passPhrase);
   };
+
+  savePastPassPhrase(phrase) {
+    this._passPhrase=phrase
+    sessionStorage.setItem('passPhrase', this._passPhrase);
+  };
+
+  fetchPassPhrase() {
+    this._passPhrase = sessionStorage.getItem('passPhrase')
+  }
 
   fetchSharedData() {
     this._keysArray.forEach((elem) => fetchWrapper.get(`data/shared/${elem}`).then((res) => this.changeSharedData(res)))
@@ -98,11 +107,6 @@ class Store {
       data: incomingData.data,
     })
   }
-
-  savePastPassPhrase(phrase) {
-    this._passPhrase = phrase;
-    sessionStorage.setItem('passPhrase', this._passPhrase);
-  };
 
   saveDataRegistration(data) {
     this._accountData = data;
@@ -193,9 +197,7 @@ class Store {
   }
 
   get passPhrase() {
-    if(sessionStorage.getItem('passPhrase')) {
-      this._passPhrase = sessionStorage.getItem('passPhrase')
-    }
+    this.fetchPassPhrase()
     return this._passPhrase
   }
 
