@@ -78,7 +78,7 @@ const Profile = observer (() => {
 
   const handleSelectedItems = (selectedItems) => {
     setSelectedItems([...selectedItems]);
-    setUpdatedValues(registrationStore.decryptedUserData.filter(({ key }) => selectedItems.includes(key))
+    setUpdatedValues(registrationStore.decryptedAccountData.filter(({ key }) => selectedItems.includes(key))
       .map(elem => (
         (!elem.seed) ? {
         ...elem,
@@ -106,7 +106,7 @@ const Profile = observer (() => {
   };
 
   const sendAddedData = () => {
-    const checkingAddedData = !registrationStore.decryptedUserData
+    const checkingAddedData = !registrationStore.decryptedAccountData
       .some((element) => element.label === addedValues.label) && (addedValues.seed.length === 20);
     if (checkingAddedData) {
       setAddPanelOpen(false);
@@ -124,13 +124,13 @@ const Profile = observer (() => {
   };
 
   const deleteDataParameters = () => {
-    const changeData = registrationStore.decryptedUserData.filter(item=>!selectedItems.includes(item.key))
+    const changeData = registrationStore.decryptedAccountData.filter(item=>!selectedItems.includes(item.key))
     registrationStore.pushAccountData(changeData);
   };
 
   const changeInitialArray = () => {
     let newArr = [];
-    registrationStore.decryptedUserData.map(elem => {
+    registrationStore.decryptedAccountData.map(elem => {
       updatedValues.forEach(item => {
         if (elem.label === item.label) {
           newArr.push({
@@ -154,7 +154,7 @@ const Profile = observer (() => {
 
   const addDataParameters = () => {
     addedValues.key = addedValues.label.toLowerCase().split(' ').join('');
-    registrationStore.pushAccountData(registrationStore.decryptedUserData.concat(addedValues));
+    registrationStore.pushAccountData(registrationStore.decryptedAccountData.concat(addedValues));
   };
 
   const cancelAddPanel = () => {
@@ -164,7 +164,7 @@ const Profile = observer (() => {
   };
 
   const cancelUpdatePanel = () => {
-    setUpdatedValues(registrationStore.decryptedUserData.filter(({ key }) => selectedItems.includes(key))
+    setUpdatedValues(registrationStore.decryptedAccountData.filter(({ key }) => selectedItems.includes(key))
       .map(elem => (
         (!elem.seed) ? {
         ...elem,
@@ -235,7 +235,7 @@ const Profile = observer (() => {
                 </div>
                 {/* Table */}
                 <div className='w-[828px]'>
-                  <ProfileTable isCheck={isCheck} handleClick={handleClick} userData={registrationStore.decryptedUserData}/>
+                  <ProfileTable isCheck={isCheck} handleClick={handleClick} userData={registrationStore.decryptedAccountData}/>
                 </div>
               </div>
               {/* Left sidebar */}
@@ -407,7 +407,7 @@ const Profile = observer (() => {
                   <div className={`${!removePanelOpen && 'hidden'} bg-white px-5 pt-4 pb-[190px] shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-12`}>
                     <h2 className="grow text-base font-semibold text-slate-800 truncate mb-2">Summary</h2>
                     <div className="flex flex-col">
-                      {registrationStore.decryptedUserData.filter(({ key }) => selectedItems.includes(key)).map(item => (
+                      {registrationStore.decryptedAccountData.filter(({ key }) => selectedItems.includes(key)).map(item => (
                         <span key={item.label} className="text-sm font-normal text-slate-600 py-3 border-b border-slate-200">{item.label}</span>
                       ))}
                     </div>

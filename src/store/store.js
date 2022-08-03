@@ -18,8 +18,6 @@ class Store {
 
   _nodeInfo = {}
 
-  _userData = []
-
   _keysArray = []
 
   _sharedData = []
@@ -32,7 +30,7 @@ class Store {
     this.fetchNodeInfo()
 
     reaction(() => this.keysArray, () => this.fetchSharedData())
-    onBecomeObserved(this, "decryptedUserData", () => this.fetchNewAccountData())
+    onBecomeObserved(this, "decryptedAccountData", () => this.fetchNewAccountData())
     onBecomeObserved(this, "sharedData", () => this.fetchKeysArray())
     onBecomeUnobserved(this, "sharedData", () => this.unobservedSharedData())
     onBecomeObserved(this, "transactionsInfo", () => this.fetchTransactionsInfo())
@@ -46,7 +44,7 @@ class Store {
         fetchWrapper.getAuth('data/private', {
           networkIdentifier: this.nodeInfo.networkIdentifier,
           lastBlockID: this.nodeInfo.lastBlockID
-        }).then((res) => this.userDataFetchChange(res))
+        }).then((res) => this.accountDataFetchChange(res))
       })
       .catch((err) => this.fetchNodeInfoFailed(err))
   }
@@ -120,9 +118,9 @@ class Store {
     this._transactionsInfo = transaction.data
   }
 
-  userDataFetchChange(res) {
+  accountDataFetchChange(res) {
     if (res.data) {
-      this._userData = res.data;
+      this._accountData = res.data;
     }
   };
 
@@ -169,8 +167,8 @@ class Store {
     })
   }
 
-  get decryptedUserData() {
-    return this._userData.map((elem) => ({
+  get decryptedAccountData() {
+    return this._accountData.map((elem) => ({
       ...elem,
       key: elem.label,
       label: labelMap[elem.label],
