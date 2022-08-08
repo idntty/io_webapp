@@ -16,16 +16,16 @@ const plugins = [
   require('tailwindcss')
 ];
 
-module.exports = {
+module.exports = (env, argv) => ( {
   entry: './src/main.jsx',
-  mode: 'development',
-  devtool: 'eval-source-map',
+  mode: argv.mode || 'development',
+  devtool: argv.mode === 'production' ? false : 'eval-source-map',
   plugins,
   output: {
     clean: true,
     path: path.resolve(__dirname, 'build'),
-    assetModuleFilename: 'assets/[hash][ext]',
-    filename: 'main.[hash:8].js',
+    assetModuleFilename: 'assets/[fullhash:12][ext]',
+    filename: 'main.[fullhash:8].js',
   },
   devServer: {
     open: true,
@@ -77,7 +77,10 @@ module.exports = {
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
-        use: ["file-loader"]
+        loader: 'file-loader',
+        options: {
+          outputPath: 'assets',
+        },
       }
     ]
   },
@@ -95,4 +98,4 @@ module.exports = {
       "fs": false
     }
   },
-};
+});
