@@ -4,13 +4,17 @@ import OnboardingImage from '../images/onboarding-image.jpg';
 import OnboardingDecoration from '../images/auth-decoration.png';
 import Logo from "../images/logo.png";
 import { observer } from "mobx-react-lite";
-import { registrationStore } from "../store/store";
+import { store } from "../store/store";
+import { Navigate } from "react-router-dom";
 
 const Onboarding1 = observer(() => {
 
-  useEffect(()=>{
-    registrationStore.generatePassPhrase()
+  useEffect(() => {
+    store.clearDataRegistration()
   }, [])
+
+  if(store.passPhrase)
+    return <Navigate to="/digitalId/profile-id" replace={true} />
 
   return (
     <main className="bg-white">

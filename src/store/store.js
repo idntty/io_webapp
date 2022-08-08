@@ -14,7 +14,7 @@ const usersImages = [User08,User06,User05,User09];
 class Store {
   _accountData = []
 
-  _passPhrase
+  _passPhrase = ''
 
   _nodeInfo = {}
 
@@ -87,7 +87,7 @@ class Store {
   };
 
   fetchPassPhrase() {
-    this._passPhrase = sessionStorage.getItem('passPhrase')
+    this._passPhrase = sessionStorage.getItem('passPhrase') || ''
   }
 
   fetchSharedData() {
@@ -110,6 +110,10 @@ class Store {
 
   saveDataRegistration(data) {
     this._accountData = data;
+  };
+
+  clearDataRegistration() {
+    this._accountData = [];
   };
 
   fetchNodeInfo() {
@@ -175,7 +179,7 @@ class Store {
     return this._accountData.map((elem) => ({
       ...elem,
       key: elem.label,
-      label: labelMap[elem.label],
+      label: labelMap[elem.label] || elem.label,
       value: cryptography.decryptMessageWithPassphrase(elem.value, elem.value_nonce, this.passPhrase, this.pubKey).split(':')[1]
     }))
   }
@@ -190,6 +194,18 @@ class Store {
         seed: item.seed,
       }
     })
+  }
+
+  get firstName() {
+    return this.decryptedAccountData.find(item => item.key === 'firstname')?.value
+  }
+
+  get lastName() {
+    return this.decryptedAccountData.find(item => item.key === 'secondname')?.value
+  }
+
+  get accountName() {
+    return this.firstName || this.lastName || this.pubKey
   }
 
   get keysArray() {
@@ -228,6 +244,6 @@ class Store {
     const sign = cryptography.signDataWithPassphrase(Buffer.from(stringToSign, 'hex'), this.passPhrase).toString('hex')
     return this.pubKey + ':' +sign
   }
-};
+}
 
-export const registrationStore = new Store();
+export const store = new Store();

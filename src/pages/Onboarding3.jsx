@@ -1,28 +1,32 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {observer} from "mobx-react-lite";
 import { Link } from 'react-router-dom';
 import {generateSvgAvatar} from "../images/GenerateOnboardingSvg/GenerateSvg";
 import Logo from "../images/logo.png";
-import {registrationStore} from "../store/store";
+import {store} from "../store/store";
 
 const Onboarding3 = observer(()=>{
-  function generatePassPhrase() {
-    registrationStore.generatePassPhrase();
+
+  useEffect(()=>{
+    store.generatePassPhrase();
+  }, [])
+
+  const generatePassPhrase = () => {
+    store.generatePassPhrase();
   };
 
-  function savePassPhraseInStore (copiedPhrase) {
+  const savePassPhraseInStore = copiedPhrase => {
     if (copiedPhrase.split(' ').length === 12) {
-      registrationStore.savePastPassPhrase(copiedPhrase.trim());
+      store.savePastPassPhrase(copiedPhrase.trim());
     }
   };
 
-  function pastePassPhrase() {
+  const pastePassPhrase = () => {
     navigator.clipboard.readText().then(res => savePassPhraseInStore(res));
   };
 
-  function convertPassPhraseToArray() {
-    return registrationStore.passPhrase.split(' ').map((item, index) => ({str:item, id:index}));
-  };
+  const convertPassPhraseToArray = () => store.passPhrase.split(' ').
+    map((item, index) => ({str: item, id: index}));
 
   return (
     <main className="bg-white">
@@ -118,7 +122,7 @@ const Onboarding3 = observer(()=>{
         {/* Image */}
         <div className="flex flex-col items-center h-full w-full hidden md:block absolute top-0 bottom-0 right-0 md:w-1/2" aria-hidden="true">
           <div className="flex mt-40 flex-col items-center gap-2.5">
-            <img className="object-cover object-center" src={generateSvgAvatar(registrationStore.pubKey)} width="493px" height="493px" alt="Onboarding" />
+            <img className="object-cover object-center" src={generateSvgAvatar(store.pubKey)} width="493px" height="493px" alt="Onboarding" />
             <span className="text-sm">Your generated Digital ID</span>
           </div>
         </div>

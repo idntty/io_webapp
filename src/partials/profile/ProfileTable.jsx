@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import ProfileTableItem from './ProfileTableItem';
 import ProfileIcon from '../../images/profile-icon.svg';
 
-function ProfileTable({
+function  ProfileTable({
   userData,
   handleClick,
   isCheck,
@@ -23,7 +23,7 @@ function ProfileTable({
 
   const generalData = userData.filter(elem => data.general.includes(elem.label));
   const nationalityData = userData.filter(elem => data.nationality.includes(elem.label));
-  const sosialData = userData.filter(elem => data.social.includes(elem.label));
+  const socialData = userData.filter(elem => data.social.includes(elem.label));
   const otherData = userData.filter((elem) =>
           !data.general.includes(elem.label) && !data.nationality.includes(elem.label) && !data.social.includes(elem.label));
 
@@ -82,12 +82,12 @@ function ProfileTable({
         </div>
       </div>
       {/* Social */}
-      <div className={`${sosialData.length > 0 || 'hidden'}`}>
+      <div className={`${socialData.length > 0 || 'hidden'}`}>
         <h2 className="grow text-base font-semibold text-slate-800 truncate mb-2.5 mt-8">Social 🖋️</h2>
         <div className="overflow-x-auto w-[828px]">
           <table className="w-[828px] table-auto w-full">
             <tbody className="text-sm divide-slate-200 divide-y ">
-            {sosialData.map(data => {
+            {socialData.map(data => {
               return (
                 <ProfileTableItem
                   key={data.label}

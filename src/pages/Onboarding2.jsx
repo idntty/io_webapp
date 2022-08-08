@@ -1,12 +1,14 @@
-import React, {useState} from 'react';
-import { Link } from 'react-router-dom';
+import React, {useEffect, useMemo, useState} from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { observer } from "mobx-react-lite";
-import { registrationStore } from "../store/store";
+import { store } from "../store/store";
 import OnboardingImage from '../images/onboarding-image.jpg';
 import OnboardingDecoration from '../images/auth-decoration.png';
 import Logo from "../images/logo.png";
 
 const Onboarding2 = observer(() => {
+  const navigate = useNavigate();
+
   const [dataRegistration, setDataRegistration] = useState(
       {
         firstname: '',
@@ -15,7 +17,8 @@ const Onboarding2 = observer(() => {
         birthdate: '',
       }
   );
-  const [fillingForm, setFillingForm] = useState(false);
+
+  const fillingForm = useMemo(() => !Object.keys(dataRegistration).find(item => !dataRegistration[item]), [dataRegistration])
 
   const saveValueChange = (event) => {
     const newValue=event.target.value;
@@ -25,22 +28,26 @@ const Onboarding2 = observer(() => {
     })
   };
 
-  const checkFillingForm = () => {
-    if (!Object.keys(dataRegistration).find(item => !dataRegistration[item])) {
-      setFillingForm(true);
+  const saveStoreRegistration = () => {
+    if (fillingForm) {
+      store.saveDataRegistration(Object.keys(dataRegistration).map(item => ({
+          key: `${item}`,
+          value: dataRegistration[item],
+        })
+      ))
+      navigate("/onboarding-3", { replace: true });
     }
   };
 
-  const saveStoreRegistration = () => {
-    if (fillingForm) {
-      registrationStore.saveDataRegistration(Object.keys(dataRegistration).map(item => {
-        return{
-          key: `${item}`,
-          value: dataRegistration[item],
-        }
-      }))
-    }
-  };
+  useEffect(() => {
+    if(store.accountData.length === 0)
+      return;
+    setDataRegistration(store.accountData.reduce((acc, item) => ({
+      ...acc,
+      [item.key]: item.value
+    }), {}))
+
+  }, [])
 
   return (
     <main className="bg-white">
@@ -97,15 +104,15 @@ const Onboarding2 = observer(() => {
                   <div className="space-y-4 mb-8">
                     <div>
                       <label className="block text-sm font-medium mb-1" htmlFor="first_name">First name <span className="text-rose-500">*</span></label>
-                      <input onBlur={checkFillingForm} id="firstname" onChange={(event)=>saveValueChange(event)} className="form-input w-full" type="text" />
+                      <input  id="firstname" onChange={(event)=>saveValueChange(event)} className="form-input w-full" type="text" value={dataRegistration.firstname} />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1" htmlFor="second_name">Last name <span className="text-rose-500">*</span></label>
-                      <input onBlur={checkFillingForm} id="secondname" onChange={(event)=>saveValueChange(event)} className="form-input w-full" type="text" />
+                      <input  id="secondname" onChange={(event)=>saveValueChange(event)} className="form-input w-full" type="text" value={dataRegistration.secondname} />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1" htmlFor="gender">Gender <span className="text-rose-500">*</span></label>
-                      <select onBlur={checkFillingForm} id="gender" onChange={(event)=>saveValueChange(event)} className="form-select w-full">
+                      <select  id="gender" onChange={(event)=>saveValueChange(event)} className="form-select w-full" value={dataRegistration.gender}>
                         <option className="hidden"></option>
                         <option>male</option>
                         <option>female</option>
@@ -113,7 +120,7 @@ const Onboarding2 = observer(() => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-1" htmlFor="birthdate">Date of birth <span className="text-rose-500">*</span></label>
-                      <input onBlur={checkFillingForm} id="birthdate" onChange={(event)=>saveValueChange(event)} className="form-input w-full" type="date" autoComplete="on" />
+                      <input  id="birthdate" onChange={(event)=>saveValueChange(event)} className="form-input w-full" type="date" autoComplete="on" value={dataRegistration.birthdate} />
                     </div>
                   </div>
                   <div className="flex items-center justify-between mt-6">
@@ -123,15 +130,8 @@ const Onboarding2 = observer(() => {
                         <span className="text-sm ml-2">Email me about product news.</span>
                       </label>
                     </div>
-                    <button onClick={saveStoreRegistration} className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-3 whitespace-nowrap">
-                      <Link id="signup" to={fillingForm && "/onboarding-3"} >Sign Up</Link>
+                    <button onClick={saveStoreRegistration} className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-3 whitespace-nowrap">Sign Up
                     </button>
-                  </div>
-                </div>
-                {/* Footer */}
-                <div className="pt-5 mt-6 border-t border-slate-200">
-                  <div className="text-sm">
-                    Have an account? <Link className="font-medium text-indigo-500 hover:text-indigo-600" to="/signIn">Sign In</Link>
                   </div>
                 </div>
               </div>

@@ -3,7 +3,7 @@ import {observer} from "mobx-react-lite";
 import { Link } from 'react-router-dom';
 import {generateSvgAvatar} from "../images/GenerateOnboardingSvg/GenerateSvg";
 import Logo from "../images/logo.png";
-import {registrationStore} from "../store/store";
+import {store} from "../store/store";
 
 const SignIn = observer(()=>{
 
@@ -12,11 +12,11 @@ const SignIn = observer(()=>{
 
   function savePassPhrase (copiedPhrase) {
     if (copiedPhrase.split(' ').length === 12) {
-      registrationStore.savePastPassPhrase(copiedPhrase.trim());
-      setPassPhrase(registrationStore.passPhrase);
+      store.savePastPassPhrase(copiedPhrase.trim());
+      setPassPhrase(store.passPhrase);
       setAddedPassPhrase(true);
     }
-  };
+  }
 
   function convertPassPhraseToArray() {
     return passPhrase.split(' ').map((item, index) => ({str:item, id:index}));
@@ -24,7 +24,7 @@ const SignIn = observer(()=>{
 
   function pastePassPhrase() {
     navigator.clipboard.readText().then(res => savePassPhrase(res));
-  };
+  }
 
   return (
     <main className="bg-white">
@@ -41,7 +41,7 @@ const SignIn = observer(()=>{
               {/* Header */}
               <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
                 {/* Logo */}
-                <Link className="block" to="/dashboard">
+                <Link className="block" to="/">
                   <img alt='logo' src={Logo} width="89" height="32"/>
                 </Link>
                 <div className="text-sm">
@@ -75,7 +75,7 @@ const SignIn = observer(()=>{
                 </div>
                 <div className="flex items-center justify-between">
                   <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-auto">
-                    <Link to={addedPassPhrase && "/dashboard"}>Go To Profile -&gt;</Link>
+                    <Link to={addedPassPhrase && "/digitalId/profile-id"}>Go To Profile -&gt;</Link>
                   </button>
                 </div>
 
@@ -90,7 +90,7 @@ const SignIn = observer(()=>{
         <div className="flex flex-col items-center h-full w-full hidden md:block absolute top-0 bottom-0 right-0 md:w-1/2" aria-hidden="true">
           <div className="flex mt-40 flex-col items-center gap-2.5">
             <div className={`${addedPassPhrase || 'opacity-0'} w-[493px] h-[493px]`}>
-              <img className="object-cover object-center" alt="" src={generateSvgAvatar(registrationStore.pubKey)}/>
+              <img className="object-cover object-center" alt="" src={generateSvgAvatar(store.pubKey)}/>
             </div>
             <span className="text-sm">Your Digital ID</span>
           </div>

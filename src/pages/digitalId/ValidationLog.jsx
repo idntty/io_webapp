@@ -3,7 +3,7 @@ import ValidateRoadMap from "../../partials/validationLog/ValidateRoadMap";
 import {observer} from "mobx-react-lite";
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
-import {registrationStore} from "../../store/store";
+import {store} from "../../store/store";
 
 const ValidationLog = observer(() => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -27,7 +27,7 @@ const ValidationLog = observer(() => {
               <div className="max-w-3xl m-auto mt-6">
                 <div className="xl:-translate-x-16 max-w-fit">
                   {/* PostsID */}
-                  {registrationStore.transactionsInfo.map(item => {
+                  {store.transactionsInfo.map(item => {
                     return <ValidateRoadMap season={item} key={item.id}/>
                   })}
                 </div>

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {generateSvgAvatar} from "../images/GenerateOnboardingSvg/GenerateSvg";
 import Logo from "../images/logo.png";
 import {observer} from "mobx-react-lite";
-import { registrationStore } from "../store/store";
+import { store } from "../store/store";
 
 const Onboarding4 = observer(() => {
 
@@ -11,8 +11,9 @@ const Onboarding4 = observer(() => {
 
   function createAccount() {
     if(checkBoxesSelected.length === 2) {
-      registrationStore.pushAccountData();
-      sessionStorage.setItem('passPhrase', registrationStore.passPhrase);
+      store.pushAccountData();
+      sessionStorage.setItem('passPhrase', store.passPhrase);
+      store.clearDataRegistration();
     }
   };
 
@@ -24,7 +25,7 @@ const Onboarding4 = observer(() => {
     }
   };
 
-  const firstNameAccount = registrationStore.accountData.length && registrationStore.accountData.find(item => item.key === "firstname").value;
+  const firstNameAccount = store.accountData.length && store.accountData.find(item => item.key === "firstname").value;
 
   return (
     <main className="bg-white">
@@ -83,7 +84,7 @@ const Onboarding4 = observer(() => {
                   </svg>
                   <h1 className="text-3xl text-slate-800 font-bold mb-8">{firstNameAccount ? `Nice to meet you, ${firstNameAccount} 🙌` : 'Please, go back step 2'}</h1>
                   <button onClick={createAccount} className="btn px-6 bg-indigo-500 hover:bg-indigo-600 text-white">
-                    <Link id="link-dashboard" to={checkBoxesSelected.length===2 && "/dashboard"}>Go To Profile -&gt;</Link>
+                    <Link id="link-dashboard" to={checkBoxesSelected.length===2 && "/digitalId/profile-id"}>Go To Profile -&gt;</Link>
                   </button>
                 </div>
 
@@ -112,7 +113,7 @@ const Onboarding4 = observer(() => {
         {/* Image */}
         <div className="flex flex-col items-center h-full w-full hidden md:block absolute top-0 bottom-0 right-0 md:w-1/2" aria-hidden="true">
           <div className="flex mt-40 flex-col items-center gap-2.5">
-            <img className="object-cover object-center" src={generateSvgAvatar(registrationStore.pubKey)} width="493px" height="493px" alt="Onboarding" />
+            <img className="object-cover object-center" src={generateSvgAvatar(store.pubKey)} width="493px" height="493px" alt="Onboarding" />
             <span className="text-sm">Your generated Digital ID</span>
           </div>
         </div>

@@ -6,7 +6,7 @@ import ValidateTable from "../../partials/validate/ValidateTable";
 import ValidatePanel from "../../partials/validate/ValidatePanel";
 import ValidateRoadMap from "../../partials/validationLog/ValidateRoadMap";
 import {Link} from "react-router-dom";
-import {registrationStore} from "../../store/store";
+import {store} from "../../store/store";
 
 const Validate = observer(() => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -57,7 +57,7 @@ const Validate = observer(() => {
               <div className="pb-8 border-b border-zinc-200 mt-[50px]">
                 <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">Digital ID validation log ✨</h1>
               </div>
-              {registrationStore.transactionsInfo.map(item => {
+              {store.transactionsInfo.map(item => {
                 return <ValidateRoadMap season={item} key={item.id}/>
               })}
             </div>

@@ -1,4 +1,4 @@
-import {registrationStore} from '../store/store';
+import {store} from '../store/store';
 
 function prepareUrl(url) {
   if (url.startsWith('http')) return url;
@@ -63,7 +63,7 @@ function get(url, headers, attempts = 1) {
 }
 
 function getAuth(url, headers, attempts = 1) {
-  return handleRequest('GET', url, headers, attempts, registrationStore.tokenKey);
+  return handleRequest('GET', url, headers, attempts, store.tokenKey);
 }
 
 function del(url, headers, attempts = 1) {
@@ -71,7 +71,7 @@ function del(url, headers, attempts = 1) {
 }
 
 function delAuth(url, headers, attempts = 1) {
-  return handleRequest('DELETE', url, headers, attempts, registrationStore.tokenKey);
+  return handleRequest('DELETE', url, headers, attempts, store.tokenKey);
 }
 
 function post(url, headers, body, attempts = 1) {
@@ -79,7 +79,7 @@ function post(url, headers, body, attempts = 1) {
 }
 
 function postAuth(url, headers, body, attempts = 1) {
-  return handleRequest('POST', url, headers, attempts, registrationStore.tokenKey, body);
+  return handleRequest('POST', url, headers, attempts, store.tokenKey, body);
 }
 
 function put(url, headers, body, attempts = 1) {
@@ -87,7 +87,7 @@ function put(url, headers, body, attempts = 1) {
 }
 
 function putAuth(url, headers, body, attempts = 1) {
-  return handleRequest('PUT', url, headers, attempts, registrationStore.tokenKey, body);
+  return handleRequest('PUT', url, headers, attempts, store.tokenKey, body);
 }
 
 export const fetchWrapper = {
