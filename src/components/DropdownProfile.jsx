@@ -75,18 +75,16 @@ import UserAvatar from '../images/user-avatar-32.png';
           onBlur={() => setDropdownOpen(false)}
         >
           <div className="pt-0.5 pb-2 px-3 mb-1 border-b border-slate-200">
-            <div className="font-medium text-slate-800">Acme Inc.</div>
-            <div className="text-xs text-slate-500 italic">Administrator</div>
+            <div className="font-medium text-slate-800">{store.accountName}</div>
           </div>
           <ul>
             <li>
-              <Link
-                className="font-medium text-sm text-indigo-500 hover:text-indigo-600 flex items-center py-1 px-3"
-                to="/dashboard"
+              <span
+                className="cursor-pointer font-medium text-sm text-indigo-500 hover:text-indigo-600 flex items-center py-1 px-3"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
               >
                 Settings
-              </Link>
+              </span>
             </li>
             <li>
               <Link

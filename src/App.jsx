@@ -7,20 +7,11 @@ import {
 
 import './css/style.scss';
 
-import './charts/ChartjsConfig';
-
 // Import pages
-import Dashboard from './pages/Dashboard';
-import Analytics from './pages/Analytics';
-import Fintech from './pages/Fintech';
 import ProfileId from './pages/digitalId/ProfileId';
 import Validate from './pages/digitalId/Validate';
 import ValidationLog from './pages/digitalId/ValidationLog';
 import Verify from './pages/digitalId/Verify';
-import Messages from './pages/Messages';
-import ButtonPage from './pages/component/ButtonPage';
-import BadgePage from './pages/component/BadgePage';
-import AccordionPage from './pages/component/AccordionPage';
 import Onboarding1 from "./pages/Onboarding1";
 import Onboarding2 from "./pages/Onboarding2";
 import Onboarding3 from "./pages/Onboarding3";

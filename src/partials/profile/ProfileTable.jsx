@@ -32,8 +32,8 @@ function  ProfileTable({
     {/* General */}
       <div className={`${generalData.length > 0 || 'hidden'}`}>
         <h2 className="grow text-base font-semibold text-slate-800 truncate mb-2.5 mt-8">General 🖋️</h2>
-        <div className="overflow-x-auto w-[828px]">
-          <table className="w-[828px] table-auto w-full">
+        <div className="overflow-x-auto">
+          <table className="table-auto w-full">
             <tbody className="divide-slate-200 divide-y">
               {generalData.map((data) => {
                 return (
@@ -58,8 +58,8 @@ function  ProfileTable({
       {/* Nationality */}
       <div className={`${nationalityData.length > 0 || 'hidden'}`}>
         <h2 className="grow text-base font-semibold text-slate-800 truncate mb-2.5 mt-8">Nationality 🖋️</h2>
-        <div className="overflow-x-auto w-[828px]">
-          <table className="w-[828px] table-auto w-full">
+        <div className="overflow-x-auto">
+          <table className="table-auto w-full">
             <tbody className="text-sm divide-slate-200 divide-y ">
               {nationalityData.map(data => {
                 return (
@@ -84,8 +84,8 @@ function  ProfileTable({
       {/* Social */}
       <div className={`${socialData.length > 0 || 'hidden'}`}>
         <h2 className="grow text-base font-semibold text-slate-800 truncate mb-2.5 mt-8">Social 🖋️</h2>
-        <div className="overflow-x-auto w-[828px]">
-          <table className="w-[828px] table-auto w-full">
+        <div className="overflow-x-auto">
+          <table className="table-auto w-full">
             <tbody className="text-sm divide-slate-200 divide-y ">
             {socialData.map(data => {
               return (
@@ -110,8 +110,8 @@ function  ProfileTable({
       {/* Other */}
       <div className={`${otherData.length > 0 || 'hidden'}`}>
         <h2 className="grow text-base font-semibold text-slate-800 truncate mb-2.5 mt-8">Other 🖋️</h2>
-        <div className="overflow-x-auto w-[828px]">
-          <table className="w-[828px] table-auto w-full">
+        <div className="overflow-x-auto">
+          <table className="table-auto w-full">
             <tbody className="text-sm divide-slate-200 divide-y ">
             {otherData.map(data => {
               return (

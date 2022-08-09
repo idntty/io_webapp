@@ -5,6 +5,7 @@ import { observer } from 'mobx-react-lite';
 import Header from '../../partials/Header';
 import ProfileTable from '../../partials/profile/ProfileTable';
 import Image from '../../images/transactions-image-04.svg';
+import {labelMap} from '../../shared/labelMap';
 
 const initialPropertyValues = ['First name', 'Second name', 'Birthdate', 'Gender', 'National doctype', 'National doc ID', 'National doc issue date', 'National doc expiry date'];
 
@@ -19,7 +20,7 @@ const Profile = observer (() => {
   const [buttonPanelOpen, setButtonPanelOpen] = useState(true);
   const [removePanelOpen, setRemovePanelOpen] = useState(false);
   const [changePanelOpen, setChangePanelOpen] = useState(false);
-  const [toggle, setToggle] = useState(true);
+  const [storeOnBlockchain, setStoreOnBlockchain] = useState(false);
   const [addPanelOpen, setAddPanelOpen] = useState(false);
   const [updatePanelOpen, setUpdatePanelOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
@@ -27,6 +28,7 @@ const Profile = observer (() => {
   const [updatedValues, setUpdatedValues] = useState([defaultValues]);
   const [addedValues, setAddedValues] = useState(defaultValues);
   const [isCheck, setIsCheck] = useState([]);
+  const [alreadyExists, setAlreadyExists] = useState(false);
 
   useEffect(() => {
     handleSelectedItems(isCheck);
@@ -107,7 +109,8 @@ const Profile = observer (() => {
 
   const sendAddedData = () => {
     const checkingAddedData = !store.decryptedAccountData
-      .some((element) => element.label === addedValues.label) && (addedValues.seed.length === 20);
+      .some((element) => element.label === addedValues.label)
+    setAlreadyExists(!checkingAddedData);
     if (checkingAddedData) {
       setAddPanelOpen(false);
       setButtonPanelOpen(true);
@@ -153,7 +156,11 @@ const Profile = observer (() => {
   };
 
   const addDataParameters = () => {
-    addedValues.key = addedValues.label.toLowerCase().split(' ').join('');
+    const label = addedValues.label.toLowerCase().split(' ').join('');
+    if(labelMap[label])
+      addedValues.key = addedValues.label.toLowerCase().split(' ').join('');
+    else
+      addedValues.key = addedValues.label
     store.pushAccountData(store.decryptedAccountData.concat(addedValues));
   };
 
@@ -234,7 +241,7 @@ const Profile = observer (() => {
                   </ul>
                 </div>
                 {/* Table */}
-                <div className='w-[828px]'>
+                <div>
                   <ProfileTable isCheck={isCheck} handleClick={handleClick} userData={store.decryptedAccountData}/>
                 </div>
               </div>
@@ -262,7 +269,7 @@ const Profile = observer (() => {
                       <input
                         autoComplete='off'
                         id="label"
-                        className="form-input w-full"
+                        className={`form-input w-full ${alreadyExists && 'border-rose-300'}`}
                         type="text"
                         required
                         onInput={(e) => handleInput(e.target.value, 'label')}
@@ -277,6 +284,7 @@ const Profile = observer (() => {
                           ))}
                         </ul>
                      </div>
+                      { alreadyExists && <div className="text-xs mt-1 text-rose-500">This property already added!</div> }
                     </div>
                     <div className='my-3 z-10'>
                       <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Value <span className="text-rose-500">*</span></label>
@@ -308,7 +316,7 @@ const Profile = observer (() => {
                       <span className="block text-sm font-medium">Store data on blockchain</span>
                       <div className="flex items-center">
                         <div className="form-switch">
-                          <input type="checkbox" id="blockcheined" className="sr-only" checked={toggle} onChange={() => setToggle(!toggle)} />
+                          <input type="checkbox" id="blockcheined" className="sr-only" checked={storeOnBlockchain} onChange={() => setStoreOnBlockchain(!storeOnBlockchain)} />
                             <label className="bg-slate-400" htmlFor="switch-1">
                             <span className="bg-white shadow-sm" aria-hidden="true"></span>
                           </label>
@@ -321,7 +329,7 @@ const Profile = observer (() => {
                         className="btn-sm bg-white border-slate-200 hover:bg-slate-50 text-slate-600"
                         onClick={cancelAddPanel}
                       >
-                        Cansel
+                        Cancel
                       </button>
                       <button
                         className="btn-sm bg-indigo-500 hover:bg-indigo-600 text-white"
@@ -380,7 +388,7 @@ const Profile = observer (() => {
                       <span className="block text-sm font-medium">Store data on blockchain</span>
                       <div className="flex items-center">
                         <div className="form-switch">
-                          <input type="checkbox" id="blockcheined" className="sr-only" checked={toggle} onChange={() => setToggle(!toggle)} />
+                          <input type="checkbox" id="blockcheined" className="sr-only" checked={storeOnBlockchain} onChange={() => setStoreOnBlockchain(!storeOnBlockchain)} />
                             <label className="bg-slate-400" htmlFor="switch-1">
                             <span className="bg-white shadow-sm" aria-hidden="true"></span>
                           </label>
@@ -393,7 +401,7 @@ const Profile = observer (() => {
                         className="btn-sm bg-white border-slate-200 hover:bg-slate-50 text-slate-600"
                         onClick={cancelUpdatePanel}
                       >
-                        Cansel
+                        Cancel
                       </button>
                       <button
                         className="btn-sm bg-indigo-500 hover:bg-indigo-600 text-white"
@@ -415,7 +423,7 @@ const Profile = observer (() => {
                       <span className="block text-sm font-medium">On blockchain too</span>
                       <div className="flex items-center">
                         <div className="form-switch">
-                          <input type="checkbox" id="switch-1" className="sr-only" checked={toggle} onChange={() => setToggle(!toggle)} />
+                          <input type="checkbox" id="switch-1" className="sr-only" checked={storeOnBlockchain} onChange={() => setStoreOnBlockchain(!storeOnBlockchain)} />
                             <label className="bg-slate-400" htmlFor="switch-1">
                             <span className="bg-white shadow-sm" aria-hidden="true"></span>
                           </label>
@@ -438,7 +446,7 @@ const Profile = observer (() => {
                     </div>
                   </div>
                   {/* Details */}
-                  <div className={`${(removePanelOpen || addPanelOpen) || 'hidden'} drop-shadow-lg`}>
+                  <div className={`${(!(removePanelOpen || addPanelOpen) || !storeOnBlockchain) && 'hidden'} drop-shadow-lg`}>
                     {/* Top */}
                     <div className="bg-white rounded-t-xl px-5 pb-4 text-center">
                       <div className="mb-3 text-center">
