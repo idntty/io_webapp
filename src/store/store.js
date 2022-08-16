@@ -1,15 +1,10 @@
-import { reaction, makeAutoObservable, onBecomeObserved, onBecomeUnobserved} from "mobx";
+import {reaction, makeAutoObservable, onBecomeObserved, onBecomeUnobserved} from "mobx";
 import {cryptography} from "@liskhq/lisk-client";
 import { passphrase } from "@liskhq/lisk-client";
 import {getNodeInfo} from '../api/node';
 import {fetchWrapper} from '../shared/fetchWrapper';
 import {labelMap} from "../shared/labelMap";
-import User08 from "../images/user-28-08.jpg";
-import User06 from "../images/user-28-06.jpg";
-import User05 from "../images/user-28-05.jpg";
-import User09 from "../images/user-28-09.jpg";
-
-const usersImages = [User08,User06,User05,User09];
+import {generateSvgAvatar} from "../images/GenerateOnboardingSvg/GenerateSvg";
 
 class Store {
   _accountData = []
@@ -157,18 +152,14 @@ class Store {
     return this._transactionsInfo.map(item => {
       return {
         id: item.id,
-        users_images: usersImages.map(image => {
-          return {
-            image: image,
-            size: 24
-          }
-        }),
+        sender_avatar: item.asset.recipientAddress && generateSvgAvatar(item.senderPublicKey),
+        avatar_size: 24,
         transaction: item.asset.features.map(asset => {
           return {
             transaction_id: item.id,
             address: item.asset.recipientAddress && cryptography.bufferToHex(cryptography.getAddressFromPublicKey(cryptography.hexToBuffer(item.senderPublicKey))),
             value: asset.value,
-            label: labelMap[asset.label],
+            label: labelMap[asset.label] || asset.label
           }
         })
       }
