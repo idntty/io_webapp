@@ -6,6 +6,10 @@ import App from './App'
 
 globalThis.Buffer = Buffer
 
+BigInt.prototype.toJSON = function() {
+  return this.toString()
+}
+
 ReactDOM.render(
   <React.StrictMode>
     <Router>

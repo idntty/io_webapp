@@ -1,10 +1,19 @@
 import {reaction, makeAutoObservable, onBecomeObserved, onBecomeUnobserved} from "mobx";
 import {cryptography} from "@liskhq/lisk-client";
-import { passphrase } from "@liskhq/lisk-client";
+import { passphrase, transactions } from "@liskhq/lisk-client";
 import {getNodeInfo} from '../api/node';
 import {fetchWrapper} from '../shared/fetchWrapper';
 import {labelMap} from "../shared/labelMap";
 import {generateSvgAvatar} from "../images/GenerateOnboardingSvg/GenerateSvg";
+import {
+  encryptAccountData,
+  generateSetTransaction, generateTransaction,
+  hashAccountData,
+} from '../utils/Utils';
+import {
+  removeFeatureAssetSchema,
+  setFeatureAssetSchema,
+} from '../utils/Schemas';
 
 class Store {
   _accountData = []
@@ -19,17 +28,20 @@ class Store {
 
   _transactionsInfo = []
 
+  _accountInfo = {};
+
   constructor() {
     makeAutoObservable(this, {});
 
-    this.fetchNodeInfo()
-
     reaction(() => this.keysArray, () => this.fetchSharedData())
+    reaction(() => this.address, () => this.fetchAccountInfo())
     onBecomeObserved(this, "decryptedAccountData", () => this.fetchNewAccountData())
     onBecomeObserved(this, "sharedData", () => this.fetchKeysArray())
     onBecomeUnobserved(this, "sharedData", () => this.unobservedSharedData())
     onBecomeObserved(this, "transactionsInfo", () => this.fetchTransactionsInfo())
     onBecomeUnobserved(this, "transactionsInfo", () => this.unobservedTransactionsInfo())
+
+    this.fetchNodeInfo()
   };
 
   fetchNewAccountData() {
@@ -44,24 +56,20 @@ class Store {
       .catch((err) => this.fetchNodeInfoFailed(err))
   }
 
-  pushAccountData(data = this.accountData) {
-    fetchWrapper.postAuth('data/private', {
-      networkIdentifier: this.nodeInfo.networkIdentifier,
-      lastBlockID: this.nodeInfo.lastBlockID
-    }, [...this.encryptAccountData(data)])
-      .then(() => this.fetchNewAccountData())
+  fetchAccountInfo() {
+    fetchWrapper.get(`accounts/${this.address}`).then((res) => this.fetchAccountInfoSuccess(res))
   }
 
   fetchKeysArray() {
     getNodeInfo()
-      .then((info)=>{
-        this.fetchNodeInfoSuccess(info)
-        fetchWrapper.getAuth('data/shared/', {
-          networkIdentifier: this.nodeInfo.networkIdentifier,
-          lastBlockID: this.nodeInfo.lastBlockID
-        }).then((res) => this.keysArrayFetchChange(res))
-      })
-      .catch((err) => this.fetchNodeInfoFailed(err))
+    .then((info)=>{
+      this.fetchNodeInfoSuccess(info)
+      fetchWrapper.getAuth('data/shared/', {
+        networkIdentifier: this.nodeInfo.networkIdentifier,
+        lastBlockID: this.nodeInfo.lastBlockID
+      }).then((res) => this.keysArrayFetchChange(res))
+    })
+    .catch((err) => this.fetchNodeInfoFailed(err))
   }
 
   fetchTransactionsInfo() {
@@ -71,6 +79,49 @@ class Store {
     }).then((res) => this.saveInfoTransactions(res))
   };
 
+  fetchPassPhrase() {
+    this._passPhrase = sessionStorage.getItem('passPhrase') || ''
+  }
+
+  fetchSharedData() {
+    this._keysArray.forEach((elem) => fetchWrapper.get(`data/shared/${elem}`).then((res) => this.changeSharedData(res)))
+  };
+
+  fetchNodeInfo() {
+    getNodeInfo()
+    .then((info)=>this.fetchNodeInfoSuccess(info))
+    .catch((err) => this.fetchNodeInfoFailed(err))
+  }
+
+  pushAccountData(data = this.accountData) {
+    fetchWrapper.postAuth('data/private', {
+      networkIdentifier: this.nodeInfo.networkIdentifier,
+      lastBlockID: this.nodeInfo.lastBlockID
+    }, [...encryptAccountData(data, this.passPhrase, this.pubKey)])
+      .then(() => this.fetchNewAccountData())
+  }
+
+  pushAccountDataToBlockchain(data = this.decryptedAccountData) {
+    const [removed, changed] = hashAccountData(data, this.decryptedAccountData, this.accountFeaturesMap)
+
+    const builder = generateTransaction(BigInt(this.accountInfo?.sequence?.nonce || 0), this.addressAndPubKey.publicKey, this.nodeInfo.networkIdentifier, this.passPhrase);
+
+    let signedTx = null;
+
+    if(removed.length !== 0)
+      signedTx = builder.remove(removed);
+
+    if(changed.length !== 0)
+      signedTx = builder.update(changed)
+
+    if(signedTx) {
+      fetchWrapper.post('transactions', {}, signedTx);
+      this.accountInfo.sequence.nonce++;
+    }
+  }
+
+
+
   generatePassPhrase() {
     this._passPhrase = passphrase.Mnemonic.generateMnemonic();
     sessionStorage.setItem('passPhrase', this._passPhrase);
@@ -79,14 +130,6 @@ class Store {
   savePastPassPhrase(phrase) {
     this._passPhrase=phrase
     sessionStorage.setItem('passPhrase', this._passPhrase);
-  };
-
-  fetchPassPhrase() {
-    this._passPhrase = sessionStorage.getItem('passPhrase') || ''
-  }
-
-  fetchSharedData() {
-    this._keysArray.forEach((elem) => fetchWrapper.get(`data/shared/${elem}`).then((res) => this.changeSharedData(res)))
   };
 
   unobservedTransactionsInfo() {
@@ -111,12 +154,6 @@ class Store {
     this._accountData = [];
   };
 
-  fetchNodeInfo() {
-    getNodeInfo()
-      .then((info)=>this.fetchNodeInfoSuccess(info))
-      .catch((err) => this.fetchNodeInfoFailed(err))
-  }
-
   saveInfoTransactions(transaction) {
     this._transactionsInfo = transaction.data
   }
@@ -133,10 +170,17 @@ class Store {
 
   fetchNodeInfoSuccess(info) {
     this._nodeInfo = info.data;
+    this.fetchPassPhrase()
   }
 
   fetchNodeInfoFailed(err) {
     console.log(err);
+  }
+
+  fetchAccountInfoSuccess(res) {
+    this._accountInfo = res.data;
+    if(this.accountInfo?.sequence?.nonce)
+      this.accountInfo.sequence.nonce = parseInt(this.accountInfo.sequence.nonce) || 0
   }
 
   get sharedData() {
@@ -167,22 +211,14 @@ class Store {
   }
 
   get decryptedAccountData() {
-    return this._accountData.map((elem) => ({
-      ...elem,
-      key: elem.label,
-      label: labelMap[elem.label] || elem.label,
-      value: cryptography.decryptMessageWithPassphrase(elem.value, elem.value_nonce, this.passPhrase, this.pubKey).split(':')[1]
-    }))
-  }
-
-  encryptAccountData(data) {
-    return data.map((item) => {
-      let value = cryptography.encryptMessageWithPassphrase(cryptography.getRandomBytes(32).toString('hex') + ":" + item.value, this.passPhrase, this.pubKey);
+    return this._accountData.map((elem) => {
+      const [seed, value] = cryptography.decryptMessageWithPassphrase(elem.value, elem.value_nonce, this.passPhrase, this.pubKey).split(':');
       return {
-        label: item.key,
-        value: value.encryptedMessage,
-        value_nonce: value.nonce,
-        seed: item.seed,
+        ...elem,
+        key: elem.label,
+        label: labelMap[elem.label] || elem.label,
+        value,
+        seed
       }
     })
   }
@@ -204,13 +240,16 @@ class Store {
   }
 
   get passPhrase() {
-    this.fetchPassPhrase()
     return this._passPhrase
   }
 
   get accountData() {
     return this._accountData
   };
+
+  get accountInfo() {
+    return this._accountInfo;
+  }
 
   get nodeInfo() {
     return this._nodeInfo;
@@ -234,6 +273,21 @@ class Store {
       return '';
     const sign = cryptography.signDataWithPassphrase(Buffer.from(stringToSign, 'hex'), this.passPhrase).toString('hex')
     return this.pubKey + ':' +sign
+  }
+
+  get accountIdentity() {
+    return this.accountInfo?.identity || {};
+  }
+
+  get accountFeatures() {
+    return this.accountIdentity?.features || [];
+  }
+
+  get accountFeaturesMap() {
+    return this.accountFeatures.reduce((acc, item) => ({
+      ...acc,
+      [item.label]: item.value
+    }), {})
   }
 }
 

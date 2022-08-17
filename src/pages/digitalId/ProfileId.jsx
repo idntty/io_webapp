@@ -129,6 +129,8 @@ const Profile = observer (() => {
   const deleteDataParameters = () => {
     const changeData = store.decryptedAccountData.filter(item=>!selectedItems.includes(item.key))
     store.pushAccountData(changeData);
+    if(storeOnBlockchain)
+      store.pushAccountDataToBlockchain(changeData)
   };
 
   const changeInitialArray = () => {
@@ -153,6 +155,8 @@ const Profile = observer (() => {
   const changeDataParameters = () => {
     const updatedData = changeInitialArray();
     store.pushAccountData(updatedData);
+    if(storeOnBlockchain)
+      store.pushAccountDataToBlockchain(updatedData)
   };
 
   const addDataParameters = () => {
@@ -162,6 +166,8 @@ const Profile = observer (() => {
     else
       addedValues.key = addedValues.label
     store.pushAccountData(store.decryptedAccountData.concat(addedValues));
+    if(storeOnBlockchain)
+      store.pushAccountDataToBlockchain(store.decryptedAccountData.concat(addedValues))
   };
 
   const cancelAddPanel = () => {
@@ -352,7 +358,7 @@ const Profile = observer (() => {
                             required
                             onChange={(e) => changeUpdatedValues(e.target.value, 'label', item.key)}
                             value={item.label}
-                            disabled='disabled'
+                            disabled
                           />
                         </div>
                         <div>

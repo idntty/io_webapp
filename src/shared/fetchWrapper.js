@@ -1,4 +1,5 @@
 import {store} from '../store/store';
+import {jsonReplacer} from '../utils/Utils';
 
 function prepareUrl(url) {
   if (url.startsWith('http')) return url;
@@ -14,7 +15,10 @@ function handleRequest(method, url, headers, attempts, token, body) {
     })()
   })
     .then((res) => res.json())
-    .catch(() => [])
+    .catch((err) => {
+      console.log(err)
+      return {}
+    })
 };
 
 /**
@@ -47,7 +51,7 @@ function request(method, url, headers = {}, token, body) {
         'Content-Type': 'application/json',
         ...headers
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(body, jsonReplacer),
       signal: controller.signal,
     }
   };
