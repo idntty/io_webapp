@@ -1,5 +1,7 @@
 FROM  node:16-alpine AS builder
 
+RUN apk --update add --no-cache curl git python3 alpine-sdk bash autoconf libtool automake
+
 WORKDIR /front
 
 COPY . .
