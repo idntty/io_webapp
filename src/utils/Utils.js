@@ -59,7 +59,7 @@ export const hashAccountData = (data = [], oldData = [], hashMap = {}) => {
   }), {})
 
   const removed = oldData.reduce((acc, item) => {
-    if(!accountMap[item.label])
+    if(!accountMap[item.label] && hashMap[item.label])
       return [...acc, {label: item.label}];
     return acc
   }, [])
