@@ -30,6 +30,8 @@ class Store {
 
   _accountInfo = {};
 
+  _loading = false;
+
   constructor() {
     makeAutoObservable(this, {});
 
@@ -288,6 +290,14 @@ class Store {
       ...acc,
       [item.label]: item.value
     }), {})
+  }
+
+  get loading() {
+    return this._loading;
+  }
+
+  set loading(value) {
+    this._loading = value;
   }
 }
 

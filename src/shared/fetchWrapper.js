@@ -8,14 +8,19 @@ function prepareUrl(url) {
 
 function handleRequest(method, url, headers, attempts, token, body) {
   return new Promise((resolve, reject) => {
+    store.loading = true;
     (function internalRequest() {
       return request(method, url, headers, token, body)
         .then(resolve)
         .catch(err => --attempts > 0 ? internalRequest() : reject(err))
     })()
   })
-    .then((res) => res.json())
+    .then((res) => {
+      store.loading = false;
+      return res.json();
+    })
     .catch((err) => {
+      store.loading = false;
       console.log(err)
       return {}
     })

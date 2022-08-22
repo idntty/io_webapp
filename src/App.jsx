@@ -19,8 +19,11 @@ import Onboarding4 from "./pages/Onboarding4";
 import SharedData from "./pages/SharedData";
 import ResetPassword from "./pages/ResetPassword";
 import SignIn from "./pages/SignIn";
+import {LoadingOverlay} from './components/LoadingOverlay';
+import {store} from './store/store';
+import {observer} from 'mobx-react-lite';
 
-function App() {
+const App = observer(() => {
 
   const location = useLocation();
   useEffect(()=> {
@@ -35,6 +38,7 @@ function App() {
 
   return (
     <>
+      { store.loading && <LoadingOverlay /> }
       <Routes>
         <Route exact path="/" element={<Onboarding1 />} />
         <Route path="/digitalId/profile-id" element={<ProfileId />} />
@@ -50,6 +54,6 @@ function App() {
       </Routes>
     </>
   );
-}
+})
 
 export default App;
