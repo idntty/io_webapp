@@ -58,7 +58,7 @@ function request(method, url, headers = {}, token, body) {
   if (!token) {
     requestOptions.headers.Authorization = null;
   }
-  setTimeout(() => controller.abort(), 3000);
+  setTimeout(() => controller.abort(), 15000);
   return fetch(prepareUrl(url), requestOptions);
 };
 
