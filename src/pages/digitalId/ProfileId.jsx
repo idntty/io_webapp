@@ -15,7 +15,7 @@ const Profile = observer (() => {
     value: '',
     seed: String(Math.floor(Math.random() * 90000000000000000000), 10),
   };
-  
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [buttonPanelOpen, setButtonPanelOpen] = useState(true);
   const [removePanelOpen, setRemovePanelOpen] = useState(false);
