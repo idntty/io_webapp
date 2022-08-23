@@ -20,7 +20,7 @@ function ProfileTableItem(props) {
               <img className="rounded-full" src={props.image} width="40" height="40" alt={props.property} />
             </div>
             <div className="flex flex-col w-60">
-              <div className="font-semibold text-slate-800 text-base">{props.value}</div>
+              <div className="font-semibold text-slate-800 text-base">{props.status==='Blockchained'?`${props.value.slice(0,4)}****${props.value.slice(props.value.length-4)}`:props.value}</div>
               <div className="font-normal text-xxs">{props.property}</div>
             </div>
           </div>

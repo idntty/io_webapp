@@ -227,7 +227,7 @@ class Store {
         return {
           ...initialData,
           status: 'Blockchained',
-          value: `${elem.value.slice(0,4)}****${elem.value.slice(elem.value.length-4)}`
+          value: elem.value
         }
       }
       const [seed, value] = cryptography.decryptMessageWithPassphrase(elem.value, elem.value_nonce, this.passPhrase, this.pubKey).split(':');
