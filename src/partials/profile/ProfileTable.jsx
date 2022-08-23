@@ -43,7 +43,7 @@ function  ProfileTable({
                     image={defaultData.image}
                     value={data.value.charAt(0).toUpperCase()+data.value.slice(1)}
                     property={data.label}
-                    status={defaultData.status}
+                    status={data.status}
                     transactions={defaultData.transactions}
                     avatars={defaultData.avatars}
                     handleClick={handleClick}
@@ -69,7 +69,7 @@ function  ProfileTable({
                     image={defaultData.image}
                     value={data.value.charAt(0).toUpperCase()+data.value.slice(1)}
                     property={data.label}
-                    status={defaultData.status}
+                    status={data.status}
                     transactions={defaultData.transactions}
                     avatars={defaultData.avatars}
                     handleClick={handleClick}
@@ -95,7 +95,7 @@ function  ProfileTable({
                   image={defaultData.image}
                   value={data.value.charAt(0).toUpperCase()+data.value.slice(1)}
                   property={data.label}
-                  status={defaultData.status}
+                  status={data.status}
                   transactions={defaultData.transactions}
                   avatars={defaultData.avatars}
                   handleClick={handleClick}
@@ -121,7 +121,7 @@ function  ProfileTable({
                   image={defaultData.image}
                   value={data.value}
                   property={data.label}
-                  status={defaultData.status}
+                  status={data.status}
                   transactions={defaultData.transactions}
                   avatars={defaultData.avatars}
                   handleClick={handleClick}

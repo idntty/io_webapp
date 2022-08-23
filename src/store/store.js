@@ -213,12 +213,44 @@ class Store {
   }
 
   get decryptedAccountData() {
-    return this._accountData.map((elem) => {
-      const [seed, value] = cryptography.decryptMessageWithPassphrase(elem.value, elem.value_nonce, this.passPhrase, this.pubKey).split(':');
-      return {
+    const allAccountData=this._accountData.concat(this.accountFeatures.filter(item=>!this._accountData.find(elem=>elem.label===item.label)))
+    return allAccountData.map((elem) => {
+      const initialData={
         ...elem,
         key: elem.label,
         label: labelMap[elem.label] || elem.label,
+        status: '',
+        value: '',
+        seed: ''
+      }
+      if(!this._accountData.find(item=>item.label===elem.label)) {
+        return {
+          ...initialData,
+          status: 'Blockchained',
+          value: elem.value
+        }
+      }
+      const [seed, value] = cryptography.decryptMessageWithPassphrase(elem.value, elem.value_nonce, this.passPhrase, this.pubKey).split(':');
+      const hashValue=cryptography.hash(Buffer.concat([Buffer.from(seed, 'utf8'), cryptography.hash(value, 'utf8')])).toString('hex')
+      if(!this.accountFeatures.find(item=>item.label===elem.label)) {
+        return {
+          ...initialData,
+          status: 'Stored',
+          value,
+          seed
+        }
+      }
+      if(this.accountFeatures.find(item=>item.label===elem.label).value!==hashValue) {
+        return {
+          ...initialData,
+          status: 'Incorrect',
+          value,
+          seed
+        }
+      }
+      return {
+        ...initialData,
+        status: 'Completed',
         value,
         seed
       }

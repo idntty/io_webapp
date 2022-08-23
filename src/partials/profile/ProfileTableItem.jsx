@@ -5,7 +5,7 @@ function ProfileTableItem(props) {
 
   return (
     <>
-      <tr className={`${props.status !== 'Progress' || 'bg-[#eaf0f6]'}`}>
+      <tr>
         <td className="pl-4 pr-4 py-3 whitespace-nowrap w-px">
           <div className="flex items-center">
             <label className="inline-flex">
@@ -19,18 +19,18 @@ function ProfileTableItem(props) {
             <div className="w-9 h-9 shrink-0 mr-2 sm:mr-4">
               <img className="rounded-full" src={props.image} width="40" height="40" alt={props.property} />
             </div>
-            <div className="flex flex-col w-60"> 
-              <div className="font-semibold text-slate-800 text-base">{props.value}</div>
+            <div className="flex flex-col w-60">
+              <div className="font-semibold text-slate-800 text-base">{props.status==='Blockchained'?`${props.value.slice(0,4)}****${props.value.slice(props.value.length-4)}`:props.value}</div>
               <div className="font-normal text-xxs">{props.property}</div>
             </div>
           </div>
         </td>
         <td className="py-3 whitespace-nowrap w-px">
           <div className="w-fit text-xs inline-flex font-medium px-2.5 py-1">
-            {(props.status === 'Progress') ? (
+            {(props.status === 'Blockchained') ? (
               <div className="bg-amber-100 text-amber-600 rounded-full text-center px-2.5 py-1">
                 {props.status}
-              </div>) : 
+              </div>) :
             (props.status === 'Stored') ? (
               <div className="bg-slate-700 text-slate-100 rounded-full text-center px-2.5 py-1">
                 {props.status}
@@ -89,7 +89,7 @@ function ProfileTableItem(props) {
             </div>
           </td>
       </tr>
-      <tr className={`${!descriptionOpen && 'hidden'} ${props.status !== 'Progress' || 'bg-[#eaf0f6]'}` }>
+      <tr className={`${!descriptionOpen && 'hidden'}` }>
         <td colSpan="10" className="px-12 pt-3.5 pb-[14px]">
           <div className="flex items-center gap-x-5">
             <div>
@@ -139,7 +139,7 @@ function ProfileTableItem(props) {
                           Explore -&gt;
                         </a>
                       </div>
-                    </li>     
+                    </li>
                   ))}
                 </ul>
               </div>
