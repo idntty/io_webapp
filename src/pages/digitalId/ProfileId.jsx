@@ -166,7 +166,6 @@ const Profile = observer (() => {
   };
 
   const addDataParameters = () => {
-    console.log(addedValues)
     const label = addedValues.label.toLowerCase().split(' ').join('');
     if(labelMap[label])
       addedValues.key = addedValues.label.toLowerCase().split(' ').join('');
