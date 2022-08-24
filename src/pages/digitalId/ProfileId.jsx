@@ -127,10 +127,10 @@ const Profile = observer (() => {
   };
 
   const deleteDataParameters = () => {
-    const changeData = store.decryptedAccountData.filter(item=>!selectedItems.includes(item.key))
+    const changeData = store.decryptedAccountData.filter(item=>!selectedItems.includes(item.key));
     store.pushAccountData(changeData);
     if(storeOnBlockchain)
-      store.pushAccountDataToBlockchain(changeData)
+      store.pushAccountDataToBlockchain(changeData.filter(elem=>elem.status!=='Stored'))
   };
 
   const changeInitialArray = () => {
@@ -140,6 +140,7 @@ const Profile = observer (() => {
         if (elem.label === item.label) {
           newArr.push({
             ...elem,
+            status: 'new',
             'value': item.value,
             'seed': item.seed,
           })
@@ -156,10 +157,11 @@ const Profile = observer (() => {
     const updatedData = changeInitialArray();
     store.pushAccountData(updatedData);
     if(storeOnBlockchain)
-      store.pushAccountDataToBlockchain(updatedData)
+      store.pushAccountDataToBlockchain(updatedData.filter(elem=>elem.status!=='Stored'))
   };
 
   const addDataParameters = () => {
+    console.log(addedValues)
     const label = addedValues.label.toLowerCase().split(' ').join('');
     if(labelMap[label])
       addedValues.key = addedValues.label.toLowerCase().split(' ').join('');
@@ -167,7 +169,7 @@ const Profile = observer (() => {
       addedValues.key = addedValues.label
     store.pushAccountData(store.decryptedAccountData.concat(addedValues));
     if(storeOnBlockchain)
-      store.pushAccountDataToBlockchain(store.decryptedAccountData.concat(addedValues))
+      store.pushAccountDataToBlockchain(store.decryptedAccountData.concat(addedValues).filter(elem=>elem.status!=='Stored'))
   };
 
   const cancelAddPanel = () => {

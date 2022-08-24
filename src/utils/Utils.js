@@ -1,6 +1,8 @@
 import resolveConfig from 'tailwindcss/resolveConfig';
 import {cryptography, transactions} from '@liskhq/lisk-client';
 import {removeFeatureAssetSchema, setFeatureAssetSchema} from './Schemas';
+import {statusMap} from "../shared/statusMap";
+import {labelMap} from "../shared/labelMap";
 
 export const tailwindConfig = () => {
   // Tailwind config
@@ -36,7 +38,7 @@ export const formatThousands = (value) => Intl.NumberFormat('en-US', {
 }).format(value);
 
 export const encryptAccountData = (data = [], passPhrase = '', pubKey = '') => {
-  return data.map((item) => {
+  return data.filter(item=>item.status!==statusMap.blockchained).map((item) => {
     let value = cryptography.encryptMessageWithPassphrase(item.seed + ":" + item.value, passPhrase, pubKey);
     return {
       label: item.key,
@@ -57,9 +59,8 @@ export const hashAccountData = (data = [], oldData = [], hashMap = {}) => {
     ...acc,
     [item.label]: item.value
   }), {})
-
   const removed = oldData.reduce((acc, item) => {
-    if(!accountMap[item.label] && hashMap[item.label])
+    if(!accountMap[item.label] && !data.find(elem=>elem.label===item.label))
       return [...acc, {label: item.label}];
     return acc
   }, [])
@@ -69,11 +70,10 @@ export const hashAccountData = (data = [], oldData = [], hashMap = {}) => {
       return [ ...acc, item ]
     const oldValue = hashMap[item.key];
     const newValue = hashValue(item.value, item.seed).toString('hex')
-    if(oldValue !== newValue)
+    if(oldValue !== newValue && item.status==='new')
       return [ ...acc, item ]
     return acc;
   }, [])
-
   return [
     removed,
     changed.map((item) => {
@@ -144,7 +144,6 @@ export const generateRemoveTransaction = (features, nonce = BigInt(0), senderPub
       features
     },
   }
-
   const signedTx = transactions.signTransaction(removeFeatureAssetSchema,
     tx, Buffer.from(networkIdentifier, "hex"),
     passPhrase)
