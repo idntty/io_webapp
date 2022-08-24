@@ -4,6 +4,7 @@ import { passphrase, transactions } from "@liskhq/lisk-client";
 import {getNodeInfo} from '../api/node';
 import {fetchWrapper} from '../shared/fetchWrapper';
 import {labelMap} from "../shared/labelMap";
+import {statusMap} from "../shared/statusMap";
 import {generateSvgAvatar} from "../images/GenerateOnboardingSvg/GenerateSvg";
 import {
   encryptAccountData,
@@ -105,7 +106,6 @@ class Store {
 
   pushAccountDataToBlockchain(data = this.decryptedAccountData) {
     const [removed, changed] = hashAccountData(data, this.decryptedAccountData, this.accountFeaturesMap)
-
     const builder = generateTransaction(BigInt(this.accountInfo?.sequence?.nonce || 0), this.addressAndPubKey.publicKey, this.nodeInfo.networkIdentifier, this.passPhrase);
 
     let signedTx = null;
@@ -115,7 +115,6 @@ class Store {
 
     if(changed.length !== 0)
       signedTx = builder.update(changed)
-
     if(signedTx) {
       fetchWrapper.post('transactions', {}, signedTx);
       this.accountInfo.sequence.nonce++;
@@ -226,7 +225,7 @@ class Store {
       if(!this._accountData.find(item=>item.label===elem.label)) {
         return {
           ...initialData,
-          status: 'Blockchained',
+          status: statusMap.blockchained,
           value: elem.value
         }
       }
@@ -235,7 +234,7 @@ class Store {
       if(!this.accountFeatures.find(item=>item.label===elem.label)) {
         return {
           ...initialData,
-          status: 'Stored',
+          status: statusMap.stored,
           value,
           seed
         }
@@ -243,14 +242,14 @@ class Store {
       if(this.accountFeatures.find(item=>item.label===elem.label).value!==hashValue) {
         return {
           ...initialData,
-          status: 'Incorrect',
+          status: statusMap.incorrect,
           value,
           seed
         }
       }
       return {
         ...initialData,
-        status: 'Completed',
+        status: statusMap.completed,
         value,
         seed
       }
