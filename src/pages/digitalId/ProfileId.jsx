@@ -6,6 +6,7 @@ import Header from '../../partials/Header';
 import ProfileTable from '../../partials/profile/ProfileTable';
 import Image from '../../images/transactions-image-04.svg';
 import {labelMap} from '../../shared/labelMap';
+import {statusMap} from "../../shared/statusMap";
 
 const initialPropertyValues = ['First name', 'Second name', 'Birthdate', 'Gender', 'National doctype', 'National doc ID', 'National doc issue date', 'National doc expiry date'];
 
@@ -28,7 +29,8 @@ const Profile = observer (() => {
   const [updatedValues, setUpdatedValues] = useState([defaultValues]);
   const [addedValues, setAddedValues] = useState(defaultValues);
   const [isCheck, setIsCheck] = useState([]);
-  const [alreadyExists, setAlreadyExists] = useState(false);
+  const [alreadyExists, setAlreadyExists] = useState(false)
+  const [blockChainValue, setBlockChainValue] = useState('');
 
   useEffect(() => {
     handleSelectedItems(isCheck);
@@ -57,12 +59,15 @@ const Profile = observer (() => {
   };
 
   const changeUpdatedValues = (value, field, key) => {
+    if(field==='value') {
+      setBlockChainValue(value)
+    }
     setUpdatedValues((prevState) =>
       prevState.map((elem) => (
-        (elem.key === key) ? {
-          ...elem,
-          [field]: value,
-        } : elem
+          (elem.key === key) ? {
+            ...elem,
+            [field]: value,
+          } : elem
       ))
     )
   };
@@ -372,7 +377,7 @@ const Profile = observer (() => {
                             type="text"
                             required
                             onChange={(e) => changeUpdatedValues(e.target.value, 'value', item.key)}
-                            value={item.value}
+                            value={item.status===statusMap.blockchained?blockChainValue : item.value}
                           />
                         </div>
                         <div>

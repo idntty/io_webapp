@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import {statusMap} from "../../shared/statusMap";
 
 function ProfileTableItem(props) {
   const [descriptionOpen, setDescriptionOpen] = useState(false);
@@ -20,22 +21,22 @@ function ProfileTableItem(props) {
               <img className="rounded-full" src={props.image} width="40" height="40" alt={props.property} />
             </div>
             <div className="flex flex-col w-60">
-              <div className="font-semibold text-slate-800 text-base">{props.status==='Blockchained'?`${props.value.slice(0,4)}****${props.value.slice(props.value.length-4)}`:props.value}</div>
+              <div className="font-semibold text-slate-800 text-base">{props.status===statusMap.blockchained?`${props.value.slice(0,4)}****${props.value.slice(props.value.length-4)}`:props.value}</div>
               <div className="font-normal text-xxs">{props.property}</div>
             </div>
           </div>
         </td>
-        <td className="py-3 whitespace-nowrap w-px">
-          <div className="w-fit text-xs inline-flex font-medium px-2.5 py-1">
-            {(props.status === 'Blockchained') ? (
+        <td className="py-3 whitespace-nowrap w-px px-2.5 text-left min-w-[117px]">
+          <div className="w-fit text-xs inline-flex font-medium py-1">
+            {(props.status === statusMap.blockchained) ? (
               <div className="bg-amber-100 text-amber-600 rounded-full text-center px-2.5 py-1">
                 {props.status}
               </div>) :
-            (props.status === 'Stored') ? (
+            (props.status === statusMap.stored) ? (
               <div className="bg-slate-700 text-slate-100 rounded-full text-center px-2.5 py-1">
                 {props.status}
               </div>) :
-            (props.status === 'Completed') ? (
+            (props.status === statusMap.completed) ? (
               <div className="bg-emerald-100 text-emerald-600 rounded-full text-center px-2.5 py-1">
                 {props.status}
               </div>) : (
