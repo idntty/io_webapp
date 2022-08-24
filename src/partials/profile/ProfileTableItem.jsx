@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { statusMap } from '../../shared/statusMap';
 
 function ProfileTableItem(props) {
   const [descriptionOpen, setDescriptionOpen] = useState(false);
@@ -10,7 +11,13 @@ function ProfileTableItem(props) {
           <div className="flex items-center">
             <label className="inline-flex">
               <span className="sr-only">Select</span>
-              <input id={props.id} className="form-checkbox" type="checkbox" onChange={props.handleClick} checked={props.isChecked} />
+              <input
+                id={props.id}
+                className="form-checkbox"
+                type="checkbox"
+                onChange={props.handleClick}
+                checked={props.isChecked}
+              />
             </label>
           </div>
         </td>
@@ -20,44 +27,50 @@ function ProfileTableItem(props) {
               <img className="rounded-full" src={props.image} width="40" height="40" alt={props.property} />
             </div>
             <div className="flex flex-col w-60">
-              <div className="font-semibold text-slate-800 text-base">{props.status==='Blockchained'?`${props.value.slice(0,4)}****${props.value.slice(props.value.length-4)}`:props.value}</div>
+              <div className="font-semibold text-slate-800 text-base">
+                {props.status === 'Blockchained' || props.status === statusMap.processed
+                  ? `${props.value.slice(0, 4)}****${props.value.slice(props.value.length - 4)}`
+                  : props.value}
+              </div>
               <div className="font-normal text-xxs">{props.property}</div>
             </div>
           </div>
         </td>
         <td className="py-3 whitespace-nowrap w-px">
           <div className="w-fit text-xs inline-flex font-medium px-2.5 py-1">
-            {(props.status === 'Blockchained') ? (
-              <div className="bg-amber-100 text-amber-600 rounded-full text-center px-2.5 py-1">
-                {props.status}
-              </div>) :
-            (props.status === 'Stored') ? (
-              <div className="bg-slate-700 text-slate-100 rounded-full text-center px-2.5 py-1">
-                {props.status}
-              </div>) :
-            (props.status === 'Completed') ? (
-              <div className="bg-emerald-100 text-emerald-600 rounded-full text-center px-2.5 py-1">
-                {props.status}
-              </div>) : (
-              <div className="bg-rose-100 text-rose-600 rounded-full text-center px-2.5 py-1">
-                {props.status}
-              </div>)
-            }
+            {props.status === 'Blockchained' ? (
+              <div className="bg-amber-100 text-amber-600 rounded-full text-center px-2.5 py-1">{props.status}</div>
+            ) : props.status === statusMap.processed ? (
+              <div className="bg-amber-100 text-amber-600 rounded-full text-center px-2.5 py-1">{props.status}</div>
+            ) : props.status === 'Stored' ? (
+              <div className="bg-slate-700 text-slate-100 rounded-full text-center px-2.5 py-1">{props.status}</div>
+            ) : props.status === 'Completed' ? (
+              <div className="bg-emerald-100 text-emerald-600 rounded-full text-center px-2.5 py-1">{props.status}</div>
+            ) : (
+              <div className="bg-rose-100 text-rose-600 rounded-full text-center px-2.5 py-1">{props.status}</div>
+            )}
           </div>
         </td>
         <td className="px-2 py-3 whitespace-nowrap w-[340px] box-border">
           <div className="flex flex-wrap items-center -m-1.5 justify-center">
             <div className="flex -space-x-3 -ml-0.5">
-              {(props.avatars) ? (
-                props.avatars.map((avatar, index) => (
-                  <img className="rounded-full border-2 border-slate-100 box-content" key={index} src={avatar} width="32" height="32" alt="Avatar" />
+              {props.avatars
+                ? props.avatars.map((avatar, index) => (
+                  <img
+                    className="rounded-full border-2 border-slate-100 box-content"
+                    key={index}
+                    src={avatar}
+                    width="32"
+                    height="32"
+                    alt="Avatar"
+                  />
                 ))
-              ): null}
+                : null}
               <button className="flex justify-center items-center w-9 h-9 rounded-full bg-white border-2 border-slate-200 hover:border-slate-300 text-indigo-500 shadow-sm transition duration-150">
-                  <span className="sr-only">Add avatar</span>
-                  <svg className="w-4 h-4 fill-current" viewBox="0 0 16 16">
-                    <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
-                  </svg>
+                <span className="sr-only">Add avatar</span>
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 16 16">
+                  <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
+                </svg>
               </button>
             </div>
           </div>
@@ -74,31 +87,40 @@ function ProfileTableItem(props) {
           </div>
         </td>
         <td className="py-3 whitespace-nowrap w-px pr-1.5">
-            <div className="flex items-center">
-              <button
-                className={`text-slate-400 hover:text-slate-500 transform ${descriptionOpen && 'rotate-180'}`}
-                aria-expanded={descriptionOpen}
-                onClick={() => setDescriptionOpen(!descriptionOpen)}
-                aria-controls={`description-${props.id}`}
-              >
-                <span className="sr-only">Show more</span>
-                <svg className="w-8 h-8 fill-current" viewBox="0 0 32 32">
-                  <path d="M16 20l-5.4-5.4 1.4-1.4 4 4 4-4 1.4 1.4z" />
-                </svg>
-              </button>
-            </div>
-          </td>
+          <div className="flex items-center">
+            <button
+              className={`text-slate-400 hover:text-slate-500 transform ${descriptionOpen && 'rotate-180'}`}
+              aria-expanded={descriptionOpen}
+              onClick={() => setDescriptionOpen(!descriptionOpen)}
+              aria-controls={`description-${props.id}`}
+            >
+              <span className="sr-only">Show more</span>
+              <svg className="w-8 h-8 fill-current" viewBox="0 0 32 32">
+                <path d="M16 20l-5.4-5.4 1.4-1.4 4 4 4-4 1.4 1.4z" />
+              </svg>
+            </button>
+          </div>
+        </td>
       </tr>
-      <tr className={`${!descriptionOpen && 'hidden'}` }>
+      <tr className={`${!descriptionOpen && 'hidden'}`}>
         <td colSpan="10" className="px-12 pt-3.5 pb-[14px]">
           <div className="flex items-center gap-x-5">
             <div>
-              <label className="block text-sm font-medium mb-1" htmlFor="placeholder">Seed</label>
-              <input id="placeholder" className="form-input w-[396px] bg-white" type="text" placeholder="2342423423423234223" />
+              <label className="block text-sm font-medium mb-1" htmlFor="placeholder">
+                Seed
+              </label>
+              <input
+                id="placeholder"
+                className="form-input w-[396px] bg-white"
+                type="text"
+                placeholder="2342423423423234223"
+              />
             </div>
             <div>
               <span className="block text-sm font-medium mb-1">Transaction</span>
-              <a href="" className="w-[396px] text-slate-400 font-normal text-sm underline">0x12831823791203192418234841238468</a>
+              <a href="" className="w-[396px] text-slate-400 font-normal text-sm underline">
+                0x12831823791203192418234841238468
+              </a>
             </div>
           </div>
           {/* Progress validation bar */}
@@ -113,8 +135,11 @@ function ProfileTableItem(props) {
                   {props.transactions.map((data, index) => (
                     <li className="relative py-2" key={index}>
                       <div className="flex items-center mb-2.5">
-                        {(props.transactions[index+1]) ? (
-                          <div className="absolute left-0 h-full w-0.5 bg-slate-200 self-start ml-2.5 -translate-x-1/2 translate-y-3" aria-hidden="true"></div>
+                        {props.transactions[index + 1] ? (
+                          <div
+                            className="absolute left-0 h-full w-0.5 bg-slate-200 self-start ml-2.5 -translate-x-1/2 translate-y-3"
+                            aria-hidden="true"
+                          ></div>
                         ) : null}
                         <div className="absolute left-0 rounded-full bg-indigo-500" aria-hidden="true">
                           <svg className="w-5 h-5 fill-current text-white" viewBox="0 0 20 20">
@@ -123,15 +148,21 @@ function ProfileTableItem(props) {
                         </div>
                         <h3 className="pl-9 whitespace-nowrap">
                           <span className="text-validateSize font-bold text-slate-800">Validate by </span>
-                          <a href="" className="font-bold text-validateSize underline text-indigo-500">{data}</a>
+                          <a href="" className="font-bold text-validateSize underline text-indigo-500">
+                            {data}
+                          </a>
                         </h3>
                       </div>
                       <div className="pl-9">
-                        <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">{data}</a>
+                        <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">
+                          {data}
+                        </a>
                         <span className="block text-xxs font-normal mb-1">Transactions ID</span>
                       </div>
                       <div className="pl-9">
-                        <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">{data.slice(2, data.length)}</a>
+                        <a href="" className="w-[396px] text-slate-800 font-semibold text-base underline">
+                          {data.slice(2, data.length)}
+                        </a>
                         <span className="block text-xxs font-normal mb-1">Validated data</span>
                       </div>
                       <div className="pl-9 pt-[14px]">
@@ -146,8 +177,8 @@ function ProfileTableItem(props) {
             </div>
           </div>
         </td>
-       </tr>
-   </>
+      </tr>
+    </>
   );
 }
 

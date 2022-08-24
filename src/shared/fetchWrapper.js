@@ -8,8 +8,9 @@ function prepareUrl(url) {
 
 function handleRequest(method, url, headers, attempts, token, body) {
   return new Promise((resolve, reject) => {
-    store.loading = true;
     (function internalRequest() {
+      if(store)
+        store.loading = true;
       return request(method, url, headers, token, body)
         .then(resolve)
         .catch(err => --attempts > 0 ? internalRequest() : reject(err))
