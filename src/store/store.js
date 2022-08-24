@@ -4,8 +4,8 @@ import { passphrase } from '@liskhq/lisk-client';
 import { getNodeInfo } from '../api/node';
 import { fetchWrapper } from '../shared/fetchWrapper';
 import { labelMap } from '../shared/labelMap';
-import { statusMap } from '../shared/statusMap';
 import { generateSvgAvatar } from '../images/GenerateOnboardingSvg/GenerateSvg';
+import {decryptedData} from "../utils/decryptedData";
 import { encryptAccountData, generateTransaction, hashAccountData } from '../utils/Utils';
 
 class Store {
@@ -251,62 +251,8 @@ class Store {
       };
     });
   }
-
   get decryptedAccountData() {
-    const allAccountData = this._accountData.concat(
-      this.accountFeatures.filter((item) => !this._accountData.find((elem) => elem.label === item.label))
-    );
-    return allAccountData.map((elem) => {
-      const initialData = {
-        ...elem,
-        key: elem.label,
-        label: labelMap[elem.label] || elem.label,
-        status: '',
-        value: '',
-        seed: '',
-      };
-      if(this.processedFeatures[elem.label])
-        return {
-          ...initialData,
-          status: statusMap.processed,
-          value: elem.value,
-        }
-      if (!this._accountData.find((item) => item.label === elem.label)) {
-        return {
-          ...initialData,
-          status: statusMap.blockchained,
-          value: elem.value,
-        };
-      }
-      const [seed, value] = cryptography
-      .decryptMessageWithPassphrase(elem.value, elem.value_nonce, this.passPhrase, this.pubKey)
-      .split(':');
-      const hashValue = cryptography
-      .hash(Buffer.concat([Buffer.from(seed, 'utf8'), cryptography.hash(value, 'utf8')]))
-      .toString('hex');
-      if (!this.accountFeatures.find((item) => item.label === elem.label)) {
-        return {
-          ...initialData,
-          status: statusMap.stored,
-          value,
-          seed,
-        };
-      }
-      if (this.accountFeatures.find((item) => item.label === elem.label).value !== hashValue) {
-        return {
-          ...initialData,
-          status: statusMap.incorrect,
-          value,
-          seed,
-        };
-      }
-      return {
-        ...initialData,
-        status: statusMap.completed,
-        value,
-        seed,
-      };
-    });
+    return decryptedData(this._accountData, this.accountFeatures, this.passPhrase, this.pubKey)
   }
 
   get firstName() {

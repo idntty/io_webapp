@@ -28,7 +28,7 @@ function ProfileTableItem(props) {
             </div>
             <div className="flex flex-col w-60">
               <div className="font-semibold text-slate-800 text-base">
-                {props.status === 'Blockchained' || props.status === statusMap.processed
+                {props.status === statusMap.blockchained || props.status === statusMap.processed
                   ? `${props.value.slice(0, 4)}****${props.value.slice(props.value.length - 4)}`
                   : props.value}
               </div>
@@ -36,15 +36,15 @@ function ProfileTableItem(props) {
             </div>
           </div>
         </td>
-        <td className="py-3 whitespace-nowrap w-px">
-          <div className="w-fit text-xs inline-flex font-medium px-2.5 py-1">
-            {props.status === 'Blockchained' ? (
+        <td className="py-3 whitespace-nowrap w-px px-2.5 text-left min-w-[117px]">
+          <div className="w-fit text-xs inline-flex font-medium py-1">
+            {props.status === statusMap.blockchained ? (
               <div className="bg-amber-100 text-amber-600 rounded-full text-center px-2.5 py-1">{props.status}</div>
             ) : props.status === statusMap.processed ? (
               <div className="bg-amber-100 text-amber-600 rounded-full text-center px-2.5 py-1">{props.status}</div>
-            ) : props.status === 'Stored' ? (
+            ) : props.status === statusMap.stored ? (
               <div className="bg-slate-700 text-slate-100 rounded-full text-center px-2.5 py-1">{props.status}</div>
-            ) : props.status === 'Completed' ? (
+            ) : props.status === statusMap.completed ? (
               <div className="bg-emerald-100 text-emerald-600 rounded-full text-center px-2.5 py-1">{props.status}</div>
             ) : (
               <div className="bg-rose-100 text-rose-600 rounded-full text-center px-2.5 py-1">{props.status}</div>
