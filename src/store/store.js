@@ -252,7 +252,7 @@ class Store {
     });
   }
   get decryptedAccountData() {
-    return decryptedData(this._accountData, this.accountFeatures, this.passPhrase, this.pubKey)
+    return decryptedData(this._accountData, this.accountFeatures, this.passPhrase, this.pubKey, this.processedFeatures)
   }
 
   get firstName() {

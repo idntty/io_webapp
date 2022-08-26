@@ -2,7 +2,7 @@ import {labelMap} from "../shared/labelMap";
 import {statusMap} from "../shared/statusMap";
 import {cryptography} from "@liskhq/lisk-client";
 
-export const decryptedData=(serverData, blockchainData, passPhrase, pubKey)=>{
+export const decryptedData=(serverData, blockchainData, passPhrase, pubKey, processedFeatures)=>{
   const allAccountData=serverData.concat(blockchainData.filter(item=>!serverData.find(elem=>elem.label===item.label)))
   return allAccountData.map((elem) => {
     const initialData={
@@ -13,6 +13,12 @@ export const decryptedData=(serverData, blockchainData, passPhrase, pubKey)=>{
       value: '',
       seed: ''
     }
+    if(processedFeatures[elem.label])
+      return {
+        ...initialData,
+        status: statusMap.processed,
+        value: elem.value,
+      }
     if(!serverData.find(item=>item.label===elem.label)) {
       return {
         ...initialData,
