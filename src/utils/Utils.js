@@ -2,7 +2,6 @@ import resolveConfig from 'tailwindcss/resolveConfig';
 import {cryptography, transactions} from '@liskhq/lisk-client';
 import {removeFeatureAssetSchema, setFeatureAssetSchema} from './Schemas';
 import {statusMap} from "../shared/statusMap";
-import {labelMap} from "../shared/labelMap";
 
 export const tailwindConfig = () => {
   // Tailwind config
@@ -45,6 +44,17 @@ export const encryptAccountData = (data = [], passPhrase = '', pubKey = '') => {
       value: value.encryptedMessage,
       value_nonce: value.nonce,
       seed: item.seed,
+    }
+  })
+}
+
+export  const encryptSharedData = (data = [], passPhrase = '', pubKey = '') => {
+  return data.map((item)=> {
+    let value = cryptography.encryptMessageWithPassphrase(item.seed + ":" + item.value, passPhrase, pubKey);
+    return {
+      label: item.key,
+      value: value.encryptedMessage,
+      value_nonce: value.nonce,
     }
   })
 }
