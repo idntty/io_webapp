@@ -165,6 +165,11 @@ const Profile = observer (() => {
       store.pushAccountDataToBlockchain(updatedData.filter(elem=>elem.status!=='Stored'))
   };
 
+  const sharedDataAccount = () => {
+    const sharedData = store.decryptedAccountData.filter(item => selectedItems.includes(item.key))
+    store.pushSharedData(sharedData)
+  }
+
   const addDataParameters = () => {
     const label = addedValues.label.toLowerCase().split(' ').join('');
     if(labelMap[label])
@@ -517,7 +522,10 @@ const Profile = observer (() => {
                       </svg>
                       <span className="ml-2">Update</span>
                     </button>
-                    <button className="btn w-full border-slate-200 hover:border-slate-300 text-slate-600 px-[100px] justify-start">
+                    <button
+                      className="btn w-full border-slate-200 hover:border-slate-300 text-slate-600 px-[100px] justify-start"
+                      onClick={sharedDataAccount}
+                      >
                       <svg className="w-4 h-4 fill-rose-500 shrink-0" viewBox="0 0 16 16">
                         <path d="M14.682 2.318A4.485 4.485 0 0 0 11.5 1 4.377 4.377 0 0 0 8 2.707 4.383 4.383 0 0 0 4.5 1a4.5 4.5 0 0 0-3.182 7.682L8 15l6.682-6.318a4.5 4.5 0 0 0 0-6.364Zm-1.4 4.933L8 12.247l-5.285-5A2.5 2.5 0 0 1 4.5 3c1.437 0 2.312.681 3.5 2.625C9.187 3.681 10.062 3 11.5 3a2.5 2.5 0 0 1 1.785 4.251h-.003Z" />
                       </svg>

@@ -4,9 +4,10 @@ import { passphrase } from '@liskhq/lisk-client';
 import { getNodeInfo } from '../api/node';
 import { fetchWrapper } from '../shared/fetchWrapper';
 import { labelMap } from '../shared/labelMap';
+import { statusMap } from "../shared/statusMap";
 import { generateSvgAvatar } from '../images/GenerateOnboardingSvg/GenerateSvg';
 import {decryptedData} from "../utils/decryptedData";
-import { encryptAccountData, generateTransaction, hashAccountData } from '../utils/Utils';
+import {encryptAccountData, encryptSharedData, generateTransaction, hashAccountData} from '../utils/Utils';
 
 class Store {
   _accountData = [];
@@ -39,6 +40,7 @@ class Store {
       () => this.fetchAccountInfo()
     );
     onBecomeObserved(this, 'decryptedAccountData', () => this.fetchNewAccountData());
+    onBecomeUnobserved(this, 'decryptedAccountData', () => this.unobservedAccountData())
     onBecomeObserved(this, 'sharedData', () => this.fetchKeysArray());
     onBecomeUnobserved(this, 'sharedData', () => this.unobservedSharedData());
     onBecomeObserved(this, 'transactionsInfo', () => this.fetchTransactionsInfo());
@@ -105,11 +107,12 @@ class Store {
   }
 
   fetchSharedData() {
-    this._keysArray.forEach((elem) =>
-      fetchWrapper
-      .get(`data/shared/${elem}`)
-      .then((res) => this.changeSharedData(res))
-      .catch((err) => this.fetchError(err))
+    this._keysArray.forEach((elem) => {
+          fetchWrapper
+              .get(`data/shared/${elem}`)
+              .then((res) => this.changeSharedData(res))
+              .catch((err) => this.fetchError(err))
+        }
     );
   }
 
@@ -117,6 +120,22 @@ class Store {
     getNodeInfo()
     .then((info) => this.fetchNodeInfoSuccess(info))
     .catch((err) => this.fetchError(err));
+  }
+
+  pushSharedData(data) {
+    data=data.filter(item=>item.status!==statusMap.blockchained)
+    if(data.length>0) {
+      fetchWrapper
+          .postAuth(
+              'data/shared',
+              {
+                networkIdentifier: this.nodeInfo.networkIdentifier,
+                lastBlockID: this.nodeInfo.lastBlockID,
+              },
+              {publickey: this.pubKey, shared: encryptSharedData(data, this.passPhrase, this.pubKey)}
+          )
+          .catch((err) => this.fetchError(err));
+    }
   }
 
   pushAccountData(data = this.accountData) {
@@ -173,6 +192,10 @@ class Store {
     this._sharedData = [];
   }
 
+  unobservedAccountData() {
+    this._accountData=[]
+  }
+
   changeSharedData(incomingData) {
     this._sharedData.push({
       data: incomingData.data,
@@ -224,7 +247,7 @@ class Store {
   get sharedData() {
     return this._sharedData.map((elem) => ({
       data: elem.data.map((item) => ({
-        label: labelMap[item.label],
+        label: labelMap[item.label] || item.label,
         value: item.value,
       })),
     }));
