@@ -59,16 +59,16 @@ class Store {
         lastBlockID: this.nodeInfo.lastBlockID,
       })
       .then((res) => this.accountDataFetchChange(res))
-      .catch((err) => this.fetchError(err));
+      .catch((err) => this.throwError(err));
     })
-    .catch((err) => this.fetchError(err));
+    .catch((err) => this.throwError(err));
   }
 
   fetchAccountInfo() {
     fetchWrapper
     .get(`accounts/${this.address}`)
     .then((res) => this.fetchAccountInfoSuccess(res))
-    .catch((err) => this.fetchError(err));
+    .catch((err) => this.throwError(err));
   }
 
   fetchKeysArray() {
@@ -82,7 +82,7 @@ class Store {
       })
       .then((res) => this.keysArrayFetchChange(res));
     })
-    .catch((err) => this.fetchError(err));
+    .catch((err) => this.throwError(err));
   }
 
   fetchTransactionsInfo() {
@@ -92,14 +92,14 @@ class Store {
       lastBlockID: this.nodeInfo.lastBlockID,
     })
     .then((res) => this.saveInfoTransactions(res))
-    .catch((err) => this.fetchError(err));
+    .catch((err) => this.throwError(err));
   }
 
   fetchTempTransactions() {
     fetchWrapper
       .get('node/transactions')
       .then((res) => this.fetchTempTransactionsSuccess(res))
-      .catch((err) => this.fetchError(err));
+      .catch((err) => this.throwError(err));
   }
 
   fetchPassPhrase() {
@@ -110,8 +110,8 @@ class Store {
     this._keysArray.forEach((elem) => {
           fetchWrapper
               .get(`data/shared/${elem}`)
-              .then((res) => this.changeSharedData(res))
-              .catch((err) => this.fetchError(err))
+              .then((res) => this.changeSharedData(res, elem))
+              .catch((err) => this.throwError(err))
         }
     );
   }
@@ -119,10 +119,10 @@ class Store {
   fetchNodeInfo() {
     getNodeInfo()
     .then((info) => this.fetchNodeInfoSuccess(info))
-    .catch((err) => this.fetchError(err));
+    .catch((err) => this.throwError(err));
   }
 
-  pushSharedData(data) {
+  pushSharedData(data, pubKey = this.pubKey) {
     data=data.filter(item=>item.status!==statusMap.blockchained)
     if(data.length>0) {
       fetchWrapper
@@ -132,9 +132,9 @@ class Store {
                 networkIdentifier: this.nodeInfo.networkIdentifier,
                 lastBlockID: this.nodeInfo.lastBlockID,
               },
-              {publickey: this.pubKey, shared: encryptSharedData(data, this.passPhrase, this.pubKey)}
+              {publickey: pubKey, shared: encryptSharedData(data, this.passPhrase, pubKey)}
           )
-          .catch((err) => this.fetchError(err));
+          .catch((err) => this.throwError(err));
     }
   }
 
@@ -149,7 +149,7 @@ class Store {
       [...encryptAccountData(data, this.passPhrase, this.pubKey)]
     )
     .then(() => this.fetchNewAccountData())
-    .catch((err) => this.fetchError(err));
+    .catch((err) => this.throwError(err));
   }
 
   pushAccountDataToBlockchain(data = this.decryptedAccountData) {
@@ -169,7 +169,7 @@ class Store {
     if (signedTx) {
       fetchWrapper.post('transactions', {}, signedTx)
       .then(() => this.fetchTempTransactions())
-      .catch((err) => this.fetchError(err));
+      .catch((err) => this.throwError(err));
       this.accountInfo.sequence.nonce++;
     }
   }
@@ -196,9 +196,10 @@ class Store {
     this._accountData=[]
   }
 
-  changeSharedData(incomingData) {
+  changeSharedData(incomingData, id) {
     this._sharedData.push({
       data: incomingData.data,
+      id
     });
   }
 
@@ -240,7 +241,7 @@ class Store {
     this._tempTransactions = res.data;
   }
 
-  fetchError(err) {
+  throwError(err) {
     console.log(err);
   }
 
@@ -250,6 +251,7 @@ class Store {
         label: labelMap[item.label] || item.label,
         value: item.value,
       })),
+      id: elem.id
     }));
   }
 

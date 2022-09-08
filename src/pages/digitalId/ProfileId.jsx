@@ -23,6 +23,7 @@ const Profile = observer (() => {
   const [changePanelOpen, setChangePanelOpen] = useState(false);
   const [storeOnBlockchain, setStoreOnBlockchain] = useState(false);
   const [addPanelOpen, setAddPanelOpen] = useState(false);
+  const [sharePanelOpen, setSharePanelOpen] = useState(false);
   const [updatePanelOpen, setUpdatePanelOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [propertyValues, setPropertyValues] = useState([]);
@@ -31,6 +32,7 @@ const Profile = observer (() => {
   const [isCheck, setIsCheck] = useState([]);
   const [alreadyExists, setAlreadyExists] = useState(false)
   const [blockChainValue, setBlockChainValue] = useState('');
+  const [publicKey, setPublicKey] = useState('')
 
   useEffect(() => {
     handleSelectedItems(isCheck);
@@ -165,9 +167,9 @@ const Profile = observer (() => {
       store.pushAccountDataToBlockchain(updatedData.filter(elem=>elem.status!=='Stored'))
   };
 
-  const sharedDataAccount = () => {
+  const shareAccountData = () => {
     const sharedData = store.decryptedAccountData.filter(item => selectedItems.includes(item.key))
-    store.pushSharedData(sharedData)
+    store.pushSharedData(sharedData, publicKey)
   }
 
   const addDataParameters = () => {
@@ -203,6 +205,16 @@ const Profile = observer (() => {
     setRemovePanelOpen(true);
     setChangePanelOpen(false);
   };
+
+  const openSharePanel = () => {
+    setSharePanelOpen(true);
+    setChangePanelOpen(false);
+  }
+
+  const cancelSharePanel = () => {
+    setSharePanelOpen(false);
+    setChangePanelOpen(true);
+  }
 
   const openUpdatePanel = () => {
     setUpdatePanelOpen(true);
@@ -462,6 +474,38 @@ const Profile = observer (() => {
                       <span className="text-descriptionSize text-slate-500 font-normal italic text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do Terms.</span>
                     </div>
                   </div>
+                  {/* Share panel */}
+                  <div className={`${!sharePanelOpen && 'hidden'} bg-white px-5 pt-4 shadow-lg rounded-sm border border-slate-200 mb-12 lg:w-72 xl:w-80`}>
+                    <div className='relative z-20'>
+                      <div className='z-10'>
+                        <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Public Key <span className="text-rose-500">*</span></label>
+                        <input
+                          autoComplete='off'
+                          id="seed"
+                          className="form-input w-full"
+                          type="text"
+                          required
+                          onChange={(e) => setPublicKey(e.target.value)}
+                          value={publicKey}
+                        />
+                      </div>
+                      {/* Buttons */}
+                      <div className="flex flex-row z-10 justify-end gap-x-2 pt-[18px] pb-[14px] items-end">
+                        <button
+                          className="btn-sm bg-white border-slate-200 hover:bg-slate-50 text-slate-600"
+                          onClick={cancelSharePanel}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          className="btn-sm bg-indigo-500 hover:bg-indigo-600 text-white"
+                          onClick={shareAccountData}
+                        >
+                          Share
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                   {/* Details */}
                   <div className={`${(!(removePanelOpen || addPanelOpen) || !storeOnBlockchain) && 'hidden'} drop-shadow-lg`}>
                     {/* Top */}
@@ -524,7 +568,7 @@ const Profile = observer (() => {
                     </button>
                     <button
                       className="btn w-full border-slate-200 hover:border-slate-300 text-slate-600 px-[100px] justify-start"
-                      onClick={sharedDataAccount}
+                      onClick={openSharePanel}
                       >
                       <svg className="w-4 h-4 fill-rose-500 shrink-0" viewBox="0 0 16 16">
                         <path d="M14.682 2.318A4.485 4.485 0 0 0 11.5 1 4.377 4.377 0 0 0 8 2.707 4.383 4.383 0 0 0 4.5 1a4.5 4.5 0 0 0-3.182 7.682L8 15l6.682-6.318a4.5 4.5 0 0 0 0-6.364Zm-1.4 4.933L8 12.247l-5.285-5A2.5 2.5 0 0 1 4.5 3c1.437 0 2.312.681 3.5 2.625C9.187 3.681 10.062 3 11.5 3a2.5 2.5 0 0 1 1.785 4.251h-.003Z" />

@@ -15,29 +15,25 @@ function SharedDataRoadMap({ data }) {
                   <path d="M15.0004 0H7.00039C6.40039 0 6.00039 0.4 6.00039 1V12C6.00039 12.7 5.80039 13.4 5.40039 14H13.0004C14.7004 14 16.0004 12.7 16.0004 11V1C16.0004 0.4 15.6004 0 15.0004 0Z" fill="#6366F1"/>
                 </svg>
               </div>
-              <div className="flex flex-col">
-                <h3 className="text-base font-semibold text-slate-800 pl-7">
-                  {data.text}
+              <div className="flex flex-col max-w-3xl">
+                <h3 className="text-base font-semibold text-slate-800 pl-7 overflow-ellipsis overflow-hidden">
+                  {data.value}
                 </h3>
-                <span className="font-normal text-[10px] text-slate-600 pl-7">{data.typeItem}</span>
+                <span className="font-normal text-[10px] text-slate-600 pl-7">{data.label}</span>
               </div>
             </div>
-            <div className="block text-slate-600 w-fit pl-7">
-              <div className="text-xs font-semibold underline mb-[-10px] cursor-pointer">{data.dataShared}</div>
-              <span className="font-normal text-[10px]">seed</span>
-            </div>
-            <div className="mb-3.5 block text-slate-600 w-fit pl-7">
-              <div className="text-xs font-semibold underline mb-[-10px] cursor-pointer">{data.dataShared}</div>
-              <span className="font-normal text-[10px]">hash</span>
-            </div>
-            <div className="flex flex-nowrap items-center space-x-2 mb-3.5">
-              {/* Avatars */}
-              <div className="flex shrink-0 -space-x-3 -ml-px pl-7">
-                {data.usersImges.map(pic => {
-                  return <ValidationUsersImg key={pic.imgId} image={pic}/>
-                })}
+            {data.seed && (
+              <div className="block text-slate-600 w-fit pl-7">
+                <div className="text-xs font-semibold underline mb-[-10px] cursor-pointer">{data.seed.toUpperCase()}</div>
+                <span className="font-normal text-[10px]">seed</span>
               </div>
-            </div>
+            )}
+            {data.hash && (
+              <div className="mb-3.5 block text-slate-600 w-fit pl-7">
+                <div className="text-xs font-semibold underline mb-[-10px] cursor-pointer">{data.hash.toUpperCase()}</div>
+                <span className="font-normal text-[10px]">hash</span>
+              </div>
+            )}
             <a className="cursor-pointer pl-7 font-normal text-sm text-indigo-500 hover:text-indigo-600">Explore -&gt;</a>
           </div>
         </div>

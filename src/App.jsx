@@ -42,14 +42,13 @@ const App = observer(() => {
       <Routes>
         <Route exact path="/" element={<Onboarding1 />} />
         <Route path="/digitalId/profile-id" element={<ProfileId />} />
-        <Route path="/digitalId/validate" element={<Validate />} />
+        {/*<Route path="/digitalId/validate" element={<Validate />} />*/}
         <Route path="/digitalId/validation-log" element={<ValidationLog />} />
         <Route path="/digitalId/verify" element={<Verify />} />
         <Route path="/onboarding-2" element={<Onboarding2 />} />
         <Route path="/onboarding-3" element={<Onboarding3 />} />
         <Route path="/onboarding-4" element={<Onboarding4 />} />
-        <Route path="/shared-data" element={<SharedData />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/shared-data/:id" element={<SharedData />} />
         <Route path="/signIn" element={<SignIn />} />
       </Routes>
     </>
