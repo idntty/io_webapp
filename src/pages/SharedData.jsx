@@ -8,6 +8,7 @@ import SharedDataRoadMap from "../partials/sharedData/SharedDataRoadmap";
 import { store } from "../store/store";
 import { fetchWrapper } from "../shared/fetchWrapper";
 import { cryptography } from "@liskhq/lisk-client";
+import {generateTransaction} from '../utils/Utils';
 
 function SharedData() {
   const [encryptedData, setEncryptedData] = useState([]);
@@ -35,7 +36,7 @@ function SharedData() {
           item.value,
           item.value_nonce,
           passPhrase,
-          pubKey
+          Buffer.from(pubKey, 'hex')
         )
         .split(":");
         hash = cryptography
@@ -59,6 +60,21 @@ function SharedData() {
       }
     });
   }, [encryptedData]);
+
+  const validateAccountData = () => {
+    const builder = generateTransaction(BigInt(store.accountInfo?.sequence?.nonce || 0),
+      store.pubKey, store.nodeInfo.networkIdentifier, store.passPhrase)
+
+    const signedTx = builder.validate(decryptedData.map(e => ({
+      label: e.label,
+      value: Buffer.from(e.hash, 'hex')
+    })), address)
+
+    if (signedTx) {
+      fetchWrapper.post('transactions', {}, signedTx)
+      .catch((err) => console.log(err));
+    }
+  }
 
   if (!passPhrase) return <Navigate to="/" replace={true} />;
 
@@ -87,6 +103,7 @@ function SharedData() {
                       </li>
                     ))}
                 </ul>
+                {!hasError && <button className="mt-12 btn bg-indigo-500 hover:bg-indigo-600 text-white" onClick={validateAccountData}>Validate data</button>}
               </div>
             </div>
           </div>

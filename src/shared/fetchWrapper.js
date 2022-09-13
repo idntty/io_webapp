@@ -68,35 +68,35 @@ function request(method, url, headers = {}, token, body) {
   return fetch(prepareUrl(url), requestOptions);
 };
 
-function get(url, headers, attempts = 1) {
+function get(url, headers, attempts = 3) {
   return handleRequest('GET', url, headers, attempts, null);
 }
 
-function getAuth(url, headers, attempts = 1) {
+function getAuth(url, headers, attempts = 3) {
   return handleRequest('GET', url, headers, attempts, store.tokenKey);
 }
 
-function del(url, headers, attempts = 1) {
+function del(url, headers, attempts = 3) {
   return handleRequest('DELETE', url, headers, attempts, null);
 }
 
-function delAuth(url, headers, attempts = 1) {
+function delAuth(url, headers, attempts = 3) {
   return handleRequest('DELETE', url, headers, attempts, store.tokenKey);
 }
 
-function post(url, headers, body, attempts = 1) {
+function post(url, headers, body, attempts = 3) {
   return handleRequest('POST', url, headers, attempts, null, body);
 }
 
-function postAuth(url, headers, body, attempts = 1) {
+function postAuth(url, headers, body, attempts = 3) {
   return handleRequest('POST', url, headers, attempts, store.tokenKey, body);
 }
 
-function put(url, headers, body, attempts = 1) {
+function put(url, headers, body, attempts = 3) {
   return handleRequest('PUT', url, headers, attempts, null, body);
 }
 
-function putAuth(url, headers, body, attempts = 1) {
+function putAuth(url, headers, body, attempts = 3) {
   return handleRequest('PUT', url, headers, attempts, store.tokenKey, body);
 }
 

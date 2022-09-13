@@ -170,6 +170,7 @@ const Profile = observer (() => {
   const shareAccountData = () => {
     const sharedData = store.decryptedAccountData.filter(item => selectedItems.includes(item.key))
     store.pushSharedData(sharedData, publicKey)
+    cancelSharePanel();
   }
 
   const addDataParameters = () => {

@@ -132,7 +132,7 @@ class Store {
                 networkIdentifier: this.nodeInfo.networkIdentifier,
                 lastBlockID: this.nodeInfo.lastBlockID,
               },
-              {publickey: pubKey, shared: encryptSharedData(data, this.passPhrase, pubKey)}
+              {publickey: this.pubKey, shared: encryptSharedData(data, this.passPhrase, pubKey)}
           )
           .catch((err) => this.throwError(err));
     }

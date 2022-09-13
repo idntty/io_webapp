@@ -1,6 +1,10 @@
 import resolveConfig from 'tailwindcss/resolveConfig';
 import {cryptography, transactions} from '@liskhq/lisk-client';
-import {removeFeatureAssetSchema, setFeatureAssetSchema} from './Schemas';
+import {
+  removeFeatureAssetSchema,
+  setFeatureAssetSchema,
+  validateFeatureAssetSchema,
+} from './Schemas';
 import {statusMap} from "../shared/statusMap";
 
 export const tailwindConfig = () => {
@@ -50,7 +54,7 @@ export const encryptAccountData = (data = [], passPhrase = '', pubKey = '') => {
 
 export  const encryptSharedData = (data = [], passPhrase = '', pubKey = '') => {
   return data.map((item)=> {
-    let value = cryptography.encryptMessageWithPassphrase(item.seed + ":" + item.value, passPhrase, pubKey);
+    let value = cryptography.encryptMessageWithPassphrase(item.seed + ":" + item.value, passPhrase, Buffer.from(pubKey, 'hex'));
     return {
       label: item.key,
       value: value.encryptedMessage,
@@ -109,6 +113,7 @@ export const generateTransaction = (nonce = BigInt(0), senderPublicKey = '', net
   return {
     update: (features) => generateSetTransaction(features, nonce, senderPublicKey, networkIdentifier, passPhrase, fee),
     remove: (features) => generateRemoveTransaction(features, nonce, senderPublicKey, networkIdentifier, passPhrase, fee),
+    validate: (features, recipientAddress) => generateValidateTransaction(features, nonce, senderPublicKey, networkIdentifier, passPhrase, fee, recipientAddress),
   }
 }
 
@@ -161,6 +166,39 @@ export const generateRemoveTransaction = (features, nonce = BigInt(0), senderPub
   signedTx.senderPublicKey = signedTx.senderPublicKey.toString(
     "hex");
   signedTx.signatures[0] = signedTx.signatures[0].toString("hex");
+
+  delete signedTx.id;
+
+  return signedTx;
+}
+
+const generateValidateTransaction = (features, nonce = BigInt(0), senderPublicKey = '', networkIdentifier = '', passPhrase = '', fee = BigInt(500000), recipientAddress='') => {
+  const tx = {
+    "moduleID": 1001,
+    "assetID": 11,
+    nonce,
+    senderPublicKey: Buffer.from(senderPublicKey, "hex"),
+    fee,
+    "asset": {
+      features,
+      recipientAddress: Buffer.from(recipientAddress, "hex")
+    },
+  }
+
+  if(features.length === 0)
+    return;
+
+  const signedTx = transactions.signTransaction(validateFeatureAssetSchema,
+    tx, Buffer.from(networkIdentifier, "hex"),
+    passPhrase)
+
+  signedTx.senderPublicKey = signedTx.senderPublicKey.toString("hex");
+  signedTx.asset.recipientAddress = signedTx.asset.recipientAddress.toString("hex");
+  signedTx.signatures[0] = signedTx.signatures[0].toString("hex");
+  signedTx.asset.features = signedTx.asset.features.map(feature => ({
+    ...feature,
+    value: feature.value.toString("hex")
+  }))
 
   delete signedTx.id;
 
