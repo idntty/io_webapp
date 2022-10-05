@@ -5,11 +5,9 @@ import { HashRouter as Router } from 'react-router-dom'
 import App from './App'
 import {store} from './store/store';
 
-import { allowMessages } from './utils/messagesApi'
+import './utils/messagesApi'
 
 globalThis.Buffer = Buffer
-
-allowMessages();
 
 window.store = store;
 
