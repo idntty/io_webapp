@@ -5,6 +5,8 @@ import { HashRouter as Router } from 'react-router-dom'
 import App from './App'
 import {store} from './store/store';
 
+import './utils/messagesApi'
+
 globalThis.Buffer = Buffer
 
 window.store = store;
