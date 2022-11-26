@@ -1,101 +1,107 @@
 const path = require("path");
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const webpack = require('webpack');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const webpack = require("webpack");
 
 const plugins = [
   new HtmlWebpackPlugin({
-    favicon: './public/favicon.ico',
-    template: './public/index.html',
+    favicon: "./public/favicon.ico",
+    template: "./public/index.html",
   }),
   new webpack.ProvidePlugin({
-    Buffer: ['buffer', 'Buffer'],
+    Buffer: ["buffer", "Buffer"],
   }),
   new webpack.ProvidePlugin({
-    process: 'process/browser',
+    process: "process/browser",
   }),
-  require('tailwindcss')
+  require("tailwindcss"),
+  new webpack.ContextReplacementPlugin(/sodium/, (data) => {
+    delete data.dependencies[0].critical;
+    return data;
+  }),
 ];
 
-module.exports = (env, argv) => ( {
-  entry: './src/main.jsx',
-  mode: argv.mode || 'development',
-  devtool: argv.mode === 'production' ? false : 'eval-source-map',
+module.exports = (env, argv) => ({
+  entry: "./src/main.jsx",
+  mode: argv.mode || "development",
+  devtool: argv.mode === "production" ? false : "eval-source-map",
   plugins,
   output: {
     clean: true,
-    path: path.resolve(__dirname, 'build'),
-    assetModuleFilename: 'assets/[fullhash:12][ext]',
-    filename: 'main.[fullhash:8].js',
+    path: path.resolve(__dirname, "build"),
+    assetModuleFilename: "assets/[fullhash:12][ext]",
+    filename: "main.[fullhash:8].js",
   },
   devServer: {
     open: true,
     static: {
-      directory: path.join(__dirname, 'public'),
+      directory: path.join(__dirname, "public"),
     },
     compress: true,
-    port: 'auto',
+    port: "auto",
     hot: true,
     client: {
       progress: true,
     },
     proxy: {
-      '/api/**': {
-        target: 'http://3.125.47.101',
+      "/api/**": {
+        target: "https://tn-alpha.idntty.org:8080/",
         secure: false,
-        changeOrigin: true
-      }
-    }
+        changeOrigin: true,
+      },
+    },
   },
+
+  ignoreWarnings: [() => false],
 
   module: {
     rules: [
-      { test: /\.(html)$/, use: ['html-loader'] },
+      { test: /\.(html)$/, use: ["html-loader"] },
       {
         test: /\.m?jsx?$/,
         exclude: /(node_modules|bower_components)/,
         use: {
-          loader: 'babel-loader',
+          loader: "babel-loader",
         },
       },
       {
         test: /\.scss$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: "style-loader",
           },
           {
-            loader: 'css-loader'
+            loader: "css-loader",
           },
 
           {
-            loader: 'postcss-loader'
+            loader: "postcss-loader",
           },
           {
-            loader: 'sass-loader'
-          }
-        ]
+            loader: "sass-loader",
+          },
+        ],
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
-        loader: 'file-loader',
+        loader: "file-loader",
         options: {
-          outputPath: 'assets',
+          outputPath: "assets",
         },
-      }
-    ]
+      },
+    ],
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: [".js", ".jsx"],
     fallback: {
-      "path": require.resolve("path-browserify"),
-      "os": require.resolve("os-browserify/browser"),
-      "querystring": require.resolve("querystring-es3"),
-      "crypto": require.resolve("crypto-browserify"),
-      "util": require.resolve("util/"),
-      "stream": require.resolve("stream-browserify"),
-      "url": require.resolve("url/"),
-      "buffer": require.resolve("buffer/"),
-      "fs": false
-    }
+      path: require.resolve("path-browserify"),
+      os: require.resolve("os-browserify/browser"),
+      querystring: require.resolve("querystring-es3"),
+      crypto: require.resolve("crypto-browserify"),
+      util: require.resolve("util/"),
+      stream: require.resolve("stream-browserify"),
+      url: require.resolve("url/"),
+      buffer: require.resolve("buffer/"),
+      fs: false,
+    },
   },
 });

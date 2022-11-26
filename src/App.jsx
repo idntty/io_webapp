@@ -1,44 +1,40 @@
-import React, { useEffect } from 'react';
-import {
-  Routes,
-  Route,
-  useLocation,
-} from 'react-router-dom';
+import React, { useEffect } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 
-import './css/style.scss';
+import "./css/style.scss";
 
 // Import pages
-import ProfileId from './pages/digitalId/ProfileId';
-import Validate from './pages/digitalId/Validate';
-import ValidationLog from './pages/digitalId/ValidationLog';
-import Verify from './pages/digitalId/Verify';
+import ProfileId from "./pages/digitalId/ProfileId";
+import ValidationLog from "./pages/digitalId/ValidationLog";
+import Verify from "./pages/digitalId/Verify";
 import Onboarding1 from "./pages/Onboarding1";
 import Onboarding2 from "./pages/Onboarding2";
 import Onboarding3 from "./pages/Onboarding3";
 import Onboarding4 from "./pages/Onboarding4";
 import SharedData from "./pages/SharedData";
-import ResetPassword from "./pages/ResetPassword";
 import SignIn from "./pages/SignIn";
-import {LoadingOverlay} from './components/LoadingOverlay';
-import {store} from './store/store';
-import {observer} from 'mobx-react-lite';
+import { LoadingOverlay } from "./components/LoadingOverlay";
+import { store } from "./store/store";
+import { observer } from "mobx-react-lite";
+import Delegates from "./pages/services/Delegates";
+import VPNServers from "./pages/services/VPNServers";
+import VPNPrepare from "./pages/services/VPNPrepare";
 
 const App = observer(() => {
-
   const location = useLocation();
-  useEffect(()=> {
-    localStorage.setItem('svgAvatar', '')
-  },[])
+  useEffect(() => {
+    localStorage.setItem("svgAvatar", "");
+  }, []);
 
   useEffect(() => {
-    document.querySelector('html').style.scrollBehavior = 'auto'
-    window.scroll({ top: 0 })
-    document.querySelector('html').style.scrollBehavior = ''
+    document.querySelector("html").style.scrollBehavior = "auto";
+    window.scroll({ top: 0 });
+    document.querySelector("html").style.scrollBehavior = "";
   }, [location.pathname]); // triggered on route change
 
   return (
     <>
-      { store.loading && <LoadingOverlay /> }
+      {store.loading && <LoadingOverlay />}
       <Routes>
         <Route exact path="/" element={<Onboarding1 />} />
         <Route path="/digitalId/profile-id" element={<ProfileId />} />
@@ -48,11 +44,14 @@ const App = observer(() => {
         <Route path="/onboarding-2" element={<Onboarding2 />} />
         <Route path="/onboarding-3" element={<Onboarding3 />} />
         <Route path="/onboarding-4" element={<Onboarding4 />} />
+        <Route path="/services/delegates" element={<Delegates />} />
+        <Route path="/services/vpn" element={<VPNPrepare />} />
+        <Route path="/services/vpn/servers" element={<VPNServers />} />
         <Route path="/shared-data/:id" element={<SharedData />} />
         <Route path="/signIn" element={<SignIn />} />
       </Routes>
     </>
   );
-})
+});
 
 export default App;

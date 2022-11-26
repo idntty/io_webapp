@@ -1,18 +1,29 @@
-import { reaction, makeAutoObservable, onBecomeObserved, onBecomeUnobserved } from 'mobx';
-import { cryptography } from '@liskhq/lisk-client';
-import { passphrase } from '@liskhq/lisk-client';
-import { getNodeInfo } from '../api/node';
-import { fetchWrapper } from '../shared/fetchWrapper';
-import { labelMap } from '../shared/labelMap';
+import {
+  reaction,
+  makeAutoObservable,
+  onBecomeObserved,
+  onBecomeUnobserved,
+} from "mobx";
+import { cryptography } from "@liskhq/lisk-client";
+import { passphrase } from "@liskhq/lisk-client";
+import { getNodeInfo } from "../api/node";
+import { fetchWrapper } from "../shared/fetchWrapper";
+import { labelMap } from "../shared/labelMap";
 import { statusMap } from "../shared/statusMap";
-import { generateSvgAvatar } from '../images/GenerateOnboardingSvg/GenerateSvg';
-import {decryptedData} from "../utils/decryptedData";
-import {encryptAccountData, encryptSharedData, generateTransaction, hashAccountData} from '../utils/Utils';
+import { generateSvgAvatar } from "../images/GenerateOnboardingSvg/GenerateSvg";
+import { decryptedData } from "../utils/decryptedData";
+import {
+  encryptAccountData,
+  encryptSharedData,
+  generateTransaction,
+  hashAccountData,
+} from "../utils/Utils";
+import sodium from "sodium-universal";
 
 class Store {
   _accountData = [];
 
-  _passPhrase = '';
+  _passPhrase = "";
 
   _nodeInfo = {};
 
@@ -28,6 +39,19 @@ class Store {
 
   _tempTransactions = [];
 
+  _vpnServers = [];
+
+  _canVPN = false;
+
+  _delegates = {
+    data: [],
+    meta: {
+      count: 0,
+      limit: 0,
+      offset: 0,
+    },
+  };
+
   constructor() {
     makeAutoObservable(this, {});
 
@@ -39,121 +63,147 @@ class Store {
       () => this.address,
       () => this.fetchAccountInfo()
     );
-    onBecomeObserved(this, 'decryptedAccountData', () => this.fetchNewAccountData());
-    onBecomeUnobserved(this, 'decryptedAccountData', () => this.unobservedAccountData())
-    onBecomeObserved(this, 'sharedData', () => this.fetchKeysArray());
-    onBecomeUnobserved(this, 'sharedData', () => this.unobservedSharedData());
-    onBecomeObserved(this, 'transactionsInfo', () => this.fetchTransactionsInfo());
-    onBecomeUnobserved(this, 'transactionsInfo', () => this.unobservedTransactionsInfo());
+    onBecomeObserved(this, "decryptedAccountData", () =>
+      this.fetchNewAccountData()
+    );
+    onBecomeUnobserved(this, "decryptedAccountData", () =>
+      this.unobservedAccountData()
+    );
+    onBecomeObserved(this, "sharedData", () => this.fetchKeysArray());
+    onBecomeUnobserved(this, "sharedData", () => this.unobservedSharedData());
+    onBecomeObserved(this, "transactionsInfo", () =>
+      this.fetchTransactionsInfo()
+    );
+    onBecomeUnobserved(this, "transactionsInfo", () =>
+      this.unobservedTransactionsInfo()
+    );
 
     this.fetchNodeInfo();
   }
 
+  fetchVPNServers() {
+    fetchWrapper
+      .getAuth("vpn/servers")
+      .then((r) => this.fetchVPNServersSuccess(r));
+  }
+
+  fetchDelegates(offset = 0, limit = 10) {
+    fetchWrapper
+      .getAuth(`delegates?limit=${limit}&offset=${offset}`)
+      .then((r) => this.fetchDelegatesSuccess(r));
+  }
+
   fetchNewAccountData() {
     getNodeInfo()
-    .then((info) => {
-      this.fetchNodeInfoSuccess(info);
-      fetchWrapper
-      .getAuth('data/private', {
-        networkIdentifier: this.nodeInfo.networkIdentifier,
-        lastBlockID: this.nodeInfo.lastBlockID,
+      .then((info) => {
+        this.fetchNodeInfoSuccess(info);
+        fetchWrapper
+          .getAuth("data/private", {
+            networkIdentifier: this.nodeInfo.networkIdentifier,
+            lastBlockID: this.nodeInfo.lastBlockID,
+          })
+          .then((res) => this.accountDataFetchChange(res))
+          .catch((err) => this.throwError(err));
       })
-      .then((res) => this.accountDataFetchChange(res))
       .catch((err) => this.throwError(err));
-    })
-    .catch((err) => this.throwError(err));
   }
 
   fetchAccountInfo() {
     fetchWrapper
-    .get(`accounts/${this.address}`)
-    .then((res) => this.fetchAccountInfoSuccess(res))
-    .catch((err) => this.throwError(err));
+      .get(`accounts/${this.address}`)
+      .then((res) => this.fetchAccountInfoSuccess(res))
+      .catch((err) => this.throwError(err));
   }
 
   fetchKeysArray() {
     getNodeInfo()
-    .then((info) => {
-      this.fetchNodeInfoSuccess(info);
-      fetchWrapper
-      .getAuth('data/shared/', {
-        networkIdentifier: this.nodeInfo.networkIdentifier,
-        lastBlockID: this.nodeInfo.lastBlockID,
+      .then((info) => {
+        this.fetchNodeInfoSuccess(info);
+        fetchWrapper
+          .getAuth("data/shared/", {
+            networkIdentifier: this.nodeInfo.networkIdentifier,
+            lastBlockID: this.nodeInfo.lastBlockID,
+          })
+          .then((res) => this.keysArrayFetchChange(res));
       })
-      .then((res) => this.keysArrayFetchChange(res));
-    })
-    .catch((err) => this.throwError(err));
+      .catch((err) => this.throwError(err));
   }
 
   fetchTransactionsInfo() {
     fetchWrapper
-    .get(`account/transactions/${this.address}`, {
-      networkIdentifier: this.nodeInfo.networkIdentifier,
-      lastBlockID: this.nodeInfo.lastBlockID,
-    })
-    .then((res) => this.saveInfoTransactions(res))
-    .catch((err) => this.throwError(err));
+      .get(`account/transactions/${this.address}`, {
+        networkIdentifier: this.nodeInfo.networkIdentifier,
+        lastBlockID: this.nodeInfo.lastBlockID,
+      })
+      .then((res) => this.saveInfoTransactions(res))
+      .catch((err) => this.throwError(err));
   }
 
   fetchTempTransactions() {
     fetchWrapper
-      .get('node/transactions')
+      .get("node/transactions")
       .then((res) => this.fetchTempTransactionsSuccess(res))
       .catch((err) => this.throwError(err));
   }
 
   fetchPassPhrase() {
-    this._passPhrase = sessionStorage.getItem('passPhrase') || '';
+    this._passPhrase = sessionStorage.getItem("passPhrase") || "";
   }
 
   fetchSharedData() {
     this._keysArray.forEach((elem) => {
-          fetchWrapper
-              .get(`data/shared/${elem}`)
-              .then((res) => this.changeSharedData(res, elem))
-              .catch((err) => this.throwError(err))
-        }
-    );
+      fetchWrapper
+        .get(`data/shared/${elem}`)
+        .then((res) => this.changeSharedData(res, elem))
+        .catch((err) => this.throwError(err));
+    });
   }
 
   fetchNodeInfo() {
     getNodeInfo()
-    .then((info) => this.fetchNodeInfoSuccess(info))
-    .catch((err) => this.throwError(err));
+      .then((info) => this.fetchNodeInfoSuccess(info))
+      .catch((err) => this.throwError(err));
   }
 
   pushSharedData(data, pubKey = this.pubKey) {
-    data=data.filter(item=>item.status!==statusMap.blockchained)
-    if(data.length>0) {
+    data = data.filter((item) => item.status !== statusMap.blockchained);
+    if (data.length > 0) {
       fetchWrapper
-          .postAuth(
-              'data/shared',
-              {
-                networkIdentifier: this.nodeInfo.networkIdentifier,
-                lastBlockID: this.nodeInfo.lastBlockID,
-              },
-              {publickey: this.pubKey, shared: encryptSharedData(data, this.passPhrase, pubKey)}
-          )
-          .catch((err) => this.throwError(err));
+        .postAuth(
+          "data/shared",
+          {
+            networkIdentifier: this.nodeInfo.networkIdentifier,
+            lastBlockID: this.nodeInfo.lastBlockID,
+          },
+          {
+            publickey: this.pubKey,
+            shared: encryptSharedData(data, this.passPhrase, pubKey),
+          }
+        )
+        .catch((err) => this.throwError(err));
     }
   }
 
   pushAccountData(data = this.accountData) {
     fetchWrapper
-    .postAuth(
-      'data/private',
-      {
-        networkIdentifier: this.nodeInfo.networkIdentifier,
-        lastBlockID: this.nodeInfo.lastBlockID,
-      },
-      [...encryptAccountData(data, this.passPhrase, this.pubKey)]
-    )
-    .then(() => this.fetchNewAccountData())
-    .catch((err) => this.throwError(err));
+      .postAuth(
+        "data/private",
+        {
+          networkIdentifier: this.nodeInfo.networkIdentifier,
+          lastBlockID: this.nodeInfo.lastBlockID,
+        },
+        [...encryptAccountData(data, this.passPhrase, this.pubKey)]
+      )
+      .then(() => this.fetchNewAccountData())
+      .catch((err) => this.throwError(err));
   }
 
   pushAccountDataToBlockchain(data = this.decryptedAccountData) {
-    const [removed, changed] = hashAccountData(data, this.decryptedAccountData, this.accountFeaturesMap);
+    const [removed, changed] = hashAccountData(
+      data,
+      this.decryptedAccountData,
+      this.accountFeaturesMap
+    );
     const builder = generateTransaction(
       BigInt(this.accountInfo?.sequence?.nonce || 0),
       this.addressAndPubKey.publicKey,
@@ -167,21 +217,63 @@ class Store {
 
     if (changed.length !== 0) signedTx = builder.update(changed);
     if (signedTx) {
-      fetchWrapper.post('transactions', {}, signedTx)
-      .then(() => this.fetchTempTransactions())
-      .catch((err) => this.throwError(err));
+      fetchWrapper
+        .post("transactions", {}, signedTx)
+        .then(() => this.fetchTempTransactions())
+        .catch((err) => this.throwError(err));
+      this.accountInfo.sequence.nonce++;
+    }
+  }
+
+  pushVoteTransaction(delegateAddress, amount) {
+    const builder = generateTransaction(
+      BigInt(this.accountInfo?.sequence?.nonce || 0),
+      this.addressAndPubKey.publicKey,
+      this.nodeInfo.networkIdentifier,
+      this.passPhrase
+    );
+
+    const signedTx = builder.vote(delegateAddress, amount);
+
+    if (signedTx) {
+      fetchWrapper
+        .post("transactions", {}, signedTx)
+        .then(() => this.fetchTempTransactions())
+        .catch((err) => this.throwError(err));
+      this.accountInfo.sequence.nonce++;
+    }
+  }
+
+  pushUnlockTransaction(delegateAddress) {
+    const builder = generateTransaction(
+      BigInt(this.accountInfo?.sequence?.nonce || 0),
+      this.addressAndPubKey.publicKey,
+      this.nodeInfo.networkIdentifier,
+      this.passPhrase
+    );
+
+    const { amount, unvoteHeight } =
+      this.accountLockedVotesCanReturn[delegateAddress];
+
+    const signedTx = builder.unlock(delegateAddress, amount, unvoteHeight);
+
+    if (signedTx) {
+      fetchWrapper
+        .post("transactions", {}, signedTx)
+        .then(() => this.fetchTempTransactions())
+        .catch((err) => this.throwError(err));
       this.accountInfo.sequence.nonce++;
     }
   }
 
   generatePassPhrase() {
     this._passPhrase = passphrase.Mnemonic.generateMnemonic();
-    sessionStorage.setItem('passPhrase', this._passPhrase);
+    sessionStorage.setItem("passPhrase", this._passPhrase);
   }
 
   savePastPassPhrase(phrase) {
     this._passPhrase = phrase;
-    sessionStorage.setItem('passPhrase', this._passPhrase);
+    sessionStorage.setItem("passPhrase", this._passPhrase);
   }
 
   unobservedTransactionsInfo() {
@@ -193,13 +285,13 @@ class Store {
   }
 
   unobservedAccountData() {
-    this._accountData=[]
+    this._accountData = [];
   }
 
   changeSharedData(incomingData, id) {
     this._sharedData.push({
       data: incomingData.data,
-      id
+      id,
     });
   }
 
@@ -226,6 +318,26 @@ class Store {
     this._keysArray = res.data;
   }
 
+  fetchVPNServersSuccess() {
+    const res = {
+      servers: [
+        {
+          endpoint: "3.71.169.233:137",
+          publicKey: "LEcqxygHtVlYWoQ6kZld9FbWxjb+fAqctMMFFJD6XU4=",
+          address: "10.1.0.6/32",
+          dns: "1.1.1.1",
+        },
+      ],
+      meta: true,
+    };
+    this._canVPN = res.meta;
+    this._vpnServers = res.servers;
+  }
+
+  fetchDelegatesSuccess(res) {
+    this._delegates = res;
+  }
+
   fetchNodeInfoSuccess(info) {
     this._nodeInfo = info.data;
     this.fetchPassPhrase();
@@ -234,7 +346,8 @@ class Store {
   fetchAccountInfoSuccess(res) {
     this._accountInfo = res.data;
     if (this.accountInfo?.sequence?.nonce)
-      this.accountInfo.sequence.nonce = parseInt(this.accountInfo.sequence.nonce) || 0;
+      this.accountInfo.sequence.nonce =
+        parseInt(this.accountInfo.sequence.nonce) || 0;
   }
 
   fetchTempTransactionsSuccess(res) {
@@ -251,7 +364,7 @@ class Store {
         label: labelMap[item.label] || item.label,
         value: item.value,
       })),
-      id: elem.id
+      id: elem.id,
     }));
   }
 
@@ -259,7 +372,9 @@ class Store {
     return this._transactionsInfo.map((item) => {
       return {
         id: item.id,
-        sender_avatar: item.asset.recipientAddress && generateSvgAvatar(item.senderPublicKey),
+        sender_avatar:
+          item.asset.recipientAddress &&
+          generateSvgAvatar(item.senderPublicKey),
         avatar_size: 24,
         transaction: item.asset.features.map((asset) => {
           return {
@@ -267,7 +382,9 @@ class Store {
             address:
               item.asset.recipientAddress &&
               cryptography.bufferToHex(
-                cryptography.getAddressFromPublicKey(cryptography.hexToBuffer(item.senderPublicKey))
+                cryptography.getAddressFromPublicKey(
+                  cryptography.hexToBuffer(item.senderPublicKey)
+                )
               ),
             value: asset.value,
             label: labelMap[asset.label] || asset.label,
@@ -277,15 +394,23 @@ class Store {
     });
   }
   get decryptedAccountData() {
-    return decryptedData(this._accountData, this.accountFeatures, this.passPhrase, this.pubKey, this.processedFeatures)
+    return decryptedData(
+      this._accountData,
+      this.accountFeatures,
+      this.passPhrase,
+      this.pubKey,
+      this.processedFeatures
+    );
   }
 
   get firstName() {
-    return this.decryptedAccountData.find((item) => item.key === 'firstname')?.value;
+    return this.decryptedAccountData.find((item) => item.key === "firstname")
+      ?.value;
   }
 
   get lastName() {
-    return this.decryptedAccountData.find((item) => item.key === 'secondname')?.value;
+    return this.decryptedAccountData.find((item) => item.key === "secondname")
+      ?.value;
   }
 
   get accountName() {
@@ -316,19 +441,36 @@ class Store {
     return cryptography.getAddressAndPublicKeyFromPassphrase(this.passPhrase);
   }
 
+  get privateKey() {
+    return cryptography.getPrivateAndPublicKeyFromPassphrase(this.passPhrase)
+      ?.privateKey;
+  }
+
+  get vpnPrivateKey() {
+    let x25519_sk = Buffer.alloc(sodium.crypto_box_SECRETKEYBYTES);
+    sodium.crypto_sign_ed25519_sk_to_curve25519(
+      x25519_sk,
+      Buffer.from(this.privateKey, "hex")
+    );
+    return x25519_sk.toString("Base64");
+  }
+
   get pubKey() {
-    return this.addressAndPubKey.publicKey.toString('hex');
+    return this.addressAndPubKey.publicKey.toString("hex");
   }
 
   get address() {
-    return this.addressAndPubKey.address.toString('hex');
+    return this.addressAndPubKey.address.toString("hex");
   }
 
   get tokenKey() {
-    const stringToSign = this.nodeInfo.networkIdentifier + this.nodeInfo.lastBlockID;
-    if (!stringToSign) return '';
-    const sign = cryptography.signDataWithPassphrase(Buffer.from(stringToSign, 'hex'), this.passPhrase).toString('hex');
-    return this.pubKey + ':' + sign;
+    const stringToSign =
+      this.nodeInfo.networkIdentifier + this.nodeInfo.lastBlockID;
+    if (!stringToSign) return "";
+    const sign = cryptography
+      .signDataWithPassphrase(Buffer.from(stringToSign, "hex"), this.passPhrase)
+      .toString("hex");
+    return this.pubKey + ":" + sign;
   }
 
   get accountIdentity() {
@@ -337,6 +479,51 @@ class Store {
 
   get accountFeatures() {
     return this.accountIdentity?.features || [];
+  }
+
+  get accountBalance() {
+    return (
+      BigInt(this.accountInfo?.token?.balance || 0) / 100000000n
+    ).toString();
+  }
+
+  get accountSentVotes() {
+    return (this.accountInfo?.dpos?.sentVotes || []).reduce(
+      (acc, e) => ({
+        ...acc,
+        [e.delegateAddress]:
+          BigInt(e.amount || 0) / 100000000n + (acc[e.delegateAddress] || 0n),
+      }),
+      {}
+    );
+  }
+
+  get accountLockedVotes() {
+    return (this.accountInfo?.dpos?.unlocking || []).reduce(
+      (acc, e) => ({
+        ...acc,
+        [e.delegateAddress]:
+          BigInt(e.amount || 0) / 100000000n + (acc[e.delegateAddress] || 0n),
+      }),
+      {}
+    );
+  }
+
+  get accountLockedVotesCanReturn() {
+    return (this.accountInfo?.dpos?.unlocking || [])
+      .filter((e) => this.nodeInfo.height - e.unvoteHeight > 2000)
+      .reduce(
+        (acc, e) => ({
+          ...acc,
+          [e.delegateAddress]: {
+            amount:
+              BigInt(e.amount || 0) / 100000000n +
+              (acc[e.delegateAddress]?.amount || 0n),
+            unvoteHeight: e.unvoteHeight,
+          },
+        }),
+        {}
+      );
   }
 
   get accountFeaturesMap() {
@@ -363,14 +550,103 @@ class Store {
 
   get processedFeatures() {
     return this.tempTransactions
-    .filter(item => item.senderPublicKey === this.pubKey)
-    .reduce((acc, item) => {
-      const { features } = item.asset;
-      return {
-        ...acc,
-        ...features.reduce((obj, feature) => ({...obj, [feature.label]: true}), {})
-      }
-    }, {})
+      .filter((item) => item.senderPublicKey === this.pubKey)
+      .reduce((acc, item) => {
+        const { features } = item.asset;
+        return {
+          ...acc,
+          ...(features?.reduce(
+            (obj, feature) => ({ ...obj, [feature.label]: true }),
+            {}
+          ) || {}),
+        };
+      }, {});
+  }
+
+  get processedVotes() {
+    return this.tempTransactions
+      .filter((item) => item.senderPublicKey === this.pubKey)
+      .reduce((acc, item) => {
+        const { votes } = item.asset;
+        return {
+          ...acc,
+          ...(votes?.reduce(
+            (obj, vote) => ({
+              ...obj,
+              [vote.delegateAddress]:
+                BigInt(vote.amount) / 100000000n +
+                (obj[vote.delegateAddress] || 0n),
+            }),
+            {}
+          ) || {}),
+        };
+      }, {});
+  }
+
+  get processedUnlocking() {
+    return this.tempTransactions
+      .filter((item) => item.senderPublicKey === this.pubKey)
+      .reduce((acc, item) => {
+        const { unlockObjects } = item.asset;
+        return {
+          ...acc,
+          ...(unlockObjects?.reduce(
+            (obj, vote) => ({
+              ...obj,
+              [vote.delegateAddress]:
+                BigInt(vote.amount) / 100000000n +
+                (obj[vote.delegateAddress] || 0n),
+            }),
+            {}
+          ) || {}),
+        };
+      }, {});
+  }
+
+  get vpnServers() {
+    return this._vpnServers;
+  }
+
+  get canVPN() {
+    return this._canVPN;
+  }
+
+  get delegates() {
+    const getStatus = (delegate) => {
+      const { address } = delegate;
+
+      let amount = this.processedVotes[address];
+
+      if (amount) return "Pending";
+
+      amount = this.accountSentVotes[address];
+
+      if (amount) return "Unvote";
+
+      return "Vote";
+    };
+
+    return this._delegates.data.map((delegate) => ({
+      ...delegate,
+      status: getStatus(delegate),
+      token: {
+        ...delegate.token,
+        balance: Number(BigInt(delegate.token.balance) / 100000000n).toString(),
+      },
+      dpos: {
+        ...delegate.dpos,
+        delegate: {
+          ...delegate.dpos.delegate,
+          totalVotesReceived: Number(
+            BigInt(delegate.dpos.delegate.totalVotesReceived) / 100000000n
+          ).toString(),
+        },
+      },
+    }));
+  }
+
+  get delegatesMeta() {
+    return this._delegates.meta;
   }
 }
 
