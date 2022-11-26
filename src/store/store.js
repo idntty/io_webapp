@@ -369,29 +369,31 @@ class Store {
   }
 
   get transactionsInfo() {
-    return this._transactionsInfo.map((item) => {
-      return {
-        id: item.id,
-        sender_avatar:
-          item.asset.recipientAddress &&
-          generateSvgAvatar(item.senderPublicKey),
-        avatar_size: 24,
-        transaction: item.asset.features.map((asset) => {
-          return {
-            transaction_id: item.id,
-            address:
-              item.asset.recipientAddress &&
-              cryptography.bufferToHex(
-                cryptography.getAddressFromPublicKey(
-                  cryptography.hexToBuffer(item.senderPublicKey)
-                )
-              ),
-            value: asset.value,
-            label: labelMap[asset.label] || asset.label,
-          };
-        }),
-      };
-    });
+    return this._transactionsInfo
+      .filter((e) => e.moduleID === 1001)
+      .map((item) => {
+        return {
+          id: item.id,
+          sender_avatar:
+            item.asset.recipientAddress &&
+            generateSvgAvatar(item.senderPublicKey),
+          avatar_size: 24,
+          transaction: item.asset.features.map((asset) => {
+            return {
+              transaction_id: item.id,
+              address:
+                item.asset.recipientAddress &&
+                cryptography.bufferToHex(
+                  cryptography.getAddressFromPublicKey(
+                    cryptography.hexToBuffer(item.senderPublicKey)
+                  )
+                ),
+              value: asset.value,
+              label: labelMap[asset.label] || asset.label,
+            };
+          }),
+        };
+      });
   }
   get decryptedAccountData() {
     return decryptedData(
