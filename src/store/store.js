@@ -318,18 +318,7 @@ class Store {
     this._keysArray = res.data;
   }
 
-  fetchVPNServersSuccess() {
-    const res = {
-      servers: [
-        {
-          endpoint: "3.71.169.233:137",
-          publicKey: "LEcqxygHtVlYWoQ6kZld9FbWxjb+fAqctMMFFJD6XU4=",
-          address: "10.1.0.6/32",
-          dns: "1.1.1.1",
-        },
-      ],
-      meta: true,
-    };
+  fetchVPNServersSuccess(res) {
     this._canVPN = res.meta;
     this._vpnServers = res.servers;
   }
