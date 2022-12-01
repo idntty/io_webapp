@@ -1,16 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { store } from "../../store/store";
+import { store } from '../../store/store';
 import Sidebar from '../../partials/Sidebar';
 import { observer } from 'mobx-react-lite';
 import Header from '../../partials/Header';
 import ProfileTable from '../../partials/profile/ProfileTable';
 import Image from '../../images/transactions-image-04.svg';
-import {labelMap} from '../../shared/labelMap';
-import {statusMap} from "../../shared/statusMap";
+import { labelMap } from '../../shared/labelMap';
+import { statusMap } from '../../shared/statusMap';
 
-const initialPropertyValues = ['First name', 'Second name', 'Birthdate', 'Gender', 'National doctype', 'National doc ID', 'National doc issue date', 'National doc expiry date'];
+const initialPropertyValues = [
+  'First name',
+  'Second name',
+  'Birthdate',
+  'Gender',
+  'National doctype',
+  'National doc ID',
+  'National doc issue date',
+  'National doc expiry date',
+];
 
-const Profile = observer (() => {
+const Profile = observer(() => {
   const defaultValues = {
     label: '',
     value: '',
@@ -30,20 +39,20 @@ const Profile = observer (() => {
   const [updatedValues, setUpdatedValues] = useState([defaultValues]);
   const [addedValues, setAddedValues] = useState(defaultValues);
   const [isCheck, setIsCheck] = useState([]);
-  const [alreadyExists, setAlreadyExists] = useState(false)
+  const [alreadyExists, setAlreadyExists] = useState(false);
   const [blockChainValue, setBlockChainValue] = useState('');
-  const [publicKey, setPublicKey] = useState('')
+  const [publicKey, setPublicKey] = useState('');
 
   useEffect(() => {
     handleSelectedItems(isCheck);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCheck]);
 
-  const handleClick = e => {
+  const handleClick = (e) => {
     const { id, checked } = e.target;
     setIsCheck([...isCheck, id]);
     if (!checked || !id) {
-      setIsCheck(isCheck.filter(item => item !== id));
+      setIsCheck(isCheck.filter((item) => item !== id));
     }
   };
 
@@ -57,27 +66,29 @@ const Profile = observer (() => {
     setAddedValues((prevState) => ({
       ...prevState,
       [field]: value,
-    }))
+    }));
   };
 
   const changeUpdatedValues = (value, field, key) => {
-    if(field==='value') {
-      setBlockChainValue(value)
+    if (field === 'value') {
+      setBlockChainValue(value);
     }
     setUpdatedValues((prevState) =>
-      prevState.map((elem) => (
-          (elem.key === key) ? {
-            ...elem,
-            [field]: value,
-          } : elem
-      ))
-    )
+      prevState.map((elem) =>
+        elem.key === key
+          ? {
+              ...elem,
+              [field]: value,
+            }
+          : elem
+      )
+    );
   };
 
   const selectHint = (element) => {
     changeAddedValues(element, 'label');
     setPropertyValues([]);
-  }
+  };
 
   const closeHint = (eventTarget) => {
     if (!eventTarget || eventTarget.tabIndex !== -1) {
@@ -87,12 +98,21 @@ const Profile = observer (() => {
 
   const handleSelectedItems = (selectedItems) => {
     setSelectedItems([...selectedItems]);
-    setUpdatedValues(store.decryptedAccountData.filter(({ key }) => selectedItems.includes(key))
-      .map(elem => (
-        (!elem.seed) ? {
-        ...elem,
-        seed: String(Math.floor(Math.random() * 90000000000000000000), 10),
-      }: elem)));
+    setUpdatedValues(
+      store.decryptedAccountData
+        .filter(({ key }) => selectedItems.includes(key))
+        .map((elem) =>
+          !elem.seed
+            ? {
+                ...elem,
+                seed: String(
+                  Math.floor(Math.random() * 90000000000000000000),
+                  10
+                ),
+              }
+            : elem
+        )
+    );
     if (selectedItems.length > 0) {
       setButtonPanelOpen(false);
       setAddPanelOpen(false);
@@ -115,8 +135,9 @@ const Profile = observer (() => {
   };
 
   const sendAddedData = () => {
-    const checkingAddedData = !store.decryptedAccountData
-      .some((element) => element.label === addedValues.label)
+    const checkingAddedData = !store.decryptedAccountData.some(
+      (element) => element.label === addedValues.label
+    );
     setAlreadyExists(!checkingAddedData);
     if (checkingAddedData) {
       setAddPanelOpen(false);
@@ -134,54 +155,65 @@ const Profile = observer (() => {
   };
 
   const deleteDataParameters = () => {
-    const changeData = store.decryptedAccountData.filter(item=>!selectedItems.includes(item.key));
+    const changeData = store.decryptedAccountData.filter(
+      (item) => !selectedItems.includes(item.key)
+    );
     store.pushAccountData(changeData);
-    if(storeOnBlockchain)
-      store.pushAccountDataToBlockchain(changeData.filter(elem=>elem.status!=='Stored'))
+    if (storeOnBlockchain)
+      store.pushAccountDataToBlockchain(
+        changeData.filter((elem) => elem.status !== 'Stored')
+      );
   };
 
   const changeInitialArray = () => {
     let newArr = [];
-    store.decryptedAccountData.map(elem => {
-      updatedValues.forEach(item => {
+    store.decryptedAccountData.map((elem) => {
+      updatedValues.forEach((item) => {
         if (elem.label === item.label) {
           newArr.push({
             ...elem,
             status: 'new',
-            'value': item.value,
-            'seed': item.seed,
-          })
+            value: item.value,
+            seed: item.seed,
+          });
         }
-      })
-      if (!newArr.find(element => element.label === elem.label)) {
+      });
+      if (!newArr.find((element) => element.label === elem.label)) {
         newArr.push(elem);
       }
-    })
+    });
     return newArr;
   };
 
   const changeDataParameters = () => {
     const updatedData = changeInitialArray();
     store.pushAccountData(updatedData);
-    if(storeOnBlockchain)
-      store.pushAccountDataToBlockchain(updatedData.filter(elem=>elem.status!=='Stored'))
+    if (storeOnBlockchain)
+      store.pushAccountDataToBlockchain(
+        updatedData.filter((elem) => elem.status !== 'Stored')
+      );
   };
 
   const shareAccountData = () => {
-    const sharedData = store.decryptedAccountData.filter(item => selectedItems.includes(item.key))
-    store.pushSharedData(sharedData, publicKey)
+    const sharedData = store.decryptedAccountData.filter((item) =>
+      selectedItems.includes(item.key)
+    );
+    store.pushSharedData(sharedData, publicKey);
     cancelSharePanel();
-  }
+  };
 
   const addDataParameters = () => {
     const label = addedValues.label.toLowerCase().split(' ').join('');
-    if(labelMap[label])
+    if (labelMap[label])
       addedValues.key = addedValues.label.toLowerCase().split(' ').join('');
-    else
-      addedValues.key = addedValues.label
+    else addedValues.key = addedValues.label;
     store.pushAccountData(store.decryptedAccountData.concat(addedValues));
-    if(storeOnBlockchain)
-      store.pushAccountDataToBlockchain(store.decryptedAccountData.concat(addedValues).filter(elem=>elem.status!=='Stored'))
+    if (storeOnBlockchain)
+      store.pushAccountDataToBlockchain(
+        store.decryptedAccountData
+          .concat(addedValues)
+          .filter((elem) => elem.status !== 'Stored')
+      );
   };
 
   const cancelAddPanel = () => {
@@ -191,12 +223,21 @@ const Profile = observer (() => {
   };
 
   const cancelUpdatePanel = () => {
-    setUpdatedValues(store.decryptedAccountData.filter(({ key }) => selectedItems.includes(key))
-      .map(elem => (
-        (!elem.seed) ? {
-        ...elem,
-        seed: String(Math.floor(Math.random() * 90000000000000000000), 10),
-      }: elem)));
+    setUpdatedValues(
+      store.decryptedAccountData
+        .filter(({ key }) => selectedItems.includes(key))
+        .map((elem) =>
+          !elem.seed
+            ? {
+                ...elem,
+                seed: String(
+                  Math.floor(Math.random() * 90000000000000000000),
+                  10
+                ),
+              }
+            : elem
+        )
+    );
     setUpdatePanelOpen(false);
     setChangePanelOpen(true);
     setIsCheck([]);
@@ -210,12 +251,12 @@ const Profile = observer (() => {
   const openSharePanel = () => {
     setSharePanelOpen(true);
     setChangePanelOpen(false);
-  }
+  };
 
   const cancelSharePanel = () => {
     setSharePanelOpen(false);
     setChangePanelOpen(true);
-  }
+  };
 
   const openUpdatePanel = () => {
     setUpdatePanelOpen(true);
@@ -234,7 +275,9 @@ const Profile = observer (() => {
     setPropertyValues(initialPropertyValues);
     if (text) {
       let reg = new RegExp(`^${text}`, 'img');
-      setPropertyValues((prevState) => prevState.filter((element) => element.match(reg)));
+      setPropertyValues((prevState) =>
+        prevState.filter((element) => element.match(reg))
+      );
     }
   };
 
@@ -272,19 +315,26 @@ const Profile = observer (() => {
                 </div>
                 {/* Table */}
                 <div>
-                  <ProfileTable isCheck={isCheck} handleClick={handleClick} userData={store.decryptedAccountData}/>
+                  <ProfileTable
+                    isCheck={isCheck}
+                    handleClick={handleClick}
+                    userData={store.decryptedAccountData}
+                  />
                 </div>
               </div>
               {/* Left sidebar */}
               <div>
                 {/* Button panel*/}
-                <div className={`${!buttonPanelOpen && "hidden"} ml-2.5`}>
+                <div className={`${!buttonPanelOpen && 'hidden'} ml-2.5`}>
                   <div className="bg-white px-5 py-[43px] shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80">
                     <button
                       className="btn w-full bg-indigo-500 hover:bg-indigo-600 text-white"
                       onClick={openAddPanel}
                     >
-                      <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 16 16">
+                      <svg
+                        className="w-4 h-4 fill-current shrink-0"
+                        viewBox="0 0 16 16"
+                      >
                         <path d="m2.457 8.516.969-.99 2.516 2.481 5.324-5.304.985.989-6.309 6.284z" />
                       </svg>
                       <span className="ml-1">Add new field</span>
@@ -293,13 +343,24 @@ const Profile = observer (() => {
                 </div>
                 <div className="ml-2.5">
                   {/* Add panel */}
-                  <div className={`${!addPanelOpen && 'hidden'} relative flex flex-col bg-white p-5 shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-11`}>
-                    <div className='relative z-20'>
-                      <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Property <span className="text-rose-500">*</span></label>
+                  <div
+                    className={`${
+                      !addPanelOpen && 'hidden'
+                    } relative flex flex-col bg-white p-5 shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-11`}
+                  >
+                    <div className="relative z-20">
+                      <label
+                        className="block text-sm font-medium mb-1"
+                        htmlFor="mandatory"
+                      >
+                        Property <span className="text-rose-500">*</span>
+                      </label>
                       <input
-                        autoComplete='off'
+                        autoComplete="off"
                         id="label"
-                        className={`form-input w-full ${alreadyExists && 'border-rose-300'}`}
+                        className={`form-input w-full ${
+                          alreadyExists && 'border-rose-300'
+                        }`}
                         type="text"
                         required
                         onInput={(e) => handleInput(e.target.value, 'label')}
@@ -307,48 +368,90 @@ const Profile = observer (() => {
                         onClick={openHint}
                         onBlur={(e) => closeHint(e.relatedTarget)}
                       />
-                      <div tabIndex='-1' className={`absolute w-full box-border bg-white flex flex-col gap-y-2 py-2 pl-2 border border-t-0 border-slate-200 rounded ${(propertyValues.length > 0) || 'hidden'}`}>
+                      <div
+                        tabIndex="-1"
+                        className={`absolute w-full box-border bg-white flex flex-col gap-y-2 py-2 pl-2 border border-t-0 border-slate-200 rounded ${
+                          propertyValues.length > 0 || 'hidden'
+                        }`}
+                      >
                         <ul>
                           {propertyValues.map((element, index) => (
-                            <li className='hover:text-indigo-600 cursor-pointer' key={index} onClick={() => selectHint(element)}>{element}</li>
+                            <li
+                              className="hover:text-indigo-600 cursor-pointer"
+                              key={index}
+                              onClick={() => selectHint(element)}
+                            >
+                              {element}
+                            </li>
                           ))}
                         </ul>
-                     </div>
-                      { alreadyExists && <div className="text-xs mt-1 text-rose-500">This property already added!</div> }
+                      </div>
+                      {alreadyExists && (
+                        <div className="text-xs mt-1 text-rose-500">
+                          This property already added!
+                        </div>
+                      )}
                     </div>
-                    <div className='my-3 z-10'>
-                      <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Value <span className="text-rose-500">*</span></label>
+                    <div className="my-3 z-10">
+                      <label
+                        className="block text-sm font-medium mb-1"
+                        htmlFor="mandatory"
+                      >
+                        Value <span className="text-rose-500">*</span>
+                      </label>
                       <input
-                        autoComplete='off'
+                        autoComplete="off"
                         id="value"
                         className="form-input w-full"
                         type="text"
                         required
                         onClick={() => setPropertyValues([])}
-                        onChange={(e) => changeAddedValues(e.target.value, 'value')}
+                        onChange={(e) =>
+                          changeAddedValues(e.target.value, 'value')
+                        }
                         value={addedValues.value}
                       />
                     </div>
-                    <div className='z-10'>
-                      <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Seed <span className="text-rose-500">*</span></label>
+                    <div className="z-10">
+                      <label
+                        className="block text-sm font-medium mb-1"
+                        htmlFor="mandatory"
+                      >
+                        Seed <span className="text-rose-500">*</span>
+                      </label>
                       <input
-                        autoComplete='off'
+                        autoComplete="off"
                         id="seed"
                         className="form-input w-full"
                         type="text"
                         required
                         onClick={() => setPropertyValues([])}
-                        onChange={(e) => changeAddedValues(e.target.value, 'seed')}
+                        onChange={(e) =>
+                          changeAddedValues(e.target.value, 'seed')
+                        }
                         value={addedValues.seed}
                       />
                     </div>
                     <div className="flex flex-row z-10 justify-between pt-[18px] pb-[23px] items-center border-b border-slate-200">
-                      <span className="block text-sm font-medium">Store data on blockchain</span>
+                      <span className="block text-sm font-medium">
+                        Store data on blockchain
+                      </span>
                       <div className="flex items-center">
                         <div className="form-switch">
-                          <input type="checkbox" id="blockcheined" className="sr-only" checked={storeOnBlockchain} onChange={() => setStoreOnBlockchain(!storeOnBlockchain)} />
-                            <label className="bg-slate-400" htmlFor="switch-1">
-                            <span className="bg-white shadow-sm" aria-hidden="true"></span>
+                          <input
+                            type="checkbox"
+                            id="blockcheined"
+                            className="sr-only"
+                            checked={storeOnBlockchain}
+                            onChange={() =>
+                              setStoreOnBlockchain(!storeOnBlockchain)
+                            }
+                          />
+                          <label className="bg-slate-400" htmlFor="switch-1">
+                            <span
+                              className="bg-white shadow-sm"
+                              aria-hidden="true"
+                            ></span>
                           </label>
                         </div>
                       </div>
@@ -370,57 +473,111 @@ const Profile = observer (() => {
                     </div>
                   </div>
                   {/* Update panel */}
-                  <div className={`${!updatePanelOpen && 'hidden'} bg-white p-5 shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-11`}>
+                  <div
+                    className={`${
+                      !updatePanelOpen && 'hidden'
+                    } bg-white p-5 shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-11`}
+                  >
                     {updatedValues.map((item, index) => (
                       <div key={index} className="flex flex-col gap-y-3">
                         <div>
-                          <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Property <span className="text-rose-500">*</span></label>
+                          <label
+                            className="block text-sm font-medium mb-1"
+                            htmlFor="mandatory"
+                          >
+                            Property <span className="text-rose-500">*</span>
+                          </label>
                           <input
                             id={`${item.key}:label`}
                             className="form-input w-full"
                             type="text"
                             required
-                            onChange={(e) => changeUpdatedValues(e.target.value, 'label', item.key)}
+                            onChange={(e) =>
+                              changeUpdatedValues(
+                                e.target.value,
+                                'label',
+                                item.key
+                              )
+                            }
                             value={item.label}
                             disabled
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Value <span className="text-rose-500">*</span></label>
+                          <label
+                            className="block text-sm font-medium mb-1"
+                            htmlFor="mandatory"
+                          >
+                            Value <span className="text-rose-500">*</span>
+                          </label>
                           <input
-                            autoComplete='off'
+                            autoComplete="off"
                             id={`${item.key}:value`}
                             className="form-input w-full"
                             type="text"
                             required
-                            onChange={(e) => changeUpdatedValues(e.target.value, 'value', item.key)}
-                            value={item.status===statusMap.blockchained?blockChainValue : item.value}
+                            onChange={(e) =>
+                              changeUpdatedValues(
+                                e.target.value,
+                                'value',
+                                item.key
+                              )
+                            }
+                            value={
+                              item.status === statusMap.blockchained
+                                ? blockChainValue
+                                : item.value
+                            }
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Seed <span className="text-rose-500">*</span></label>
+                          <label
+                            className="block text-sm font-medium mb-1"
+                            htmlFor="mandatory"
+                          >
+                            Seed <span className="text-rose-500">*</span>
+                          </label>
                           <input
-                            autoComplete='off'
+                            autoComplete="off"
                             id={`${item.key}:seed`}
                             className="form-input w-full"
                             type="text"
                             required
-                            onChange={(e) => changeUpdatedValues(e.target.value, 'seed', item.key)}
+                            onChange={(e) =>
+                              changeUpdatedValues(
+                                e.target.value,
+                                'seed',
+                                item.key
+                              )
+                            }
                             value={item.seed}
                           />
                         </div>
-                        {(updatedValues[index+1]) ? (
-                        <div className="mt-2 mb-3.5 items-center border-b border-slate-200"></div>
+                        {updatedValues[index + 1] ? (
+                          <div className="mt-2 mb-3.5 items-center border-b border-slate-200"></div>
                         ) : null}
                       </div>
                     ))}
                     <div className="flex flex-row justify-between pt-[16px] pb-[23px] items-center border-b border-slate-200">
-                      <span className="block text-sm font-medium">Store data on blockchain</span>
+                      <span className="block text-sm font-medium">
+                        Store data on blockchain
+                      </span>
                       <div className="flex items-center">
                         <div className="form-switch">
-                          <input type="checkbox" id="blockcheined" className="sr-only" checked={storeOnBlockchain} onChange={() => setStoreOnBlockchain(!storeOnBlockchain)} />
-                            <label className="bg-slate-400" htmlFor="switch-1">
-                            <span className="bg-white shadow-sm" aria-hidden="true"></span>
+                          <input
+                            type="checkbox"
+                            id="blockcheined"
+                            className="sr-only"
+                            checked={storeOnBlockchain}
+                            onChange={() =>
+                              setStoreOnBlockchain(!storeOnBlockchain)
+                            }
+                          />
+                          <label className="bg-slate-400" htmlFor="switch-1">
+                            <span
+                              className="bg-white shadow-sm"
+                              aria-hidden="true"
+                            ></span>
                           </label>
                         </div>
                       </div>
@@ -442,20 +599,46 @@ const Profile = observer (() => {
                     </div>
                   </div>
                   {/* Remove panel */}
-                  <div className={`${!removePanelOpen && 'hidden'} bg-white px-5 pt-4 pb-[190px] shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-12`}>
-                    <h2 className="grow text-base font-semibold text-slate-800 truncate mb-2">Summary</h2>
+                  <div
+                    className={`${
+                      !removePanelOpen && 'hidden'
+                    } bg-white px-5 pt-4 pb-[190px] shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-12`}
+                  >
+                    <h2 className="grow text-base font-semibold text-slate-800 truncate mb-2">
+                      Summary
+                    </h2>
                     <div className="flex flex-col">
-                      {store.decryptedAccountData.filter(({ key }) => selectedItems.includes(key)).map(item => (
-                        <span key={item.label} className="text-sm font-normal text-slate-600 py-3 border-b border-slate-200">{item.label}</span>
-                      ))}
+                      {store.decryptedAccountData
+                        .filter(({ key }) => selectedItems.includes(key))
+                        .map((item) => (
+                          <span
+                            key={item.label}
+                            className="text-sm font-normal text-slate-600 py-3 border-b border-slate-200"
+                          >
+                            {item.label}
+                          </span>
+                        ))}
                     </div>
                     <div className="flex flex-row justify-between pt-[16px] pb-7 items-center">
-                      <span className="block text-sm font-medium">On blockchain too</span>
+                      <span className="block text-sm font-medium">
+                        On blockchain too
+                      </span>
                       <div className="flex items-center">
                         <div className="form-switch">
-                          <input type="checkbox" id="switch-1" className="sr-only" checked={storeOnBlockchain} onChange={() => setStoreOnBlockchain(!storeOnBlockchain)} />
-                            <label className="bg-slate-400" htmlFor="switch-1">
-                            <span className="bg-white shadow-sm" aria-hidden="true"></span>
+                          <input
+                            type="checkbox"
+                            id="switch-1"
+                            className="sr-only"
+                            checked={storeOnBlockchain}
+                            onChange={() =>
+                              setStoreOnBlockchain(!storeOnBlockchain)
+                            }
+                          />
+                          <label className="bg-slate-400" htmlFor="switch-1">
+                            <span
+                              className="bg-white shadow-sm"
+                              aria-hidden="true"
+                            ></span>
                           </label>
                         </div>
                       </div>
@@ -464,24 +647,39 @@ const Profile = observer (() => {
                       <button
                         className="btn w-full bg-indigo-500 hover:bg-indigo-600 text-white px-[100px] justify-start"
                         onClick={applyDataDeletion}
+                      >
+                        <svg
+                          className="w-4 h-4 fill-current shrink-0"
+                          viewBox="0 0 16 16"
                         >
-                        <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 16 16">
                           <path d="m2.457 8.516.969-.99 2.516 2.481 5.324-5.304.985.989-6.309 6.284z" />
                         </svg>
                         <span className="ml-2">Apply</span>
                       </button>
                     </div>
                     <div className="flex justify-center">
-                      <span className="text-descriptionSize text-slate-500 font-normal italic text-center">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do Terms.</span>
+                      <span className="text-descriptionSize text-slate-500 font-normal italic text-center">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                        sed do Terms.
+                      </span>
                     </div>
                   </div>
                   {/* Share panel */}
-                  <div className={`${!sharePanelOpen && 'hidden'} bg-white px-5 pt-4 shadow-lg rounded-sm border border-slate-200 mb-12 lg:w-72 xl:w-80`}>
-                    <div className='relative z-20'>
-                      <div className='z-10'>
-                        <label className="block text-sm font-medium mb-1" htmlFor="mandatory">Public Key <span className="text-rose-500">*</span></label>
+                  <div
+                    className={`${
+                      !sharePanelOpen && 'hidden'
+                    } bg-white px-5 pt-4 shadow-lg rounded-sm border border-slate-200 mb-12 lg:w-72 xl:w-80`}
+                  >
+                    <div className="relative z-20">
+                      <div className="z-10">
+                        <label
+                          className="block text-sm font-medium mb-1"
+                          htmlFor="mandatory"
+                        >
+                          Public Key <span className="text-rose-500">*</span>
+                        </label>
                         <input
-                          autoComplete='off'
+                          autoComplete="off"
                           id="seed"
                           className="form-input w-full"
                           type="text"
@@ -508,24 +706,49 @@ const Profile = observer (() => {
                     </div>
                   </div>
                   {/* Details */}
-                  <div className={`${(!(removePanelOpen || addPanelOpen) || !storeOnBlockchain) && 'hidden'} drop-shadow-lg`}>
+                  <div
+                    className={`${
+                      (!(removePanelOpen || addPanelOpen) ||
+                        !storeOnBlockchain) &&
+                      'hidden'
+                    } drop-shadow-lg`}
+                  >
                     {/* Top */}
                     <div className="bg-white rounded-t-xl px-5 pb-4 text-center">
                       <div className="mb-3 text-center">
-                        <img className="inline-flex w-12 h-12 rounded-full -mt-6" src={Image} width="48" height="48" alt="Transaction 04" />
+                        <img
+                          className="inline-flex w-12 h-12 rounded-full -mt-6"
+                          src={Image}
+                          width="48"
+                          height="48"
+                          alt="Transaction 04"
+                        />
                       </div>
-                      <div className="mt-[31px] text-2xl font-semibold text-emerald-500 mb-1">0.012 IDN</div>
-                      <div className="text-sm font-medium text-slate-800 mb-3">Total amount fee</div>
+                      <div className="mt-[31px] text-2xl font-semibold text-emerald-500 mb-1">
+                        0.012 IDN
+                      </div>
+                      <div className="text-sm font-medium text-slate-800 mb-3">
+                        Total amount fee
+                      </div>
                     </div>
                     {/* Divider */}
-                    <div className="flex justify-between items-center" aria-hidden="true">
-                      <svg className="w-5 h-5 fill-white" xmlns="http://www.w3.org/2000/svg">
+                    <div
+                      className="flex justify-between items-center"
+                      aria-hidden="true"
+                    >
+                      <svg
+                        className="w-5 h-5 fill-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
                         <path d="M0 20c5.523 0 10-4.477 10-10S5.523 0 0 0h20v20H0Z" />
                       </svg>
                       <div className="grow w-full h-5 bg-white flex flex-col justify-center">
                         <div className="h-px w-full border-t border-dashed border-slate-200" />
                       </div>
-                      <svg className="w-5 h-5 fill-white rotate-180" xmlns="http://www.w3.org/2000/svg">
+                      <svg
+                        className="w-5 h-5 fill-white rotate-180"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
                         <path d="M0 20c5.523 0 10-4.477 10-10S5.523 0 0 0h20v20H0Z" />
                       </svg>
                     </div>
@@ -533,15 +756,21 @@ const Profile = observer (() => {
                     <div className="bg-white rounded-b-xl p-5 pt-[22px] pb-10 text-sm space-y-3">
                       <div className="flex justify-between space-x-1">
                         <span className="italic">Validator:</span>
-                        <span className="font-medium text-slate-700 text-right">IT17 2207 1010 0504 0006 88</span>
+                        <span className="font-medium text-slate-700 text-right">
+                          IT17 2207 1010 0504 0006 88
+                        </span>
                       </div>
                       <div className="flex justify-between space-x-1">
                         <span className="italic">Recipient:</span>
-                        <span className="font-medium text-slate-700 text-right">IT17 2207 1010 0504 0006 88</span>
+                        <span className="font-medium text-slate-700 text-right">
+                          IT17 2207 1010 0504 0006 88
+                        </span>
                       </div>
                       <div className="flex justify-between space-x-1">
                         <span className="italic">Transaction:</span>
-                        <span className="font-medium text-slate-700 text-right">145 bytes</span>
+                        <span className="font-medium text-slate-700 text-right">
+                          145 bytes
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -552,8 +781,11 @@ const Profile = observer (() => {
                     <button
                       className="btn w-full bg-indigo-500 hover:bg-indigo-600 text-white px-[100px] justify-start"
                       onClick={openRemovePanel}
+                    >
+                      <svg
+                        className="w-4 h-4 fill-current shrink-0"
+                        viewBox="0 0 16 16"
                       >
-                      <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 16 16">
                         <path d="m2.457 8.516.969-.99 2.516 2.481 5.324-5.304.985.989-6.309 6.284z" />
                       </svg>
                       <span className="ml-2">Remove</span>
@@ -561,8 +793,11 @@ const Profile = observer (() => {
                     <button
                       className="btn w-full border-slate-200 hover:border-slate-300 text-slate-600 px-[100px] justify-start"
                       onClick={openUpdatePanel}
+                    >
+                      <svg
+                        className="w-4 h-4 fill-rose-500 shrink-0"
+                        viewBox="0 0 16 16"
                       >
-                      <svg className="w-4 h-4 fill-rose-500 shrink-0" viewBox="0 0 16 16">
                         <path d="M14.682 2.318A4.485 4.485 0 0 0 11.5 1 4.377 4.377 0 0 0 8 2.707 4.383 4.383 0 0 0 4.5 1a4.5 4.5 0 0 0-3.182 7.682L8 15l6.682-6.318a4.5 4.5 0 0 0 0-6.364Zm-1.4 4.933L8 12.247l-5.285-5A2.5 2.5 0 0 1 4.5 3c1.437 0 2.312.681 3.5 2.625C9.187 3.681 10.062 3 11.5 3a2.5 2.5 0 0 1 1.785 4.251h-.003Z" />
                       </svg>
                       <span className="ml-2">Update</span>
@@ -570,8 +805,11 @@ const Profile = observer (() => {
                     <button
                       className="btn w-full border-slate-200 hover:border-slate-300 text-slate-600 px-[100px] justify-start"
                       onClick={openSharePanel}
+                    >
+                      <svg
+                        className="w-4 h-4 fill-rose-500 shrink-0"
+                        viewBox="0 0 16 16"
                       >
-                      <svg className="w-4 h-4 fill-rose-500 shrink-0" viewBox="0 0 16 16">
                         <path d="M14.682 2.318A4.485 4.485 0 0 0 11.5 1 4.377 4.377 0 0 0 8 2.707 4.383 4.383 0 0 0 4.5 1a4.5 4.5 0 0 0-3.182 7.682L8 15l6.682-6.318a4.5 4.5 0 0 0 0-6.364Zm-1.4 4.933L8 12.247l-5.285-5A2.5 2.5 0 0 1 4.5 3c1.437 0 2.312.681 3.5 2.625C9.187 3.681 10.062 3 11.5 3a2.5 2.5 0 0 1 1.785 4.251h-.003Z" />
                       </svg>
                       <span className="ml-2">Share</span>
@@ -584,7 +822,7 @@ const Profile = observer (() => {
         </main>
       </div>
     </div>
-  )
-})
+  );
+});
 
-export default Profile
+export default Profile;

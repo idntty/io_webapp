@@ -1,14 +1,14 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Link, Navigate, useParams } from "react-router-dom";
-import { generateSvgAvatar } from "../images/GenerateOnboardingSvg/GenerateSvg";
-import User06 from "../images/user-28-06.jpg";
-import User08 from "../images/user-28-08.jpg";
-import User09 from "../images/user-28-09.jpg";
-import SharedDataRoadMap from "../partials/sharedData/SharedDataRoadmap";
-import { store } from "../store/store";
-import { fetchWrapper } from "../shared/fetchWrapper";
-import { cryptography } from "@liskhq/lisk-client";
-import {generateTransaction} from '../utils/Utils';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Link, Navigate, useParams } from 'react-router-dom';
+import { generateSvgAvatar } from '../images/GenerateOnboardingSvg/GenerateSvg';
+import User06 from '../images/user-28-06.jpg';
+import User08 from '../images/user-28-08.jpg';
+import User09 from '../images/user-28-09.jpg';
+import SharedDataRoadMap from '../partials/sharedData/SharedDataRoadmap';
+import { store } from '../store/store';
+import { fetchWrapper } from '../shared/fetchWrapper';
+import { cryptography } from '@liskhq/lisk-client';
+import { generateTransaction } from '../utils/Utils';
 
 function SharedData() {
   const [encryptedData, setEncryptedData] = useState([]);
@@ -16,15 +16,15 @@ function SharedData() {
 
   const { id } = useParams();
 
-  const [address, pubKey] = id.split(":");
+  const [address, pubKey] = id.split(':');
 
-  const passPhrase = sessionStorage.getItem("passPhrase");
+  const passPhrase = sessionStorage.getItem('passPhrase');
 
   useEffect(() => {
     fetchWrapper
-    .get(`data/shared/${id}`)
-    .then((res) => setEncryptedData(res.data ?? []))
-    .catch((err) => console.log(err));
+      .get(`data/shared/${id}`)
+      .then((res) => setEncryptedData(res.data ?? []))
+      .catch((err) => console.log(err));
   }, [id]);
 
   const decryptedData = useMemo(() => {
@@ -32,21 +32,21 @@ function SharedData() {
       let seed, value, hash;
       try {
         [seed, value] = cryptography
-        .decryptMessageWithPassphrase(
-          item.value,
-          item.value_nonce,
-          passPhrase,
-          Buffer.from(pubKey, 'hex')
-        )
-        .split(":");
+          .decryptMessageWithPassphrase(
+            item.value,
+            item.value_nonce,
+            passPhrase,
+            Buffer.from(pubKey, 'hex')
+          )
+          .split(':');
         hash = cryptography
-        .hash(
-          Buffer.concat([
-            Buffer.from(seed, "utf8"),
-            cryptography.hash(value, "utf8"),
-          ])
-        )
-        .toString("hex");
+          .hash(
+            Buffer.concat([
+              Buffer.from(seed, 'utf8'),
+              cryptography.hash(value, 'utf8'),
+            ])
+          )
+          .toString('hex');
       } catch (err) {
         setHasError(true);
         console.log(err);
@@ -62,19 +62,27 @@ function SharedData() {
   }, [encryptedData]);
 
   const validateAccountData = () => {
-    const builder = generateTransaction(BigInt(store.accountInfo?.sequence?.nonce || 0),
-      store.pubKey, store.nodeInfo.networkIdentifier, store.passPhrase)
+    const builder = generateTransaction(
+      BigInt(store.accountInfo?.sequence?.nonce || 0),
+      store.pubKey,
+      store.nodeInfo.networkIdentifier,
+      store.passPhrase
+    );
 
-    const signedTx = builder.validate(decryptedData.map(e => ({
-      label: e.label,
-      value: Buffer.from(e.hash, 'hex')
-    })), address)
+    const signedTx = builder.validate(
+      decryptedData.map((e) => ({
+        label: e.label,
+        value: Buffer.from(e.hash, 'hex'),
+      })),
+      address
+    );
 
     if (signedTx) {
-      fetchWrapper.post('transactions', {}, signedTx)
-      .catch((err) => console.log(err));
+      fetchWrapper
+        .post('transactions', {}, signedTx)
+        .catch((err) => console.log(err));
     }
-  }
+  };
 
   if (!passPhrase) return <Navigate to="/" replace={true} />;
 
@@ -103,7 +111,14 @@ function SharedData() {
                       </li>
                     ))}
                 </ul>
-                {!hasError && <button className="mt-12 btn bg-indigo-500 hover:bg-indigo-600 text-white" onClick={validateAccountData}>Validate data</button>}
+                {!hasError && (
+                  <button
+                    className="mt-12 btn bg-indigo-500 hover:bg-indigo-600 text-white"
+                    onClick={validateAccountData}
+                  >
+                    Validate data
+                  </button>
+                )}
               </div>
             </div>
           </div>

@@ -1,3 +1,3 @@
-import {fetchWrapper} from '../shared/fetchWrapper';
+import { fetchWrapper } from '../shared/fetchWrapper';
 
-export const getNodeInfo = (headers) => fetchWrapper.get('node/info/', headers)
+export const getNodeInfo = (headers) => fetchWrapper.get('node/info/', headers);

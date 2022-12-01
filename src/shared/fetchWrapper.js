@@ -1,5 +1,5 @@
-import {store} from '../store/store';
-import {jsonReplacer} from '../utils/Utils';
+import { store } from '../store/store';
+import { jsonReplacer } from '../utils/Utils';
 
 function prepareUrl(url) {
   if (url.startsWith('http')) return url;
@@ -9,12 +9,11 @@ function prepareUrl(url) {
 function handleRequest(method, url, headers, attempts, token, body) {
   return new Promise((resolve, reject) => {
     (function internalRequest() {
-      if(store)
-        store.loading = true;
+      if (store) store.loading = true;
       return request(method, url, headers, token, body)
         .then(resolve)
-        .catch(err => --attempts > 0 ? internalRequest() : reject(err))
-    })()
+        .catch((err) => (--attempts > 0 ? internalRequest() : reject(err)));
+    })();
   })
     .then((res) => {
       store.loading = false;
@@ -22,10 +21,10 @@ function handleRequest(method, url, headers, attempts, token, body) {
     })
     .catch((err) => {
       store.loading = false;
-      console.log(err)
-      return {}
-    })
-};
+      console.log(err);
+      return {};
+    });
+}
 
 /**
  * Request
@@ -36,37 +35,37 @@ function handleRequest(method, url, headers, attempts, token, body) {
  * @param {object} headers - request headers
  */
 function request(method, url, headers = {}, token, body) {
-  let controller = new AbortController;
+  let controller = new AbortController();
   let requestOptions = {};
-  if (method === 'GET' || method === 'DELETE'){
+  if (method === 'GET' || method === 'DELETE') {
     requestOptions = {
       method: method,
       headers: {
         Authorization: `IDNTTY ${token}`,
-        ...headers
+        ...headers,
       },
       signal: controller.signal,
-    }
-  };
-  if (method === 'POST' || method === 'PUT'){
+    };
+  }
+  if (method === 'POST' || method === 'PUT') {
     requestOptions = {
       method: method,
       headers: {
         Authorization: `IDNTTY ${token}`,
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        ...headers
+        ...headers,
       },
       body: JSON.stringify(body, jsonReplacer),
       signal: controller.signal,
-    }
-  };
+    };
+  }
   if (!token) {
     requestOptions.headers.Authorization = null;
   }
   setTimeout(() => controller.abort(), 15000);
   return fetch(prepareUrl(url), requestOptions);
-};
+}
 
 function get(url, headers, attempts = 3) {
   return handleRequest('GET', url, headers, attempts, null);
@@ -109,5 +108,5 @@ export const fetchWrapper = {
   delAuth,
   postAuth,
   putAuth,
-  baseUrl: ''
+  baseUrl: '',
 };

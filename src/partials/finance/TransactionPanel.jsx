@@ -1,12 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from 'react';
 
-import Image from "../../images/transactions-image-04.svg";
-import moment from "moment";
-import { formatAddressBig } from "../../utils/Utils";
-import { generateSvgAvatar } from "../../images/GenerateOnboardingSvg/GenerateSvg";
-import { store } from "../../store/store";
-import UserAvatar from "../../images/user-avatar-32.png";
-import { observer } from "mobx-react-lite";
+import Image from '../../images/transactions-image-04.svg';
+import moment from 'moment';
+import { formatAddressBig } from '../../utils/Utils';
+import { generateSvgAvatar } from '../../images/GenerateOnboardingSvg/GenerateSvg';
+import { store } from '../../store/store';
+import UserAvatar from '../../images/user-avatar-32.png';
+import { observer } from 'mobx-react-lite';
 
 const TransactionPanel = observer(
   ({ transactionPanelOpen, onClose, delegate, postTransaction }) => {
@@ -17,17 +17,17 @@ const TransactionPanel = observer(
 
     const statusColor = () => {
       switch (delegate.status) {
-        case "Vote":
-          return "bg-emerald-100 text-emerald-600";
-        case "Unvote":
-          return "bg-rose-100 text-rose-500";
+        case 'Vote':
+          return 'bg-emerald-100 text-emerald-600';
+        case 'Unvote':
+          return 'bg-rose-100 text-rose-500';
         default:
-          return "bg-slate-100 text-slate-500";
+          return 'bg-slate-100 text-slate-500';
       }
     };
 
     const amountLabel =
-      delegate.status === "Vote" ? "Voiting amount" : "Unvoiting amount";
+      delegate.status === 'Vote' ? 'Voiting amount' : 'Unvoiting amount';
 
     // close if the esc key is pressed
     useEffect(() => {
@@ -35,14 +35,14 @@ const TransactionPanel = observer(
         if (!transactionPanelOpen || keyCode !== 27) return;
         onClose();
       };
-      document.addEventListener("keydown", keyHandler);
-      return () => document.removeEventListener("keydown", keyHandler);
+      document.addEventListener('keydown', keyHandler);
+      return () => document.removeEventListener('keydown', keyHandler);
     });
 
     useEffect(() => {
       const status = delegate.status;
 
-      if (status === "Unvote") {
+      if (status === 'Unvote') {
         setAmount(store.accountSentVotes[delegate.address].toString());
       }
     }, [delegate]);
@@ -51,7 +51,7 @@ const TransactionPanel = observer(
       <div
         ref={panelContent}
         className={`absolute inset-0 sm:left-auto z-20 transform shadow-xl transition-transform duration-200 ease-in-out ${
-          transactionPanelOpen ? "translate-x-" : "translate-x-full"
+          transactionPanelOpen ? 'translate-x-' : 'translate-x-full'
         }`}
       >
         <div className="sticky top-16 bg-slate-50 overflow-x-hidden overflow-y-auto no-scrollbar shrink-0 border-l border-slate-200 w-full sm:w-[390px] h-[calc(100vh-64px)]">
@@ -74,7 +74,7 @@ const TransactionPanel = observer(
                 Vote Transaction
               </div>
               <div className="text-sm text-center italic">
-                {moment().format("DD/MM/YYYY hh:mm A")}
+                {moment().format('DD/MM/YYYY hh:mm A')}
               </div>
               {/* Details */}
               <div className="drop-shadow-lg mt-12">
@@ -96,11 +96,11 @@ const TransactionPanel = observer(
                   </div>
                   <div className="text-sm font-medium text-slate-800 mb-3">
                     {delegate?.dpos?.delegate?.username ||
-                      formatAddressBig(delegate.address || "")}
+                      formatAddressBig(delegate.address || '')}
                   </div>
                   <div
                     className={`text-xs inline-flex font-medium rounded-full text-center px-2.5 py-1 ${statusColor()} justify-center`}
-                    style={{ minWidth: "84px" }}
+                    style={{ minWidth: '84px' }}
                   >
                     {delegate.status}
                   </div>
@@ -131,7 +131,7 @@ const TransactionPanel = observer(
                   <div className="flex justify-between space-x-1">
                     <span className="italic">ADDRESS:</span>
                     <span className="font-medium text-slate-700 text-right">
-                      {formatAddressBig(delegate.address || "")}
+                      {formatAddressBig(delegate.address || '')}
                     </span>
                   </div>
                   <div className="flex justify-between space-x-1">

@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
-import { NavLink, useLocation } from "react-router-dom";
-import Logo from "../images/logo.png";
+import React, { useState, useEffect, useRef } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import Logo from '../images/logo.png';
 
-import SidebarLinkGroup from "./SidebarLinkGroup";
+import SidebarLinkGroup from './SidebarLinkGroup';
 
 function Sidebar({ sidebarOpen, setSidebarOpen }) {
   const location = useLocation();
@@ -10,9 +10,9 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
   const trigger = useRef(null);
   const sidebar = useRef(null);
-  const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
+  const storedSidebarExpanded = localStorage.getItem('sidebar-expanded');
   const [sidebarExpanded, setSidebarExpanded] = useState(
-    storedSidebarExpanded === null ? false : storedSidebarExpanded === "true"
+    storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true'
   );
 
   // close on click outside
@@ -27,8 +27,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
         return;
       setSidebarOpen(false);
     };
-    document.addEventListener("click", clickHandler);
-    return () => document.removeEventListener("click", clickHandler);
+    document.addEventListener('click', clickHandler);
+    return () => document.removeEventListener('click', clickHandler);
   });
 
   // close if the esc key is pressed
@@ -37,16 +37,16 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
       if (!sidebarOpen || keyCode !== 27) return;
       setSidebarOpen(false);
     };
-    document.addEventListener("keydown", keyHandler);
-    return () => document.removeEventListener("keydown", keyHandler);
+    document.addEventListener('keydown', keyHandler);
+    return () => document.removeEventListener('keydown', keyHandler);
   });
 
   useEffect(() => {
-    localStorage.setItem("sidebar-expanded", sidebarExpanded);
+    localStorage.setItem('sidebar-expanded', sidebarExpanded);
     if (sidebarExpanded) {
-      document.querySelector("body").classList.add("sidebar-expanded");
+      document.querySelector('body').classList.add('sidebar-expanded');
     } else {
-      document.querySelector("body").classList.remove("sidebar-expanded");
+      document.querySelector('body').classList.remove('sidebar-expanded');
     }
   }, [sidebarExpanded]);
 
@@ -55,7 +55,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
       {/* Sidebar backdrop (mobile only) */}
       <div
         className={`fixed inset-0 bg-slate-900 bg-opacity-30 z-40 lg:hidden lg:z-auto transition-opacity duration-200 ${
-          sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          sidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         aria-hidden="true"
       ></div>
@@ -65,7 +65,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
         id="sidebar"
         ref={sidebar}
         className={`flex flex-col absolute z-40 left-0 top-0 lg:static lg:left-auto lg:top-auto lg:translate-x-0 transform h-screen overflow-y-scroll lg:overflow-y-auto no-scrollbar w-64 lg:w-20 lg:sidebar-expanded:!w-64 2xl:!w-64 shrink-0 bg-slate-800 p-4 transition-all duration-200 ease-in-out ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-64"
+          sidebarOpen ? 'translate-x-0' : '-translate-x-64'
         }`}
       >
         {/* Sidebar header */}
@@ -111,15 +111,15 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
             <ul className="mt-3">
               {/* digitalId */}
               <SidebarLinkGroup
-                activecondition={pathname.includes("digitalId")}
+                activecondition={pathname.includes('digitalId')}
               >
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
                       <a
                         className={`block text-slate-200 hover:text-white truncate transition duration-150 ${
-                          pathname.includes("digitalId") &&
-                          "hover:text-slate-200"
+                          pathname.includes('digitalId') &&
+                          'hover:text-slate-200'
                         }`}
                         onClick={(e) => {
                           e.preventDefault();
@@ -136,29 +136,29 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             >
                               <path
                                 className={`fill-current text-slate-600 ${
-                                  pathname.includes("digitalId") &&
-                                  "text-indigo-500"
+                                  pathname.includes('digitalId') &&
+                                  'text-indigo-500'
                                 }`}
                                 d="M19.714 14.7l-7.007 7.007-1.414-1.414 7.007-7.007c-.195-.4-.298-.84-.3-1.286a3 3 0 113 3 2.969 2.969 0 01-1.286-.3z"
                               />
                               <path
                                 className={`fill-current text-slate-400 ${
-                                  pathname.includes("digitalId") &&
-                                  "text-indigo-300"
+                                  pathname.includes('digitalId') &&
+                                  'text-indigo-300'
                                 }`}
                                 d="M10.714 18.3c.4-.195.84-.298 1.286-.3a3 3 0 11-3 3c.002-.446.105-.885.3-1.286l-6.007-6.007 1.414-1.414 6.007 6.007z"
                               />
                               <path
                                 className={`fill-current text-slate-600 ${
-                                  pathname.includes("digitalId") &&
-                                  "text-indigo-500"
+                                  pathname.includes('digitalId') &&
+                                  'text-indigo-500'
                                 }`}
                                 d="M5.7 10.714c.195.4.298.84.3 1.286a3 3 0 11-3-3c.446.002.885.105 1.286.3l7.007-7.007 1.414 1.414L5.7 10.714z"
                               />
                               <path
                                 className={`fill-current text-slate-400 ${
-                                  pathname.includes("digitalId") &&
-                                  "text-indigo-300"
+                                  pathname.includes('digitalId') &&
+                                  'text-indigo-300'
                                 }`}
                                 d="M19.707 9.292a3.012 3.012 0 00-1.415 1.415L13.286 5.7c-.4.195-.84.298-1.286.3a3 3 0 113-3 2.969 2.969 0 01-.3 1.286l5.007 5.006z"
                               />
@@ -171,7 +171,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                           <div className="flex shrink-0 ml-2">
                             <svg
                               className={`w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 ${
-                                open && "transform rotate-180"
+                                open && 'transform rotate-180'
                               }`}
                               viewBox="0 0 12 12"
                             >
@@ -181,14 +181,14 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                         </div>
                       </a>
                       <div className="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                        <ul className={`pl-9 mt-1 ${!open && "hidden"}`}>
+                        <ul className={`pl-9 mt-1 ${!open && 'hidden'}`}>
                           <li className="mb-1 last:mb-0">
                             <NavLink
                               end
                               to="/digitalId/profile-id"
                               className={({ isActive }) =>
-                                "block text-slate-400 hover:text-slate-200 transition duration-150 truncate " +
-                                (isActive ? "!text-indigo-500" : "")
+                                'block text-slate-400 hover:text-slate-200 transition duration-150 truncate ' +
+                                (isActive ? '!text-indigo-500' : '')
                               }
                             >
                               <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
@@ -214,8 +214,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                               end
                               to="/digitalId/validation-log"
                               className={({ isActive }) =>
-                                "block text-slate-400 hover:text-slate-200 transition duration-150 truncate " +
-                                (isActive ? "!text-indigo-500" : "")
+                                'block text-slate-400 hover:text-slate-200 transition duration-150 truncate ' +
+                                (isActive ? '!text-indigo-500' : '')
                               }
                             >
                               <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
@@ -228,8 +228,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                               end
                               to="/digitalId/verify"
                               className={({ isActive }) =>
-                                "block text-slate-400 hover:text-slate-200 transition duration-150 truncate " +
-                                (isActive ? "!text-indigo-500" : "")
+                                'block text-slate-400 hover:text-slate-200 transition duration-150 truncate ' +
+                                (isActive ? '!text-indigo-500' : '')
                               }
                             >
                               <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
@@ -243,14 +243,14 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                   );
                 }}
               </SidebarLinkGroup>
-              <SidebarLinkGroup activecondition={pathname.includes("services")}>
+              <SidebarLinkGroup activecondition={pathname.includes('services')}>
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
                       <a
                         className={`block text-slate-200 hover:text-white truncate transition duration-150 ${
-                          pathname.includes("services") &&
-                          "hover:text-slate-200"
+                          pathname.includes('services') &&
+                          'hover:text-slate-200'
                         }`}
                         onClick={(e) => {
                           e.preventDefault();
@@ -267,8 +267,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             >
                               <circle
                                 className={`fill-current text-slate-400 ${
-                                  pathname.includes("services") &&
-                                  "text-indigo-300"
+                                  pathname.includes('services') &&
+                                  'text-indigo-300'
                                 }`}
                                 cx="18.5"
                                 cy="5.5"
@@ -276,8 +276,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                               />
                               <circle
                                 className={`fill-current text-slate-600 ${
-                                  pathname.includes("services") &&
-                                  "text-indigo-500"
+                                  pathname.includes('services') &&
+                                  'text-indigo-500'
                                 }`}
                                 cx="5.5"
                                 cy="5.5"
@@ -285,8 +285,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                               />
                               <circle
                                 className={`fill-current text-slate-600 ${
-                                  pathname.includes("services") &&
-                                  "text-indigo-500"
+                                  pathname.includes('services') &&
+                                  'text-indigo-500'
                                 }`}
                                 cx="18.5"
                                 cy="18.5"
@@ -294,8 +294,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                               />
                               <circle
                                 className={`fill-current text-slate-400 ${
-                                  pathname.includes("services") &&
-                                  "text-indigo-300"
+                                  pathname.includes('services') &&
+                                  'text-indigo-300'
                                 }`}
                                 cx="5.5"
                                 cy="18.5"
@@ -310,7 +310,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                           <div className="flex shrink-0 ml-2">
                             <svg
                               className={`w-3 h-3 shrink-0 ml-1 fill-current text-slate-400 ${
-                                open && "transform rotate-180"
+                                open && 'transform rotate-180'
                               }`}
                               viewBox="0 0 12 12"
                             >
@@ -320,14 +320,14 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                         </div>
                       </a>
                       <div className="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                        <ul className={`pl-9 mt-1 ${!open && "hidden"}`}>
+                        <ul className={`pl-9 mt-1 ${!open && 'hidden'}`}>
                           <li className="mb-1 last:mb-0">
                             <NavLink
                               end
                               to="/services/delegates"
                               className={({ isActive }) =>
-                                "block text-slate-400 hover:text-slate-200 transition duration-150 truncate " +
-                                (isActive ? "!text-indigo-500" : "")
+                                'block text-slate-400 hover:text-slate-200 transition duration-150 truncate ' +
+                                (isActive ? '!text-indigo-500' : '')
                               }
                             >
                               <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
@@ -340,8 +340,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                               end
                               to="/services/vpn"
                               className={({ isActive }) =>
-                                "block text-slate-400 hover:text-slate-200 transition duration-150 truncate " +
-                                (isActive ? "!text-indigo-500" : "")
+                                'block text-slate-400 hover:text-slate-200 transition duration-150 truncate ' +
+                                (isActive ? '!text-indigo-500' : '')
                               }
                             >
                               <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">

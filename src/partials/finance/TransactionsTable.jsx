@@ -1,8 +1,8 @@
-import React from "react";
-import TransactionItem from "./TransactionsTableItem";
+import React from 'react';
+import TransactionItem from './TransactionsTableItem';
 
-import Image01 from "../../images/transactions-image-01.svg";
-import { observer } from "mobx-react-lite";
+import Image01 from '../../images/transactions-image-01.svg';
+import { observer } from 'mobx-react-lite';
 
 const TransactionsTable = observer(({ data, rowClick }) => {
   return (

@@ -1,17 +1,17 @@
-import resolveConfig from "tailwindcss/resolveConfig";
-import { cryptography, transactions } from "@liskhq/lisk-client";
+import resolveConfig from 'tailwindcss/resolveConfig';
+import { cryptography, transactions } from '@liskhq/lisk-client';
 import {
   removeFeatureAssetSchema,
   setFeatureAssetSchema,
   unlockDelegateAssetSchema,
   validateFeatureAssetSchema,
   voteDelegateAssetSchema,
-} from "./Schemas";
-import { statusMap } from "../shared/statusMap";
+} from './Schemas';
+import { statusMap } from '../shared/statusMap';
 
 export const tailwindConfig = () => {
   // Tailwind config
-  return resolveConfig("./src/tailwind.config.js");
+  return resolveConfig('./src/tailwind.config.js');
 };
 
 export const hexToRGB = (h) => {
@@ -31,17 +31,17 @@ export const hexToRGB = (h) => {
 };
 
 export const formatValue = (value) =>
-  Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
+  Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
     maximumSignificantDigits: 3,
-    notation: "compact",
+    notation: 'compact',
   }).format(value);
 
 export const formatThousands = (value) =>
-  Intl.NumberFormat("en-US", {
+  Intl.NumberFormat('en-US', {
     maximumSignificantDigits: 3,
-    notation: "compact",
+    notation: 'compact',
   }).format(value);
 
 export const formatAddressBig = (address) =>
@@ -50,12 +50,12 @@ export const formatAddressBig = (address) =>
     address.length - 4
   )} ${address.slice(address.length - 4)}`;
 
-export const encryptAccountData = (data = [], passPhrase = "", pubKey = "") => {
+export const encryptAccountData = (data = [], passPhrase = '', pubKey = '') => {
   return data
     .filter((item) => item.status !== statusMap.blockchained)
     .map((item) => {
       let value = cryptography.encryptMessageWithPassphrase(
-        item.seed + ":" + item.value,
+        item.seed + ':' + item.value,
         passPhrase,
         pubKey
       );
@@ -68,12 +68,12 @@ export const encryptAccountData = (data = [], passPhrase = "", pubKey = "") => {
     });
 };
 
-export const encryptSharedData = (data = [], passPhrase = "", pubKey = "") => {
+export const encryptSharedData = (data = [], passPhrase = '', pubKey = '') => {
   return data.map((item) => {
     let value = cryptography.encryptMessageWithPassphrase(
-      item.seed + ":" + item.value,
+      item.seed + ':' + item.value,
       passPhrase,
-      Buffer.from(pubKey, "hex")
+      Buffer.from(pubKey, 'hex')
     );
     return {
       label: item.key,
@@ -111,8 +111,8 @@ export const hashAccountData = (data = [], oldData = [], hashMap = {}) => {
   const changed = data.reduce((acc, item) => {
     if (!oldAccountMap[item.label]) return [...acc, item];
     const oldValue = hashMap[item.key];
-    const newValue = hashValue(item.value, item.seed).toString("hex");
-    if (oldValue !== newValue && item.status === "new") return [...acc, item];
+    const newValue = hashValue(item.value, item.seed).toString('hex');
+    if (oldValue !== newValue && item.status === 'new') return [...acc, item];
     return acc;
   }, []);
   return [
@@ -128,22 +128,22 @@ export const hashAccountData = (data = [], oldData = [], hashMap = {}) => {
 };
 
 export const jsonReplacer = (key, value) => {
-  if (key === "big") {
+  if (key === 'big') {
     return value.toString();
   }
   return value;
 };
 
-export const hashValue = (value = "", seed = "") =>
+export const hashValue = (value = '', seed = '') =>
   cryptography.hash(
-    Buffer.concat([Buffer.from(seed, "utf8"), cryptography.hash(value, "utf8")])
+    Buffer.concat([Buffer.from(seed, 'utf8'), cryptography.hash(value, 'utf8')])
   );
 
 export const generateTransaction = (
   nonce = BigInt(0),
-  senderPublicKey = "",
-  networkIdentifier = "",
-  passPhrase = "",
+  senderPublicKey = '',
+  networkIdentifier = '',
+  passPhrase = '',
   fee = BigInt(500000)
 ) => {
   return {
@@ -202,9 +202,9 @@ export const generateTransaction = (
 export const generateSetTransaction = (
   features,
   nonce = BigInt(0),
-  senderPublicKey = "",
-  networkIdentifier = "",
-  passPhrase = "",
+  senderPublicKey = '',
+  networkIdentifier = '',
+  passPhrase = '',
   fee = BigInt(500000)
 ) => {
   const tx = {
@@ -223,15 +223,15 @@ export const generateSetTransaction = (
   const signedTx = transactions.signTransaction(
     setFeatureAssetSchema,
     tx,
-    Buffer.from(networkIdentifier, "hex"),
+    Buffer.from(networkIdentifier, 'hex'),
     passPhrase
   );
 
-  signedTx.senderPublicKey = signedTx.senderPublicKey.toString("hex");
-  signedTx.signatures[0] = signedTx.signatures[0].toString("hex");
+  signedTx.senderPublicKey = signedTx.senderPublicKey.toString('hex');
+  signedTx.signatures[0] = signedTx.signatures[0].toString('hex');
   signedTx.asset.features = signedTx.asset.features.map((feature) => ({
     ...feature,
-    value: feature.value.toString("hex"),
+    value: feature.value.toString('hex'),
   }));
 
   delete signedTx.id;
@@ -242,9 +242,9 @@ export const generateSetTransaction = (
 export const generateRemoveTransaction = (
   features,
   nonce = BigInt(0),
-  senderPublicKey = "",
-  networkIdentifier = "",
-  passPhrase = "",
+  senderPublicKey = '',
+  networkIdentifier = '',
+  passPhrase = '',
   fee = BigInt(500000)
 ) => {
   const tx = {
@@ -260,12 +260,12 @@ export const generateRemoveTransaction = (
   const signedTx = transactions.signTransaction(
     removeFeatureAssetSchema,
     tx,
-    Buffer.from(networkIdentifier, "hex"),
+    Buffer.from(networkIdentifier, 'hex'),
     passPhrase
   );
 
-  signedTx.senderPublicKey = signedTx.senderPublicKey.toString("hex");
-  signedTx.signatures[0] = signedTx.signatures[0].toString("hex");
+  signedTx.senderPublicKey = signedTx.senderPublicKey.toString('hex');
+  signedTx.signatures[0] = signedTx.signatures[0].toString('hex');
 
   delete signedTx.id;
 
@@ -275,21 +275,21 @@ export const generateRemoveTransaction = (
 const generateValidateTransaction = (
   features,
   nonce = BigInt(0),
-  senderPublicKey = "",
-  networkIdentifier = "",
-  passPhrase = "",
+  senderPublicKey = '',
+  networkIdentifier = '',
+  passPhrase = '',
   fee = BigInt(500000),
-  recipientAddress = ""
+  recipientAddress = ''
 ) => {
   const tx = {
     moduleID: 1001,
     assetID: 11,
     nonce,
-    senderPublicKey: Buffer.from(senderPublicKey, "hex"),
+    senderPublicKey: Buffer.from(senderPublicKey, 'hex'),
     fee,
     asset: {
       features,
-      recipientAddress: Buffer.from(recipientAddress, "hex"),
+      recipientAddress: Buffer.from(recipientAddress, 'hex'),
     },
   };
 
@@ -298,17 +298,17 @@ const generateValidateTransaction = (
   const signedTx = transactions.signTransaction(
     validateFeatureAssetSchema,
     tx,
-    Buffer.from(networkIdentifier, "hex"),
+    Buffer.from(networkIdentifier, 'hex'),
     passPhrase
   );
 
-  signedTx.senderPublicKey = signedTx.senderPublicKey.toString("hex");
+  signedTx.senderPublicKey = signedTx.senderPublicKey.toString('hex');
   signedTx.asset.recipientAddress =
-    signedTx.asset.recipientAddress.toString("hex");
-  signedTx.signatures[0] = signedTx.signatures[0].toString("hex");
+    signedTx.asset.recipientAddress.toString('hex');
+  signedTx.signatures[0] = signedTx.signatures[0].toString('hex');
   signedTx.asset.features = signedTx.asset.features.map((feature) => ({
     ...feature,
-    value: feature.value.toString("hex"),
+    value: feature.value.toString('hex'),
   }));
 
   delete signedTx.id;
@@ -318,23 +318,23 @@ const generateValidateTransaction = (
 
 const generateVoteTransaction = (
   nonce = BigInt(0),
-  senderPublicKey = "",
-  networkIdentifier = "",
-  passPhrase = "",
+  senderPublicKey = '',
+  networkIdentifier = '',
+  passPhrase = '',
   fee = BigInt(500000),
-  delegateAddress = "",
+  delegateAddress = '',
   amount = 0n
 ) => {
   const tx = {
     moduleID: 5,
     assetID: 1,
     nonce,
-    senderPublicKey: Buffer.from(senderPublicKey, "hex"),
+    senderPublicKey: Buffer.from(senderPublicKey, 'hex'),
     fee,
     asset: {
       votes: [
         {
-          delegateAddress: Buffer.from(delegateAddress, "hex"),
+          delegateAddress: Buffer.from(delegateAddress, 'hex'),
           amount: amount * 100000000n,
         },
       ],
@@ -344,15 +344,15 @@ const generateVoteTransaction = (
   const signedTx = transactions.signTransaction(
     voteDelegateAssetSchema,
     tx,
-    Buffer.from(networkIdentifier, "hex"),
+    Buffer.from(networkIdentifier, 'hex'),
     passPhrase
   );
 
-  signedTx.senderPublicKey = signedTx.senderPublicKey.toString("hex");
-  signedTx.signatures[0] = signedTx.signatures[0].toString("hex");
+  signedTx.senderPublicKey = signedTx.senderPublicKey.toString('hex');
+  signedTx.signatures[0] = signedTx.signatures[0].toString('hex');
   signedTx.asset.votes = signedTx.asset.votes.map((vote) => ({
     ...vote,
-    delegateAddress: vote.delegateAddress.toString("hex"),
+    delegateAddress: vote.delegateAddress.toString('hex'),
   }));
 
   delete signedTx.id;
@@ -362,11 +362,11 @@ const generateVoteTransaction = (
 
 const generateUnlockTransaction = (
   nonce = BigInt(0),
-  senderPublicKey = "",
-  networkIdentifier = "",
-  passPhrase = "",
+  senderPublicKey = '',
+  networkIdentifier = '',
+  passPhrase = '',
   fee = BigInt(500000),
-  delegateAddress = "",
+  delegateAddress = '',
   amount = 0n,
   unvoteHeight = 0
 ) => {
@@ -374,12 +374,12 @@ const generateUnlockTransaction = (
     moduleID: 5,
     assetID: 2,
     nonce,
-    senderPublicKey: Buffer.from(senderPublicKey, "hex"),
+    senderPublicKey: Buffer.from(senderPublicKey, 'hex'),
     fee,
     asset: {
       unlockObjects: [
         {
-          delegateAddress: Buffer.from(delegateAddress, "hex"),
+          delegateAddress: Buffer.from(delegateAddress, 'hex'),
           amount: amount * 100000000n,
           unvoteHeight,
         },
@@ -390,15 +390,15 @@ const generateUnlockTransaction = (
   const signedTx = transactions.signTransaction(
     unlockDelegateAssetSchema,
     tx,
-    Buffer.from(networkIdentifier, "hex"),
+    Buffer.from(networkIdentifier, 'hex'),
     passPhrase
   );
 
-  signedTx.senderPublicKey = signedTx.senderPublicKey.toString("hex");
-  signedTx.signatures[0] = signedTx.signatures[0].toString("hex");
+  signedTx.senderPublicKey = signedTx.senderPublicKey.toString('hex');
+  signedTx.signatures[0] = signedTx.signatures[0].toString('hex');
   signedTx.asset.unlockObjects = signedTx.asset.unlockObjects.map((vote) => ({
     ...vote,
-    delegateAddress: vote.delegateAddress.toString("hex"),
+    delegateAddress: vote.delegateAddress.toString('hex'),
   }));
 
   delete signedTx.id;

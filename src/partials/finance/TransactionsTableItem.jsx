@@ -1,26 +1,26 @@
-import React from "react";
+import React from 'react';
 
-import ServiceImage from "../../images/service_icon.png";
-import { observer } from "mobx-react-lite";
+import ServiceImage from '../../images/service_icon.png';
+import { observer } from 'mobx-react-lite';
 
 const TransactionsTableItem = observer((props) => {
   const statusColor = () => {
     switch (props.status) {
-      case "Vote":
-        return "bg-emerald-100 text-emerald-600";
-      case "Unvote":
-        return "bg-rose-100 text-rose-500";
+      case 'Vote':
+        return 'bg-emerald-100 text-emerald-600';
+      case 'Unvote':
+        return 'bg-rose-100 text-rose-500';
       default:
-        return "bg-slate-100 text-slate-500";
+        return 'bg-slate-100 text-slate-500';
     }
   };
 
   const amountColor = () => {
-    switch (props.status === "Unvote") {
-      case "+":
-        return "text-emerald-500";
+    switch (props.status === 'Unvote') {
+      case '+':
+        return 'text-emerald-500';
       default:
-        return "text-slate-700";
+        return 'text-slate-700';
     }
   };
 
@@ -78,7 +78,7 @@ const TransactionsTableItem = observer((props) => {
         <div className="text-center">
           <div
             className={`text-xs inline-flex font-medium rounded-full justify-center px-2.5 py-1 ${statusColor()}`}
-            style={{ minWidth: "84px" }}
+            style={{ minWidth: '84px' }}
           >
             {props.status}
           </div>

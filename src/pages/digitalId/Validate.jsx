@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import {observer} from "mobx-react-lite";
+import { observer } from 'mobx-react-lite';
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
-import ValidateTable from "../../partials/validate/ValidateTable";
-import ValidatePanel from "../../partials/validate/ValidatePanel";
-import ValidateRoadMap from "../../partials/validationLog/ValidateRoadMap";
-import {Link} from "react-router-dom";
-import {store} from "../../store/store";
+import ValidateTable from '../../partials/validate/ValidateTable';
+import ValidatePanel from '../../partials/validate/ValidatePanel';
+import ValidateRoadMap from '../../partials/validationLog/ValidateRoadMap';
+import { Link } from 'react-router-dom';
+import { store } from '../../store/store';
 
 const Validate = observer(() => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -23,12 +23,19 @@ const Validate = observer(() => {
         <main className="relative">
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
             <div className="w-fit">
-            {/* Page header */}
+              {/* Page header */}
               <div className="pb-2.5">
                 {/* Title */}
-                <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">0x28394710234192304719234</h1>
+                <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">
+                  0x28394710234192304719234
+                </h1>
               </div>
-              <Link className="font-normal text-sm text-indigo-500 hover:text-indigo-600" to="/digitalId/validate">Explore -&gt;</Link>
+              <Link
+                className="font-normal text-sm text-indigo-500 hover:text-indigo-600"
+                to="/digitalId/validate"
+              >
+                Explore -&gt;
+              </Link>
               <div className="mb-5 mt-5">
                 <ul className="flex flex-wrap -m-1">
                   <li className="m-1">
@@ -53,20 +60,25 @@ const Validate = observer(() => {
                   </li>
                 </ul>
               </div>
-              <ValidateTable setValidatePanelOpen={setValidatePanelOpen}/>
+              <ValidateTable setValidatePanelOpen={setValidatePanelOpen} />
               <div className="pb-8 border-b border-zinc-200 mt-[50px]">
-                <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">Digital ID validation log ✨</h1>
+                <h1 className="text-2xl md:text-3xl text-slate-800 font-bold">
+                  Digital ID validation log ✨
+                </h1>
               </div>
-              {store.transactionsInfo.map(item => {
-                return <ValidateRoadMap season={item} key={item.id}/>
+              {store.transactionsInfo.map((item) => {
+                return <ValidateRoadMap season={item} key={item.id} />;
               })}
             </div>
           </div>
-          <ValidatePanel validatePanelOpen={validatePanelOpen} setValidatePanelOpen={setValidatePanelOpen}/>
+          <ValidatePanel
+            validatePanelOpen={validatePanelOpen}
+            setValidatePanelOpen={setValidatePanelOpen}
+          />
         </main>
       </div>
     </div>
-  )
-})
+  );
+});
 
 export default Validate;

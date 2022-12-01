@@ -1,29 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-import Sidebar from "../../partials/Sidebar";
-import Header from "../../partials/Header";
-import DropdownTransaction from "../../components/DropdownTransaction";
-import TransactionsTable from "../../partials/finance/TransactionsTable";
-import PaginationClassic from "../../components/PaginationClassic";
-import { observer } from "mobx-react-lite";
-import TransactionPanel from "../../partials/finance/TransactionPanel";
-import { Filters } from "../../components/Filters";
+import Sidebar from '../../partials/Sidebar';
+import Header from '../../partials/Header';
+import DropdownTransaction from '../../components/DropdownTransaction';
+import TransactionsTable from '../../partials/finance/TransactionsTable';
+import PaginationClassic from '../../components/PaginationClassic';
+import { observer } from 'mobx-react-lite';
+import TransactionPanel from '../../partials/finance/TransactionPanel';
+import { Filters } from '../../components/Filters';
 
 const filters = {
-  "View All": "",
-  Voted: "Unvote",
-  Pending: "Pending",
+  'View All': '',
+  Voted: 'Unvote',
+  Pending: 'Pending',
 };
 
 const Delegates = observer(() => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentDelegate, setCurrentDelegate] = useState(null);
-  const [currentFilter, setCurrentFilter] = useState("View All");
+  const [currentFilter, setCurrentFilter] = useState('View All');
 
-  const [lockedFor, setLockedFor] = useState("Voiting");
+  const [lockedFor, setLockedFor] = useState('Voiting');
 
   const lockedLabel = Object.values(
-    lockedFor === "Voiting" ? store.processedVotes : store.accountLockedVotes
+    lockedFor === 'Voiting' ? store.processedVotes : store.accountLockedVotes
   )
     .reduce((sum, e) => sum + e, 0n)
     .toString();

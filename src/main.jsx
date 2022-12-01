@@ -1,18 +1,17 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import {Buffer} from "buffer";
-import { HashRouter as Router } from 'react-router-dom'
-import App from './App'
-import {store} from './store/store';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Buffer } from 'buffer';
+import { HashRouter as Router } from 'react-router-dom';
+import App from './App';
+import { store } from './store/store';
 
-
-globalThis.Buffer = Buffer
+globalThis.Buffer = Buffer;
 
 window.store = store;
 
-BigInt.prototype.toJSON = function() {
-  return this.toString()
-}
+BigInt.prototype.toJSON = function () {
+  return this.toString();
+};
 
 ReactDOM.render(
   <React.StrictMode>
@@ -21,4 +20,4 @@ ReactDOM.render(
     </Router>
   </React.StrictMode>,
   document.getElementById('root')
-)
+);

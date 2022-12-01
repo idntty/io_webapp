@@ -1,0 +1,18 @@
+{
+  "arrowParens": "always",
+  "useTabs": false,
+  "tabWidth": 2,
+  "singleQuote": true,
+  "endOfLine": "lf",
+  "jsxBracketSameLine": false,
+  "trailingComma": "es5",
+  "overrides": [
+    {
+      "files": "*.json",
+      "options": {
+        "singleQuote": false,
+        "parser": "json"
+      }
+    }
+  ]
+}

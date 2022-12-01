@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import Sidebar from "../../partials/Sidebar";
-import Header from "../../partials/Header";
-import VPNServiceImg from "../../images/vpn_service.png";
-import { observer } from "mobx-react-lite";
+import React, { useEffect, useState } from 'react';
+import Sidebar from '../../partials/Sidebar';
+import Header from '../../partials/Header';
+import VPNServiceImg from '../../images/vpn_service.png';
+import { observer } from 'mobx-react-lite';
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 const VPNPrepare = observer(() => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -18,12 +18,12 @@ const VPNPrepare = observer(() => {
   const canVote = store.accountBalance > 20;
 
   const clickButton = () => {
-    if (canVote) navigate("/services/delegates");
-    else window.open("https://testnet.idntty.org/faucet", "_blank");
+    if (canVote) navigate('/services/delegates');
+    else window.open('https://testnet.idntty.org/faucet', '_blank');
   };
 
   useEffect(() => {
-    if (store.canVPN) navigate("/services/vpn/servers");
+    if (store.canVPN) navigate('/services/vpn/servers');
   }, [store.canVPN]);
 
   return (
@@ -62,17 +62,17 @@ const VPNPrepare = observer(() => {
               />
               <h2 className="text-xl md:text-2xl text-slate-800 font-bold text-center">
                 {canVote
-                  ? "Vote for VPN delegate to get service"
-                  : "You cannot get the VPN service, sorry 😢"}
+                  ? 'Vote for VPN delegate to get service'
+                  : 'You cannot get the VPN service, sorry 😢'}
               </h2>
               <p className="text-gray-600 text-center">
                 {canVote ? (
-                  "The tokens used for voting are locked, which means that they still belong to you but they cannot be used for transactions. The funds are locked for as long as you are voting using these tokens and you are able to unlock them any time you want, by removing them from the votes."
+                  'The tokens used for voting are locked, which means that they still belong to you but they cannot be used for transactions. The funds are locked for as long as you are voting using these tokens and you are able to unlock them any time you want, by removing them from the votes.'
                 ) : (
                   <>
-                    Only users who can vote for a VPN delegate using{" "}
+                    Only users who can vote for a VPN delegate using{' '}
                     <b>at least 19.9 tokens</b> can use this service.
-                    Unfortunately, your account currently has{" "}
+                    Unfortunately, your account currently has{' '}
                     <b>only {store.accountBalance} tokens</b>, which is not
                     enough to vote.
                   </>
@@ -89,7 +89,7 @@ const VPNPrepare = observer(() => {
                   <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
                 </svg>
                 <span className="hidden xs:block mx-6">
-                  {canVote ? "Vote" : "Get It"}
+                  {canVote ? 'Vote' : 'Get It'}
                 </span>
               </button>
             </div>

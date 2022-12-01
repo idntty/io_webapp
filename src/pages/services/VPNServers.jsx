@@ -1,22 +1,22 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from 'react';
 
-import Sidebar from "../../partials/Sidebar";
-import Header from "../../partials/Header";
-import { QRCodeSVG } from "qrcode.react";
+import Sidebar from '../../partials/Sidebar';
+import Header from '../../partials/Header';
+import { QRCodeSVG } from 'qrcode.react';
 
-import VPNServeIcon from "../../images/vpn_server_icon.png";
-import { Filters } from "../../components/Filters";
+import VPNServeIcon from '../../images/vpn_server_icon.png';
+import { Filters } from '../../components/Filters';
 
 const filters = {
-  "View All": "",
-  Active: "Active",
-  Offline: "Offline",
+  'View All': '',
+  Active: 'Active',
+  Offline: 'Offline',
 };
 
 function VPNServers() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedServer, setSelectedServer] = useState(0);
-  const [currentFilter, setCurrentFilter] = useState("View All");
+  const [currentFilter, setCurrentFilter] = useState('View All');
 
   const qrContent = useMemo(
     () => `
@@ -34,10 +34,10 @@ Endpoint = ${store.vpnServers?.[selectedServer]?.endpoint}
   );
 
   const downloadTxtFile = () => {
-    const element = document.createElement("a");
-    const file = new Blob([qrContent], { type: "text/plain" });
+    const element = document.createElement('a');
+    const file = new Blob([qrContent], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
-    element.download = "vpnConfig.conf";
+    element.download = 'vpnConfig.conf';
     document.body.appendChild(element); // Required for this to work in FireFox
     element.click();
   };
@@ -183,7 +183,7 @@ Endpoint = ${store.vpnServers?.[selectedServer]?.endpoint}
                           <div className="flex justify-between text-sm mb-2">
                             <div>Spent This Month</div>
                             <div className="italic">
-                              4673,00 Mb{" "}
+                              4673,00 Mb{' '}
                               <span className="text-slate-400">/</span> 46730,00
                               Mb
                             </div>
@@ -192,7 +192,7 @@ Endpoint = ${store.vpnServers?.[selectedServer]?.endpoint}
                             <div
                               className="absolute inset-0 bg-indigo-500"
                               aria-hidden="true"
-                              style={{ width: "10%" }}
+                              style={{ width: '10%' }}
                             />
                           </div>
                         </div>

@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import Transition from "../utils/Transition";
+import React, { useState, useRef, useEffect } from 'react';
+import Transition from '../utils/Transition';
 
 function DropdownTransaction({ align, value, onChange }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -24,8 +24,8 @@ function DropdownTransaction({ align, value, onChange }) {
         return;
       setDropdownOpen(false);
     };
-    document.addEventListener("click", clickHandler);
-    return () => document.removeEventListener("click", clickHandler);
+    document.addEventListener('click', clickHandler);
+    return () => document.removeEventListener('click', clickHandler);
   });
 
   // close if the esc key is pressed
@@ -34,8 +34,8 @@ function DropdownTransaction({ align, value, onChange }) {
       if (!dropdownOpen || keyCode !== 27) return;
       setDropdownOpen(false);
     };
-    document.addEventListener("keydown", keyHandler);
-    return () => document.removeEventListener("keydown", keyHandler);
+    document.addEventListener('keydown', keyHandler);
+    return () => document.removeEventListener('keydown', keyHandler);
   });
 
   return (
@@ -62,7 +62,7 @@ function DropdownTransaction({ align, value, onChange }) {
 
       <Transition
         className={`origin-top-right z-10 absolute top-full min-w-44 bg-white border border-slate-200 py-1.5 rounded shadow-lg overflow-hidden mt-1 ${
-          align === "right" ? "right-0" : "left-0"
+          align === 'right' ? 'right-0' : 'left-0'
         }`}
         show={dropdownOpen}
         enter="transition ease-out duration-200 transform"
@@ -81,7 +81,7 @@ function DropdownTransaction({ align, value, onChange }) {
             <li>
               <span
                 className="font-medium text-sm text-slate-600 hover:text-slate-800 flex items-center py-1 px-3 cursor-pointer"
-                onClick={() => changeValue("Voiting")}
+                onClick={() => changeValue('Voiting')}
               >
                 Voiting
               </span>
@@ -89,7 +89,7 @@ function DropdownTransaction({ align, value, onChange }) {
             <li>
               <span
                 className="font-medium text-sm text-slate-600 hover:text-slate-800 flex items-center py-1 px-3 cursor-pointer"
-                onClick={() => changeValue("Unvoiting")}
+                onClick={() => changeValue('Unvoiting')}
               >
                 Unvoiting
               </span>

@@ -1,10 +1,7 @@
-import React, {useEffect, useState} from "react";
-import ValidateTableItem from "./ValidateItem";
+import React, { useEffect, useState } from 'react';
+import ValidateTableItem from './ValidateItem';
 
-function ValidateTable({
- setValidatePanelOpen
-}) {
-
+function ValidateTable({ setValidatePanelOpen }) {
   const validateData = [
     {
       id: '10',
@@ -59,35 +56,40 @@ function ValidateTable({
 
   const handleSelectAll = () => {
     setSelectAll(!selectAll);
-    setMarked(selectedList.map(li => li.id));
+    setMarked(selectedList.map((li) => li.id));
     if (selectAll) {
       setMarked([]);
     }
   };
 
-  const handleClick = e => {
+  const handleClick = (e) => {
     const { id, checked } = e.target;
     setSelectAll(false);
     setMarked([...marked, id]);
     if (!checked) {
-      setMarked(marked.filter(item => item !== id));
+      setMarked(marked.filter((item) => item !== id));
     }
   };
 
   return (
-      <div className="w-fit">
-        <div>
-          {/* Table */}
-          <div className="overflow-x-auto">
-            <table className="table-auto w-fit">
-              {/* Table header */}
-              <thead className="bg-white text-xs font-semibold uppercase text-slate-500 border-t border-b-2 border-slate-200">
+    <div className="w-fit">
+      <div>
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <table className="table-auto w-fit">
+            {/* Table header */}
+            <thead className="bg-white text-xs font-semibold uppercase text-slate-500 border-t border-b-2 border-slate-200">
               <tr>
                 <th className="first:pl-4 last:pr-5 py-3 whitespace-nowrap w-px">
                   <div className="flex items-center">
                     <label className="inline-flex">
                       <span className="sr-only">Select all</span>
-                      <input className="form-checkbox" type="checkbox" checked={selectAll} onChange={handleSelectAll} />
+                      <input
+                        className="form-checkbox"
+                        type="checkbox"
+                        checked={selectAll}
+                        onChange={handleSelectAll}
+                      />
                     </label>
                   </div>
                 </th>
@@ -105,30 +107,30 @@ function ValidateTable({
                 </th>
                 <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap" />
               </tr>
-              </thead>
-              {/* Table body */}
-              <tbody className="text-sm divide-y divide-slate-200 border-b border-slate-200">
+            </thead>
+            {/* Table body */}
+            <tbody className="text-sm divide-y divide-slate-200 border-b border-slate-200">
               {selectedList.map((data) => {
                 return (
-                    <ValidateTableItem
-                        key={data.id}
-                        id={data.id}
-                        filed={data.filed}
-                        data={data.data}
-                        status={data.status}
-                        seed={data.seed}
-                        check={data.check}
-                        handleClick={handleClick}
-                        isChecked={marked.includes(data.id)}
-                        setValidatePanelOpen={setValidatePanelOpen}
-                    />
+                  <ValidateTableItem
+                    key={data.id}
+                    id={data.id}
+                    filed={data.filed}
+                    data={data.data}
+                    status={data.status}
+                    seed={data.seed}
+                    check={data.check}
+                    handleClick={handleClick}
+                    isChecked={marked.includes(data.id)}
+                    setValidatePanelOpen={setValidatePanelOpen}
+                  />
                 );
               })}
-              </tbody>
-            </table>
-          </div>
+            </tbody>
+          </table>
         </div>
       </div>
+    </div>
   );
 }
 
