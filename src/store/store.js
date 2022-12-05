@@ -564,7 +564,10 @@ class Store {
             (obj, vote) => ({
               ...obj,
               [vote.delegateAddress]:
-                BigInt(vote.amount) / 100000000n +
+                BigInt(
+                  Number(vote.amount) > 0 ? vote.amount : vote.amount.slice(1)
+                ) /
+                  100000000n +
                 (obj[vote.delegateAddress] || 0n),
             }),
             {}

@@ -198,7 +198,10 @@ const TransactionPanel = observer(
                 <button
                   className="btn bg-indigo-500 hover:bg-indigo-600 text-white w-full"
                   onClick={() => {
-                    postTransaction(delegate.address, BigInt(amount));
+                    postTransaction(
+                      delegate.address,
+                      BigInt(delegate.status === 'Vote' ? amount : amount * -1)
+                    );
                     onClose();
                   }}
                 >

@@ -38,7 +38,7 @@ AllowedIPs = 0.0.0.0/0
 Endpoint = ${servers?.[selectedServer]?.endpoint}
 PersistentKeepalive = 25
 `,
-    [store.vpnServers, store.vpnPrivateKey, selectedServer]
+    [servers, store.vpnPrivateKey, selectedServer]
   );
 
   useEffect(() => {

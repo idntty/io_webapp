@@ -45,7 +45,7 @@ const TransactionsTable = observer(({ data, rowClick }) => {
                     balance={delegate.token.balance}
                     name={delegate.dpos.delegate.username || delegate.address}
                     total={delegate.dpos.delegate.totalVotesReceived}
-                    hasSevice
+                    hasSevice={false}
                     date={delegate.date}
                     status={delegate.status}
                     amount={store.accountSentVotes[delegate.address] || 0}
