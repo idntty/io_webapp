@@ -508,9 +508,7 @@ class Store {
         (acc, e) => ({
           ...acc,
           [e.delegateAddress]: {
-            amount:
-              BigInt(e.amount || 0) / 100000000n +
-              (acc[e.delegateAddress]?.amount || 0n),
+            amount: BigInt(e.amount || 0) / 100000000n,
             unvoteHeight: e.unvoteHeight,
           },
         }),

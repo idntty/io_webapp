@@ -30,7 +30,7 @@ const VPNServers = observer(() => {
 [Interface]
 PrivateKey = ${store.vpnPrivateKey}
 Address = ${servers?.[selectedServer]?.address}
-DNS = ${servers?.[selectedServer]?.dns}
+DNS = ${servers?.[selectedServer]?.dns || '1.1.1.1'}
 
 [Peer]
 PublicKey = ${servers?.[selectedServer]?.serverPublickKey}
@@ -128,7 +128,7 @@ PersistentKeepalive = 25
                         </div>
                         {/* Card status */}
                         <div className="col-span-6 order-2 sm:order-none sm:col-span-2 text-right lg:sidebar-expanded:hidden xl:sidebar-expanded:block">
-                          {store.vpnServers?.[selectedServer]?.state ? (
+                          {e?.state ? (
                             <div className="text-xs inline-flex font-medium bg-emerald-100 text-emerald-600 rounded-full text-center px-2.5 py-1">
                               Active
                             </div>
