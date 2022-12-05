@@ -3,27 +3,30 @@ import {
   makeAutoObservable,
   onBecomeObserved,
   onBecomeUnobserved,
-} from "mobx";
-import { cryptography } from "@liskhq/lisk-client";
-import { passphrase } from "@liskhq/lisk-client";
-import { getNodeInfo } from "../api/node";
-import { fetchWrapper } from "../shared/fetchWrapper";
-import { labelMap } from "../shared/labelMap";
-import { statusMap } from "../shared/statusMap";
-import { generateSvgAvatar } from "../images/GenerateOnboardingSvg/GenerateSvg";
-import { decryptedData } from "../utils/decryptedData";
+} from 'mobx';
+import { cryptography } from '@liskhq/lisk-client';
+import { passphrase } from '@liskhq/lisk-client';
+import { getNodeInfo } from '../api/node';
+import { fetchWrapper } from '../shared/fetchWrapper';
+import { labelMap } from '../shared/labelMap';
+import { statusMap } from '../shared/statusMap';
+import { generateSvgAvatar } from '../images/GenerateOnboardingSvg/GenerateSvg';
+import { decryptedData } from '../utils/decryptedData';
 import {
+  bytesToMbytes,
   encryptAccountData,
   encryptSharedData,
+  formatBytes,
   generateTransaction,
   hashAccountData,
-} from "../utils/Utils";
-import sodium from "sodium-universal";
+} from '../utils/Utils';
+import sodium from 'sodium-universal';
+import { countryCodes } from '../utils/countryCodes';
 
 class Store {
   _accountData = [];
 
-  _passPhrase = "";
+  _passPhrase = '';
 
   _nodeInfo = {};
 
@@ -63,18 +66,18 @@ class Store {
       () => this.address,
       () => this.fetchAccountInfo()
     );
-    onBecomeObserved(this, "decryptedAccountData", () =>
+    onBecomeObserved(this, 'decryptedAccountData', () =>
       this.fetchNewAccountData()
     );
-    onBecomeUnobserved(this, "decryptedAccountData", () =>
+    onBecomeUnobserved(this, 'decryptedAccountData', () =>
       this.unobservedAccountData()
     );
-    onBecomeObserved(this, "sharedData", () => this.fetchKeysArray());
-    onBecomeUnobserved(this, "sharedData", () => this.unobservedSharedData());
-    onBecomeObserved(this, "transactionsInfo", () =>
+    onBecomeObserved(this, 'sharedData', () => this.fetchKeysArray());
+    onBecomeUnobserved(this, 'sharedData', () => this.unobservedSharedData());
+    onBecomeObserved(this, 'transactionsInfo', () =>
       this.fetchTransactionsInfo()
     );
-    onBecomeUnobserved(this, "transactionsInfo", () =>
+    onBecomeUnobserved(this, 'transactionsInfo', () =>
       this.unobservedTransactionsInfo()
     );
 
@@ -83,7 +86,7 @@ class Store {
 
   fetchVPNServers() {
     fetchWrapper
-      .getAuth("vpn/servers", {
+      .getAuth('vpn/servers', {
         networkIdentifier: this.nodeInfo.networkIdentifier,
         lastBlockID: this.nodeInfo.lastBlockID,
       })
@@ -97,17 +100,12 @@ class Store {
   }
 
   fetchNewAccountData() {
-    getNodeInfo()
-      .then((info) => {
-        this.fetchNodeInfoSuccess(info);
-        fetchWrapper
-          .getAuth("data/private", {
-            networkIdentifier: this.nodeInfo.networkIdentifier,
-            lastBlockID: this.nodeInfo.lastBlockID,
-          })
-          .then((res) => this.accountDataFetchChange(res))
-          .catch((err) => this.throwError(err));
+    fetchWrapper
+      .getAuth('data/private', {
+        networkIdentifier: this.nodeInfo.networkIdentifier,
+        lastBlockID: this.nodeInfo.lastBlockID,
       })
+      .then((res) => this.accountDataFetchChange(res))
       .catch((err) => this.throwError(err));
   }
 
@@ -123,7 +121,7 @@ class Store {
       .then((info) => {
         this.fetchNodeInfoSuccess(info);
         fetchWrapper
-          .getAuth("data/shared/", {
+          .getAuth('data/shared/', {
             networkIdentifier: this.nodeInfo.networkIdentifier,
             lastBlockID: this.nodeInfo.lastBlockID,
           })
@@ -144,13 +142,13 @@ class Store {
 
   fetchTempTransactions() {
     fetchWrapper
-      .get("node/transactions")
+      .get('node/transactions')
       .then((res) => this.fetchTempTransactionsSuccess(res))
       .catch((err) => this.throwError(err));
   }
 
   fetchPassPhrase() {
-    this._passPhrase = sessionStorage.getItem("passPhrase") || "";
+    this._passPhrase = sessionStorage.getItem('passPhrase') || '';
   }
 
   fetchSharedData() {
@@ -173,7 +171,7 @@ class Store {
     if (data.length > 0) {
       fetchWrapper
         .postAuth(
-          "data/shared",
+          'data/shared',
           {
             networkIdentifier: this.nodeInfo.networkIdentifier,
             lastBlockID: this.nodeInfo.lastBlockID,
@@ -190,7 +188,7 @@ class Store {
   pushAccountData(data = this.accountData) {
     fetchWrapper
       .postAuth(
-        "data/private",
+        'data/private',
         {
           networkIdentifier: this.nodeInfo.networkIdentifier,
           lastBlockID: this.nodeInfo.lastBlockID,
@@ -221,7 +219,7 @@ class Store {
     if (changed.length !== 0) signedTx = builder.update(changed);
     if (signedTx) {
       fetchWrapper
-        .post("transactions", {}, signedTx)
+        .post('transactions', {}, signedTx)
         .then(() => this.fetchTempTransactions())
         .catch((err) => this.throwError(err));
       this.accountInfo.sequence.nonce++;
@@ -240,7 +238,7 @@ class Store {
 
     if (signedTx) {
       fetchWrapper
-        .post("transactions", {}, signedTx)
+        .post('transactions', {}, signedTx)
         .then(() => this.fetchTempTransactions())
         .catch((err) => this.throwError(err));
       this.accountInfo.sequence.nonce++;
@@ -262,7 +260,7 @@ class Store {
 
     if (signedTx) {
       fetchWrapper
-        .post("transactions", {}, signedTx)
+        .post('transactions', {}, signedTx)
         .then(() => this.fetchTempTransactions())
         .catch((err) => this.throwError(err));
       this.accountInfo.sequence.nonce++;
@@ -271,12 +269,12 @@ class Store {
 
   generatePassPhrase() {
     this._passPhrase = passphrase.Mnemonic.generateMnemonic();
-    sessionStorage.setItem("passPhrase", this._passPhrase);
+    sessionStorage.setItem('passPhrase', this._passPhrase);
   }
 
   savePastPassPhrase(phrase) {
     this._passPhrase = phrase;
-    sessionStorage.setItem("passPhrase", this._passPhrase);
+    sessionStorage.setItem('passPhrase', this._passPhrase);
   }
 
   unobservedTransactionsInfo() {
@@ -398,12 +396,12 @@ class Store {
   }
 
   get firstName() {
-    return this.decryptedAccountData.find((item) => item.key === "firstname")
+    return this.decryptedAccountData.find((item) => item.key === 'firstname')
       ?.value;
   }
 
   get lastName() {
-    return this.decryptedAccountData.find((item) => item.key === "secondname")
+    return this.decryptedAccountData.find((item) => item.key === 'secondname')
       ?.value;
   }
 
@@ -444,27 +442,27 @@ class Store {
     let x25519_sk = Buffer.alloc(sodium.crypto_box_SECRETKEYBYTES);
     sodium.crypto_sign_ed25519_sk_to_curve25519(
       x25519_sk,
-      Buffer.from(this.privateKey, "hex")
+      Buffer.from(this.privateKey, 'hex')
     );
-    return x25519_sk.toString("Base64");
+    return x25519_sk.toString('Base64');
   }
 
   get pubKey() {
-    return this.addressAndPubKey.publicKey.toString("hex");
+    return this.addressAndPubKey.publicKey.toString('hex');
   }
 
   get address() {
-    return this.addressAndPubKey.address.toString("hex");
+    return this.addressAndPubKey.address.toString('hex');
   }
 
   get tokenKey() {
     const stringToSign =
       this.nodeInfo.networkIdentifier + this.nodeInfo.lastBlockID;
-    if (!stringToSign) return "";
+    if (!stringToSign) return '';
     const sign = cryptography
-      .signDataWithPassphrase(Buffer.from(stringToSign, "hex"), this.passPhrase)
-      .toString("hex");
-    return this.pubKey + ":" + sign;
+      .signDataWithPassphrase(Buffer.from(stringToSign, 'hex'), this.passPhrase)
+      .toString('hex');
+    return this.pubKey + ':' + sign;
   }
 
   get accountIdentity() {
@@ -598,7 +596,19 @@ class Store {
   }
 
   get vpnServers() {
-    return this._vpnServers;
+    return this._vpnServers?.map((server) => ({
+      ...server,
+      transferSum: formatBytes(
+        Number(server.transferTx || 0) + Number(server.transferRx || 0)
+      ),
+      trafficUsed: Math.floor(
+        ((Number(server.transferTx || 0) + Number(server.transferRx || 0)) /
+          (50 * 1024 * 1024 * 1024)) *
+          100
+      ),
+      state: server.state === '1',
+      country: countryCodes[server.country] || 'US',
+    }));
   }
 
   get canVPN() {
@@ -611,13 +621,13 @@ class Store {
 
       let amount = this.processedVotes[address];
 
-      if (amount) return "Pending";
+      if (amount) return 'Pending';
 
       amount = this.accountSentVotes[address];
 
-      if (amount) return "Unvote";
+      if (amount) return 'Unvote';
 
-      return "Vote";
+      return 'Vote';
     };
 
     return this._delegates.data.map((delegate) => ({

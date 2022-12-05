@@ -32,6 +32,10 @@ const App = observer(() => {
     document.querySelector('html').style.scrollBehavior = '';
   }, [location.pathname]); // triggered on route change
 
+  if (!store.nodeInfo.networkIdentifier) {
+    return <LoadingOverlay />;
+  }
+
   return (
     <>
       {store.loading && <LoadingOverlay />}
