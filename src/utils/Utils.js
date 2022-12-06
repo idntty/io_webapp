@@ -197,7 +197,7 @@ export const generateTransaction = (
         delegateAddress,
         amount
       ),
-    unlock: (delegateAddress, amount, unvoteHeight) =>
+    unlock: (delegateAddress, unlockObjects) =>
       generateUnlockTransaction(
         nonce,
         senderPublicKey,
@@ -205,8 +205,7 @@ export const generateTransaction = (
         passPhrase,
         fee,
         delegateAddress,
-        amount,
-        unvoteHeight
+        unlockObjects
       ),
   };
 };
@@ -379,8 +378,7 @@ const generateUnlockTransaction = (
   passPhrase = '',
   fee = BigInt(500000),
   delegateAddress = '',
-  amount = 0n,
-  unvoteHeight = 0
+  unlockObjects = []
 ) => {
   const tx = {
     moduleID: 5,
@@ -389,13 +387,11 @@ const generateUnlockTransaction = (
     senderPublicKey: Buffer.from(senderPublicKey, 'hex'),
     fee,
     asset: {
-      unlockObjects: [
-        {
-          delegateAddress: Buffer.from(delegateAddress, 'hex'),
-          amount: amount * 100000000n,
-          unvoteHeight,
-        },
-      ],
+      unlockObjects: unlockObjects.map((e) => ({
+        delegateAddress: Buffer.from(delegateAddress, 'hex'),
+        amount: e.amount * 100000000n,
+        unvoteHeight: e.unvoteHeight,
+      })),
     },
   };
 

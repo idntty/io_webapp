@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import Sidebar from '../../partials/Sidebar';
 import Header from '../../partials/Header';
@@ -10,7 +10,7 @@ import TransactionPanel from '../../partials/finance/TransactionPanel';
 import { Filters } from '../../components/Filters';
 
 const filters = {
-  'View All': '',
+  'View All': 'all',
   Voted: 'Unvote',
   Pending: 'Pending',
 };
@@ -22,17 +22,24 @@ const Delegates = observer(() => {
 
   const [lockedFor, setLockedFor] = useState('Voiting');
 
-  const lockedLabel = Object.values(
-    lockedFor === 'Voiting' ? store.processedVotes : store.accountLockedVotes
+  const delegates = useMemo(() => {
+    if (filters[currentFilter] === 'all') return store.delegates;
+    return store.delegates.filter((e) => e.status === filters[currentFilter]);
+  }, [store.delegates, currentFilter]);
+
+  const lockedLabel = (
+    lockedFor === 'Voiting'
+      ? Object.values(store.accountSentVotes)
+      : Object.values(store.accountLockedVotesCanReturn)
+          .flat()
+          .map((e) => e.amount)
   )
     .reduce((sum, e) => sum + e, 0n)
     .toString();
 
-  const [fetchOffset, setFetchOffset] = useState(0);
-
   useEffect(() => {
-    store.fetchDelegates(fetchOffset);
-  }, [fetchOffset]);
+    store.fetchDelegates(0);
+  }, []);
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -72,20 +79,21 @@ const Delegates = observer(() => {
 
             {/* Table */}
             <TransactionsTable
-              data={store.delegates}
+              data={delegates}
+              lockedFor={lockedFor}
               rowClick={(delegate) => setCurrentDelegate(delegate)}
             />
 
-            {/* Pagination */}
-            <div className="mt-8">
-              <PaginationClassic
-                count={store.delegatesMeta.count}
-                limit={store.delegatesMeta.limit}
-                offset={store.delegatesMeta.offset}
-                onNextPage={() => setFetchOffset((prev) => prev + 10)}
-                onPrevPage={() => setFetchOffset((prev) => prev - 10)}
-              />
-            </div>
+            {/*/!* Pagination *!/*/}
+            {/*<div className="mt-8">*/}
+            {/*  <PaginationClassic*/}
+            {/*    count={store.delegatesMeta.count}*/}
+            {/*    limit={store.delegatesMeta.limit}*/}
+            {/*    offset={store.delegatesMeta.offset}*/}
+            {/*    onNextPage={() => setFetchOffset((prev) => prev + 10)}*/}
+            {/*    onPrevPage={() => setFetchOffset((prev) => prev - 10)}*/}
+            {/*  />*/}
+            {/*</div>*/}
 
             <TransactionPanel
               transactionPanelOpen={!!currentDelegate}

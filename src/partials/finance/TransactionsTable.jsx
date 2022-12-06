@@ -4,7 +4,7 @@ import TransactionItem from './TransactionsTableItem';
 import Image01 from '../../images/transactions-image-01.svg';
 import { observer } from 'mobx-react-lite';
 
-const TransactionsTable = observer(({ data, rowClick }) => {
+const TransactionsTable = observer(({ data, rowClick, lockedFor }) => {
   return (
     <div className="bg-white">
       <div>
@@ -30,7 +30,9 @@ const TransactionsTable = observer(({ data, rowClick }) => {
                   <div className="font-semibold text-center"></div>
                 </th>
                 <th className="px-4 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                  <div className="font-semibold text-center">Sent Votes</div>
+                  <div className="font-semibold text-center">
+                    {lockedFor === 'Voiting' ? 'Sent Votes' : 'Blocked votes'}
+                  </div>
                 </th>
               </tr>
             </thead>
@@ -42,14 +44,25 @@ const TransactionsTable = observer(({ data, rowClick }) => {
                     key={delegate.address}
                     id={delegate.address}
                     image={Image01}
-                    balance={delegate.token.balance}
-                    name={delegate.dpos.delegate.username || delegate.address}
-                    total={delegate.dpos.delegate.totalVotesReceived}
-                    hasSevice={false}
+                    balance={delegate?.token?.balance}
+                    name={delegate.dpos?.delegate?.username || delegate.address}
+                    total={delegate.dpos?.delegate?.totalVotesReceived || ''}
+                    hasSevice={
+                      delegate.dpos?.delegate?.username === 'delegate_0'
+                    }
                     date={delegate.date}
+                    displayReturn={lockedFor === 'Unlocking'}
                     status={delegate.status}
-                    amount={store.accountSentVotes[delegate.address] || 0}
-                    handleClick={() => rowClick(delegate)}
+                    amount={
+                      (lockedFor === 'Voiting'
+                        ? store.accountSentVotes[delegate.address]
+                        : store.accountLockedVotesCanReturnSum[
+                            delegate.address
+                          ]) || ''
+                    }
+                    handleClick={() =>
+                      lockedFor === 'Voiting' && rowClick(delegate)
+                    }
                   />
                 );
               })}

@@ -26,6 +26,8 @@ const VPNPrepare = observer(() => {
     if (store.canVPN) navigate('/services/vpn/servers');
   }, [store.canVPN]);
 
+  if (store.loading && !store.canVPN) return null;
+
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}

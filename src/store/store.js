@@ -13,7 +13,6 @@ import { statusMap } from '../shared/statusMap';
 import { generateSvgAvatar } from '../images/GenerateOnboardingSvg/GenerateSvg';
 import { decryptedData } from '../utils/decryptedData';
 import {
-  bytesToMbytes,
   encryptAccountData,
   encryptSharedData,
   formatBytes,
@@ -55,6 +54,8 @@ class Store {
     },
   };
 
+  _notifications = [];
+
   constructor() {
     makeAutoObservable(this, {});
 
@@ -93,7 +94,7 @@ class Store {
       .then((r) => this.fetchVPNServersSuccess(r));
   }
 
-  fetchDelegates(offset = 0, limit = 10) {
+  fetchDelegates(offset = 0, limit = 100) {
     fetchWrapper
       .getAuth(`delegates?limit=${limit}&offset=${offset}`)
       .then((r) => this.fetchDelegatesSuccess(r));
@@ -253,10 +254,9 @@ class Store {
       this.passPhrase
     );
 
-    const { amount, unvoteHeight } =
-      this.accountLockedVotesCanReturn[delegateAddress];
+    const unlockObjects = this.accountLockedVotesCanReturn[delegateAddress];
 
-    const signedTx = builder.unlock(delegateAddress, amount, unvoteHeight);
+    const signedTx = builder.unlock(delegateAddress, unlockObjects);
 
     if (signedTx) {
       fetchWrapper
@@ -507,13 +507,25 @@ class Store {
       .reduce(
         (acc, e) => ({
           ...acc,
-          [e.delegateAddress]: {
-            amount: BigInt(e.amount || 0) / 100000000n,
-            unvoteHeight: e.unvoteHeight,
-          },
+          [e.delegateAddress]: [
+            {
+              ...acc[e.delegateAddress],
+              amount: BigInt(e.amount || 0) / 100000000n,
+              unvoteHeight: e.unvoteHeight,
+            },
+          ],
         }),
         {}
       );
+  }
+
+  get accountLockedVotesCanReturnSum() {
+    return Object.fromEntries(
+      Object.entries(this.accountLockedVotesCanReturn).map(([key, val]) => [
+        key,
+        val.reduce((sum, e) => sum + e.amount, 0n),
+      ])
+    );
   }
 
   get accountFeaturesMap() {
@@ -644,7 +656,7 @@ class Store {
           ...delegate.dpos.delegate,
           totalVotesReceived: Number(
             BigInt(delegate.dpos.delegate.totalVotesReceived) / 100000000n
-          ).toString(),
+          ),
         },
       },
     }));
@@ -652,6 +664,22 @@ class Store {
 
   get delegatesMeta() {
     return this._delegates.meta;
+  }
+
+  get notifications() {
+    return this._notifications;
+  }
+
+  addNotification(id, type, message) {
+    this._notifications.push({
+      id,
+      type,
+      message,
+    });
+  }
+
+  removeNotification(id) {
+    this._notifications = this._notifications.filter((e) => e.id !== id);
   }
 }
 

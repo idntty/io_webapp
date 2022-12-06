@@ -64,7 +64,12 @@ function request(method, url, headers = {}, token, body) {
     requestOptions.headers.Authorization = null;
   }
   setTimeout(() => controller.abort(), 15000);
-  return fetch(prepareUrl(url), requestOptions);
+  return fetch(prepareUrl(url), requestOptions).then((res) => {
+    if (res.status > 400) {
+      store.addNotification(new Date().getTime(), 'error', res.statusText);
+    }
+    return res;
+  });
 }
 
 function get(url, headers, attempts = 3) {

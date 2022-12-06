@@ -95,7 +95,7 @@ PersistentKeepalive = 25
                   <label
                     className="relative block cursor-pointer text-left w-full"
                     onClick={() => setSelectedServer(i)}
-                    key={e.publicKey}
+                    key={e.serverPublickKey}
                   >
                     <input
                       type="radio"
@@ -107,7 +107,7 @@ PersistentKeepalive = 25
                     <div className="p-4 rounded border border-slate-200 hover:border-slate-300 shadow-sm duration-150 ease-in-out">
                       <div className="grid grid-cols-12 items-center gap-x-2">
                         {/* Card */}
-                        <div className="col-span-6 order-1 sm:order-none sm:col-span-3 flex items-center space-x-4 lg:sidebar-expanded:col-span-6 xl:sidebar-expanded:col-span-3">
+                        <div className="col-span-6 order-1 sm:order-none flex items-center space-x-4 ">
                           <ReactCountryFlag
                             countryCode={e.country}
                             svg
@@ -121,13 +121,13 @@ PersistentKeepalive = 25
                           </div>
                         </div>
                         {/* Card limits */}
-                        <div className="col-span-6 order-1 sm:order-none sm:col-span-4 text-right sm:text-center lg:sidebar-expanded:col-span-6 xl:sidebar-expanded:col-span-6">
+                        <div className="col-span-3 order-1 sm:order-none text-right sm:text-center">
                           <div className="text-sm">
                             {e.transferSum} / 50.00 GB
                           </div>
                         </div>
                         {/* Card status */}
-                        <div className="col-span-6 order-2 sm:order-none sm:col-span-2 text-right lg:sidebar-expanded:hidden xl:sidebar-expanded:block">
+                        <div className="col-span-3 order-2 sm:order-none text-right">
                           {e?.state ? (
                             <div className="text-xs inline-flex font-medium bg-emerald-100 text-emerald-600 rounded-full text-center px-2.5 py-1">
                               Active
@@ -150,7 +150,7 @@ PersistentKeepalive = 25
             </div>
 
             {/* Sidebar */}
-            {servers?.length > 0 && (
+            {servers?.length > 0 && servers?.[selectedServer]?.state && (
               <div>
                 <div className="lg:sticky lg:top-16 bg-slate-50 lg:overflow-x-hidden lg:overflow-y-auto no-scrollbar lg:shrink-0 border-t lg:border-t-0 lg:border-l border-slate-200 lg:w-[390px] lg:h-[calc(100vh-64px)]">
                   <div className="py-8 px-4 lg:px-8 h-full">

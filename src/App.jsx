@@ -19,6 +19,7 @@ import { observer } from 'mobx-react-lite';
 import Delegates from './pages/services/Delegates';
 import VPNServers from './pages/services/VPNServers';
 import VPNPrepare from './pages/services/VPNPrepare';
+import { NotificationContainer } from './components/NotificationContainer';
 
 const App = observer(() => {
   const location = useLocation();
@@ -39,6 +40,7 @@ const App = observer(() => {
   return (
     <>
       {store.loading && <LoadingOverlay />}
+      <NotificationContainer />
       <Routes>
         <Route exact path="/" element={<Onboarding1 />} />
         <Route path="/digitalId/profile-id" element={<ProfileId />} />

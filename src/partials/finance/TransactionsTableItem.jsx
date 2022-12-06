@@ -43,14 +43,6 @@ const TransactionsTableItem = observer((props) => {
             />
           </div>
           <div className="font-medium text-slate-800">{props.name}</div>
-          {store.accountLockedVotesCanReturn[props.id] && (
-            <span
-              className="truncate font-medium text-indigo-500 group-hover:text-indigo-600 ml-2"
-              onClick={clickReturn}
-            >
-              Return votes
-            </span>
-          )}
         </div>
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
@@ -72,21 +64,36 @@ const TransactionsTableItem = observer((props) => {
         <div className="text-center">{props.balance}/idn</div>
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-        <div className="text-center">{props.total}/idn</div>
+        <div className="text-center">
+          {props.total}
+          {props.total && '/idn'}
+        </div>
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
         <div className="text-center">
-          <div
-            className={`text-xs inline-flex font-medium rounded-full justify-center px-2.5 py-1 ${statusColor()}`}
-            style={{ minWidth: '84px' }}
-          >
-            {props.status}
-          </div>
+          {props.displayReturn ? (
+            store.accountLockedVotesCanReturn[props.id] && (
+              <span
+                className="truncate font-medium text-indigo-500 group-hover:text-indigo-600 ml-2"
+                onClick={clickReturn}
+              >
+                Return votes
+              </span>
+            )
+          ) : (
+            <div
+              className={`text-xs inline-flex font-medium rounded-full justify-center px-2.5 py-1 ${statusColor()}`}
+              style={{ minWidth: '84px' }}
+            >
+              {props.status}
+            </div>
+          )}
         </div>
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
         <div className={`text-center font-medium ${amountColor()}`}>
-          {props.amount.toString()}/idn
+          {props.amount.toString()}
+          {props.amount && '/idn'}
         </div>
       </td>
     </tr>
