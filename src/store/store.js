@@ -620,7 +620,7 @@ class Store {
           100
       ),
       state: server.state === '1',
-      country: countryCodes[server.country] || 'US',
+      shortCountry: countryCodes[server.country] || 'US',
     }));
   }
 

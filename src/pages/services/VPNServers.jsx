@@ -49,7 +49,7 @@ PersistentKeepalive = 25
     const element = document.createElement('a');
     const file = new Blob([qrContent], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
-    element.download = 'vpnConfig.conf';
+    element.download = 'IDNTTY-' + servers?.[selectedServer]?.country + '.conf';
     document.body.appendChild(element); // Required for this to work in FireFox
     element.click();
   };
@@ -109,7 +109,7 @@ PersistentKeepalive = 25
                         {/* Card */}
                         <div className="col-span-6 order-1 sm:order-none flex items-center space-x-4 ">
                           <ReactCountryFlag
-                            countryCode={e.country}
+                            countryCode={e.shortCountry}
                             svg
                             style={{ width: '36px', height: 'auto' }}
                           />
@@ -157,7 +157,8 @@ PersistentKeepalive = 25
                     <div className="max-w-sm mx-auto lg:max-w-none flex flex-col justify-between h-full">
                       <div>
                         <div className="text-slate-800 font-semibold text-center mb-6">
-                          Physical Metal Card
+                          {servers?.[selectedServer]?.country} -{' '}
+                          {servers?.[selectedServer]?.region}
                         </div>
 
                         {/* Credit Card */}
