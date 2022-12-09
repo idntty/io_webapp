@@ -81,7 +81,11 @@ const Delegates = observer(() => {
             <TransactionsTable
               data={delegates}
               lockedFor={lockedFor}
-              rowClick={(delegate) => setCurrentDelegate(delegate)}
+              rowClick={(delegate) =>
+                (lockedFor === 'Voiting' ||
+                  store.accountLockedVotesCanReturnSum[delegate.address]) &&
+                setCurrentDelegate(delegate)
+              }
             />
 
             {/*/!* Pagination *!/*/}
@@ -99,9 +103,11 @@ const Delegates = observer(() => {
               transactionPanelOpen={!!currentDelegate}
               onClose={() => setCurrentDelegate(null)}
               delegate={currentDelegate || {}}
-              postTransaction={(address, amount) =>
-                store.pushVoteTransaction(address, amount)
-              }
+              unlocking={lockedFor !== 'Voiting'}
+              postTransaction={(address, amount) => {
+                if (lockedFor === 'Voiting') store.pushVoteTransaction(address, amount);
+                else store.pushUnlockTransaction(address);
+              }}
             />
           </div>
         </main>

@@ -1,9 +1,4 @@
-import {
-  reaction,
-  makeAutoObservable,
-  onBecomeObserved,
-  onBecomeUnobserved,
-} from 'mobx';
+import { reaction, makeAutoObservable, onBecomeObserved, onBecomeUnobserved } from 'mobx';
 import { cryptography, transactions } from '@liskhq/lisk-client';
 import { passphrase } from '@liskhq/lisk-client';
 import { getNodeInfo } from '../api/node';
@@ -67,20 +62,12 @@ class Store {
       () => this.address,
       () => this.fetchAccountInfo()
     );
-    onBecomeObserved(this, 'decryptedAccountData', () =>
-      this.fetchNewAccountData()
-    );
-    onBecomeUnobserved(this, 'decryptedAccountData', () =>
-      this.unobservedAccountData()
-    );
+    onBecomeObserved(this, 'decryptedAccountData', () => this.fetchNewAccountData());
+    onBecomeUnobserved(this, 'decryptedAccountData', () => this.unobservedAccountData());
     onBecomeObserved(this, 'sharedData', () => this.fetchKeysArray());
     onBecomeUnobserved(this, 'sharedData', () => this.unobservedSharedData());
-    onBecomeObserved(this, 'transactionsInfo', () =>
-      this.fetchTransactionsInfo()
-    );
-    onBecomeUnobserved(this, 'transactionsInfo', () =>
-      this.unobservedTransactionsInfo()
-    );
+    onBecomeObserved(this, 'transactionsInfo', () => this.fetchTransactionsInfo());
+    onBecomeUnobserved(this, 'transactionsInfo', () => this.unobservedTransactionsInfo());
 
     this.fetchNodeInfo();
   }
@@ -342,8 +329,7 @@ class Store {
   fetchAccountInfoSuccess(res) {
     this._accountInfo = res.data;
     if (this.accountInfo?.sequence?.nonce)
-      this.accountInfo.sequence.nonce =
-        parseInt(this.accountInfo.sequence.nonce) || 0;
+      this.accountInfo.sequence.nonce = parseInt(this.accountInfo.sequence.nonce) || 0;
   }
 
   fetchTempTransactionsSuccess(res) {
@@ -370,24 +356,23 @@ class Store {
       .map((item) => {
         return {
           id: item.id,
-          sender_avatar:
-            item.asset.recipientAddress &&
-            generateSvgAvatar(item.senderPublicKey),
+          sender_avatar: item?.asset?.recipientAddress && generateSvgAvatar(item.senderPublicKey),
           avatar_size: 24,
-          transaction: item.asset.features.map((asset) => {
-            return {
-              transaction_id: item.id,
-              address:
-                item.asset.recipientAddress &&
-                cryptography.bufferToHex(
-                  cryptography.getAddressFromPublicKey(
-                    cryptography.hexToBuffer(item.senderPublicKey)
-                  )
-                ),
-              value: asset.value,
-              label: labelMap[asset.label] || asset.label,
-            };
-          }),
+          transaction:
+            item.asset?.features?.map((asset) => {
+              return {
+                transaction_id: item.id,
+                address:
+                  item.asset.recipientAddress &&
+                  cryptography.bufferToHex(
+                    cryptography.getAddressFromPublicKey(
+                      cryptography.hexToBuffer(item.senderPublicKey)
+                    )
+                  ),
+                value: asset.value,
+                label: labelMap[asset.label] || asset.label,
+              };
+            }) || [],
         };
       });
   }
@@ -402,13 +387,11 @@ class Store {
   }
 
   get firstName() {
-    return this.decryptedAccountData.find((item) => item.key === 'firstname')
-      ?.value;
+    return this.decryptedAccountData.find((item) => item.key === 'firstname')?.value;
   }
 
   get lastName() {
-    return this.decryptedAccountData.find((item) => item.key === 'secondname')
-      ?.value;
+    return this.decryptedAccountData.find((item) => item.key === 'secondname')?.value;
   }
 
   get accountName() {
@@ -440,16 +423,12 @@ class Store {
   }
 
   get privateKey() {
-    return cryptography.getPrivateAndPublicKeyFromPassphrase(this.passPhrase)
-      ?.privateKey;
+    return cryptography.getPrivateAndPublicKeyFromPassphrase(this.passPhrase)?.privateKey;
   }
 
   get vpnPrivateKey() {
     let x25519_sk = Buffer.alloc(sodium.crypto_box_SECRETKEYBYTES);
-    sodium.crypto_sign_ed25519_sk_to_curve25519(
-      x25519_sk,
-      Buffer.from(this.privateKey, 'hex')
-    );
+    sodium.crypto_sign_ed25519_sk_to_curve25519(x25519_sk, Buffer.from(this.privateKey, 'hex'));
     return x25519_sk.toString('Base64');
   }
 
@@ -462,8 +441,7 @@ class Store {
   }
 
   get tokenKey() {
-    const stringToSign =
-      this.nodeInfo.networkIdentifier + this.nodeInfo.lastBlockID;
+    const stringToSign = this.nodeInfo.networkIdentifier + this.nodeInfo.lastBlockID;
     if (!stringToSign) return '';
     const sign = cryptography
       .signDataWithPassphrase(Buffer.from(stringToSign, 'hex'), this.passPhrase)
@@ -480,17 +458,14 @@ class Store {
   }
 
   get accountBalance() {
-    return (
-      BigInt(this.accountInfo?.token?.balance || 0) / 100000000n
-    ).toString();
+    return (BigInt(this.accountInfo?.token?.balance || 0) / 100000000n).toString();
   }
 
   get accountSentVotes() {
     return (this.accountInfo?.dpos?.sentVotes || []).reduce(
       (acc, e) => ({
         ...acc,
-        [e.delegateAddress]:
-          BigInt(e.amount || 0) / 100000000n + (acc[e.delegateAddress] || 0n),
+        [e.delegateAddress]: BigInt(e.amount || 0) / 100000000n + (acc[e.delegateAddress] || 0n),
       }),
       {}
     );
@@ -500,8 +475,7 @@ class Store {
     return (this.accountInfo?.dpos?.unlocking || []).reduce(
       (acc, e) => ({
         ...acc,
-        [e.delegateAddress]:
-          BigInt(e.amount || 0) / 100000000n + (acc[e.delegateAddress] || 0n),
+        [e.delegateAddress]: BigInt(e.amount || 0) / 100000000n + (acc[e.delegateAddress] || 0n),
       }),
       {}
     );
@@ -563,10 +537,7 @@ class Store {
         const { features } = item.asset;
         return {
           ...acc,
-          ...(features?.reduce(
-            (obj, feature) => ({ ...obj, [feature.label]: true }),
-            {}
-          ) || {}),
+          ...(features?.reduce((obj, feature) => ({ ...obj, [feature.label]: true }), {}) || {}),
         };
       }, {});
   }
@@ -582,10 +553,7 @@ class Store {
             (obj, vote) => ({
               ...obj,
               [vote.delegateAddress]:
-                BigInt(
-                  Number(vote.amount) > 0 ? vote.amount : vote.amount.slice(1)
-                ) /
-                  100000000n +
+                BigInt(Number(vote.amount) > 0 ? vote.amount : vote.amount.slice(1)) / 100000000n +
                 (obj[vote.delegateAddress] || 0n),
             }),
             {}
@@ -605,8 +573,7 @@ class Store {
             (obj, vote) => ({
               ...obj,
               [vote.delegateAddress]:
-                BigInt(vote.amount) / 100000000n +
-                (obj[vote.delegateAddress] || 0n),
+                BigInt(vote.amount) / 100000000n + (obj[vote.delegateAddress] || 0n),
             }),
             {}
           ) || {}),
@@ -617,9 +584,7 @@ class Store {
   get vpnServers() {
     return this._vpnServers?.map((server) => ({
       ...server,
-      transferSum: formatBytes(
-        Number(server.transferTx || 0) + Number(server.transferRx || 0)
-      ),
+      transferSum: formatBytes(Number(server.transferTx || 0) + Number(server.transferRx || 0)),
       trafficUsed: Math.floor(
         ((Number(server.transferTx || 0) + Number(server.transferRx || 0)) /
           (50 * 1024 * 1024 * 1024)) *
@@ -638,7 +603,7 @@ class Store {
     const getStatus = (delegate) => {
       const { address } = delegate;
 
-      let amount = this.processedVotes[address];
+      let amount = this.processedVotes[address] || this.processedUnlocking[address];
 
       if (amount) return 'Pending';
 

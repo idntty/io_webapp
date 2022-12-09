@@ -24,11 +24,6 @@ const TransactionsTableItem = observer((props) => {
     }
   };
 
-  const clickReturn = (e) => {
-    e.stopPropagation();
-    store.pushUnlockTransaction(props.id);
-  };
-
   return (
     <tr className="cursor-pointer" onClick={() => props.handleClick()}>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap md:w-1/2">
@@ -71,14 +66,14 @@ const TransactionsTableItem = observer((props) => {
       </td>
       <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
         <div className="text-center">
-          {props.displayReturn ? (
+          {props.displayReturn && props.status !== 'Pending' ? (
             store.accountLockedVotesCanReturn[props.id] && (
-              <span
-                className="truncate font-medium text-indigo-500 group-hover:text-indigo-600 ml-2"
-                onClick={clickReturn}
+              <div
+                className={`text-xs inline-flex font-medium rounded-full justify-center px-2.5 py-1 bg-rose-100 text-rose-500`}
+                style={{ minWidth: '84px' }}
               >
-                Return votes
-              </span>
+                Unlock
+              </div>
             )
           ) : (
             <div

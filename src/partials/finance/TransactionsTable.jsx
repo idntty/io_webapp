@@ -47,22 +47,16 @@ const TransactionsTable = observer(({ data, rowClick, lockedFor }) => {
                     balance={delegate?.token?.balance}
                     name={delegate.dpos?.delegate?.username || delegate.address}
                     total={delegate.dpos?.delegate?.totalVotesReceived || ''}
-                    hasSevice={
-                      delegate.dpos?.delegate?.username === 'delegate_0'
-                    }
+                    hasSevice={delegate.dpos?.delegate?.username === 'delegate_0'}
                     date={delegate.date}
                     displayReturn={lockedFor === 'Unlocking'}
                     status={delegate.status}
                     amount={
                       (lockedFor === 'Voiting'
                         ? store.accountSentVotes[delegate.address]
-                        : store.accountLockedVotesCanReturnSum[
-                            delegate.address
-                          ]) || ''
+                        : store.accountLockedVotesCanReturnSum[delegate.address]) || ''
                     }
-                    handleClick={() =>
-                      lockedFor === 'Voiting' && rowClick(delegate)
-                    }
+                    handleClick={() => rowClick(delegate)}
                   />
                 );
               })}

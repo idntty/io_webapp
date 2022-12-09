@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import Image from '../../images/transactions-image-04.svg';
 import moment from 'moment';
@@ -9,16 +9,19 @@ import UserAvatar from '../../images/user-avatar-32.png';
 import { observer } from 'mobx-react-lite';
 
 const TransactionPanel = observer(
-  ({ transactionPanelOpen, onClose, delegate, postTransaction }) => {
+  ({ transactionPanelOpen, onClose, delegate, postTransaction, unlocking }) => {
     const closeBtn = useRef(null);
     const panelContent = useRef(null);
 
     const [amount, setAmount] = useState(0);
 
+    const status = useMemo(() => (unlocking ? 'Unlock' : delegate.status), [unlocking, delegate]);
+
     const statusColor = () => {
-      switch (delegate.status) {
+      switch (status) {
         case 'Vote':
           return 'bg-emerald-100 text-emerald-600';
+        case 'Unlock':
         case 'Unvote':
           return 'bg-rose-100 text-rose-500';
         default:
@@ -26,8 +29,7 @@ const TransactionPanel = observer(
       }
     };
 
-    const amountLabel =
-      delegate.status === 'Vote' ? 'Voiting amount' : 'Unvoiting amount';
+    const amountLabel = delegate.status === 'Vote' ? 'Voiting amount' : 'Unvoiting amount';
 
     // close if the esc key is pressed
     useEffect(() => {
@@ -40,12 +42,13 @@ const TransactionPanel = observer(
     });
 
     useEffect(() => {
-      const status = delegate.status;
-
       if (status === 'Unvote') {
         setAmount(store.accountSentVotes[delegate.address].toString());
       }
-    }, [delegate]);
+      if (status === 'Unlock') {
+        setAmount(store.accountLockedVotesCanReturnSum[delegate.address]?.toString());
+      }
+    }, [delegate, status]);
 
     return (
       <div
@@ -70,9 +73,7 @@ const TransactionPanel = observer(
           </button>
           <div className="py-8 px-4 lg:px-8">
             <div className="max-w-sm mx-auto lg:max-w-none">
-              <div className="text-slate-800 font-semibold text-center mb-1">
-                Vote Transaction
-              </div>
+              <div className="text-slate-800 font-semibold text-center mb-1">Vote Transaction</div>
               <div className="text-sm text-center italic">
                 {moment().format('DD/MM/YYYY hh:mm A')}
               </div>
@@ -89,40 +90,28 @@ const TransactionPanel = observer(
                       alt="Transaction 04"
                     />
                   </div>
-                  <div
-                    className={`text-2xl font-semibold mb-1 ${statusColor()} bg-transparent`}
-                  >
+                  <div className={`text-2xl font-semibold mb-1 ${statusColor()} bg-transparent`}>
                     {amount}/idn
                   </div>
                   <div className="text-sm font-medium text-slate-800 mb-3">
-                    {delegate?.dpos?.delegate?.username ||
-                      formatAddressBig(delegate.address || '')}
+                    {delegate?.dpos?.delegate?.username || formatAddressBig(delegate.address || '')}
                   </div>
                   <div
                     className={`text-xs inline-flex font-medium rounded-full text-center px-2.5 py-1 ${statusColor()} justify-center`}
                     style={{ minWidth: '84px' }}
                   >
-                    {delegate.status}
+                    {status}
                   </div>
                 </div>
                 {/* Divider */}
-                <div
-                  className="flex justify-between items-center"
-                  aria-hidden="true"
-                >
-                  <svg
-                    className="w-5 h-5 fill-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
+                <div className="flex justify-between items-center" aria-hidden="true">
+                  <svg className="w-5 h-5 fill-white" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0 20c5.523 0 10-4.477 10-10S5.523 0 0 0h20v20H0Z" />
                   </svg>
                   <div className="grow w-full h-5 bg-white flex flex-col justify-center">
                     <div className="h-px w-full border-t border-dashed border-slate-200" />
                   </div>
-                  <svg
-                    className="w-5 h-5 fill-white rotate-180"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
+                  <svg className="w-5 h-5 fill-white rotate-180" xmlns="http://www.w3.org/2000/svg">
                     <path d="M0 20c5.523 0 10-4.477 10-10S5.523 0 0 0h20v20H0Z" />
                   </svg>
                 </div>
@@ -136,9 +125,7 @@ const TransactionPanel = observer(
                   </div>
                   <div className="flex justify-between space-x-1">
                     <span className="italic">FEE:</span>
-                    <span className="font-medium text-slate-700 text-right">
-                      145/idn
-                    </span>
+                    <span className="font-medium text-slate-700 text-right">145/idn</span>
                   </div>
                   <div className="flex justify-between space-x-1">
                     <span className="italic">Nonce:</span>
@@ -156,11 +143,9 @@ const TransactionPanel = observer(
               </div>
               {/* Receipts */}
               <div className="mt-6">
-                <label
-                  className="block text-sm font-medium mb-1"
-                  htmlFor="mandatory"
-                >
-                  {amountLabel} <span className="text-rose-500">*</span>
+                <label className="block text-sm font-medium mb-1" htmlFor="mandatory">
+                  {unlocking ? 'Unlock amount' : amountLabel}{' '}
+                  <span className="text-rose-500">*</span>
                 </label>
                 <input
                   id="amount"
@@ -169,13 +154,12 @@ const TransactionPanel = observer(
                   required
                   onChange={(e) => setAmount(e.target.value)}
                   value={amount}
+                  disabled={unlocking}
                 />
               </div>
               {/* Notes */}
               <div className="mt-6">
-                <div className="text-sm font-semibold text-slate-800 mb-2">
-                  Transaction details
-                </div>
+                <div className="text-sm font-semibold text-slate-800 mb-2">Transaction details</div>
                 <div className="flex p-2 justify-between items-center border border-slate-300 rounded-md">
                   <div className="flex gap-2">
                     <img
@@ -185,9 +169,7 @@ const TransactionPanel = observer(
                       height="32"
                       alt="User"
                     />
-                    <div className="flex items-center text-sm text-slate-700">
-                      Balance
-                    </div>
+                    <div className="flex items-center text-sm text-slate-700">Balance</div>
                   </div>
                   <div className="flex items-center text-sm text-slate-700">
                     {store.accountBalance}/idn
