@@ -66,7 +66,9 @@ function SharedData() {
       BigInt(store.accountInfo?.sequence?.nonce || 0),
       store.pubKey,
       store.nodeInfo.networkIdentifier,
-      store.passPhrase
+      store.passPhrase,
+      store.nodeInfo?.genesisConfig?.minFeePerByte,
+      store.nodeInfo?.genesisConfig?.baseFees
     );
 
     const signedTx = builder.validate(

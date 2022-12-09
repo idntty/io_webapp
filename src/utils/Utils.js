@@ -156,7 +156,8 @@ export const generateTransaction = (
   senderPublicKey = '',
   networkIdentifier = '',
   passPhrase = '',
-  fee = BigInt(500000)
+  minFeePerByte = 0,
+  baseFees = []
 ) => {
   return {
     update: (features) =>
@@ -166,7 +167,8 @@ export const generateTransaction = (
         senderPublicKey,
         networkIdentifier,
         passPhrase,
-        fee
+        minFeePerByte,
+        baseFees
       ),
     remove: (features) =>
       generateRemoveTransaction(
@@ -175,7 +177,8 @@ export const generateTransaction = (
         senderPublicKey,
         networkIdentifier,
         passPhrase,
-        fee
+        minFeePerByte,
+        baseFees
       ),
     validate: (features, recipientAddress) =>
       generateValidateTransaction(
@@ -184,7 +187,8 @@ export const generateTransaction = (
         senderPublicKey,
         networkIdentifier,
         passPhrase,
-        fee,
+        minFeePerByte,
+        baseFees,
         recipientAddress
       ),
     vote: (delegateAddress, amount) =>
@@ -193,7 +197,8 @@ export const generateTransaction = (
         senderPublicKey,
         networkIdentifier,
         passPhrase,
-        fee,
+        minFeePerByte,
+        baseFees,
         delegateAddress,
         amount
       ),
@@ -203,7 +208,8 @@ export const generateTransaction = (
         senderPublicKey,
         networkIdentifier,
         passPhrase,
-        fee,
+        minFeePerByte,
+        baseFees,
         delegateAddress,
         unlockObjects
       ),
@@ -216,18 +222,24 @@ export const generateSetTransaction = (
   senderPublicKey = '',
   networkIdentifier = '',
   passPhrase = '',
-  fee = BigInt(500000)
+  minFeePerByte = 0,
+  baseFees = []
 ) => {
   const tx = {
     moduleID: 1001,
     assetID: 1,
     nonce,
     senderPublicKey,
-    fee,
     asset: {
       features,
     },
   };
+
+  tx.fee = transactions.computeMinFee(setFeatureAssetSchema, tx, {
+    minFeePerByte,
+    baseFees,
+    numberOfSignatures: 1,
+  });
 
   if (features.length === 0) return;
 
@@ -256,18 +268,24 @@ export const generateRemoveTransaction = (
   senderPublicKey = '',
   networkIdentifier = '',
   passPhrase = '',
-  fee = BigInt(500000)
+  minFeePerByte = 0,
+  baseFees = []
 ) => {
   const tx = {
     moduleID: 1001,
     assetID: 2,
     nonce,
     senderPublicKey,
-    fee,
     asset: {
       features,
     },
   };
+
+  tx.fee = transactions.computeMinFee(removeFeatureAssetSchema, tx, {
+    minFeePerByte,
+    baseFees,
+    numberOfSignatures: 1,
+  });
   const signedTx = transactions.signTransaction(
     removeFeatureAssetSchema,
     tx,
@@ -289,7 +307,8 @@ const generateValidateTransaction = (
   senderPublicKey = '',
   networkIdentifier = '',
   passPhrase = '',
-  fee = BigInt(500000),
+  minFeePerByte = 0,
+  baseFees = [],
   recipientAddress = ''
 ) => {
   const tx = {
@@ -297,12 +316,17 @@ const generateValidateTransaction = (
     assetID: 11,
     nonce,
     senderPublicKey: Buffer.from(senderPublicKey, 'hex'),
-    fee,
     asset: {
       features,
       recipientAddress: Buffer.from(recipientAddress, 'hex'),
     },
   };
+
+  tx.fee = transactions.computeMinFee(validateFeatureAssetSchema, tx, {
+    minFeePerByte,
+    baseFees,
+    numberOfSignatures: 1,
+  });
 
   if (features.length === 0) return;
 
@@ -332,7 +356,8 @@ const generateVoteTransaction = (
   senderPublicKey = '',
   networkIdentifier = '',
   passPhrase = '',
-  fee = BigInt(500000),
+  minFeePerByte = 0,
+  baseFees = [],
   delegateAddress = '',
   amount = 0n
 ) => {
@@ -341,7 +366,6 @@ const generateVoteTransaction = (
     assetID: 1,
     nonce,
     senderPublicKey: Buffer.from(senderPublicKey, 'hex'),
-    fee,
     asset: {
       votes: [
         {
@@ -351,6 +375,12 @@ const generateVoteTransaction = (
       ],
     },
   };
+
+  tx.fee = transactions.computeMinFee(voteDelegateAssetSchema, tx, {
+    minFeePerByte,
+    baseFees,
+    numberOfSignatures: 1,
+  });
 
   const signedTx = transactions.signTransaction(
     voteDelegateAssetSchema,
@@ -376,7 +406,8 @@ const generateUnlockTransaction = (
   senderPublicKey = '',
   networkIdentifier = '',
   passPhrase = '',
-  fee = BigInt(500000),
+  minFeePerByte = 0,
+  baseFees = [],
   delegateAddress = '',
   unlockObjects = []
 ) => {
@@ -385,7 +416,6 @@ const generateUnlockTransaction = (
     assetID: 2,
     nonce,
     senderPublicKey: Buffer.from(senderPublicKey, 'hex'),
-    fee,
     asset: {
       unlockObjects: unlockObjects.map((e) => ({
         delegateAddress: Buffer.from(delegateAddress, 'hex'),
@@ -394,6 +424,12 @@ const generateUnlockTransaction = (
       })),
     },
   };
+
+  tx.fee = transactions.computeMinFee(unlockDelegateAssetSchema, tx, {
+    minFeePerByte,
+    baseFees,
+    numberOfSignatures: 1,
+  });
 
   const signedTx = transactions.signTransaction(
     unlockDelegateAssetSchema,

@@ -4,7 +4,7 @@ import {
   onBecomeObserved,
   onBecomeUnobserved,
 } from 'mobx';
-import { cryptography } from '@liskhq/lisk-client';
+import { cryptography, transactions } from '@liskhq/lisk-client';
 import { passphrase } from '@liskhq/lisk-client';
 import { getNodeInfo } from '../api/node';
 import { fetchWrapper } from '../shared/fetchWrapper';
@@ -210,7 +210,9 @@ class Store {
       BigInt(this.accountInfo?.sequence?.nonce || 0),
       this.addressAndPubKey.publicKey,
       this.nodeInfo.networkIdentifier,
-      this.passPhrase
+      this.passPhrase,
+      this.nodeInfo?.genesisConfig?.minFeePerByte,
+      this.nodeInfo?.genesisConfig?.baseFees
     );
 
     let signedTx = null;
@@ -232,7 +234,9 @@ class Store {
       BigInt(this.accountInfo?.sequence?.nonce || 0),
       this.addressAndPubKey.publicKey,
       this.nodeInfo.networkIdentifier,
-      this.passPhrase
+      this.passPhrase,
+      this.nodeInfo?.genesisConfig?.minFeePerByte,
+      this.nodeInfo?.genesisConfig?.baseFees
     );
 
     const signedTx = builder.vote(delegateAddress, amount);
@@ -251,7 +255,9 @@ class Store {
       BigInt(this.accountInfo?.sequence?.nonce || 0),
       this.addressAndPubKey.publicKey,
       this.nodeInfo.networkIdentifier,
-      this.passPhrase
+      this.passPhrase,
+      this.nodeInfo?.genesisConfig?.minFeePerByte,
+      this.nodeInfo?.genesisConfig?.baseFees
     );
 
     const unlockObjects = this.accountLockedVotesCanReturn[delegateAddress];
