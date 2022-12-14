@@ -3,7 +3,7 @@ import { jsonReplacer } from '../utils/Utils';
 
 function prepareUrl(url) {
   if (url.startsWith('http')) return url;
-  return `${window.location.origin}/api/${url}`;
+  return `${fetchWrapper.baseUrl}${url}`;
 }
 
 function handleRequest(method, url, headers, attempts, token, body) {
@@ -115,3 +115,5 @@ export const fetchWrapper = {
   putAuth,
   baseUrl: '',
 };
+
+fetchWrapper.baseUrl = `${window.location.origin}/api/`;
