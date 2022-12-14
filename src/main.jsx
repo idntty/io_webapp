@@ -17,6 +17,7 @@ BigInt.prototype.toJSON = function () {
 fetch('settings.json')
   .then((e) => e.json())
   .then((data) => (fetchWrapper.baseUrl = data.API_URL))
+  .then((data) => store.fetchNodeInfo())
   .then(() =>
     ReactDOM.render(
       <React.StrictMode>

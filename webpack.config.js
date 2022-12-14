@@ -27,7 +27,7 @@ module.exports = (env, argv) => ({
   plugins,
   output: {
     clean: true,
-    path: path.resolve(__dirname, 'build'),
+    path: path.resolve(__dirname, 'dist'),
     assetModuleFilename: 'assets/[fullhash:12][ext]',
     filename: 'main.[fullhash:8].js',
   },

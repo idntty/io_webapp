@@ -68,8 +68,6 @@ class Store {
     onBecomeUnobserved(this, 'sharedData', () => this.unobservedSharedData());
     onBecomeObserved(this, 'transactionsInfo', () => this.fetchTransactionsInfo());
     onBecomeUnobserved(this, 'transactionsInfo', () => this.unobservedTransactionsInfo());
-
-    this.fetchNodeInfo();
   }
 
   fetchVPNServers() {
