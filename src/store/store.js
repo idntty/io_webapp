@@ -51,6 +51,8 @@ class Store {
 
   _notifications = [];
 
+  _tmpPassPhrase = '';
+
   constructor() {
     makeAutoObservable(this, {});
 
@@ -256,11 +258,6 @@ class Store {
         .catch((err) => this.throwError(err));
       this.accountInfo.sequence.nonce++;
     }
-  }
-
-  generatePassPhrase() {
-    this._passPhrase = passphrase.Mnemonic.generateMnemonic();
-    sessionStorage.setItem('passPhrase', this._passPhrase);
   }
 
   savePastPassPhrase(phrase) {
@@ -649,6 +646,14 @@ class Store {
 
   removeNotification(id) {
     this._notifications = this._notifications.filter((e) => e.id !== id);
+  }
+
+  get tmpPassPhrase() {
+    return this._tmpPassPhrase;
+  }
+
+  set tmpPassPhrase(value) {
+    this._tmpPassPhrase = value;
   }
 }
 

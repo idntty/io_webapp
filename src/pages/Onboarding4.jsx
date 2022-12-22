@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { generateSvgAvatar } from '../images/GenerateOnboardingSvg/GenerateSvg';
 import Logo from '../images/logo.png';
 import { observer } from 'mobx-react-lite';
 import { store } from '../store/store';
+import { cryptography } from '@liskhq/lisk-client';
 
 const Onboarding4 = observer(() => {
   const [checkBoxesSelected, setCheckBoxesSelected] = useState([]);
 
   function createAccount() {
     if (checkBoxesSelected.length === 2) {
+      store.savePastPassPhrase(store.tmpPassPhrase);
       store.pushAccountData();
-      sessionStorage.setItem('passPhrase', store.passPhrase);
       store.clearDataRegistration();
     }
   }
@@ -24,9 +25,21 @@ const Onboarding4 = observer(() => {
     }
   }
 
+  const copyToClipboard = (e) => {
+    e.stopPropagation();
+    window.navigator.clipboard.writeText(store.tmpPassPhrase);
+  };
+
   const firstNameAccount =
-    store.accountData.length &&
-    store.accountData.find((item) => item.key === 'firstname').value;
+    store.accountData.length && store.accountData.find((item) => item.key === 'firstname').value;
+
+  const pubKey = useMemo(
+    () =>
+      cryptography
+        .getAddressAndPublicKeyFromPassphrase(store.tmpPassPhrase)
+        ?.publicKey?.toString('hex'),
+    [store.tmpPassPhrase]
+  );
 
   return (
     <main className="bg-white">
@@ -43,10 +56,7 @@ const Onboarding4 = observer(() => {
                 </Link>
                 <div className="text-sm">
                   Have an account?{' '}
-                  <Link
-                    className="font-medium text-indigo-500 hover:text-indigo-600"
-                    to="/signIn"
-                  >
+                  <Link className="font-medium text-indigo-500 hover:text-indigo-600" to="/signIn">
                     Sign In
                   </Link>
                 </div>
@@ -102,20 +112,9 @@ const Onboarding4 = observer(() => {
             <div className="px-4 mt-40 py-8">
               <div className=" flex flex-col items-center gap-20 max-w-md mx-auto">
                 <div className="text-center">
-                  <svg
-                    className="inline-flex w-16 h-16 fill-current mb-6"
-                    viewBox="0 0 64 64"
-                  >
-                    <circle
-                      className="text-emerald-100"
-                      cx="32"
-                      cy="32"
-                      r="32"
-                    />
-                    <path
-                      className="text-emerald-500"
-                      d="m28.5 41-8-8 3-3 5 5 12-12 3 3z"
-                    />
+                  <svg className="inline-flex w-16 h-16 fill-current mb-6" viewBox="0 0 64 64">
+                    <circle className="text-emerald-100" cx="32" cy="32" r="32" />
+                    <path className="text-emerald-500" d="m28.5 41-8-8 3-3 5 5 12-12 3 3z" />
                   </svg>
                   <h1 className="text-3xl text-slate-800 font-bold mb-8">
                     {firstNameAccount
@@ -128,10 +127,7 @@ const Onboarding4 = observer(() => {
                   >
                     <Link
                       id="link-dashboard"
-                      to={
-                        checkBoxesSelected.length === 2 &&
-                        '/digitalId/profile-id'
-                      }
+                      to={checkBoxesSelected.length === 2 && '/digitalId/profile-id'}
                     >
                       Go To Profile -&gt;
                     </Link>
@@ -160,12 +156,12 @@ const Onboarding4 = observer(() => {
                       />
                       <div className="text-sm ml-2">
                         I{' '}
-                        <Link
-                          className="text-indigo-500 hover:text-indigo-600 underline"
-                          to="/"
+                        <span
+                          className="text-indigo-500 hover:text-indigo-600 underline cursor-pointer"
+                          onClickCapture={copyToClipboard}
                         >
                           store my pharse
-                        </Link>{' '}
+                        </span>{' '}
                         very carefuly
                       </div>
                     </label>
@@ -184,7 +180,7 @@ const Onboarding4 = observer(() => {
           <div className="flex mt-40 flex-col items-center gap-2.5">
             <img
               className="object-cover object-center"
-              src={generateSvgAvatar(store.pubKey)}
+              src={generateSvgAvatar(pubKey)}
               width="493px"
               height="493px"
               alt="Onboarding"

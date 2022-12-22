@@ -1,22 +1,23 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Link } from 'react-router-dom';
 import { generateSvgAvatar } from '../images/GenerateOnboardingSvg/GenerateSvg';
 import Logo from '../images/logo.png';
 import { store } from '../store/store';
+import { passphrase, cryptography } from '@liskhq/lisk-client';
 
 const Onboarding3 = observer(() => {
   useEffect(() => {
-    store.generatePassPhrase();
+    store.tmpPassPhrase = passphrase.Mnemonic.generateMnemonic();
   }, []);
 
   const generatePassPhrase = () => {
-    store.generatePassPhrase();
+    store.tmpPassPhrase = passphrase.Mnemonic.generateMnemonic();
   };
 
   const savePassPhraseInStore = (copiedPhrase) => {
     if (copiedPhrase.split(' ').length === 12) {
-      store.savePastPassPhrase(copiedPhrase.trim());
+      store.tmpPassPhrase = copiedPhrase.trim();
     }
   };
 
@@ -24,10 +25,18 @@ const Onboarding3 = observer(() => {
     navigator.clipboard.readText().then((res) => savePassPhraseInStore(res));
   };
 
-  const convertPassPhraseToArray = () =>
-    store.passPhrase
-      .split(' ')
-      .map((item, index) => ({ str: item, id: index }));
+  const arrayPassPhrase = useMemo(
+    () => store.tmpPassPhrase.split(' ').map((item, index) => ({ str: item, id: index })),
+    [store.tmpPassPhrase]
+  );
+
+  const pubKey = useMemo(
+    () =>
+      cryptography
+        .getAddressAndPublicKeyFromPassphrase(store.tmpPassPhrase)
+        ?.publicKey?.toString('hex'),
+    [store.tmpPassPhrase]
+  );
 
   return (
     <main className="bg-white">
@@ -44,10 +53,7 @@ const Onboarding3 = observer(() => {
                 </Link>
                 <div className="text-sm">
                   Have an account?{' '}
-                  <Link
-                    className="font-medium text-indigo-500 hover:text-indigo-600"
-                    to="/signIn"
-                  >
+                  <Link className="font-medium text-indigo-500 hover:text-indigo-600" to="/signIn">
                     Sign In
                   </Link>
                 </div>
@@ -108,7 +114,7 @@ const Onboarding3 = observer(() => {
                   </h1>
                   {/* htmlForm */}
                   <div className="grid grid-cols-4 gap-y-2.5 gap-[18px] mb-14">
-                    {convertPassPhraseToArray().map((tag) => (
+                    {arrayPassPhrase.map((tag) => (
                       <button
                         key={tag.id}
                         className="min-w-93px w-24 min-h-26px h-26px bg-slate-100 text-slate-500 cursor-pointer hover:bg-blue-100 hover:text-blue-600 rounded-full text-center px-2.5"
@@ -158,10 +164,7 @@ const Onboarding3 = observer(() => {
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <Link
-                    className="text-sm underline hover:no-underline"
-                    to="/onboarding-2"
-                  >
+                  <Link className="text-sm underline hover:no-underline" to="/onboarding-2">
                     &lt;- Back
                   </Link>
                   <button className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-auto">
@@ -181,7 +184,7 @@ const Onboarding3 = observer(() => {
           <div className="flex mt-40 flex-col items-center gap-2.5">
             <img
               className="object-cover object-center"
-              src={generateSvgAvatar(store.pubKey)}
+              src={generateSvgAvatar(pubKey)}
               width="493px"
               height="493px"
               alt="Onboarding"
