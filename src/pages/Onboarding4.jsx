@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { generateSvgAvatar } from '../images/GenerateOnboardingSvg/GenerateSvg';
 import Logo from '../images/logo.png';
 import { observer } from 'mobx-react-lite';
@@ -11,9 +11,9 @@ const Onboarding4 = observer(() => {
 
   function createAccount() {
     if (checkBoxesSelected.length === 2) {
-      store.savePastPassPhrase(store.tmpPassPhrase);
-      store.pushAccountData();
-      store.clearDataRegistration();
+      store.pushAccountData(store.accountData, () => {
+        store.pushFirstBalanceRequest(navigateToProfile);
+      });
     }
   }
 
@@ -40,6 +40,14 @@ const Onboarding4 = observer(() => {
         ?.publicKey?.toString('hex'),
     [store.tmpPassPhrase]
   );
+
+  const navigate = useNavigate();
+
+  const navigateToProfile = () => {
+    navigate('/digitalId/profile-id', { replace: true });
+    store.savePastPassPhrase(store.tmpPassPhrase);
+    store.clearDataRegistration();
+  };
 
   return (
     <main className="bg-white">
@@ -125,12 +133,7 @@ const Onboarding4 = observer(() => {
                     onClick={createAccount}
                     className="btn px-6 bg-indigo-500 hover:bg-indigo-600 text-white"
                   >
-                    <Link
-                      id="link-dashboard"
-                      to={checkBoxesSelected.length === 2 && '/digitalId/profile-id'}
-                    >
-                      Go To Profile -&gt;
-                    </Link>
+                    Go To Profile -&gt;
                   </button>
                 </div>
 

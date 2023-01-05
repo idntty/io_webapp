@@ -17,8 +17,7 @@ const Onboarding2 = observer(() => {
   });
 
   const fillingForm = useMemo(
-    () =>
-      !Object.keys(dataRegistration).find((item) => !dataRegistration[item]),
+    () => !Object.keys(dataRegistration).find((item) => !dataRegistration[item]),
     [dataRegistration]
   );
 
@@ -36,6 +35,7 @@ const Onboarding2 = observer(() => {
         Object.keys(dataRegistration).map((item) => ({
           key: `${item}`,
           value: dataRegistration[item],
+          seed: String(Math.floor(Math.random() * 90000000000000000000), 10),
         }))
       );
       navigate('/onboarding-3', { replace: true });
@@ -70,10 +70,7 @@ const Onboarding2 = observer(() => {
                 </Link>
                 <div className="text-sm">
                   Have an account?{' '}
-                  <Link
-                    className="font-medium text-indigo-500 hover:text-indigo-600"
-                    to="/signIn"
-                  >
+                  <Link className="font-medium text-indigo-500 hover:text-indigo-600" to="/signIn">
                     Sign In
                   </Link>
                 </div>
@@ -128,17 +125,12 @@ const Onboarding2 = observer(() => {
 
             <div className="px-4 py-8">
               <div className="max-w-[344px] mx-auto">
-                <h1 className="text-3xl text-slate-800 font-bold mb-6">
-                  Create your Account ✨
-                </h1>
+                <h1 className="text-3xl text-slate-800 font-bold mb-6">Create your Account ✨</h1>
                 {/* Form */}
                 <div>
                   <div className="space-y-4 mb-8">
                     <div>
-                      <label
-                        className="block text-sm font-medium mb-1"
-                        htmlFor="first_name"
-                      >
+                      <label className="block text-sm font-medium mb-1" htmlFor="first_name">
                         First name <span className="text-rose-500">*</span>
                       </label>
                       <input
@@ -150,10 +142,7 @@ const Onboarding2 = observer(() => {
                       />
                     </div>
                     <div>
-                      <label
-                        className="block text-sm font-medium mb-1"
-                        htmlFor="second_name"
-                      >
+                      <label className="block text-sm font-medium mb-1" htmlFor="second_name">
                         Last name <span className="text-rose-500">*</span>
                       </label>
                       <input
@@ -165,10 +154,7 @@ const Onboarding2 = observer(() => {
                       />
                     </div>
                     <div>
-                      <label
-                        className="block text-sm font-medium mb-1"
-                        htmlFor="gender"
-                      >
+                      <label className="block text-sm font-medium mb-1" htmlFor="gender">
                         Gender <span className="text-rose-500">*</span>
                       </label>
                       <select
@@ -183,10 +169,7 @@ const Onboarding2 = observer(() => {
                       </select>
                     </div>
                     <div>
-                      <label
-                        className="block text-sm font-medium mb-1"
-                        htmlFor="birthdate"
-                      >
+                      <label className="block text-sm font-medium mb-1" htmlFor="birthdate">
                         Date of birth <span className="text-rose-500">*</span>
                       </label>
                       <input
@@ -203,9 +186,7 @@ const Onboarding2 = observer(() => {
                     <div className="mr-1">
                       <label className="flex items-center">
                         <input type="checkbox" className="form-checkbox" />
-                        <span className="text-sm ml-2">
-                          Email me about product news.
-                        </span>
+                        <span className="text-sm ml-2">Email me about product news.</span>
                       </label>
                     </div>
                     <button

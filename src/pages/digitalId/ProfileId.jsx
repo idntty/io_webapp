@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { store } from '../../store/store';
 import Sidebar from '../../partials/Sidebar';
 import { observer } from 'mobx-react-lite';
@@ -7,6 +7,7 @@ import ProfileTable from '../../partials/profile/ProfileTable';
 import Image from '../../images/transactions-image-04.svg';
 import { labelMap } from '../../shared/labelMap';
 import { statusMap } from '../../shared/statusMap';
+import { Filters } from '../../components/Filters';
 
 const initialPropertyValues = [
   'First name',
@@ -18,6 +19,12 @@ const initialPropertyValues = [
   'National doc issue date',
   'National doc expiry date',
 ];
+
+const filters = {
+  'View All': 'all',
+  Blockchained: 'blockchained',
+  Validated: 'Validated',
+};
 
 const Profile = observer(() => {
   const defaultValues = {
@@ -42,6 +49,7 @@ const Profile = observer(() => {
   const [alreadyExists, setAlreadyExists] = useState(false);
   const [blockChainValue, setBlockChainValue] = useState('');
   const [publicKey, setPublicKey] = useState('');
+  const [currentFilter, setCurrentFilter] = useState('View All');
 
   useEffect(() => {
     handleSelectedItems(isCheck);
@@ -105,10 +113,7 @@ const Profile = observer(() => {
           !elem.seed
             ? {
                 ...elem,
-                seed: String(
-                  Math.floor(Math.random() * 90000000000000000000),
-                  10
-                ),
+                seed: String(Math.floor(Math.random() * 90000000000000000000), 10),
               }
             : elem
         )
@@ -160,9 +165,7 @@ const Profile = observer(() => {
     );
     store.pushAccountData(changeData);
     if (storeOnBlockchain)
-      store.pushAccountDataToBlockchain(
-        changeData.filter((elem) => elem.status !== 'Stored')
-      );
+      store.pushAccountDataToBlockchain(changeData.filter((elem) => elem.status !== 'Stored'));
   };
 
   const changeInitialArray = () => {
@@ -189,9 +192,7 @@ const Profile = observer(() => {
     const updatedData = changeInitialArray();
     store.pushAccountData(updatedData);
     if (storeOnBlockchain)
-      store.pushAccountDataToBlockchain(
-        updatedData.filter((elem) => elem.status !== 'Stored')
-      );
+      store.pushAccountDataToBlockchain(updatedData.filter((elem) => elem.status !== 'Stored'));
   };
 
   const shareAccountData = () => {
@@ -204,15 +205,12 @@ const Profile = observer(() => {
 
   const addDataParameters = () => {
     const label = addedValues.label.toLowerCase().split(' ').join('');
-    if (labelMap[label])
-      addedValues.key = addedValues.label.toLowerCase().split(' ').join('');
+    if (labelMap[label]) addedValues.key = addedValues.label.toLowerCase().split(' ').join('');
     else addedValues.key = addedValues.label;
     store.pushAccountData(store.decryptedAccountData.concat(addedValues));
     if (storeOnBlockchain)
       store.pushAccountDataToBlockchain(
-        store.decryptedAccountData
-          .concat(addedValues)
-          .filter((elem) => elem.status !== 'Stored')
+        store.decryptedAccountData.concat(addedValues).filter((elem) => elem.status !== 'Stored')
       );
   };
 
@@ -230,10 +228,7 @@ const Profile = observer(() => {
           !elem.seed
             ? {
                 ...elem,
-                seed: String(
-                  Math.floor(Math.random() * 90000000000000000000),
-                  10
-                ),
+                seed: String(Math.floor(Math.random() * 90000000000000000000), 10),
               }
             : elem
         )
@@ -275,11 +270,18 @@ const Profile = observer(() => {
     setPropertyValues(initialPropertyValues);
     if (text) {
       let reg = new RegExp(`^${text}`, 'img');
-      setPropertyValues((prevState) =>
-        prevState.filter((element) => element.match(reg))
-      );
+      setPropertyValues((prevState) => prevState.filter((element) => element.match(reg)));
     }
   };
+
+  const accountData = useMemo(
+    () => store.decryptedAccountData.filter((e) => e.filter.includes(filters[currentFilter])),
+    [store.decryptedAccountData, currentFilter]
+  );
+  // const delegates = useMemo(() => {
+  //   if (filters[currentFilter] === 'all') return store.delegates;
+  //   return store.delegates.filter((e) => e.status === filters[currentFilter]);
+  // }, [store.delegates, currentFilter]);
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -293,37 +295,23 @@ const Profile = observer(() => {
           <div className="pl-8 pr-[42px] py-8 w-full max-w-9xl mx-auto">
             <div className="mx-auto flex flex-col lg:flex-row lg:space-x-8">
               {/* Page header */}
-              <div>
-                <div>
-                  <ul className="flex flex-wrap -m-1">
-                    <li className="m-1">
-                      <button className="inline-flex items-center justify-center text-sm font-medium leading-5 rounded-full px-3 py-1 border border-transparent shadow-sm bg-indigo-500 text-white duration-150 ease-in-out">
-                        View All
-                      </button>
-                    </li>
-                    <li className="m-1">
-                      <button className="inline-flex items-center justify-center text-sm font-medium leading-5 rounded-full px-3 py-1 border border-slate-200 hover:border-slate-300 shadow-sm bg-white text-slate-500 duration-150 ease-in-out">
-                        Validated
-                      </button>
-                    </li>
-                    <li className="m-1">
-                      <button className="inline-flex items-center justify-center text-sm font-medium leading-5 rounded-full px-3 py-1 border border-slate-200 hover:border-slate-300 shadow-sm bg-white text-slate-500 duration-150 ease-in-out">
-                        Blockchained
-                      </button>
-                    </li>
-                  </ul>
-                </div>
+              <div className="w-8/12">
+                <Filters
+                  value={currentFilter}
+                  values={Object.keys(filters)}
+                  onChange={setCurrentFilter}
+                />
                 {/* Table */}
                 <div>
                   <ProfileTable
                     isCheck={isCheck}
                     handleClick={handleClick}
-                    userData={store.decryptedAccountData}
+                    userData={accountData}
                   />
                 </div>
               </div>
               {/* Left sidebar */}
-              <div>
+              <div className="w-4/12">
                 {/* Button panel*/}
                 <div className={`${!buttonPanelOpen && 'hidden'} ml-2.5`}>
                   <div className="bg-white px-5 py-[43px] shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80">
@@ -331,10 +319,7 @@ const Profile = observer(() => {
                       className="btn w-full bg-indigo-500 hover:bg-indigo-600 text-white"
                       onClick={openAddPanel}
                     >
-                      <svg
-                        className="w-4 h-4 fill-current shrink-0"
-                        viewBox="0 0 16 16"
-                      >
+                      <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 16 16">
                         <path d="m2.457 8.516.969-.99 2.516 2.481 5.324-5.304.985.989-6.309 6.284z" />
                       </svg>
                       <span className="ml-1">Add new field</span>
@@ -349,18 +334,13 @@ const Profile = observer(() => {
                     } relative flex flex-col bg-white p-5 shadow-lg rounded-sm border border-slate-200 lg:w-72 xl:w-80 mb-11`}
                   >
                     <div className="relative z-20">
-                      <label
-                        className="block text-sm font-medium mb-1"
-                        htmlFor="mandatory"
-                      >
+                      <label className="block text-sm font-medium mb-1" htmlFor="mandatory">
                         Property <span className="text-rose-500">*</span>
                       </label>
                       <input
                         autoComplete="off"
                         id="label"
-                        className={`form-input w-full ${
-                          alreadyExists && 'border-rose-300'
-                        }`}
+                        className={`form-input w-full ${alreadyExists && 'border-rose-300'}`}
                         type="text"
                         required
                         onInput={(e) => handleInput(e.target.value, 'label')}
@@ -393,10 +373,7 @@ const Profile = observer(() => {
                       )}
                     </div>
                     <div className="my-3 z-10">
-                      <label
-                        className="block text-sm font-medium mb-1"
-                        htmlFor="mandatory"
-                      >
+                      <label className="block text-sm font-medium mb-1" htmlFor="mandatory">
                         Value <span className="text-rose-500">*</span>
                       </label>
                       <input
@@ -406,17 +383,12 @@ const Profile = observer(() => {
                         type="text"
                         required
                         onClick={() => setPropertyValues([])}
-                        onChange={(e) =>
-                          changeAddedValues(e.target.value, 'value')
-                        }
+                        onChange={(e) => changeAddedValues(e.target.value, 'value')}
                         value={addedValues.value}
                       />
                     </div>
                     <div className="z-10">
-                      <label
-                        className="block text-sm font-medium mb-1"
-                        htmlFor="mandatory"
-                      >
+                      <label className="block text-sm font-medium mb-1" htmlFor="mandatory">
                         Seed <span className="text-rose-500">*</span>
                       </label>
                       <input
@@ -426,16 +398,12 @@ const Profile = observer(() => {
                         type="text"
                         required
                         onClick={() => setPropertyValues([])}
-                        onChange={(e) =>
-                          changeAddedValues(e.target.value, 'seed')
-                        }
+                        onChange={(e) => changeAddedValues(e.target.value, 'seed')}
                         value={addedValues.seed}
                       />
                     </div>
                     <div className="flex flex-row z-10 justify-between pt-[18px] pb-[23px] items-center border-b border-slate-200">
-                      <span className="block text-sm font-medium">
-                        Store data on blockchain
-                      </span>
+                      <span className="block text-sm font-medium">Store data on blockchain</span>
                       <div className="flex items-center">
                         <div className="form-switch">
                           <input
@@ -443,15 +411,10 @@ const Profile = observer(() => {
                             id="blockcheined"
                             className="sr-only"
                             checked={storeOnBlockchain}
-                            onChange={() =>
-                              setStoreOnBlockchain(!storeOnBlockchain)
-                            }
+                            onChange={() => setStoreOnBlockchain(!storeOnBlockchain)}
                           />
                           <label className="bg-slate-400" htmlFor="switch-1">
-                            <span
-                              className="bg-white shadow-sm"
-                              aria-hidden="true"
-                            ></span>
+                            <span className="bg-white shadow-sm" aria-hidden="true"></span>
                           </label>
                         </div>
                       </div>
@@ -481,10 +444,7 @@ const Profile = observer(() => {
                     {updatedValues.map((item, index) => (
                       <div key={index} className="flex flex-col gap-y-3">
                         <div>
-                          <label
-                            className="block text-sm font-medium mb-1"
-                            htmlFor="mandatory"
-                          >
+                          <label className="block text-sm font-medium mb-1" htmlFor="mandatory">
                             Property <span className="text-rose-500">*</span>
                           </label>
                           <input
@@ -492,22 +452,13 @@ const Profile = observer(() => {
                             className="form-input w-full"
                             type="text"
                             required
-                            onChange={(e) =>
-                              changeUpdatedValues(
-                                e.target.value,
-                                'label',
-                                item.key
-                              )
-                            }
+                            onChange={(e) => changeUpdatedValues(e.target.value, 'label', item.key)}
                             value={item.label}
                             disabled
                           />
                         </div>
                         <div>
-                          <label
-                            className="block text-sm font-medium mb-1"
-                            htmlFor="mandatory"
-                          >
+                          <label className="block text-sm font-medium mb-1" htmlFor="mandatory">
                             Value <span className="text-rose-500">*</span>
                           </label>
                           <input
@@ -516,25 +467,14 @@ const Profile = observer(() => {
                             className="form-input w-full"
                             type="text"
                             required
-                            onChange={(e) =>
-                              changeUpdatedValues(
-                                e.target.value,
-                                'value',
-                                item.key
-                              )
-                            }
+                            onChange={(e) => changeUpdatedValues(e.target.value, 'value', item.key)}
                             value={
-                              item.status === statusMap.blockchained
-                                ? blockChainValue
-                                : item.value
+                              item.status === statusMap.blockchained ? blockChainValue : item.value
                             }
                           />
                         </div>
                         <div>
-                          <label
-                            className="block text-sm font-medium mb-1"
-                            htmlFor="mandatory"
-                          >
+                          <label className="block text-sm font-medium mb-1" htmlFor="mandatory">
                             Seed <span className="text-rose-500">*</span>
                           </label>
                           <input
@@ -543,13 +483,7 @@ const Profile = observer(() => {
                             className="form-input w-full"
                             type="text"
                             required
-                            onChange={(e) =>
-                              changeUpdatedValues(
-                                e.target.value,
-                                'seed',
-                                item.key
-                              )
-                            }
+                            onChange={(e) => changeUpdatedValues(e.target.value, 'seed', item.key)}
                             value={item.seed}
                           />
                         </div>
@@ -559,9 +493,7 @@ const Profile = observer(() => {
                       </div>
                     ))}
                     <div className="flex flex-row justify-between pt-[16px] pb-[23px] items-center border-b border-slate-200">
-                      <span className="block text-sm font-medium">
-                        Store data on blockchain
-                      </span>
+                      <span className="block text-sm font-medium">Store data on blockchain</span>
                       <div className="flex items-center">
                         <div className="form-switch">
                           <input
@@ -569,15 +501,10 @@ const Profile = observer(() => {
                             id="blockcheined"
                             className="sr-only"
                             checked={storeOnBlockchain}
-                            onChange={() =>
-                              setStoreOnBlockchain(!storeOnBlockchain)
-                            }
+                            onChange={() => setStoreOnBlockchain(!storeOnBlockchain)}
                           />
                           <label className="bg-slate-400" htmlFor="switch-1">
-                            <span
-                              className="bg-white shadow-sm"
-                              aria-hidden="true"
-                            ></span>
+                            <span className="bg-white shadow-sm" aria-hidden="true"></span>
                           </label>
                         </div>
                       </div>
@@ -620,9 +547,7 @@ const Profile = observer(() => {
                         ))}
                     </div>
                     <div className="flex flex-row justify-between pt-[16px] pb-7 items-center">
-                      <span className="block text-sm font-medium">
-                        On blockchain too
-                      </span>
+                      <span className="block text-sm font-medium">On blockchain too</span>
                       <div className="flex items-center">
                         <div className="form-switch">
                           <input
@@ -630,15 +555,10 @@ const Profile = observer(() => {
                             id="switch-1"
                             className="sr-only"
                             checked={storeOnBlockchain}
-                            onChange={() =>
-                              setStoreOnBlockchain(!storeOnBlockchain)
-                            }
+                            onChange={() => setStoreOnBlockchain(!storeOnBlockchain)}
                           />
                           <label className="bg-slate-400" htmlFor="switch-1">
-                            <span
-                              className="bg-white shadow-sm"
-                              aria-hidden="true"
-                            ></span>
+                            <span className="bg-white shadow-sm" aria-hidden="true"></span>
                           </label>
                         </div>
                       </div>
@@ -648,10 +568,7 @@ const Profile = observer(() => {
                         className="btn w-full bg-indigo-500 hover:bg-indigo-600 text-white px-[100px] justify-start"
                         onClick={applyDataDeletion}
                       >
-                        <svg
-                          className="w-4 h-4 fill-current shrink-0"
-                          viewBox="0 0 16 16"
-                        >
+                        <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 16 16">
                           <path d="m2.457 8.516.969-.99 2.516 2.481 5.324-5.304.985.989-6.309 6.284z" />
                         </svg>
                         <span className="ml-2">Apply</span>
@@ -659,8 +576,7 @@ const Profile = observer(() => {
                     </div>
                     <div className="flex justify-center">
                       <span className="text-descriptionSize text-slate-500 font-normal italic text-center">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                        sed do Terms.
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do Terms.
                       </span>
                     </div>
                   </div>
@@ -672,10 +588,7 @@ const Profile = observer(() => {
                   >
                     <div className="relative z-20">
                       <div className="z-10">
-                        <label
-                          className="block text-sm font-medium mb-1"
-                          htmlFor="mandatory"
-                        >
+                        <label className="block text-sm font-medium mb-1" htmlFor="mandatory">
                           Public Key <span className="text-rose-500">*</span>
                         </label>
                         <input
@@ -708,9 +621,7 @@ const Profile = observer(() => {
                   {/* Details */}
                   <div
                     className={`${
-                      (!(removePanelOpen || addPanelOpen) ||
-                        !storeOnBlockchain) &&
-                      'hidden'
+                      (!(removePanelOpen || addPanelOpen) || !storeOnBlockchain) && 'hidden'
                     } drop-shadow-lg`}
                   >
                     {/* Top */}
@@ -732,14 +643,8 @@ const Profile = observer(() => {
                       </div>
                     </div>
                     {/* Divider */}
-                    <div
-                      className="flex justify-between items-center"
-                      aria-hidden="true"
-                    >
-                      <svg
-                        className="w-5 h-5 fill-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
+                    <div className="flex justify-between items-center" aria-hidden="true">
+                      <svg className="w-5 h-5 fill-white" xmlns="http://www.w3.org/2000/svg">
                         <path d="M0 20c5.523 0 10-4.477 10-10S5.523 0 0 0h20v20H0Z" />
                       </svg>
                       <div className="grow w-full h-5 bg-white flex flex-col justify-center">
@@ -768,9 +673,7 @@ const Profile = observer(() => {
                       </div>
                       <div className="flex justify-between space-x-1">
                         <span className="italic">Transaction:</span>
-                        <span className="font-medium text-slate-700 text-right">
-                          145 bytes
-                        </span>
+                        <span className="font-medium text-slate-700 text-right">145 bytes</span>
                       </div>
                     </div>
                   </div>
@@ -782,10 +685,7 @@ const Profile = observer(() => {
                       className="btn w-full bg-indigo-500 hover:bg-indigo-600 text-white px-[100px] justify-start"
                       onClick={openRemovePanel}
                     >
-                      <svg
-                        className="w-4 h-4 fill-current shrink-0"
-                        viewBox="0 0 16 16"
-                      >
+                      <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 16 16">
                         <path d="m2.457 8.516.969-.99 2.516 2.481 5.324-5.304.985.989-6.309 6.284z" />
                       </svg>
                       <span className="ml-2">Remove</span>
@@ -794,10 +694,7 @@ const Profile = observer(() => {
                       className="btn w-full border-slate-200 hover:border-slate-300 text-slate-600 px-[100px] justify-start"
                       onClick={openUpdatePanel}
                     >
-                      <svg
-                        className="w-4 h-4 fill-rose-500 shrink-0"
-                        viewBox="0 0 16 16"
-                      >
+                      <svg className="w-4 h-4 fill-rose-500 shrink-0" viewBox="0 0 16 16">
                         <path d="M14.682 2.318A4.485 4.485 0 0 0 11.5 1 4.377 4.377 0 0 0 8 2.707 4.383 4.383 0 0 0 4.5 1a4.5 4.5 0 0 0-3.182 7.682L8 15l6.682-6.318a4.5 4.5 0 0 0 0-6.364Zm-1.4 4.933L8 12.247l-5.285-5A2.5 2.5 0 0 1 4.5 3c1.437 0 2.312.681 3.5 2.625C9.187 3.681 10.062 3 11.5 3a2.5 2.5 0 0 1 1.785 4.251h-.003Z" />
                       </svg>
                       <span className="ml-2">Update</span>
@@ -806,10 +703,7 @@ const Profile = observer(() => {
                       className="btn w-full border-slate-200 hover:border-slate-300 text-slate-600 px-[100px] justify-start"
                       onClick={openSharePanel}
                     >
-                      <svg
-                        className="w-4 h-4 fill-rose-500 shrink-0"
-                        viewBox="0 0 16 16"
-                      >
+                      <svg className="w-4 h-4 fill-rose-500 shrink-0" viewBox="0 0 16 16">
                         <path d="M14.682 2.318A4.485 4.485 0 0 0 11.5 1 4.377 4.377 0 0 0 8 2.707 4.383 4.383 0 0 0 4.5 1a4.5 4.5 0 0 0-3.182 7.682L8 15l6.682-6.318a4.5 4.5 0 0 0 0-6.364Zm-1.4 4.933L8 12.247l-5.285-5A2.5 2.5 0 0 1 4.5 3c1.437 0 2.312.681 3.5 2.625C9.187 3.681 10.062 3 11.5 3a2.5 2.5 0 0 1 1.785 4.251h-.003Z" />
                       </svg>
                       <span className="ml-2">Share</span>

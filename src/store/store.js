@@ -173,7 +173,7 @@ class Store {
     }
   }
 
-  pushAccountData(data = this.accountData) {
+  pushAccountData(data = this.accountData, onFinish = () => {}) {
     fetchWrapper
       .postAuth(
         'data/private',
@@ -183,7 +183,20 @@ class Store {
         },
         [...encryptAccountData(data, this.passPhrase, this.pubKey)]
       )
-      .then(() => this.fetchNewAccountData())
+      .then(onFinish)
+      .catch((err) => this.throwError(err));
+  }
+
+  pushFirstBalanceRequest(onFinish = () => {}) {
+    fetchWrapper
+      .post(
+        'faucet/fundbyaccount',
+        {},
+        {
+          account: this.address,
+        }
+      )
+      .then(onFinish)
       .catch((err) => this.throwError(err));
   }
 
@@ -390,7 +403,7 @@ class Store {
   }
 
   get accountName() {
-    return this.firstName || this.lastName || this.pubKey;
+    return this.address;
   }
 
   get keysArray() {

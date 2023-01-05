@@ -10,9 +10,7 @@ export const decryptedData = (
   processedFeatures
 ) => {
   const allAccountData = serverData.concat(
-    blockchainData.filter(
-      (item) => !serverData.find((elem) => elem.label === item.label)
-    )
+    blockchainData.filter((item) => !serverData.find((elem) => elem.label === item.label))
   );
   return allAccountData.map((elem) => {
     const initialData = {
@@ -22,6 +20,7 @@ export const decryptedData = (
       status: '',
       value: '',
       seed: '',
+      filter: ['all'],
     };
     if (processedFeatures[elem.label])
       return {
@@ -37,20 +36,10 @@ export const decryptedData = (
       };
     }
     const [seed, value] = cryptography
-      .decryptMessageWithPassphrase(
-        elem.value,
-        elem.value_nonce,
-        passPhrase,
-        pubKey
-      )
+      .decryptMessageWithPassphrase(elem.value, elem.value_nonce, passPhrase, pubKey)
       .split(':');
     const hashValue = cryptography
-      .hash(
-        Buffer.concat([
-          Buffer.from(seed, 'utf8'),
-          cryptography.hash(value, 'utf8'),
-        ])
-      )
+      .hash(Buffer.concat([Buffer.from(seed, 'utf8'), cryptography.hash(value, 'utf8')]))
       .toString('hex');
     if (!blockchainData.find((item) => item.label === elem.label)) {
       return {
@@ -60,14 +49,12 @@ export const decryptedData = (
         seed,
       };
     }
-    if (
-      blockchainData.find((item) => item.label === elem.label).value !==
-      hashValue
-    ) {
+    if (blockchainData.find((item) => item.label === elem.label).value !== hashValue) {
       return {
         ...initialData,
         status: statusMap.incorrect,
         value,
+        filter: [...initialData.filter, 'blockchained'],
         seed,
       };
     }
@@ -75,6 +62,7 @@ export const decryptedData = (
       ...initialData,
       status: statusMap.completed,
       value,
+      filter: [...initialData.filter, 'blockchained'],
       seed,
     };
   });

@@ -16,11 +16,7 @@ const DropdownProfile = observer(({ align }) => {
   useEffect(() => {
     const clickHandler = ({ target }) => {
       if (!dropdown.current) return;
-      if (
-        !dropdownOpen ||
-        dropdown.current.contains(target) ||
-        trigger.current.contains(target)
-      )
+      if (!dropdownOpen || dropdown.current.contains(target) || trigger.current.contains(target))
         return;
       setDropdownOpen(false);
     };
@@ -43,6 +39,11 @@ const DropdownProfile = observer(({ align }) => {
     store.fetchPassPhrase();
   };
 
+  const copyToClipboard = (e) => {
+    e.stopPropagation();
+    window.navigator.clipboard.writeText(store.accountName);
+  };
+
   return (
     <div className="relative inline-flex">
       <button
@@ -60,13 +61,10 @@ const DropdownProfile = observer(({ align }) => {
           alt="User"
         />
         <div className="flex items-center truncate">
-          <span className="truncate ml-2 text-sm font-medium group-hover:text-slate-800">
+          <span className="truncate ml-2 text-sm font-medium group-hover:text-slate-800 flex">
             {store.accountName}
           </span>
-          <svg
-            className="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400"
-            viewBox="0 0 12 12"
-          >
+          <svg className="w-3 h-3 shrink-0 ml-1 fill-current text-slate-400" viewBox="0 0 12 12">
             <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
           </svg>
         </div>
@@ -90,8 +88,25 @@ const DropdownProfile = observer(({ align }) => {
           onBlur={() => setDropdownOpen(false)}
         >
           <div className="pt-0.5 pb-2 px-3 mb-1 border-b border-slate-200">
-            <div className="font-medium text-slate-800">
+            <div className="font-medium text-slate-800 flex items-center">
               {store.accountName}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="cursor-pointer hover:stroke-blue-600 active:stroke-blue-800"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="#2c3e50"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                onClick={copyToClipboard}
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <rect x="8" y="8" width="12" height="12" rx="2" />
+                <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />
+              </svg>
             </div>
           </div>
           <ul>
