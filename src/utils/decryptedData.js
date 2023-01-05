@@ -1,6 +1,7 @@
 import { labelMap } from '../shared/labelMap';
 import { statusMap } from '../shared/statusMap';
 import { cryptography } from '@liskhq/lisk-client';
+import { store } from '../store/store';
 
 export const decryptedData = (
   serverData,
@@ -35,14 +36,21 @@ export const decryptedData = (
         value: elem.value,
       };
     }
-    const [seed, value] = cryptography
-      .decryptMessageWithPassphrase(
-        elem.value,
-        elem.value_nonce,
-        passPhrase,
-        Buffer.from(pubKey, 'hex')
-      )
-      .split(':');
+
+    let seed, value;
+    try {
+      [seed, value] = cryptography
+        .decryptMessageWithPassphrase(
+          elem.value,
+          elem.value_nonce,
+          passPhrase,
+          Buffer.from(pubKey, 'hex')
+        )
+        .split(':');
+    } catch (e) {
+      seed = 'Incorrect value!';
+      value = 'Incorrect value!';
+    }
     const hashValue = cryptography
       .hash(Buffer.concat([Buffer.from(seed, 'utf8'), cryptography.hash(value, 'utf8')]))
       .toString('hex');

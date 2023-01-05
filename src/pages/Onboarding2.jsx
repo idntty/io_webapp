@@ -164,8 +164,10 @@ const Onboarding2 = observer(() => {
                         value={dataRegistration.gender}
                       >
                         <option className="hidden"></option>
-                        <option>male</option>
-                        <option>female</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                        <option>Non-binary</option>
+                        <option>Prefer not to say</option>
                       </select>
                     </div>
                     <div>
@@ -182,18 +184,12 @@ const Onboarding2 = observer(() => {
                       />
                     </div>
                   </div>
-                  <div className="flex items-center justify-between mt-6">
-                    <div className="mr-1">
-                      <label className="flex items-center">
-                        <input type="checkbox" className="form-checkbox" />
-                        <span className="text-sm ml-2">Email me about product news.</span>
-                      </label>
-                    </div>
+                  <div className="flex items-center justify-end mt-6">
                     <button
                       onClick={saveStoreRegistration}
                       className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-3 whitespace-nowrap"
                     >
-                      Sign Up
+                      Next step -&gt;
                     </button>
                   </div>
                 </div>

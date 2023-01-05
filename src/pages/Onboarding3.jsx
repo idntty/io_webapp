@@ -110,7 +110,7 @@ const Onboarding3 = observer(() => {
               <div className="max-w-fit mx-auto flex flex-col gap-y-36">
                 <div className="gap-0.5">
                   <h1 className="text-3xl text-slate-800 font-bold mb-12">
-                    Company information ✨
+                    Your digital id secret phrase ✨
                   </h1>
                   {/* htmlForm */}
                   <div className="grid grid-cols-4 gap-y-2.5 gap-[18px] mb-14">
