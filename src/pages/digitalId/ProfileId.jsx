@@ -163,7 +163,7 @@ const Profile = observer(() => {
     const changeData = store.decryptedAccountData.filter(
       (item) => !selectedItems.includes(item.key)
     );
-    store.pushAccountData(changeData);
+    store.pushAccountData(changeData, () => store.fetchNewAccountData());
     if (storeOnBlockchain)
       store.pushAccountDataToBlockchain(changeData.filter((elem) => elem.status !== 'Stored'));
   };
@@ -190,7 +190,7 @@ const Profile = observer(() => {
 
   const changeDataParameters = () => {
     const updatedData = changeInitialArray();
-    store.pushAccountData(updatedData);
+    store.pushAccountData(updatedData, () => store.fetchNewAccountData());
     if (storeOnBlockchain)
       store.pushAccountDataToBlockchain(updatedData.filter((elem) => elem.status !== 'Stored'));
   };
@@ -207,7 +207,9 @@ const Profile = observer(() => {
     const label = addedValues.label.toLowerCase().split(' ').join('');
     if (labelMap[label]) addedValues.key = addedValues.label.toLowerCase().split(' ').join('');
     else addedValues.key = addedValues.label;
-    store.pushAccountData(store.decryptedAccountData.concat(addedValues));
+    store.pushAccountData(store.decryptedAccountData.concat(addedValues), () =>
+      store.fetchNewAccountData()
+    );
     if (storeOnBlockchain)
       store.pushAccountDataToBlockchain(
         store.decryptedAccountData.concat(addedValues).filter((elem) => elem.status !== 'Stored')
@@ -622,7 +624,7 @@ const Profile = observer(() => {
                   <div
                     className={`${
                       (!(removePanelOpen || addPanelOpen) || !storeOnBlockchain) && 'hidden'
-                    } drop-shadow-lg`}
+                    } drop-shadow-lg lg:w-72 xl:w-80`}
                   >
                     {/* Top */}
                     <div className="bg-white rounded-t-xl px-5 pb-4 text-center">

@@ -5,9 +5,11 @@ import Transition from '../utils/Transition';
 import { store } from '../store/store';
 import { generateSvgAvatar } from '../images/GenerateOnboardingSvg/GenerateSvg';
 import UserAvatar from '../images/user-avatar-32.png';
+import ReactTooltip from 'react-tooltip';
 
 const DropdownProfile = observer(({ align }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [tooltipText, setTooltipText] = useState('Copy');
 
   const trigger = useRef(null);
   const dropdown = useRef(null);
@@ -41,6 +43,7 @@ const DropdownProfile = observer(({ align }) => {
 
   const copyToClipboard = (e) => {
     e.stopPropagation();
+    setTooltipText('Copied!');
     window.navigator.clipboard.writeText(store.accountName);
   };
 
@@ -91,8 +94,10 @@ const DropdownProfile = observer(({ align }) => {
             <div className="font-medium text-slate-800 flex items-center">
               {store.accountName}
               <svg
+                data-tip
+                data-for="copy_link"
                 xmlns="http://www.w3.org/2000/svg"
-                className="cursor-pointer hover:stroke-blue-600 active:stroke-blue-800"
+                className="cursor-pointer hover:stroke-blue-600 active:stroke-blue-800 outline-0"
                 width="18"
                 height="18"
                 viewBox="0 0 24 24"
@@ -107,6 +112,15 @@ const DropdownProfile = observer(({ align }) => {
                 <rect x="8" y="8" width="12" height="12" rx="2" />
                 <path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" />
               </svg>
+              <ReactTooltip
+                id="copy_link"
+                place="bottom"
+                type="dark"
+                effect="float"
+                afterHide={() => setTooltipText('Copy')}
+              >
+                <span>{tooltipText}</span>
+              </ReactTooltip>
             </div>
           </div>
           <ul>

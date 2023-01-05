@@ -36,16 +36,11 @@ function SharedData() {
             item.value,
             item.value_nonce,
             passPhrase,
-            Buffer.from(pubKey, 'hex')
+            Buffer.from('a6167f6c9226f325555f280a06f77f09f99150eb0c1343cce1f63fdcc1919ec0', 'hex')
           )
           .split(':');
         hash = cryptography
-          .hash(
-            Buffer.concat([
-              Buffer.from(seed, 'utf8'),
-              cryptography.hash(value, 'utf8'),
-            ])
-          )
+          .hash(Buffer.concat([Buffer.from(seed, 'utf8'), cryptography.hash(value, 'utf8')]))
           .toString('hex');
       } catch (err) {
         setHasError(true);
@@ -80,9 +75,7 @@ function SharedData() {
     );
 
     if (signedTx) {
-      fetchWrapper
-        .post('transactions', {}, signedTx)
-        .catch((err) => console.log(err));
+      fetchWrapper.post('transactions', {}, signedTx).catch((err) => console.log(err));
     }
   };
 
@@ -96,9 +89,7 @@ function SharedData() {
           <div className="min-h-screen h-full flex flex-col after:flex-1">
             <div className="px-4 mt-16 py-9">
               <div className=" flex flex-col max-w-md mx-auto">
-                <h1 className="text-3xl text-slate-800 font-bold mb-8">
-                  Shared data ✨
-                </h1>
+                <h1 className="text-3xl text-slate-800 font-bold mb-8">Shared data ✨</h1>
                 <ul>
                   {!hasError &&
                     decryptedData.map((item) => (
@@ -139,10 +130,7 @@ function SharedData() {
               height="493px"
               alt="Onboarding"
             />
-            <Link
-              className="mt-12 btn bg-indigo-500 hover:bg-indigo-600 text-white"
-              to="/"
-            >
+            <Link className="mt-12 btn bg-indigo-500 hover:bg-indigo-600 text-white" to="/">
               Get my digital ID
             </Link>
           </div>

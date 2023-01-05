@@ -12,7 +12,9 @@ function handleRequest(method, url, headers, attempts, token, body) {
       if (store) store.loading = true;
       return request(method, url, headers, token, body)
         .then(resolve)
-        .catch((err) => (--attempts > 0 ? internalRequest() : reject(err)));
+        .catch((err) =>
+          !err.skip && --attempts > 0 ? internalRequest() : reject(err?.res || err)
+        );
     })();
   })
     .then((res) => {
@@ -21,8 +23,7 @@ function handleRequest(method, url, headers, attempts, token, body) {
     })
     .catch((err) => {
       store.loading = false;
-      console.log(err);
-      return {};
+      throw err;
     });
 }
 
@@ -66,7 +67,7 @@ function request(method, url, headers = {}, token, body) {
   setTimeout(() => controller.abort(), 30000);
   return fetch(prepareUrl(url), requestOptions).then((res) => {
     if (res.status > 400) {
-      store.addNotification(new Date().getTime(), 'error', res.statusText);
+      throw { skip: true, res };
     }
     return res;
   });

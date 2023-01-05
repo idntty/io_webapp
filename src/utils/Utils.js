@@ -57,13 +57,12 @@ export const encryptAccountData = (data = [], passPhrase = '', pubKey = '') => {
       let value = cryptography.encryptMessageWithPassphrase(
         item.seed + ':' + item.value,
         passPhrase,
-        pubKey
+        Buffer.from(pubKey, 'hex')
       );
       return {
         label: item.key,
         value: value.encryptedMessage,
         value_nonce: value.nonce,
-        seed: item.seed,
       };
     });
 };
@@ -100,10 +99,7 @@ export const hashAccountData = (data = [], oldData = [], hashMap = {}) => {
     {}
   );
   const removed = oldData.reduce((acc, item) => {
-    if (
-      !accountMap[item.label] &&
-      !data.find((elem) => elem.label === item.label)
-    )
+    if (!accountMap[item.label] && !data.find((elem) => elem.label === item.label))
       return [...acc, { label: item.label }];
     return acc;
   }, []);
@@ -135,9 +131,7 @@ export const jsonReplacer = (key, value) => {
 };
 
 export const hashValue = (value = '', seed = '') =>
-  cryptography.hash(
-    Buffer.concat([Buffer.from(seed, 'utf8'), cryptography.hash(value, 'utf8')])
-  );
+  cryptography.hash(Buffer.concat([Buffer.from(seed, 'utf8'), cryptography.hash(value, 'utf8')]));
 
 export const formatBytes = (bytes, decimals = 2) => {
   if (!+bytes) return '0 Bytes';
@@ -338,8 +332,7 @@ const generateValidateTransaction = (
   );
 
   signedTx.senderPublicKey = signedTx.senderPublicKey.toString('hex');
-  signedTx.asset.recipientAddress =
-    signedTx.asset.recipientAddress.toString('hex');
+  signedTx.asset.recipientAddress = signedTx.asset.recipientAddress.toString('hex');
   signedTx.signatures[0] = signedTx.signatures[0].toString('hex');
   signedTx.asset.features = signedTx.asset.features.map((feature) => ({
     ...feature,

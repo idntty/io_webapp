@@ -5,12 +5,15 @@ import Logo from '../images/logo.png';
 import { observer } from 'mobx-react-lite';
 import { store } from '../store/store';
 import { cryptography } from '@liskhq/lisk-client';
+import ReactTooltip from 'react-tooltip';
 
 const Onboarding4 = observer(() => {
   const [checkBoxesSelected, setCheckBoxesSelected] = useState([]);
+  const [tooltipText, setTooltipText] = useState('Copy');
 
   function createAccount() {
     if (checkBoxesSelected.length === 2) {
+      store.savePastPassPhrase(store.tmpPassPhrase);
       store.pushAccountData(store.accountData, () => {
         store.pushFirstBalanceRequest(navigateToProfile);
       });
@@ -27,6 +30,7 @@ const Onboarding4 = observer(() => {
 
   const copyToClipboard = (e) => {
     e.stopPropagation();
+    setTooltipText('Copied!');
     window.navigator.clipboard.writeText(store.tmpPassPhrase);
   };
 
@@ -44,9 +48,8 @@ const Onboarding4 = observer(() => {
   const navigate = useNavigate();
 
   const navigateToProfile = () => {
-    navigate('/digitalId/profile-id', { replace: true });
-    store.savePastPassPhrase(store.tmpPassPhrase);
     store.clearDataRegistration();
+    navigate('/digitalId/profile-id', { replace: true });
   };
 
   return (
@@ -139,7 +142,7 @@ const Onboarding4 = observer(() => {
 
                 <div className="flex items-center justify-between">
                   <div className="mr-1">
-                    <label className="flex items-center">
+                    <label className="flex items-center cursor-pointer">
                       <input
                         id="checkbox-1"
                         onChange={(e) => saveCheckBoxesValues(e)}
@@ -150,24 +153,35 @@ const Onboarding4 = observer(() => {
                         I understand that Idntty cannot recover pass phrase
                       </span>
                     </label>
-                    <label className="flex items-center">
+                    <div className="flex items-center">
                       <input
                         id="checkbox-2"
                         onChange={(e) => saveCheckBoxesValues(e)}
                         type="checkbox"
-                        className="form-checkbox"
+                        className="form-checkbox cursor-pointer"
                       />
                       <div className="text-sm ml-2">
                         I{' '}
                         <span
+                          data-tip
+                          data-for="copy_link"
                           className="text-indigo-500 hover:text-indigo-600 underline cursor-pointer"
                           onClickCapture={copyToClipboard}
                         >
                           store my pharse
-                        </span>{' '}
+                        </span>
+                        <ReactTooltip
+                          id="copy_link"
+                          place="bottom"
+                          type="dark"
+                          effect="float"
+                          afterHide={() => setTooltipText('Copy')}
+                        >
+                          <span>{tooltipText}</span>
+                        </ReactTooltip>{' '}
                         very carefuly
                       </div>
-                    </label>
+                    </div>
                   </div>
                 </div>
               </div>

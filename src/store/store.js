@@ -98,10 +98,11 @@ class Store {
   }
 
   fetchAccountInfo() {
+    if (!this.passPhrase) return;
     fetchWrapper
       .get(`accounts/${this.address}`)
       .then((res) => this.fetchAccountInfoSuccess(res))
-      .catch((err) => this.throwError(err));
+      .catch((err) => this.throwError(err, true));
   }
 
   fetchKeysArray() {
@@ -189,12 +190,13 @@ class Store {
 
   pushFirstBalanceRequest(onFinish = () => {}) {
     fetchWrapper
-      .post(
+      .postAuth(
         'faucet/fundbyaccount',
-        {},
         {
-          account: this.address,
-        }
+          networkIdentifier: this.nodeInfo.networkIdentifier,
+          lastBlockID: this.nodeInfo.lastBlockID,
+        },
+        {}
       )
       .then(onFinish)
       .catch((err) => this.throwError(err));
@@ -206,6 +208,7 @@ class Store {
       this.decryptedAccountData,
       this.accountFeaturesMap
     );
+    console.log(this.decryptedAccountData);
     const builder = generateTransaction(
       BigInt(this.accountInfo?.sequence?.nonce || 0),
       this.addressAndPubKey.publicKey,
@@ -344,7 +347,8 @@ class Store {
     this._tempTransactions = res.data;
   }
 
-  throwError(err) {
+  throwError(err, skip) {
+    if (!skip) this.addNotification(new Date().getTime(), 'error', err.statusText);
     console.log(err);
   }
 

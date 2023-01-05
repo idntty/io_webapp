@@ -36,7 +36,12 @@ export const decryptedData = (
       };
     }
     const [seed, value] = cryptography
-      .decryptMessageWithPassphrase(elem.value, elem.value_nonce, passPhrase, pubKey)
+      .decryptMessageWithPassphrase(
+        elem.value,
+        elem.value_nonce,
+        passPhrase,
+        Buffer.from(pubKey, 'hex')
+      )
       .split(':');
     const hashValue = cryptography
       .hash(Buffer.concat([Buffer.from(seed, 'utf8'), cryptography.hash(value, 'utf8')]))
