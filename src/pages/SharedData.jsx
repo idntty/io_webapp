@@ -36,7 +36,7 @@ function SharedData() {
             item.value,
             item.value_nonce,
             passPhrase,
-            Buffer.from('a6167f6c9226f325555f280a06f77f09f99150eb0c1343cce1f63fdcc1919ec0', 'hex')
+            Buffer.from(pubKey, 'hex')
           )
           .split(':');
         hash = cryptography

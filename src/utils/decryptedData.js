@@ -8,7 +8,8 @@ export const decryptedData = (
   blockchainData,
   passPhrase,
   pubKey,
-  processedFeatures
+  processedFeatures,
+  verifiedFieldsMap
 ) => {
   const allAccountData = serverData.concat(
     blockchainData.filter((item) => !serverData.find((elem) => elem.label === item.label))
@@ -23,6 +24,9 @@ export const decryptedData = (
       seed: '',
       filter: ['all'],
     };
+
+    if (verifiedFieldsMap[elem.label]) initialData.filter.push('Validated');
+
     if (processedFeatures[elem.label])
       return {
         ...initialData,

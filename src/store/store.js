@@ -388,6 +388,22 @@ class Store {
         };
       });
   }
+
+  get verifiedFields() {
+    return this.accountIdentity?.verifications || [];
+  }
+
+  get verifiedFieldsMap() {
+    return this.verifiedFields.reduce(
+      (acc, item) => ({
+        ...acc,
+        [item.label]: {
+          ...item,
+        },
+      }),
+      {}
+    );
+  }
   get decryptedAccountData() {
     return (
       decryptedData(
@@ -395,7 +411,8 @@ class Store {
         this.accountFeatures,
         this.passPhrase,
         this.pubKey,
-        this.processedFeatures
+        this.processedFeatures,
+        this.verifiedFieldsMap
       ) || []
     );
   }
