@@ -23,17 +23,20 @@ export const decryptedData = (
       value: '',
       seed: '',
       filter: ['all'],
+      encrypted: true,
     };
 
     if (verifiedFieldsMap[elem.label]) initialData.filter.push('Validated');
 
-    if (processedFeatures[elem.label])
+    const serverDataItem = serverData.find((item) => item.label === elem.label);
+
+    if (processedFeatures[elem.label] && !serverDataItem)
       return {
         ...initialData,
         status: statusMap.processed,
         value: elem.value,
       };
-    if (!serverData.find((item) => item.label === elem.label)) {
+    if (!serverDataItem) {
       return {
         ...initialData,
         status: statusMap.blockchained,
@@ -55,6 +58,17 @@ export const decryptedData = (
       seed = 'Incorrect value!';
       value = 'Incorrect value!';
     }
+
+    if (processedFeatures[elem.label]) {
+      return {
+        ...initialData,
+        status: statusMap.processed,
+        value,
+        seed,
+        encrypted: false,
+      };
+    }
+
     const hashValue = cryptography
       .hash(Buffer.concat([Buffer.from(seed, 'utf8'), cryptography.hash(value, 'utf8')]))
       .toString('hex');
@@ -64,6 +78,7 @@ export const decryptedData = (
         status: statusMap.stored,
         value,
         seed,
+        encrypted: false,
       };
     }
     if (blockchainData.find((item) => item.label === elem.label).value !== hashValue) {
@@ -73,6 +88,7 @@ export const decryptedData = (
         value,
         filter: [...initialData.filter, 'blockchained'],
         seed,
+        encrypted: false,
       };
     }
     return {
@@ -81,6 +97,7 @@ export const decryptedData = (
       value,
       filter: [...initialData.filter, 'blockchained'],
       seed,
+      encrypted: false,
     };
   });
 };

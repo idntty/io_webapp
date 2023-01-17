@@ -11,13 +11,7 @@ function ProfileTable({ userData, handleClick, isCheck }) {
   };
 
   const data = {
-    general: [
-      'First name',
-      'Second name',
-      'Gender',
-      'Birthdate',
-      'Place of birth',
-    ],
+    general: ['First name', 'Second name', 'Gender', 'Birthdate', 'Place of birth'],
     nationality: [
       'Nationality',
       'National ID',
@@ -44,15 +38,9 @@ function ProfileTable({ userData, handleClick, isCheck }) {
     ],
   };
 
-  const generalData = userData.filter((elem) =>
-    data.general.includes(elem.label)
-  );
-  const nationalityData = userData.filter((elem) =>
-    data.nationality.includes(elem.label)
-  );
-  const socialData = userData.filter((elem) =>
-    data.social.includes(elem.label)
-  );
+  const generalData = userData.filter((elem) => data.general.includes(elem.label));
+  const nationalityData = userData.filter((elem) => data.nationality.includes(elem.label));
+  const socialData = userData.filter((elem) => data.social.includes(elem.label));
   const otherData = userData.filter(
     (elem) =>
       !data.general.includes(elem.label) &&
@@ -76,15 +64,14 @@ function ProfileTable({ userData, handleClick, isCheck }) {
                     key={data.label}
                     id={data.key}
                     image={defaultData.image}
-                    value={
-                      data.value.charAt(0).toUpperCase() + data.value.slice(1)
-                    }
+                    value={data.value.charAt(0).toUpperCase() + data.value.slice(1)}
                     property={data.label}
                     status={data.status}
                     transactions={defaultData.transactions}
                     avatars={defaultData.avatars}
                     handleClick={handleClick}
                     isChecked={isCheck.includes(data.key)}
+                    encrypted={data.encrypted}
                   />
                 );
               })}
@@ -106,9 +93,7 @@ function ProfileTable({ userData, handleClick, isCheck }) {
                     key={data.label}
                     id={data.key}
                     image={defaultData.image}
-                    value={
-                      data.value.charAt(0).toUpperCase() + data.value.slice(1)
-                    }
+                    value={data.value.charAt(0).toUpperCase() + data.value.slice(1)}
                     property={data.label}
                     status={data.status}
                     transactions={defaultData.transactions}
@@ -136,9 +121,7 @@ function ProfileTable({ userData, handleClick, isCheck }) {
                     key={data.label}
                     id={data.key}
                     image={defaultData.image}
-                    value={
-                      data.value.charAt(0).toUpperCase() + data.value.slice(1)
-                    }
+                    value={data.value.charAt(0).toUpperCase() + data.value.slice(1)}
                     property={data.label}
                     status={data.status}
                     transactions={defaultData.transactions}

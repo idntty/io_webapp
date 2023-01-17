@@ -38,7 +38,7 @@ const DropdownProfile = observer(({ align }) => {
 
   const logOut = () => {
     sessionStorage.removeItem('passPhrase');
-    store.fetchPassPhrase();
+    store.clearAll();
   };
 
   const copyToClipboard = (e) => {

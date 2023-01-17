@@ -35,10 +35,8 @@ function ProfileTableItem(props) {
             <div className="flex flex-col w-60">
               <div className="font-semibold text-slate-800 text-base">
                 {props.status === statusMap.blockchained ||
-                props.status === statusMap.processed
-                  ? `${props.value.slice(0, 4)}****${props.value.slice(
-                      props.value.length - 4
-                    )}`
+                (props.status === statusMap.processed && props.encrypted)
+                  ? `${props.value.slice(0, 4)}****${props.value.slice(props.value.length - 4)}`
                   : props.value}
               </div>
               <div className="font-normal text-xxs">{props.property}</div>
@@ -99,10 +97,7 @@ function ProfileTableItem(props) {
           <div className="flex items-center">
             <button className="text-slate-400 hover:text-slate-500 rounded-full">
               <span className="sr-only">Link</span>
-              <svg
-                className="w-4 h-4 fill-current shrink-0 text-slate-400"
-                viewBox="0 0 16 16"
-              >
+              <svg className="w-4 h-4 fill-current shrink-0 text-slate-400" viewBox="0 0 16 16">
                 <path d="M11 0c1.3 0 2.6.5 3.5 1.5 1 .9 1.5 2.2 1.5 3.5 0 1.3-.5 2.6-1.4 3.5l-1.2 1.2c-.2.2-.5.3-.7.3-.2 0-.5-.1-.7-.3-.4-.4-.4-1 0-1.4l1.1-1.2c.6-.5.9-1.3.9-2.1s-.3-1.6-.9-2.2C12 1.7 10 1.7 8.9 2.8L7.7 4c-.4.4-1 .4-1.4 0-.4-.4-.4-1 0-1.4l1.2-1.1C8.4.5 9.7 0 11 0ZM8.3 12c.4-.4 1-.5 1.4-.1.4.4.4 1 0 1.4l-1.2 1.2C7.6 15.5 6.3 16 5 16c-1.3 0-2.6-.5-3.5-1.5C.5 13.6 0 12.3 0 11c0-1.3.5-2.6 1.5-3.5l1.1-1.2c.4-.4 1-.4 1.4 0 .4.4.4 1 0 1.4L2.9 8.9c-.6.5-.9 1.3-.9 2.1s.3 1.6.9 2.2c1.1 1.1 3.1 1.1 4.2 0L8.3 12Zm1.1-6.8c.4-.4 1-.4 1.4 0 .4.4.4 1 0 1.4l-4.2 4.2c-.2.2-.5.3-.7.3-.2 0-.5-.1-.7-.3-.4-.4-.4-1 0-1.4l4.2-4.2Z" />
               </svg>
             </button>
@@ -130,10 +125,7 @@ function ProfileTableItem(props) {
         <td colSpan="10" className="px-12 pt-3.5 pb-[14px]">
           <div className="flex items-center gap-x-5">
             <div>
-              <label
-                className="block text-sm font-medium mb-1"
-                htmlFor="placeholder"
-              >
+              <label className="block text-sm font-medium mb-1" htmlFor="placeholder">
                 Seed
               </label>
               <input
@@ -144,13 +136,8 @@ function ProfileTableItem(props) {
               />
             </div>
             <div>
-              <span className="block text-sm font-medium mb-1">
-                Transaction
-              </span>
-              <a
-                href=""
-                className="w-[396px] text-slate-400 font-normal text-sm underline"
-              >
+              <span className="block text-sm font-medium mb-1">Transaction</span>
+              <a href="" className="w-[396px] text-slate-400 font-normal text-sm underline">
                 0x12831823791203192418234841238468
               </a>
             </div>
@@ -179,10 +166,7 @@ function ProfileTableItem(props) {
                           className="absolute left-0 rounded-full bg-indigo-500"
                           aria-hidden="true"
                         >
-                          <svg
-                            className="w-5 h-5 fill-current text-white"
-                            viewBox="0 0 20 20"
-                          >
+                          <svg className="w-5 h-5 fill-current text-white" viewBox="0 0 20 20">
                             <path d="M14.4 8.4L13 7l-4 4-2-2-1.4 1.4L9 13.8z" />
                           </svg>
                         </div>
@@ -205,9 +189,7 @@ function ProfileTableItem(props) {
                         >
                           {data}
                         </a>
-                        <span className="block text-xxs font-normal mb-1">
-                          Transactions ID
-                        </span>
+                        <span className="block text-xxs font-normal mb-1">Transactions ID</span>
                       </div>
                       <div className="pl-9">
                         <a
@@ -216,9 +198,7 @@ function ProfileTableItem(props) {
                         >
                           {data.slice(2, data.length)}
                         </a>
-                        <span className="block text-xxs font-normal mb-1">
-                          Validated data
-                        </span>
+                        <span className="block text-xxs font-normal mb-1">Validated data</span>
                       </div>
                       <div className="pl-9 pt-[14px]">
                         <a

@@ -100,7 +100,7 @@ export const hashAccountData = (data = [], oldData = [], hashMap = {}) => {
   );
   const removed = oldData.reduce((acc, item) => {
     if (!accountMap[item.label] && !data.find((elem) => elem.label === item.label))
-      return [...acc, { label: item.label }];
+      return [...acc, { label: item.key }];
     return acc;
   }, []);
 

@@ -88,17 +88,18 @@ class Store {
   }
 
   fetchNewAccountData() {
+    if (!this.nodeInfo.networkIdentifier || !this.nodeInfo.lastBlockID) return;
     fetchWrapper
       .getAuth('data/private', {
         networkIdentifier: this.nodeInfo.networkIdentifier,
         lastBlockID: this.nodeInfo.lastBlockID,
       })
       .then((res) => this.accountDataFetchChange(res))
-      .catch((err) => this.throwError(err));
+      .catch((err) => this.throwError(err, true));
   }
 
   fetchAccountInfo() {
-    if (!this.passPhrase) return;
+    if (!this.passPhrase || !this.address) return;
     fetchWrapper
       .get(`accounts/${this.address}`)
       .then((res) => this.fetchAccountInfoSuccess(res))
@@ -690,6 +691,28 @@ class Store {
 
   set tmpPassPhrase(value) {
     this._tmpPassPhrase = value;
+  }
+
+  clearAll() {
+    this._accountData = [];
+    this._passPhrase = '';
+    this._keysArray = [];
+    this._sharedData = [];
+    this._transactionsInfo = [];
+    this._accountInfo = {};
+    this._tempTransactions = [];
+    this._vpnServers = [];
+    this._canVPN = false;
+    this._delegates = {
+      data: [],
+      meta: {
+        count: 0,
+        limit: 0,
+        offset: 0,
+      },
+    };
+    this._notifications = [];
+    this._tmpPassPhrase = '';
   }
 }
 

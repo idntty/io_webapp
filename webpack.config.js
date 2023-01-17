@@ -26,7 +26,9 @@ module.exports = (env, argv) => ({
   devtool: argv.mode === 'production' ? false : 'eval-source-map',
   plugins,
   output: {
-    clean: true,
+    clean: {
+      keep: 'settings.json',
+    },
     path: path.resolve(__dirname, 'dist'),
     assetModuleFilename: 'assets/[fullhash:12][ext]',
     filename: 'main.[fullhash:8].js',

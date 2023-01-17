@@ -9,6 +9,7 @@ import { store } from '../store/store';
 import { fetchWrapper } from '../shared/fetchWrapper';
 import { cryptography } from '@liskhq/lisk-client';
 import { generateTransaction } from '../utils/Utils';
+import { runInAction } from 'mobx';
 
 function SharedData() {
   const [encryptedData, setEncryptedData] = useState([]);
@@ -75,7 +76,19 @@ function SharedData() {
     );
 
     if (signedTx) {
-      fetchWrapper.post('transactions', {}, signedTx).catch((err) => console.log(err));
+      fetchWrapper
+        .post('transactions', {}, signedTx)
+        .then(() => {
+          runInAction(() => {
+            store.addNotification(new Date().getTime(), 'success', 'Validate success');
+          });
+        })
+        .catch(async (err) => {
+          const data = await err.json();
+          runInAction(() => {
+            store.addNotification(new Date().getTime(), 'error', data?.errors?.[0]?.message);
+          });
+        });
     }
   };
 
