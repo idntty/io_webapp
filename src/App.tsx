@@ -263,7 +263,7 @@ const Button = styled.div`
   align-items: flex-start;
   justify-content: flex-start;
 `;
-const ContinueButton = styled.div`
+const ContinueButton = styled.a`
   width: 360px;
   align-self: center;
   display: flex;
@@ -271,9 +271,11 @@ const ContinueButton = styled.div`
   align-items: flex-start;
   justify-content: flex-start;
   color: #fff;
+  cursor: pointer;
+  text-decoration: none;
 `;
 
-function App() {
+export default function App() {
   return (
     <Page>
       <Header>
@@ -324,7 +326,7 @@ function App() {
                 <CheckboxUnfilled />
               </AuthorityAccount>
             </RadioGroup>
-            <ContinueButton>
+            <ContinueButton href="/passphrase">
               <Button>
                 <ButtonBase>
                   <ButtonText>Continue</ButtonText>
@@ -350,5 +352,3 @@ function App() {
     </Page>
   );
 }
-
-export default App;
