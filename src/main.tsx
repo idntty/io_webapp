@@ -11,6 +11,7 @@ import CreateAccount from './CreateAccount.tsx';
 import LoginWithPasskey from './LoginWithPasskey.tsx';
 import LoginWithoutPasskey from './LoginWithoutPasskey.tsx';
 import IdentityPage from './IdentityPage.tsx';
+import ComponentsTesting from './ComponentsTesting.tsx';
 
 const router = createBrowserRouter([
   { path: '/', element: <App /> },
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
   { path: '/login-with-passkey', element: <LoginWithPasskey /> },
   { path: '/login-without-passkey', element: <LoginWithoutPasskey /> },
   { path: '/identity-page', element: <IdentityPage /> },
+  { path: '/components', element: <ComponentsTesting /> },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
