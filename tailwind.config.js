@@ -34,6 +34,13 @@ export default {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
       },
+      boxShadow: {
+        primary: '0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
+        'color-focused':
+          '0px 0px 0px 4px #F4EBFF, 0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
+        'gray-focused':
+          '0px 0px 0px 4px #F2F4F7, 0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
+      },
     },
   },
   plugins: [],

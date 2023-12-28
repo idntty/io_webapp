@@ -8,7 +8,7 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-brand-50 text-brand-700',
+        primary: 'bg-brand-50 text-brand-700',
         secondary: 'bg-gray-100 text-gray-700',
       },
       size: {
@@ -18,7 +18,7 @@ const badgeVariants = cva(
       },
     },
     defaultVariants: {
-      variant: 'default',
+      variant: 'primary',
       size: 'sm',
     },
   },
@@ -27,16 +27,18 @@ const badgeVariants = cva(
 export type BadgeProps = React.HTMLAttributes<HTMLDivElement> &
   VariantProps<typeof badgeVariants>;
 
-export default function Badge({
+const Badge: React.FC<BadgeProps> = ({
   className,
   variant,
   size,
   ...props
-}: BadgeProps) {
+}) => {
   return (
     <div
       className={cn(badgeVariants({ variant, size }), className)}
       {...props}
     />
   );
-}
+};
+
+export default Badge;

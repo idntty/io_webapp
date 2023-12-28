@@ -10,13 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "1.0.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "framer-motion": "^10.16.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.1",
     "styled-components": "^6.1.1",
     "tailwind-merge": "^2.2.0",
+    "untitledui-js": "^2.0.74",
     "vite-plugin-babel-macros": "^1.0.6"
   },
   "devDependencies": {
