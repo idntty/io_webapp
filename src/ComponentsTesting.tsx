@@ -131,7 +131,24 @@ export default function ComponentsTesting() {
         />
       </div>
       {/* Radio group */}
-      <IdentityRadioGroup />
+      <IdentityRadioGroup
+        variants={[
+          {
+            type: 'personal',
+            title: 'Personal',
+            description:
+              'Personal data is private and securely encrypted. It is only accessible with your consent.',
+            Icon: UntitledUI.Users.User01,
+          },
+          {
+            type: 'authority',
+            title: 'Authority',
+            description:
+              'All data is public and accessible to everyone. Used by companies & communities.',
+            Icon: UntitledUI.Education.BriefCase01,
+          },
+        ]}
+      />
     </div>
   );
 }
