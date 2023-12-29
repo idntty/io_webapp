@@ -29,7 +29,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {/* Input field */}
         <div className="flex items-center gap-[8px] self-stretch rounded-lg border border-solid border-gray-300 bg-white px-[14px] py-[10px] shadow-primary">
           <div className="flex flex-shrink-0 flex-grow basis-0 items-center gap-[8px]">
-            {Icon && <Icon size="20" className={'stroke-gray-500'} />}
+            {Icon && <Icon size="20" className="stroke-gray-500" />}
             <input
               type={type}
               ref={ref}

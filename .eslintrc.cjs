@@ -28,6 +28,7 @@ module.exports = {
         allowSingleExtends: true,
       },
     ],
+    'react/prop-types': 'off',
   },
   settings: {
     react: { version: 'detect' },

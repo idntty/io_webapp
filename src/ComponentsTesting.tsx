@@ -1,6 +1,7 @@
 import Badge from './components/badge';
 import Button from './components/button';
 import Input from './components/input';
+import IdentityRadioGroup from './components/IdentityRadioGroup';
 
 import * as UntitledUI from 'untitledui-js';
 
@@ -129,6 +130,8 @@ export default function ComponentsTesting() {
           Icon={UntitledUI.Communication.Mail01}
         />
       </div>
+      {/* Radio group */}
+      <IdentityRadioGroup />
     </div>
   );
 }
