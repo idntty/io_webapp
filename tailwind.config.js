@@ -32,6 +32,19 @@ export default {
           800: '#1D2939',
           900: '#101828',
         },
+        error: {
+          25: '#FFFBFA',
+          50: '#FEF3F2',
+          100: '#FEE4E2',
+          200: '#FECDCA',
+          300: '#FDA29B',
+          400: '#F97066',
+          500: '#F04438',
+          600: '#D92D20',
+          700: '#B42318',
+          800: '#912018',
+          900: '#7A271A',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
@@ -42,6 +55,11 @@ export default {
           '0px 0px 0px 4px #F4EBFF, 0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
         'gray-focused':
           '0px 0px 0px 4px #F2F4F7, 0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
+        'error-focused':
+          '0px 0px 0px 4px #FEE4E2, 0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
+      },
+      aria: {
+        invalid: 'invalid="true"',
       },
     },
   },

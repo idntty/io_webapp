@@ -2,6 +2,7 @@ import Badge from './components/badge';
 import Button from './components/button';
 import Input from './components/input';
 import IdentityRadioGroup from './components/IdentityRadioGroup';
+import UserRegistrationForm from './components/UserRegistrationForm';
 
 import * as UntitledUI from 'untitledui-js';
 
@@ -128,6 +129,7 @@ export default function ComponentsTesting() {
         <Input
           placeholder="Placeholder"
           Icon={UntitledUI.Communication.Mail01}
+          className="w-[360px]"
         />
       </div>
       {/* Radio group */}
@@ -149,6 +151,8 @@ export default function ComponentsTesting() {
           },
         ]}
       />
+      {/* Form */}
+      <UserRegistrationForm withErrors />
     </div>
   );
 }

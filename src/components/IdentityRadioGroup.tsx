@@ -28,16 +28,16 @@ const IdentityRadioGroup: React.FC<IdentityRadioGroupProps> = ({
           key={index}
           value={type}
           id={type}
-          className="group flex w-[343px] items-start gap-[4px] rounded-lg border border-solid border-gray-200 bg-white p-[16px] text-base hover:border-brand-300 focus:border-brand-300 focus:shadow-color-focused disabled:bg-gray-50 aria-checked:border-brand-300 aria-checked:bg-brand-50 aria-checked:hover:border-brand-500 aria-checked:disabled:border-gray-200 aria-checked:disabled:bg-gray-50"
+          className="group flex w-[343px] cursor-pointer items-start gap-[4px] rounded-lg border border-solid border-gray-200 bg-white p-[16px] text-base hover:border-brand-300 focus:border-brand-300 focus:shadow-color-focused disabled:cursor-not-allowed disabled:bg-gray-50 aria-checked:border-brand-300 aria-checked:bg-brand-50 aria-checked:hover:border-brand-500 aria-checked:disabled:border-gray-200 aria-checked:disabled:bg-gray-50"
         >
           <div className="flex flex-shrink-0 flex-grow basis-0 items-start gap-[16px] text-left">
             <div className="flex h-[32px] w-[32px] items-center justify-center">
               {/* FIXME: padding: 10px makes it too small for some reason, also shifted down */}
-              <div className="flex h-[40px] w-[40px] flex-shrink-0 items-center justify-center rounded-[28px] border-[6px] border-solid border-brand-50 bg-brand-100 p-[15px]">
+              <div className="flex h-[40px] w-[40px] flex-shrink-0 items-center justify-center rounded-[28px] border-[6px] border-solid border-brand-50 bg-brand-100 p-[15px] group-disabled:border-gray-50 group-disabled:bg-gray-100">
                 <Icon
                   size="20"
                   // FIXME: stroke-width: 1.66667 looks too thin for some reason
-                  className="flex-shrink-0 stroke-brand-600 stroke-2"
+                  className="flex-shrink-0 stroke-brand-600 stroke-2 group-disabled:stroke-gray-300"
                 />
               </div>
             </div>
