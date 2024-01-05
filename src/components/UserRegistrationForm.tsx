@@ -114,10 +114,11 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
       nationalID: '',
       passportNumber: '',
     },
+    mode: 'onBlur',
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    alert(JSON.stringify(data, null, 2));
+    console.log(data);
   }
 
   return (
@@ -148,15 +149,21 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
                 {/* FIXME: Figma has a text-shadow if the input is focused
                 but I don't see it */}
                 {withErrors && (
-                  <FormMessage className="text-error-500 text-sm font-normal" />
+                  <FormMessage className="text-sm font-normal text-error-500" />
                 )}
               </FormItem>
             )}
           />
         ))}
         <div className="flex flex-col items-start gap-[16px] self-stretch">
-          <Button type="submit" size="lg" className="w-full">
-            Secure my data
+          {/* TODO: What did asChild do? */}
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full"
+            disabled={!form.formState.isDirty || !form.formState.isValid}
+          >
+            <a href="/create-account">Secure my data</a>
           </Button>
         </div>
       </form>

@@ -3,6 +3,7 @@ import Button from './components/button';
 import Input from './components/input';
 import IdentityRadioGroup from './components/IdentityRadioGroup';
 import UserRegistrationForm from './components/UserRegistrationForm';
+import Checkbox from './components/checkbox';
 
 import * as UntitledUI from 'untitledui-js';
 
@@ -131,6 +132,10 @@ export default function ComponentsTesting() {
           Icon={UntitledUI.Communication.Mail01}
           className="w-[360px]"
         />
+      </div>
+      {/* Checkbox */}
+      <div className="flex w-full items-center justify-center gap-4">
+        <Checkbox />
       </div>
       {/* Radio group */}
       <IdentityRadioGroup

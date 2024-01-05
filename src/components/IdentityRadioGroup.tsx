@@ -53,8 +53,8 @@ const IdentityRadioGroup: React.FC<IdentityRadioGroupProps> = ({
               </div>
             </div>
           </div>
-          {/* TODO: Refactor checkbox to a separate component */}
-          <div className="flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center rounded-[10px] border border-solid border-gray-300 bg-white group-hover:border-brand-600 group-hover:bg-brand-50 group-focus:border-brand-300 group-disabled:border-gray-200 group-disabled:bg-gray-100 group-aria-checked:border-brand-600 group-aria-checked:bg-brand-600 group-aria-checked:p-[3px] group-aria-checked:group-disabled:border-gray-200 group-aria-checked:group-disabled:bg-gray-200">
+          {/* TODO: Maybe use Checkbox component here? */}
+          <div className="flex h-[20px] w-[20px] flex-shrink-0 content-center items-center justify-center rounded-[10px] border border-solid border-gray-300 bg-white group-hover:border-brand-600 group-hover:bg-brand-50 group-focus:border-brand-300 group-disabled:border-gray-200 group-disabled:bg-gray-100 group-aria-checked:border-brand-600 group-aria-checked:bg-brand-600 group-aria-checked:p-[3px] group-aria-checked:group-disabled:border-gray-200 group-aria-checked:group-disabled:bg-gray-200">
             <RadioGroup.Indicator>
               <UntitledUI.General.Check
                 size="14"
