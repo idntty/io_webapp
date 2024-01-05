@@ -5,7 +5,7 @@ import IdentityRadioGroup from './components/IdentityRadioGroup';
 import UserRegistrationForm from './components/UserRegistrationForm';
 import Checkbox from './components/checkbox';
 
-import * as UntitledUI from 'untitledui-js';
+import { Communication, Users, Education } from 'untitledui-js';
 
 export default function ComponentsTesting() {
   return (
@@ -129,7 +129,7 @@ export default function ComponentsTesting() {
       <div className="flex w-full items-center justify-center gap-4">
         <Input
           placeholder="Placeholder"
-          Icon={UntitledUI.Communication.Mail01}
+          Icon={Communication.Mail01}
           className="w-[360px]"
         />
       </div>
@@ -145,14 +145,14 @@ export default function ComponentsTesting() {
             title: 'Personal',
             description:
               'Personal data is private and securely encrypted. It is only accessible with your consent.',
-            Icon: UntitledUI.Users.User01,
+            Icon: Users.User01,
           },
           {
             type: 'authority',
             title: 'Authority',
             description:
               'All data is public and accessible to everyone. Used by companies & communities.',
-            Icon: UntitledUI.Education.BriefCase01,
+            Icon: Education.BriefCase01,
           },
         ]}
       />

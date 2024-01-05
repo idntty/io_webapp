@@ -3,7 +3,7 @@ import Footer from './components/onboarding/Footer';
 import TextAndSupportingText from './components/onboarding/TextAndSupportingText';
 import Checkbox from './components/checkbox';
 import Button from './components/button';
-import * as UntitledUI from 'untitledui-js';
+import { General } from 'untitledui-js';
 
 export default function LoginWithoutPasskey() {
   return (
@@ -30,10 +30,7 @@ export default function LoginWithoutPasskey() {
                 </div>
                 <Button asChild size="lg" className="w-full">
                   <a href="/identity-page">
-                    <UntitledUI.General.Copy01
-                      className="stroke-current"
-                      size="20"
-                    />
+                    <General.Copy01 className="stroke-current" size="20" />
                     Paste and login
                   </a>
                 </Button>

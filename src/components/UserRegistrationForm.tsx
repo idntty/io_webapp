@@ -2,7 +2,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import validator from 'validator';
-import * as UntitledUI from 'untitledui-js';
+import {
+  Users,
+  Maps,
+  Communication,
+  General,
+  Alerts,
+  Education,
+} from 'untitledui-js';
 
 import Button from './button';
 import {
@@ -47,49 +54,49 @@ const formFields = [
     name: 'fullName',
     label: 'Full name',
     placeholder: 'Full name',
-    Icon: UntitledUI.Users.User01,
+    Icon: Users.User01,
   },
   {
     name: 'citezenship',
     label: 'Citezenship',
     placeholder: 'Citezenship',
-    Icon: UntitledUI.Maps.Flag01,
+    Icon: Maps.Flag01,
   },
   {
     name: 'phone',
     label: 'Phone',
     placeholder: '+1 123 474 87 67',
-    Icon: UntitledUI.Communication.Phone,
+    Icon: Communication.Phone,
   },
   {
     name: 'email',
     label: 'Email',
     placeholder: 'olivia@untitledui.com',
-    Icon: UntitledUI.Communication.Mail01,
+    Icon: Communication.Mail01,
   },
   {
     name: 'placeOfBirth',
     label: 'Place of birth',
     placeholder: 'Place of Birth',
-    Icon: UntitledUI.General.Home02,
+    Icon: General.Home02,
   },
   {
     name: 'currentLocation',
     label: 'Current location',
     placeholder: 'Current location',
-    Icon: UntitledUI.Maps.MarkerPin01,
+    Icon: Maps.MarkerPin01,
   },
   {
     name: 'nationalID',
     label: 'National Identification Number',
     placeholder: 'National Identification Number',
-    Icon: UntitledUI.Alerts.AlertCircle,
+    Icon: Alerts.AlertCircle,
   },
   {
     name: 'passportNumber',
     label: 'Passport Number',
     placeholder: 'Passport Number',
-    Icon: UntitledUI.Education.BookOpen01,
+    Icon: Education.BookOpen01,
   },
 ];
 

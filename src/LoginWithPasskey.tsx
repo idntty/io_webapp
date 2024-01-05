@@ -2,7 +2,7 @@ import Button from './components/button';
 import Footer from './components/onboarding/Footer';
 import Header from './components/onboarding/Header';
 import TextAndSupportingText from './components/onboarding/TextAndSupportingText';
-import * as UntitledUI from 'untitledui-js';
+import { Security, General } from 'untitledui-js';
 
 export default function LoginWithPasskey() {
   return (
@@ -18,10 +18,7 @@ export default function LoginWithPasskey() {
             <div className="flex flex-col items-start gap-[16px] self-stretch">
               <Button asChild size="lg" className="w-full">
                 <a href="/identity-page">
-                  <UntitledUI.Security.Shield01
-                    className="stroke-current"
-                    size="20"
-                  />
+                  <Security.Shield01 className="stroke-current" size="20" />
                   Seamless Re-entry
                 </a>
               </Button>
@@ -40,10 +37,7 @@ export default function LoginWithPasskey() {
                 className="w-full"
               >
                 <a href="/identity-page">
-                  <UntitledUI.General.Copy01
-                    className="stroke-current"
-                    size="20"
-                  />
+                  <General.Copy01 className="stroke-current" size="20" />
                   Paste and login
                 </a>
               </Button>

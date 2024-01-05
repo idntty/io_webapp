@@ -2,7 +2,7 @@ import Header from './components/onboarding/Header';
 import Footer from './components/onboarding/Footer';
 import TextAndSupportingText from './components/onboarding/TextAndSupportingText';
 import Button from './components/button';
-import * as UntitledUI from 'untitledui-js';
+import { Security } from 'untitledui-js';
 
 export default function CreateAccount() {
   return (
@@ -18,10 +18,7 @@ export default function CreateAccount() {
             <div className="flex flex-col items-start gap-[16px] self-stretch">
               <Button asChild size="lg" className="w-full">
                 <a href="/identity-page">
-                  <UntitledUI.Security.Shield01
-                    className="stroke-current"
-                    size="20"
-                  />
+                  <Security.Shield01 className="stroke-current" size="20" />
                   Create my account
                 </a>
               </Button>

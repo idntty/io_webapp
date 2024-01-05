@@ -1,6 +1,6 @@
 import * as React from 'react';
 // import { cva, type VariantProps } from 'class-variance-authority';
-import * as UntitledUI from 'untitledui-js';
+import { type SVGComponentProps, Alerts, General } from 'untitledui-js';
 
 import { cn } from '../lib/utils';
 
@@ -9,7 +9,7 @@ import { cn } from '../lib/utils';
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
-  Icon?: React.ComponentType<UntitledUI.SVGComponentProps>;
+  Icon?: React.ComponentType<SVGComponentProps>;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -28,7 +28,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {/* Input field */}
         {/* FIXME: When should we focus an input field? */}
         {/* FIXME: Couldn't get tailwind has: to work */}
-        <div className="[&:has([aria-invalid='true'])]:border-error-300 [&:has([aria-invalid='true'])]:has-[:focus]:shadow-error-focused flex items-center gap-[8px] self-stretch rounded-lg border border-solid border-gray-300 bg-white px-[14px] py-[10px] shadow-primary has-[:focus]:border-brand-300 has-[:disabled]:bg-gray-50 has-[:focus]:shadow-color-focused">
+        <div className="flex items-center gap-[8px] self-stretch rounded-lg border border-solid border-gray-300 bg-white px-[14px] py-[10px] shadow-primary has-[:focus]:border-brand-300 has-[:disabled]:bg-gray-50 has-[:focus]:shadow-color-focused [&:has([aria-invalid='true'])]:border-error-300 [&:has([aria-invalid='true'])]:has-[:focus]:shadow-error-focused">
           <div className="flex flex-shrink-0 flex-grow basis-0 items-center gap-[8px]">
             {Icon && <Icon size="20" className="stroke-gray-500" />}
             <input
@@ -39,15 +39,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             />
           </div>
           {props['aria-invalid'] ? (
-            <UntitledUI.Alerts.AlertCircle
-              size="16"
-              className={'stroke-error-500'}
-            />
+            <Alerts.AlertCircle size="16" className={'stroke-error-500'} />
           ) : (
-            <UntitledUI.General.HelpCircle
-              size="16"
-              className={'stroke-gray-400'}
-            />
+            <General.HelpCircle size="16" className={'stroke-gray-400'} />
           )}
         </div>
       </div>

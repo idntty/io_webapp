@@ -1,7 +1,7 @@
 import Header from './components/onboarding/Header';
 import TextAndSupportingText from './components/onboarding/TextAndSupportingText';
 import Badge from './components/badge';
-import * as UntitledUI from 'untitledui-js';
+import { Arrow, General } from 'untitledui-js';
 import Button from './components/button';
 import Checkbox from './components/checkbox';
 import Footer from './components/onboarding/Footer';
@@ -22,11 +22,7 @@ export default function Passphrase() {
     'snap',
     'vendor',
   ];
-  const actionIcons = [
-    UntitledUI.Arrow.RefreshCW02,
-    UntitledUI.General.Copy01,
-    UntitledUI.General.Edit05,
-  ];
+  const actionIcons = [Arrow.RefreshCW02, General.Copy01, General.Edit05];
 
   return (
     <div className="box-border flex h-screen w-screen flex-row items-center self-stretch overflow-hidden bg-white text-base text-black">

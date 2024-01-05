@@ -3,7 +3,7 @@ import TextAndSupportingText from './components/onboarding/TextAndSupportingText
 import Button from './components/button';
 import Header from './components/onboarding/Header';
 import LoginPrompt from './components/onboarding/LoginPrompt';
-import * as UntitledUI from 'untitledui-js';
+import { Users, Education } from 'untitledui-js';
 import Footer from './components/onboarding/Footer';
 
 export default function App() {
@@ -25,14 +25,14 @@ export default function App() {
                   title: 'Personal',
                   description:
                     'Personal data is private and securely encrypted. It is only accessible with your consent.',
-                  Icon: UntitledUI.Users.User01,
+                  Icon: Users.User01,
                 },
                 {
                   type: 'authority',
                   title: 'Authority',
                   description:
                     'All data is public and accessible to everyone. Used by companies & communities.',
-                  Icon: UntitledUI.Education.BriefCase01,
+                  Icon: Education.BriefCase01,
                 },
               ]}
             />
