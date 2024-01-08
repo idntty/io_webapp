@@ -92,7 +92,7 @@ export default function Passphrase() {
         </main>
         <Footer />
       </div>
-      <div className="flex shrink-0 grow basis-0 flex-col items-center justify-between self-stretch bg-gray-50"></div>
+      <div className="hidden shrink-0 grow basis-0 flex-col items-center justify-between self-stretch bg-gray-50 md:flex"></div>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import './index.css';
 
-import App from './App.tsx';
+import IdentitySelection from './IdentitySelection.tsx';
 import Passphrase from './Passphrase.tsx';
 import PrivateData from './PrivateData.tsx';
 import CreateAccount from './CreateAccount.tsx';
@@ -14,7 +14,7 @@ import IdentityPage from './IdentityPage.tsx';
 import ComponentsTesting from './ComponentsTesting.tsx';
 
 const router = createBrowserRouter([
-  { path: '/', element: <App /> },
+  { path: '/', element: <IdentitySelection /> },
   { path: '/passphrase', element: <Passphrase /> },
   { path: '/private-data', element: <PrivateData /> },
   { path: '/create-account', element: <CreateAccount /> },

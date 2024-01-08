@@ -19,7 +19,7 @@ export default function PrivateData() {
         </main>
         <Footer />
       </div>
-      <div className="w-[960px] self-stretch bg-gray-50"></div>
+      <div className="hidden w-[960px] self-stretch bg-gray-50 md:flex"></div>
     </div>
   );
 }

@@ -6,7 +6,7 @@ import LoginPrompt from './components/onboarding/LoginPrompt';
 import { Users, Education } from 'untitledui-js';
 import Footer from './components/onboarding/Footer';
 
-export default function App() {
+export default function IdentitySelection() {
   return (
     <div className="flex h-screen flex-shrink-0 flex-grow basis-0 flex-col items-center justify-between self-stretch overflow-hidden bg-white text-gray-900">
       <Header />

@@ -21,7 +21,10 @@ const IdentityRadioGroup: React.FC<IdentityRadioGroupProps> = ({
 }) => {
   return (
     <RadioGroup.Root
-      className={cn('flex items-start justify-center gap-[24px]', className)}
+      className={cn(
+        'flex flex-col items-start justify-center gap-[24px] md:flex-row',
+        className,
+      )}
     >
       {variants.map(({ type, title, description, Icon }, index) => (
         <RadioGroup.Item
