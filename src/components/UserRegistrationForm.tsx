@@ -10,6 +10,7 @@ import {
   Alerts,
   Education,
 } from 'untitledui-js';
+import { Link } from 'react-router-dom';
 
 import Button from './button';
 import {
@@ -48,6 +49,8 @@ const FormSchema = z.object({
     message: 'Please enter your passport number.',
   }),
 });
+
+export type UserRegistrationFormSchemaType = z.infer<typeof FormSchema>;
 
 const formFields = [
   {
@@ -109,7 +112,7 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
   withLabels,
   withErrors,
 }) => {
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<UserRegistrationFormSchemaType>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       fullName: '',
@@ -124,7 +127,7 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
     mode: 'onBlur',
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  function onSubmit(data: UserRegistrationFormSchemaType) {
     console.log(data);
   }
 
@@ -142,7 +145,7 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
             key={index}
             control={form.control}
             // FIXME: There is probably a way to do this without the type assertion
-            name={fieldData.name as keyof z.infer<typeof FormSchema>}
+            name={fieldData.name as keyof UserRegistrationFormSchemaType}
             render={({ field }) => (
               <FormItem className="flex flex-col gap-[6px]">
                 {withLabels && <FormLabel>{fieldData.label}</FormLabel>}
@@ -163,15 +166,20 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
           />
         ))}
         <div className="flex flex-col items-start gap-[16px] self-stretch">
-          {/* TODO: What did asChild do? */}
-          <Button
-            type="submit"
-            size="lg"
-            className="w-full"
-            disabled={!form.formState.isDirty || !form.formState.isValid}
+          {/* FIXME: Fix hardcoded width and having to use has-[:disabled]:*/}
+          <Link
+            to="/create-account"
+            className="has-[:disabled]:pointer-events-none"
           >
-            <a href="/create-account">Secure my data</a>
-          </Button>
+            <Button
+              type="submit"
+              size="lg"
+              className="w-[360px]"
+              disabled={!form.formState.isDirty || !form.formState.isValid}
+            >
+              Secure my data
+            </Button>
+          </Link>
         </div>
       </form>
     </Form>

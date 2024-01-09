@@ -13,14 +13,17 @@ export interface IdentityRadioGroupProps {
     description: string;
     Icon: React.ComponentType<SVGComponentProps>;
   }[];
+  onValueChange?: (value: string) => void;
 }
 
 const IdentityRadioGroup: React.FC<IdentityRadioGroupProps> = ({
   className,
   variants,
+  onValueChange,
 }) => {
   return (
     <RadioGroup.Root
+      onValueChange={onValueChange}
       className={cn(
         'flex flex-col items-start justify-center gap-[24px] md:flex-row',
         className,

@@ -1,9 +1,11 @@
+import { General } from 'untitledui-js';
+import { Link } from 'react-router-dom';
+
 import Header from './components/onboarding/Header';
 import Footer from './components/onboarding/Footer';
 import TextAndSupportingText from './components/onboarding/TextAndSupportingText';
 import Checkbox from './components/checkbox';
 import Button from './components/button';
-import { General } from 'untitledui-js';
 
 export default function LoginWithoutPasskey() {
   return (
@@ -28,12 +30,16 @@ export default function LoginWithoutPasskey() {
                     Encrypt and save it locally
                   </label>
                 </div>
-                <Button asChild size="lg" className="w-full">
-                  <a href="/identity-page">
+                {/* FIXME: Fix hardcoded width and having to use has-[:disabled]:*/}
+                <Link
+                  to="/identity-page"
+                  className="has-[:disabled]:pointer-events-none"
+                >
+                  <Button size="lg" className="w-[360px]">
                     <General.Copy01 className="stroke-current" size="20" />
                     Paste and login
-                  </a>
-                </Button>
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>

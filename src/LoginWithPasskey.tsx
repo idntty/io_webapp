@@ -1,8 +1,10 @@
+import { Security, General } from 'untitledui-js';
+import { Link } from 'react-router-dom';
+
 import Button from './components/button';
 import Footer from './components/onboarding/Footer';
 import Header from './components/onboarding/Header';
 import TextAndSupportingText from './components/onboarding/TextAndSupportingText';
-import { Security, General } from 'untitledui-js';
 
 export default function LoginWithPasskey() {
   return (
@@ -16,12 +18,16 @@ export default function LoginWithPasskey() {
               supportingText="Sign in effortlessly to reclaim control of your digital identity with private key, encrypted in local storage. Your secure space awaits."
             />
             <div className="flex flex-col items-start gap-[16px] self-stretch">
-              <Button asChild size="lg" className="w-full">
-                <a href="/identity-page">
+              {/* FIXME: Fix hardcoded width and having to use has-[:disabled]:*/}
+              <Link
+                to="/identity-page"
+                className="has-[:disabled]:pointer-events-none"
+              >
+                <Button size="lg" className="w-[360px]">
                   <Security.Shield01 className="stroke-current" size="20" />
                   Seamless Re-entry
-                </a>
-              </Button>
+                </Button>
+              </Link>
               {/* TODO: Maybe extract as a Divider component? */}
               <div className="flex items-center gap-[8px] self-stretch">
                 <div className="h-[1px] flex-shrink-0 flex-grow basis-0 bg-gray-200" />
@@ -30,17 +36,20 @@ export default function LoginWithPasskey() {
                 </div>
                 <div className="h-[1px] flex-shrink-0 flex-grow basis-0 bg-gray-200" />
               </div>
-              <Button
-                asChild
-                size="lg"
-                variant="secondary-color"
-                className="w-full"
+              {/* FIXME: Fix hardcoded width and having to use has-[:disabled]:*/}
+              <Link
+                to="/identity-page"
+                className="has-[:disabled]:pointer-events-none"
               >
-                <a href="/identity-page">
+                <Button
+                  size="lg"
+                  variant="secondary-color"
+                  className="w-[360px]"
+                >
                   <General.Copy01 className="stroke-current" size="20" />
                   Paste and login
-                </a>
-              </Button>
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

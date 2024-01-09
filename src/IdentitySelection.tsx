@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+
 import IdentityRadioGroup from './components/IdentityRadioGroup';
 import TextAndSupportingText from './components/onboarding/TextAndSupportingText';
 import Button from './components/button';
@@ -7,6 +10,8 @@ import { Users, Education } from 'untitledui-js';
 import Footer from './components/onboarding/Footer';
 
 export default function IdentitySelection() {
+  const [isIdentitySelected, setIsIdentitySelected] = useState(false);
+
   return (
     <div className="flex h-screen flex-shrink-0 flex-grow basis-0 flex-col items-center justify-between self-stretch overflow-hidden bg-white text-gray-900">
       <Header />
@@ -19,6 +24,7 @@ export default function IdentitySelection() {
           />
           <div className="flex flex-col items-center justify-start gap-[24px]">
             <IdentityRadioGroup
+              onValueChange={(_) => setIsIdentitySelected(true)}
               variants={[
                 {
                   type: 'personal',
@@ -36,10 +42,19 @@ export default function IdentitySelection() {
                 },
               ]}
             />
-            {/* FIXME: Fix hardcoded width */}
-            <Button asChild size="lg" className="w-[360px]">
-              <a href="/passphrase">Continue</a>
-            </Button>
+            {/* FIXME: Fix hardcoded width and having to use has-[:disabled]:*/}
+            <Link
+              to="/passphrase"
+              className="has-[:disabled]:pointer-events-none"
+            >
+              <Button
+                size="lg"
+                className="w-[360px]"
+                disabled={!isIdentitySelected}
+              >
+                Continue
+              </Button>
+            </Link>
           </div>
           <LoginPrompt />
         </div>

@@ -1,7 +1,9 @@
+import { Arrow, General } from 'untitledui-js';
+import { Link } from 'react-router-dom';
+
 import Header from './components/onboarding/Header';
 import TextAndSupportingText from './components/onboarding/TextAndSupportingText';
 import Badge from './components/badge';
-import { Arrow, General } from 'untitledui-js';
 import Button from './components/button';
 import Checkbox from './components/checkbox';
 import Footer from './components/onboarding/Footer';
@@ -81,10 +83,15 @@ export default function Passphrase() {
                     Download
                   </a>
                 </div>
-                {/* FIXME: Fix hardcoded width */}
-                <Button asChild size="lg" className="w-[360px]">
-                  <a href="/private-data">Define my digital self</a>
-                </Button>
+                {/* FIXME: Fix hardcoded width and having to use has-[:disabled]:*/}
+                <Link
+                  to="/private-data"
+                  className="has-[:disabled]:pointer-events-none"
+                >
+                  <Button size="lg" className="w-[360px]">
+                    Define my digital self
+                  </Button>
+                </Link>
               </div>
             </div>
             <LoginPrompt />
