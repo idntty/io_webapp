@@ -14,7 +14,7 @@ export interface OnboardingState {
   setPrivateKey: (privateKey: Buffer) => void;
   setPublicKey: (publicKey: Buffer) => void;
   setWalletAddress: (walletAddress: Buffer) => void;
-  setFormData: (formData: UserRegistrationFormSchemaType) => void;
+  setPrivateData: (privateData: UserRegistrationFormSchemaType) => void;
 }
 
 export const useOnboardingStore = create<OnboardingState>()((set) => ({
@@ -29,5 +29,5 @@ export const useOnboardingStore = create<OnboardingState>()((set) => ({
   setPrivateKey: (privateKey) => set({ privateKey }),
   setPublicKey: (publicKey) => set({ publicKey }),
   setWalletAddress: (walletAddress) => set({ walletAddress }),
-  setFormData: (formData) => set({ privateData: formData }),
+  setPrivateData: (privateData) => set({ privateData }),
 }));

@@ -10,7 +10,7 @@ import {
   Alerts,
   Education,
 } from 'untitledui-js';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import Button from './button';
 import {
@@ -22,6 +22,8 @@ import {
   FormMessage,
 } from './form';
 import Input from './input';
+
+import { useOnboardingStore } from '../stores/onboardingStore';
 
 const FormSchema = z.object({
   fullName: z.string().min(1, {
@@ -112,6 +114,8 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
   withLabels,
   withErrors,
 }) => {
+  const navigate = useNavigate();
+
   const form = useForm<UserRegistrationFormSchemaType>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -127,9 +131,12 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
     mode: 'onBlur',
   });
 
-  function onSubmit(data: UserRegistrationFormSchemaType) {
-    console.log(data);
-  }
+  const setPrivateData = useOnboardingStore((state) => state.setPrivateData);
+
+  const onSubmit = (data: UserRegistrationFormSchemaType) => {
+    setPrivateData(data);
+    navigate('/create-account');
+  };
 
   return (
     <Form {...form}>
@@ -166,20 +173,15 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
           />
         ))}
         <div className="flex flex-col items-start gap-[16px] self-stretch">
-          {/* FIXME: Fix hardcoded width and having to use has-[:disabled]:*/}
-          <Link
-            to="/create-account"
-            className="has-[:disabled]:pointer-events-none"
+          {/* FIXME: Fix hardcoded width*/}
+          <Button
+            type="submit"
+            size="lg"
+            className="w-[360px]"
+            disabled={!form.formState.isDirty || !form.formState.isValid}
           >
-            <Button
-              type="submit"
-              size="lg"
-              className="w-[360px]"
-              disabled={!form.formState.isDirty || !form.formState.isValid}
-            >
-              Secure my data
-            </Button>
-          </Link>
+            Secure my data
+          </Button>
         </div>
       </form>
     </Form>
