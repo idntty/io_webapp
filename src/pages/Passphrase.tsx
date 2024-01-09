@@ -1,33 +1,36 @@
 import { Arrow, General } from 'untitledui-js';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import Header from './components/onboarding/Header';
-import TextAndSupportingText from './components/onboarding/TextAndSupportingText';
-import Badge from './components/badge';
-import Button from './components/button';
-import Checkbox from './components/checkbox';
-import Footer from './components/onboarding/Footer';
-import LoginPrompt from './components/onboarding/LoginPrompt';
+import Header from '../components/onboarding/Header';
+import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
+import Badge from '../components/badge';
+import Button from '../components/button';
+import Checkbox from '../components/checkbox';
+import Footer from '../components/onboarding/Footer';
+import LoginPrompt from '../components/onboarding/LoginPrompt';
+import { useOnboardingStore } from '../stores/onboardingStore';
+import { generatePassphrase } from '../lib/crypto';
 
 export default function Passphrase() {
-  const passphraseWords = [
-    'sniff',
-    'trap',
-    'frog',
-    'camera',
-    'lamp',
-    'same',
-    'trap',
-    'biology',
-    'nephew',
-    'office',
-    'snap',
-    'vendor',
-  ];
-  const actionIcons = [Arrow.RefreshCW02, General.Copy01, General.Edit05];
-
+  const passphrase = useOnboardingStore((state) => state.passphrase);
+  const setPassphrase = useOnboardingStore((state) => state.setPassphrase);
   const [isPassphraseSaved, setIsPassphraseSaved] = useState(false);
+
+  useEffect(() => {
+    setPassphrase(generatePassphrase().split(' '));
+  }, [setPassphrase]);
+
+  const handleCopyClick = () => {
+    void navigator.clipboard.writeText(passphrase.join(' ')).then(
+      () => {
+        console.log('Copied the passphrase to clipboard');
+      },
+      (err) => {
+        console.error('Could not copy the passphrase to clipboard: ', err);
+      },
+    );
+  };
 
   return (
     <div className="box-border flex h-screen w-screen flex-row items-center self-stretch overflow-hidden bg-white text-base text-black">
@@ -44,21 +47,31 @@ export default function Passphrase() {
               {/* TODO: Maybe extract as a Divider component? */}
               <div className="h-[1px] self-stretch bg-gray-200" />
               <div className="flex flex-wrap content-center items-center justify-center gap-[20px] self-stretch">
-                {passphraseWords.map((word, index) => (
+                {passphrase.map((word, index) => (
                   <Badge key={index}>{word}</Badge>
                 ))}
               </div>
               <div className="flex items-center justify-center gap-[16px] self-stretch">
-                {actionIcons.map((Icon, index) => (
-                  <Button
-                    key={index}
-                    size="lg"
-                    variant="secondary-gray"
-                    shape="square"
-                  >
-                    <Icon className="stroke-gray-700" />
-                  </Button>
-                ))}
+                <Button
+                  size="lg"
+                  variant="secondary-gray"
+                  shape="square"
+                  onClick={() => setPassphrase(generatePassphrase().split(' '))}
+                >
+                  <Arrow.RefreshCW02 className="stroke-gray-700" />
+                </Button>
+                <Button
+                  size="lg"
+                  variant="secondary-gray"
+                  shape="square"
+                  // TODO: Add some kind of toast to indicate that the passphrase was copied or not
+                  onClick={handleCopyClick}
+                >
+                  <General.Copy01 className="stroke-gray-700" />
+                </Button>
+                <Button size="lg" variant="secondary-gray" shape="square">
+                  <General.Edit05 className="stroke-gray-700" />
+                </Button>
               </div>
               <div className="flex flex-col items-start gap-[16px] self-stretch">
                 {/* TODO: Maybe extract as a Divider component? */}

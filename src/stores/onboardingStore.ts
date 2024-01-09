@@ -3,7 +3,7 @@ import { UserRegistrationFormSchemaType } from '../components/UserRegistrationFo
 
 export interface OnboardingState {
   identity?: 'personal' | 'authority';
-  passphrase?: string[];
+  passphrase: string[];
   formData?: UserRegistrationFormSchemaType;
 
   setIdentity: (identity: 'personal' | 'authority') => void;
@@ -13,7 +13,7 @@ export interface OnboardingState {
 
 export const useOnboardingStore = create<OnboardingState>()((set) => ({
   identity: undefined,
-  passphrase: undefined,
+  passphrase: [],
   formData: undefined,
   setIdentity: (identity) => set({ identity }),
   setPassphrase: (passphrase) => set({ passphrase }),

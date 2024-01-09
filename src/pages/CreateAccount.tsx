@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
 import { Security } from 'untitledui-js';
 
-import Header from './components/onboarding/Header';
-import Footer from './components/onboarding/Footer';
-import TextAndSupportingText from './components/onboarding/TextAndSupportingText';
-import Button from './components/button';
+import Header from '../components/onboarding/Header';
+import Footer from '../components/onboarding/Footer';
+import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
+import Button from '../components/button';
 
 export default function CreateAccount() {
   return (

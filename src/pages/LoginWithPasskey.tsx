@@ -1,10 +1,10 @@
 import { Security, General } from 'untitledui-js';
 import { Link } from 'react-router-dom';
 
-import Button from './components/button';
-import Footer from './components/onboarding/Footer';
-import Header from './components/onboarding/Header';
-import TextAndSupportingText from './components/onboarding/TextAndSupportingText';
+import Button from '../components/button';
+import Footer from '../components/onboarding/Footer';
+import Header from '../components/onboarding/Header';
+import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
 
 export default function LoginWithPasskey() {
   return (

@@ -1,11 +1,11 @@
 import { General } from 'untitledui-js';
 import { Link } from 'react-router-dom';
 
-import Header from './components/onboarding/Header';
-import Footer from './components/onboarding/Footer';
-import TextAndSupportingText from './components/onboarding/TextAndSupportingText';
-import Checkbox from './components/checkbox';
-import Button from './components/button';
+import Header from '../components/onboarding/Header';
+import Footer from '../components/onboarding/Footer';
+import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
+import Checkbox from '../components/checkbox';
+import Button from '../components/button';
 
 export default function LoginWithoutPasskey() {
   return (

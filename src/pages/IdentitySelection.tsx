@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import IdentityRadioGroup from './components/IdentityRadioGroup';
-import TextAndSupportingText from './components/onboarding/TextAndSupportingText';
-import Button from './components/button';
-import Header from './components/onboarding/Header';
-import LoginPrompt from './components/onboarding/LoginPrompt';
+import IdentityRadioGroup from '../components/IdentityRadioGroup';
+import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
+import Button from '../components/button';
+import Header from '../components/onboarding/Header';
+import LoginPrompt from '../components/onboarding/LoginPrompt';
 import { Users, Education } from 'untitledui-js';
-import Footer from './components/onboarding/Footer';
+import Footer from '../components/onboarding/Footer';
+import { useOnboardingStore } from '../stores/onboardingStore';
 
 export default function IdentitySelection() {
   const [isIdentitySelected, setIsIdentitySelected] = useState(false);
+  const setIdentity = useOnboardingStore((state) => state.setIdentity);
 
   return (
     <div className="flex h-screen flex-shrink-0 flex-grow basis-0 flex-col items-center justify-between self-stretch overflow-hidden bg-white text-gray-900">
@@ -24,7 +26,10 @@ export default function IdentitySelection() {
           />
           <div className="flex flex-col items-center justify-start gap-[24px]">
             <IdentityRadioGroup
-              onValueChange={(_) => setIsIdentitySelected(true)}
+              onValueChange={(value) => {
+                setIsIdentitySelected(true);
+                setIdentity(value as 'personal' | 'authority');
+              }}
               variants={[
                 {
                   type: 'personal',
