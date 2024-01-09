@@ -5,15 +5,14 @@ import { type SVGComponentProps, General } from 'untitledui-js';
 
 import { cn } from '../lib/utils';
 
-export interface IdentityRadioGroupProps {
-  className?: string;
+export interface IdentityRadioGroupProps
+  extends React.ComponentPropsWithoutRef<typeof RadioGroup.Root> {
   variants: {
     type: string;
     title: string;
     description: string;
     Icon: React.ComponentType<SVGComponentProps>;
   }[];
-  onValueChange?: (value: string) => void;
 }
 
 const IdentityRadioGroup: React.FC<IdentityRadioGroupProps> = ({

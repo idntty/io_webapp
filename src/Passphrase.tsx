@@ -1,5 +1,6 @@
 import { Arrow, General } from 'untitledui-js';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
 import Header from './components/onboarding/Header';
 import TextAndSupportingText from './components/onboarding/TextAndSupportingText';
@@ -25,6 +26,8 @@ export default function Passphrase() {
     'vendor',
   ];
   const actionIcons = [Arrow.RefreshCW02, General.Copy01, General.Edit05];
+
+  const [isPassphraseSaved, setIsPassphraseSaved] = useState(false);
 
   return (
     <div className="box-border flex h-screen w-screen flex-row items-center self-stretch overflow-hidden bg-white text-base text-black">
@@ -68,7 +71,14 @@ export default function Passphrase() {
                 </div>
                 <div className="flex items-center justify-between self-stretch">
                   <div className="flex items-center gap-[8px]">
-                    <Checkbox id="passphraseSaved" />
+                    <Checkbox
+                      id="passphraseSaved"
+                      onCheckedChange={(checked) =>
+                        setIsPassphraseSaved(
+                          checked == 'indeterminate' ? false : checked,
+                        )
+                      }
+                    />
                     <label
                       htmlFor="passphraseSaved"
                       className="text-sm font-medium text-gray-700 peer-disabled:text-gray-300"
@@ -88,7 +98,11 @@ export default function Passphrase() {
                   to="/private-data"
                   className="has-[:disabled]:pointer-events-none"
                 >
-                  <Button size="lg" className="w-[360px]">
+                  <Button
+                    size="lg"
+                    className="w-[360px]"
+                    disabled={!isPassphraseSaved}
+                  >
                     Define my digital self
                   </Button>
                 </Link>
