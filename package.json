@@ -31,7 +31,8 @@
     "untitledui-js": "^2.0.74",
     "validator": "^13.11.0",
     "zod": "^3.22.4",
-    "zustand": "^4.4.7"
+    "zustand": "^4.4.7",
+    "buffer": "github:feross/buffer"
   },
   "devDependencies": {
     "@swc/core": "^1.3.101",

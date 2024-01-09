@@ -1,6 +1,6 @@
 import { Arrow, General } from 'untitledui-js';
 import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import Header from '../components/onboarding/Header';
 import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
@@ -10,19 +10,41 @@ import Checkbox from '../components/checkbox';
 import Footer from '../components/onboarding/Footer';
 import LoginPrompt from '../components/onboarding/LoginPrompt';
 import { useOnboardingStore } from '../stores/onboardingStore';
-import { generatePassphrase } from '../lib/crypto';
+import { generatePassphraseAndKeys } from '../lib/crypto';
+import { createPDF } from '../lib/utils';
 
 export default function Passphrase() {
   const passphrase = useOnboardingStore((state) => state.passphrase);
   const setPassphrase = useOnboardingStore((state) => state.setPassphrase);
+
+  const setPrivateKey = useOnboardingStore((state) => state.setPrivateKey);
+
+  const publicKey = useOnboardingStore((state) => state.publicKey);
+  const setPublicKey = useOnboardingStore((state) => state.setPublicKey);
+
+  const walletAddress = useOnboardingStore((state) => state.walletAddress);
+  const setWalletAddress = useOnboardingStore(
+    (state) => state.setWalletAddress,
+  );
+
   const [isPassphraseSaved, setIsPassphraseSaved] = useState(false);
 
-  useEffect(() => {
-    setPassphrase(generatePassphrase().split(' '));
-  }, [setPassphrase]);
+  const handleGenerate = useCallback(() => {
+    generatePassphraseAndKeys().then(
+      ({ passphrase, privateKey, publicKey, walletAddress }) => {
+        setPassphrase(passphrase.split(' '));
+        setPrivateKey(privateKey);
+        setPublicKey(publicKey);
+        setWalletAddress(walletAddress);
+      },
+      (err) => {
+        console.error('Could not generate keys from passphrase: ', err);
+      },
+    );
+  }, [setPassphrase, setPrivateKey, setPublicKey, setWalletAddress]);
 
   const handleCopyClick = () => {
-    void navigator.clipboard.writeText(passphrase.join(' ')).then(
+    navigator.clipboard.writeText(passphrase.join(' ')).then(
       () => {
         console.log('Copied the passphrase to clipboard');
       },
@@ -31,6 +53,25 @@ export default function Passphrase() {
       },
     );
   };
+
+  const handleDownloadClick = () => {
+    if (!passphrase || !publicKey || !walletAddress) {
+      console.error("Can't generate a PDF: missing data");
+      return;
+    }
+    createPDF(passphrase, publicKey, walletAddress).then(
+      () => {
+        console.log('Generated a PDF');
+      },
+      (err) => {
+        console.error('Could not generate a PDF: ', err);
+      },
+    );
+  };
+
+  useEffect(() => {
+    handleGenerate();
+  }, [handleGenerate]);
 
   return (
     <div className="box-border flex h-screen w-screen flex-row items-center self-stretch overflow-hidden bg-white text-base text-black">
@@ -56,7 +97,7 @@ export default function Passphrase() {
                   size="lg"
                   variant="secondary-gray"
                   shape="square"
-                  onClick={() => setPassphrase(generatePassphrase().split(' '))}
+                  onClick={handleGenerate}
                 >
                   <Arrow.RefreshCW02 className="stroke-gray-700" />
                 </Button>
@@ -99,12 +140,12 @@ export default function Passphrase() {
                       I have saved my passphrase
                     </label>
                   </div>
-                  <a
+                  <button
                     className="text-sm font-semibold text-brand-700 no-underline"
-                    href="google.com"
+                    onClick={handleDownloadClick}
                   >
                     Download
-                  </a>
+                  </button>
                 </div>
                 {/* FIXME: Fix hardcoded width and having to use has-[:disabled]:*/}
                 <Link
