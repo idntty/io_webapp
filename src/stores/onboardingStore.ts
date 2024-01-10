@@ -9,6 +9,10 @@ export interface OnboardingState {
   walletAddress?: Buffer;
   privateData?: UserRegistrationFormSchemaType;
 
+  // FIXME: Remove later
+  encryptedMessage?: string;
+  setEncryptedMessage: (encryptedMessage: string) => void;
+
   setIdentity: (identity: 'personal' | 'authority') => void;
   setPassphrase: (passphrase: string[]) => void;
   setPrivateKey: (privateKey: Buffer) => void;
@@ -24,6 +28,11 @@ export const useOnboardingStore = create<OnboardingState>()((set) => ({
   publicKey: undefined,
   walletAddress: undefined,
   privateData: undefined,
+
+  // FIXME: Remove later
+  encryptedMessage: undefined,
+  setEncryptedMessage: (encryptedMessage) => set({ encryptedMessage }),
+
   setIdentity: (identity) => set({ identity }),
   setPassphrase: (passphrase) => set({ passphrase }),
   setPrivateKey: (privateKey) => set({ privateKey }),

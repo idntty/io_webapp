@@ -1,10 +1,13 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-
 import { text, image, barcodes } from '@pdfme/schemas';
 import { generate } from '@pdfme/generator';
 import type { Font } from '@pdfme/common';
 import { template } from '../lib/pdfTemplate';
+import axios from 'axios';
+import { Buffer } from 'buffer';
+
+const PORT = 5001;
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -52,4 +55,21 @@ export const createPDF = async (
 
   const blob = new Blob([pdf], { type: 'application/pdf' });
   window.open(URL.createObjectURL(blob));
+};
+
+interface SendMessageToServerResponse {
+  success: boolean;
+}
+
+export const sendMessageToServer = async (
+  encryptedMessage: Uint8Array,
+  nonce: Uint8Array,
+) => {
+  return axios.post<SendMessageToServerResponse>(
+    `http://localhost:${PORT}/message/send`,
+    {
+      message: Buffer.from(encryptedMessage).toString('hex'),
+      nonce: Buffer.from(nonce).toString('hex'),
+    },
+  );
 };
