@@ -8,6 +8,7 @@ export interface OnboardingState {
   publicKey?: Buffer;
   walletAddress?: Buffer;
   privateData?: UserRegistrationFormSchemaType;
+  isAuthenticated: boolean;
 
   // FIXME: Remove later
   encryptedMessage?: string;
@@ -19,6 +20,7 @@ export interface OnboardingState {
   setPublicKey: (publicKey: Buffer) => void;
   setWalletAddress: (walletAddress: Buffer) => void;
   setPrivateData: (privateData: UserRegistrationFormSchemaType) => void;
+  setIsAuthenticated: (isAuthenticated: boolean) => void;
 }
 
 export const useOnboardingStore = create<OnboardingState>()((set) => ({
@@ -28,6 +30,7 @@ export const useOnboardingStore = create<OnboardingState>()((set) => ({
   publicKey: undefined,
   walletAddress: undefined,
   privateData: undefined,
+  isAuthenticated: false,
 
   // FIXME: Remove later
   encryptedMessage: undefined,
@@ -39,4 +42,5 @@ export const useOnboardingStore = create<OnboardingState>()((set) => ({
   setPublicKey: (publicKey) => set({ publicKey }),
   setWalletAddress: (walletAddress) => set({ walletAddress }),
   setPrivateData: (privateData) => set({ privateData }),
+  setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
 }));

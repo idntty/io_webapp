@@ -10,6 +10,8 @@ import {
   PublicKeyCredentialRequestOptionsJSON,
 } from '@simplewebauthn/typescript-types';
 
+const HOST = '18.193.116.18';
+// const HOST = 'localhost';
 const PORT = 5001;
 
 export interface VerificationResponse {
@@ -21,7 +23,7 @@ export const registerWithPasskey = async (publicKey: Buffer) => {
   let registrationResponse: RegistrationResponseJSON;
   try {
     const response = await axios.get<PublicKeyCredentialCreationOptionsJSON>(
-      `http://localhost:${PORT}/register`,
+      `http://${HOST}:${PORT}/register`,
       {
         params: { userID: publicKey.toString('hex') },
       },
@@ -37,7 +39,7 @@ export const registerWithPasskey = async (publicKey: Buffer) => {
   }
 
   const verificationResponse = await axios.post<VerificationResponse>(
-    `http://localhost:${PORT}/register/verify`,
+    `http://${HOST}:${PORT}/register/verify`,
     registrationResponse,
   );
   console.log('Got registration verification response:', verificationResponse);
@@ -48,7 +50,7 @@ export const loginWithPasskey = async () => {
   let authenticationResponse: AuthenticationResponseJSON;
   try {
     const response = await axios.get<PublicKeyCredentialRequestOptionsJSON>(
-      `http://localhost:${PORT}/login`,
+      `http://${HOST}:${PORT}/login`,
     );
     const options = response.data;
     console.log('Got authentication options:', options);
@@ -61,7 +63,7 @@ export const loginWithPasskey = async () => {
   }
 
   const verificationResponse = await axios.post<VerificationResponse>(
-    `http://localhost:${PORT}/login/verify`,
+    `http://${HOST}:${PORT}/login/verify`,
     authenticationResponse,
   );
   console.log(

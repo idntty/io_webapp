@@ -1,12 +1,101 @@
 import { Security, General } from 'untitledui-js';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '../components/button';
 import Footer from '../components/onboarding/Footer';
 import Header from '../components/onboarding/Header';
 import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
+import { UserRegistrationFormSchemaType } from '../components/UserRegistrationForm';
+import {
+  generateKeysAndAdress,
+  loadMnemonic,
+  convertKeys,
+  decryptMessage,
+} from '../lib/crypto';
+import { useOnboardingStore } from '../stores/onboardingStore';
+import { loginWithPasskey } from '../lib/passkeys';
+import { getMessageFromServer } from '../lib/utils';
 
 export default function LoginWithPasskey() {
+  const navigate = useNavigate();
+
+  const setPassphrase = useOnboardingStore((state) => state.setPassphrase);
+  const setPrivateKey = useOnboardingStore((state) => state.setPrivateKey);
+  const setPublicKey = useOnboardingStore((state) => state.setPublicKey);
+  const setWalletAddress = useOnboardingStore(
+    (state) => state.setWalletAddress,
+  );
+  const setPrivateData = useOnboardingStore((state) => state.setPrivateData);
+
+  const loginWithPassphrase = async () => {
+    try {
+      const passphrase = await navigator.clipboard.readText();
+      if (passphrase.split(' ').length !== 12) {
+        throw new Error('Passphrase is not 12 words long');
+      }
+      setPassphrase(passphrase.split(' '));
+      console.log('Pasted the passphrase from clipboard');
+
+      const { privateKey, publicKey, walletAddress } =
+        await generateKeysAndAdress(passphrase);
+      setPrivateKey(privateKey);
+      setPublicKey(publicKey);
+      setWalletAddress(walletAddress);
+
+      navigate('/identity-page');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // FIXME: Likely bad
+  const handleLoginWithPassphrase = () => {
+    loginWithPassphrase().catch((error) => {
+      console.error(error);
+    });
+  };
+
+  const login = async () => {
+    try {
+      const response = await loginWithPasskey();
+      const webAuthnPublicKey = response.webAuthnPublicKey;
+      if (!webAuthnPublicKey) {
+        throw new Error('Did not get webAuthnPublicKey from server');
+      }
+      const { phrase, privateKey, publicKey, walletAddress } =
+        await loadMnemonic(webAuthnPublicKey);
+      console.log(phrase.split(' '));
+      setPassphrase(phrase.split(' '));
+      setPrivateKey(privateKey);
+      setPublicKey(publicKey);
+      setWalletAddress(walletAddress);
+
+      const { encryptedMessage, nonce } = await getMessageFromServer();
+      const { convertedPrivateKey } = await convertKeys(publicKey, privateKey);
+      const decryptedMessage = await decryptMessage(
+        encryptedMessage,
+        nonce,
+        convertedPrivateKey,
+      );
+      const privateData = JSON.parse(
+        atob(decryptedMessage),
+      ) as UserRegistrationFormSchemaType;
+      setPrivateData(privateData);
+      console.log('privateData', privateData);
+
+      navigate('/identity-page');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // FIXME: Likely bad
+  const handleLogin = () => {
+    login().catch((error) => {
+      console.error(error);
+    });
+  };
+
   return (
     <div className="box-border flex h-screen w-screen flex-row overflow-hidden bg-white text-base">
       <div className="flex shrink-0 grow basis-0 flex-col items-center justify-between self-stretch">
@@ -19,15 +108,14 @@ export default function LoginWithPasskey() {
             />
             <div className="flex flex-col items-start gap-[16px] self-stretch">
               {/* FIXME: Fix hardcoded width and having to use has-[:disabled]:*/}
-              <Link
-                to="/identity-page"
-                className="has-[:disabled]:pointer-events-none"
+              <Button
+                size="lg"
+                className="w-[360px] has-[:disabled]:pointer-events-none"
+                onClick={handleLogin}
               >
-                <Button size="lg" className="w-[360px]">
-                  <Security.Shield01 className="stroke-current" size="20" />
-                  Seamless Re-entry
-                </Button>
-              </Link>
+                <Security.Shield01 className="stroke-current" size="20" />
+                Seamless Re-entry
+              </Button>
               {/* TODO: Maybe extract as a Divider component? */}
               <div className="flex items-center gap-[8px] self-stretch">
                 <div className="h-[1px] flex-shrink-0 flex-grow basis-0 bg-gray-200" />
@@ -37,19 +125,15 @@ export default function LoginWithPasskey() {
                 <div className="h-[1px] flex-shrink-0 flex-grow basis-0 bg-gray-200" />
               </div>
               {/* FIXME: Fix hardcoded width and having to use has-[:disabled]:*/}
-              <Link
-                to="/identity-page"
-                className="has-[:disabled]:pointer-events-none"
+              <Button
+                size="lg"
+                variant="secondary-color"
+                className="w-[360px] has-[:disabled]:pointer-events-none"
+                onClick={handleLoginWithPassphrase}
               >
-                <Button
-                  size="lg"
-                  variant="secondary-color"
-                  className="w-[360px]"
-                >
-                  <General.Copy01 className="stroke-current" size="20" />
-                  Paste and login
-                </Button>
-              </Link>
+                <General.Copy01 className="stroke-current" size="20" />
+                Paste and login
+              </Button>
             </div>
           </div>
         </div>

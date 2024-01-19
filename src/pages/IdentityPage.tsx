@@ -12,10 +12,14 @@ export default function IdentityPage() {
         Encrypted mnemonic:{' '}
         <b>{window.localStorage.getItem('encryptedMnemonic')}</b>
       </p>
-      <h2 className="p-1 text-xl font-bold">Sent to server</h2>
-      <p className="break-all p-1">
-        Encrypted message: <b>{encryptedMessage}</b> (also sent nonce)
-      </p>
+      {encryptedMessage && (
+        <>
+          <h2 className="p-1 text-xl font-bold">Sent to server</h2>
+          <p className="break-all p-1">
+            Encrypted message: <b>{encryptedMessage}</b> (also sent nonce)
+          </p>
+        </>
+      )}
     </div>
   );
 }

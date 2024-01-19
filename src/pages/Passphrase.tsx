@@ -54,6 +54,23 @@ export default function Passphrase() {
     );
   };
 
+  const handlePasteClick = () => {
+    navigator.clipboard.readText().then(
+      (text) => {
+        const words = text.split(' ');
+        if (words.length !== 12) {
+          console.error('Invalid passphrase');
+          return;
+        }
+        setPassphrase(words);
+        console.log('Pasted the passphrase from clipboard');
+      },
+      (err) => {
+        console.error('Could not paste the passphrase from clipboard: ', err);
+      },
+    );
+  };
+
   const handleDownloadClick = () => {
     if (!passphrase || !publicKey || !walletAddress) {
       console.error("Can't generate a PDF: missing data");
@@ -110,7 +127,12 @@ export default function Passphrase() {
                 >
                   <General.Copy01 className="stroke-gray-700" />
                 </Button>
-                <Button size="lg" variant="secondary-gray" shape="square">
+                <Button
+                  size="lg"
+                  variant="secondary-gray"
+                  shape="square"
+                  onClick={handlePasteClick}
+                >
                   <General.Edit05 className="stroke-gray-700" />
                 </Button>
               </div>

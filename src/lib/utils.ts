@@ -7,6 +7,8 @@ import { template } from '../lib/pdfTemplate';
 import axios from 'axios';
 import { Buffer } from 'buffer';
 
+const HOST = '18.193.116.18';
+// const HOST = 'localhost';
 const PORT = 5001;
 
 export function cn(...inputs: ClassValue[]) {
@@ -66,10 +68,26 @@ export const sendMessageToServer = async (
   nonce: Uint8Array,
 ) => {
   return axios.post<SendMessageToServerResponse>(
-    `http://localhost:${PORT}/message/send`,
+    `http://${HOST}:${PORT}/message/send`,
     {
       message: Buffer.from(encryptedMessage).toString('hex'),
       nonce: Buffer.from(nonce).toString('hex'),
     },
   );
+};
+
+interface GetMessageFromServerResponse {
+  message: string;
+  nonce: string;
+}
+
+export const getMessageFromServer = async () => {
+  const response = await axios.get<GetMessageFromServerResponse>(
+    `http://${HOST}:${PORT}/message/get`,
+  );
+  const { message, nonce } = response.data;
+  return {
+    encryptedMessage: Buffer.from(message, 'hex'),
+    nonce: Buffer.from(nonce, 'hex'),
+  };
 };

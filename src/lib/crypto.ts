@@ -4,7 +4,7 @@ import { Buffer } from 'buffer';
 
 const PATH = "m/44'/134'/0'";
 
-const generateKeysAndAdress = async (phrase: string) => {
+export const generateKeysAndAdress = async (phrase: string) => {
   const privateKey: Buffer =
     await cryptography.ed.getPrivateKeyFromPhraseAndPath(phrase, PATH);
   const publicKey: Buffer =
@@ -52,6 +52,39 @@ export const saveMnemonic = async (
   window.localStorage.setItem('nonce', Buffer.from(nonce).toString('hex'));
 };
 
+export const loadMnemonic = async (webAuthnPublicKey: string) => {
+  const salt = window.localStorage.getItem('salt');
+  const encryptedMnemonic = window.localStorage.getItem('encryptedMnemonic');
+  const nonce = window.localStorage.getItem('nonce');
+  if (!salt || !encryptedMnemonic || !nonce) {
+    throw new Error('Mnemonic was not saved');
+  }
+
+  await _sodium.ready;
+  const sodium = _sodium;
+
+  const key = sodium.crypto_pwhash(
+    sodium.crypto_box_SEEDBYTES,
+    webAuthnPublicKey,
+    Buffer.from(salt, 'hex'),
+    sodium.crypto_pwhash_OPSLIMIT_INTERACTIVE,
+    sodium.crypto_pwhash_MEMLIMIT_INTERACTIVE,
+    sodium.crypto_pwhash_ALG_DEFAULT,
+  );
+
+  const mnemonic = sodium.crypto_secretbox_open_easy(
+    Buffer.from(encryptedMnemonic, 'hex'),
+    Buffer.from(nonce, 'hex'),
+    key,
+  );
+
+  const phrase = Buffer.from(mnemonic).toString('utf-8');
+  const { privateKey, publicKey, walletAddress } = await generateKeysAndAdress(
+    Buffer.from(mnemonic).toString('utf-8'),
+  );
+  return { phrase, privateKey, publicKey, walletAddress };
+};
+
 export const convertKeys = async (publicKey: Buffer, privateKey: Buffer) => {
   await _sodium.ready;
   const sodium = _sodium;
@@ -80,4 +113,21 @@ export const encryptMessage = async (
     convertedPrivateKey,
   );
   return { encryptedMessage, nonce };
+};
+
+export const decryptMessage = async (
+  encryptedMessage: Buffer,
+  nonce: Buffer,
+  convertedPrivateKey: Buffer,
+) => {
+  await _sodium.ready;
+  const sodium = _sodium;
+
+  const message = sodium.crypto_secretbox_open_easy(
+    encryptedMessage,
+    nonce,
+    convertedPrivateKey,
+  );
+
+  return Buffer.from(message).toString('utf-8');
 };
