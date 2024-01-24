@@ -45,6 +45,10 @@ export default {
           800: '#912018',
           900: '#7A271A',
         },
+        warning: {
+          100: '#FEF0C7',
+          600: '#DC6803',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
@@ -57,11 +61,13 @@ export default {
           '0px 0px 0px 4px #F2F4F7, 0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
         'error-focused':
           '0px 0px 0px 4px #FEE4E2, 0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
+        dialog:
+          '0px 8px 8px -4px rgba(16, 24, 40, 0.03), 0px 20px 24px -4px rgba(16, 24, 40, 0.08)',
       },
       aria: {
         invalid: 'invalid="true"',
       },
     },
   },
-  plugins: [],
+  plugins: [require('tailwindcss-animate')],
 };

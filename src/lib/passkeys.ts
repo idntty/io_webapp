@@ -23,7 +23,7 @@ export const registerWithPasskey = async (publicKey: Buffer) => {
   let registrationResponse: RegistrationResponseJSON;
   try {
     const response = await axios.get<PublicKeyCredentialCreationOptionsJSON>(
-      `http://${HOST}:${PORT}/register`,
+      `https://${HOST}:${PORT}/register`,
       {
         params: { userID: publicKey.toString('hex') },
       },
@@ -39,7 +39,7 @@ export const registerWithPasskey = async (publicKey: Buffer) => {
   }
 
   const verificationResponse = await axios.post<VerificationResponse>(
-    `http://${HOST}:${PORT}/register/verify`,
+    `https://${HOST}:${PORT}/register/verify`,
     registrationResponse,
   );
   console.log('Got registration verification response:', verificationResponse);
@@ -50,7 +50,7 @@ export const loginWithPasskey = async () => {
   let authenticationResponse: AuthenticationResponseJSON;
   try {
     const response = await axios.get<PublicKeyCredentialRequestOptionsJSON>(
-      `http://${HOST}:${PORT}/login`,
+      `https://${HOST}:${PORT}/login`,
     );
     const options = response.data;
     console.log('Got authentication options:', options);
@@ -63,7 +63,7 @@ export const loginWithPasskey = async () => {
   }
 
   const verificationResponse = await axios.post<VerificationResponse>(
-    `http://${HOST}:${PORT}/login/verify`,
+    `https://${HOST}:${PORT}/login/verify`,
     authenticationResponse,
   );
   console.log(

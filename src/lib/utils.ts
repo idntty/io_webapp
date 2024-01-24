@@ -68,7 +68,7 @@ export const sendMessageToServer = async (
   nonce: Uint8Array,
 ) => {
   return axios.post<SendMessageToServerResponse>(
-    `http://${HOST}:${PORT}/message/send`,
+    `https://${HOST}:${PORT}/message/send`,
     {
       message: Buffer.from(encryptedMessage).toString('hex'),
       nonce: Buffer.from(nonce).toString('hex'),
@@ -83,7 +83,7 @@ interface GetMessageFromServerResponse {
 
 export const getMessageFromServer = async () => {
   const response = await axios.get<GetMessageFromServerResponse>(
-    `http://${HOST}:${PORT}/message/get`,
+    `https://${HOST}:${PORT}/message/get`,
   );
   const { message, nonce } = response.data;
   return {

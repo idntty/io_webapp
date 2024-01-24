@@ -1,4 +1,4 @@
-import { Arrow, General } from 'untitledui-js';
+import { Arrow, General, Alerts } from 'untitledui-js';
 import { Link } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -9,6 +9,14 @@ import Button from '../components/button';
 import Checkbox from '../components/checkbox';
 import Footer from '../components/onboarding/Footer';
 import LoginPrompt from '../components/onboarding/LoginPrompt';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogTitle,
+} from '../components/alert-dialog';
+
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { generatePassphraseAndKeys } from '../lib/crypto';
 import { createPDF } from '../lib/utils';
@@ -28,6 +36,8 @@ export default function Passphrase() {
   );
 
   const [isPassphraseSaved, setIsPassphraseSaved] = useState(false);
+
+  const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
 
   const handleGenerate = useCallback(() => {
     generatePassphraseAndKeys().then(
@@ -60,6 +70,7 @@ export default function Passphrase() {
         const words = text.split(' ');
         if (words.length !== 12) {
           console.error('Invalid passphrase');
+          setIsAlertDialogOpen(true);
           return;
         }
         setPassphrase(words);
@@ -135,6 +146,34 @@ export default function Passphrase() {
                 >
                   <General.Edit05 className="stroke-gray-700" />
                 </Button>
+                <AlertDialog
+                  open={isAlertDialogOpen}
+                  onOpenChange={setIsAlertDialogOpen}
+                >
+                  <AlertDialogContent className="flex gap-[24px]">
+                    <div className="bg-warning-100 flex h-[40px] w-[40px] items-center justify-center rounded-[20px] p-[10px]">
+                      <Alerts.AlertTriangle
+                        size="20"
+                        className="stroke-warning-600 flex-shrink-0 stroke-2"
+                      />
+                    </div>
+                    <div className="flex flex-shrink-0 flex-grow basis-0 flex-col gap-[32px]">
+                      <div className="flex flex-col gap-[8px] self-stretch">
+                        <AlertDialogTitle>Invalid passphrase</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          It seems that the passphrase you tried to insert is
+                          not correct. A correct passphrase should contain 12
+                          words separated by a space.
+                        </AlertDialogDescription>
+                      </div>
+                      <div className="flex items-center justify-end gap-[12px] self-stretch">
+                        <div className="flex gap-[12px]">
+                          <AlertDialogAction>OK</AlertDialogAction>
+                        </div>
+                      </div>
+                    </div>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
               <div className="flex flex-col items-start gap-[16px] self-stretch">
                 {/* TODO: Maybe extract as a Divider component? */}
