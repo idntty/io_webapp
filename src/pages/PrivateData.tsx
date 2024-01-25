@@ -1,7 +1,7 @@
 import Header from '../components/onboarding/Header';
 import Footer from '../components/onboarding/Footer';
 import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
-import UserRegistrationForm from '../components/UserRegistrationForm';
+import UserRegistrationForm from '../components/onboarding/UserRegistrationForm';
 
 export default function PrivateData() {
   return (

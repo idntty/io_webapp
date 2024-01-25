@@ -1,11 +1,11 @@
 import { Security, General } from 'untitledui-js';
 import { useNavigate } from 'react-router-dom';
 
-import Button from '../components/button';
+import Button from '../components/button/button';
 import Footer from '../components/onboarding/Footer';
 import Header from '../components/onboarding/Header';
 import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
-import { UserRegistrationFormSchemaType } from '../components/UserRegistrationForm';
+import { UserRegistrationFormSchemaType } from '../components/onboarding/UserRegistrationForm';
 import {
   generateKeysAndAdress,
   loadMnemonic,

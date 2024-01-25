@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import IdentityRadioGroup from '../components/IdentityRadioGroup';
+import IdentityRadioGroup from '../components/onboarding/IdentityRadioGroup';
 import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
-import Button from '../components/button';
+import Button from '../components/button/button';
 import Header from '../components/onboarding/Header';
 import LoginPrompt from '../components/onboarding/LoginPrompt';
 import { Users, Education } from 'untitledui-js';

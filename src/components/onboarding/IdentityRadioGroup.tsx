@@ -3,7 +3,7 @@ import * as RadioGroup from '@radix-ui/react-radio-group';
 // import * as Label from '@radix-ui/react-label';
 import { type SVGComponentProps, General } from 'untitledui-js';
 
-import { cn } from '../lib/utils';
+import { cn } from '../../lib/utils';
 
 export interface IdentityRadioGroupProps
   extends React.ComponentPropsWithoutRef<typeof RadioGroup.Root> {

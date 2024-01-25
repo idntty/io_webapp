@@ -1,8 +1,8 @@
 import Badge from '../components/badge';
-import Button from '../components/button';
+import Button from '../components/button/button';
 import Input from '../components/input';
-import IdentityRadioGroup from '../components/IdentityRadioGroup';
-import UserRegistrationForm from '../components/UserRegistrationForm';
+import IdentityRadioGroup from '../components/onboarding/IdentityRadioGroup';
+import UserRegistrationForm from '../components/onboarding/UserRegistrationForm';
 import Checkbox from '../components/checkbox';
 
 import { Communication, Users, Education } from 'untitledui-js';

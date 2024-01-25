@@ -12,7 +12,7 @@ import {
 } from 'untitledui-js';
 import { useNavigate } from 'react-router-dom';
 
-import Button from './button';
+import Button from '../button/button';
 import {
   Form,
   FormControl,
@@ -20,10 +20,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from './form';
-import Input from './input';
+} from '../form';
+import Input from '../input';
 
-import { useOnboardingStore } from '../stores/onboardingStore';
+import { useOnboardingStore } from '../../stores/onboardingStore';
 
 const FormSchema = z.object({
   fullName: z.string().min(1, {

@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Header from '../components/onboarding/Header';
 import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
 import Badge from '../components/badge';
-import Button from '../components/button';
+import Button from '../components/button/button';
 import Checkbox from '../components/checkbox';
 import Footer from '../components/onboarding/Footer';
 import LoginPrompt from '../components/onboarding/LoginPrompt';
@@ -151,10 +151,10 @@ export default function Passphrase() {
                   onOpenChange={setIsAlertDialogOpen}
                 >
                   <AlertDialogContent className="flex gap-[24px]">
-                    <div className="bg-warning-100 flex h-[40px] w-[40px] items-center justify-center rounded-[20px] p-[10px]">
+                    <div className="flex h-[40px] w-[40px] items-center justify-center rounded-[20px] bg-warning-100 p-[10px]">
                       <Alerts.AlertTriangle
                         size="20"
-                        className="stroke-warning-600 flex-shrink-0 stroke-2"
+                        className="flex-shrink-0 stroke-warning-600 stroke-2"
                       />
                     </div>
                     <div className="flex flex-shrink-0 flex-grow basis-0 flex-col gap-[32px]">

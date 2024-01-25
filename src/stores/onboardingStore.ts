@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { UserRegistrationFormSchemaType } from '../components/UserRegistrationForm';
+import { UserRegistrationFormSchemaType } from '../components/onboarding/UserRegistrationForm';
 
 export interface OnboardingState {
   identity?: 'personal' | 'authority';

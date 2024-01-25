@@ -5,7 +5,7 @@ import { Buffer } from 'buffer';
 import Header from '../components/onboarding/Header';
 import Footer from '../components/onboarding/Footer';
 import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
-import Button from '../components/button';
+import Button from '../components/button/button';
 
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { registerWithPasskey } from '../lib/passkeys';
