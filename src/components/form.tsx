@@ -123,13 +123,19 @@ const FormMessage = React.forwardRef<
 >(({ className, children, ...props }, ref) => {
   const { error, formMessageId } = useFormField();
   const body = error ? String(error?.message) : children;
+  const textColorClassName = error ? 'text-error-500' : 'text-gray-500';
 
   if (!body) {
     return null;
   }
 
   return (
-    <p ref={ref} id={formMessageId} className={cn('', className)} {...props}>
+    <p
+      ref={ref}
+      id={formMessageId}
+      className={cn('', textColorClassName, className)}
+      {...props}
+    >
       {body}
     </p>
   );

@@ -12,6 +12,7 @@ import LoginWithPasskey from './pages/LoginWithPasskey.tsx';
 import LoginWithoutPasskey from './pages/LoginWithoutPasskey.tsx';
 import IdentityPage from './pages/IdentityPage.tsx';
 import ComponentsTesting from './pages/ComponentsTesting.tsx';
+import ShareForm from './components/identity-page/ShareForm.tsx';
 
 const router = createBrowserRouter([
   { path: '/', element: <IdentitySelection /> },
@@ -22,6 +23,14 @@ const router = createBrowserRouter([
   { path: '/login-without-passkey', element: <LoginWithoutPasskey /> },
   { path: '/identity-page', element: <IdentityPage /> },
   { path: '/components', element: <ComponentsTesting /> },
+  {
+    path: '/share-form',
+    element: (
+      <div className="flex justify-center self-stretch px-[300px] py-[20px]">
+        <ShareForm />
+      </div>
+    ),
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

@@ -165,9 +165,7 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
                 </FormControl>
                 {/* FIXME: Figma has a text-shadow if the input is focused
                 but I don't see it */}
-                {withErrors && (
-                  <FormMessage className="text-sm font-normal text-error-500" />
-                )}
+                {withErrors && <FormMessage className="text-sm font-normal" />}
               </FormItem>
             )}
           />
