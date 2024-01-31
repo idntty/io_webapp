@@ -9,7 +9,7 @@ import { Buffer } from 'buffer';
 
 const HOST = 'api.idntty.io';
 // const HOST = 'localhost';
-const PORT = 8000;
+const PORT = 443;
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
