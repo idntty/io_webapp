@@ -7,9 +7,9 @@ import { template } from '../lib/pdfTemplate';
 import axios from 'axios';
 import { Buffer } from 'buffer';
 
-const HOST = '18.193.116.18';
+const HOST = 'api.idntty.io';
 // const HOST = 'localhost';
-const PORT = 5001;
+const PORT = 8000;
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

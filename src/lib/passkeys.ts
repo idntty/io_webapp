@@ -10,9 +10,9 @@ import {
   PublicKeyCredentialRequestOptionsJSON,
 } from '@simplewebauthn/typescript-types';
 
-const HOST = '18.193.116.18';
+const HOST = 'api.idntty.io';
 // const HOST = 'localhost';
-const PORT = 5001;
+const PORT = 443;
 
 export interface VerificationResponse {
   verified: boolean;
