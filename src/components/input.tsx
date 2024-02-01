@@ -10,10 +10,11 @@ export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   Icon?: React.ComponentType<SVGComponentProps>;
+  withHelpIcon?: boolean;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, label, Icon, ...props }, ref) => {
+  ({ className, type, label, Icon, withHelpIcon, ...props }, ref) => {
     return (
       <div
         className={cn(
@@ -38,11 +39,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               {...props}
             />
           </div>
-          {props['aria-invalid'] ? (
-            <Alerts.AlertCircle size="16" className={'stroke-error-500'} />
-          ) : (
-            <General.HelpCircle size="16" className={'stroke-gray-400'} />
-          )}
+          {withHelpIcon &&
+            (props['aria-invalid'] ? (
+              <Alerts.AlertCircle size="16" className={'stroke-error-500'} />
+            ) : (
+              <General.HelpCircle size="16" className={'stroke-gray-400'} />
+            ))}
         </div>
       </div>
     );

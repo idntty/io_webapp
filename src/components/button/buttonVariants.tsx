@@ -23,6 +23,12 @@ export const buttonVariants = cva(
           'focus:shadow-gray-focused',
           'disabled:border-gray-200 disabled:text-gray-300',
         ],
+        destructive: [
+          'border-error-600 bg-error-600 text-white shadow-primary',
+          'hover:border-error-700 hover:bg-error-700',
+          'focus:shadow-error-focused',
+          'disabled:border-error-200 disabled:bg-error-200',
+        ],
       },
       size: {
         sm: 'text-sm',

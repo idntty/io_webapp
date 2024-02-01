@@ -88,12 +88,12 @@ export default function CreateAccount() {
                 <Security.Shield01 className="stroke-current" size="20" />
                 Create my account
               </Button>
-              {/* TODO: Maybe extract as a Divider component? */}
               <div className="flex items-center gap-[8px] self-stretch">
                 <div className="h-[1px] flex-shrink-0 flex-grow basis-0 bg-gray-200" />
                 <div className="text-center text-sm font-normal text-gray-500">
                   Will enter the passphrase every time
                 </div>
+                {/* TODO: Maybe extract as a Divider component? */}
                 <div className="h-[1px] flex-shrink-0 flex-grow basis-0 bg-gray-200" />
               </div>
               {/* FIXME: Fix hardcoded width and having to use has-[:disabled]:*/}

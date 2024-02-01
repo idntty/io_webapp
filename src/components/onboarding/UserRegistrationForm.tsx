@@ -158,6 +158,7 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
                 {withLabels && <FormLabel>{fieldData.label}</FormLabel>}
                 <FormControl>
                   <Input
+                    withHelpIcon
                     placeholder={fieldData.placeholder}
                     Icon={fieldData.Icon}
                     {...field}

@@ -128,6 +128,7 @@ export default function ComponentsTesting() {
       {/* Inputs */}
       <div className="flex w-full items-center justify-center gap-4">
         <Input
+          withHelpIcon
           placeholder="Placeholder"
           Icon={Communication.Mail01}
           className="w-[360px]"

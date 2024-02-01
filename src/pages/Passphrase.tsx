@@ -20,6 +20,7 @@ import {
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { generatePassphraseAndKeys } from '../lib/crypto';
 import { createPDF } from '../lib/utils';
+import Divider from '../components/Divider';
 
 export default function Passphrase() {
   const passphrase = useOnboardingStore((state) => state.passphrase);
@@ -113,8 +114,7 @@ export default function Passphrase() {
               align="left"
             />
             <div className="flex flex-col items-center gap-[24px] self-stretch rounded-xl">
-              {/* TODO: Maybe extract as a Divider component? */}
-              <div className="h-[1px] self-stretch bg-gray-200" />
+              <Divider />
               <div className="flex flex-wrap content-center items-center justify-center gap-[20px] self-stretch">
                 {passphrase.map((word, index) => (
                   <Badge key={index}>{word}</Badge>
@@ -176,12 +176,12 @@ export default function Passphrase() {
                 </AlertDialog>
               </div>
               <div className="flex flex-col items-start gap-[16px] self-stretch">
-                {/* TODO: Maybe extract as a Divider component? */}
                 <div className="flex items-center gap-[8px] self-stretch">
                   <div className="h-[1px] flex-shrink-0 flex-grow basis-0 bg-gray-200" />
                   <div className="text-center text-sm font-normal text-gray-500">
                     Your Key to Security
                   </div>
+                  {/* TODO: Maybe extract as a Divider component? */}
                   <div className="h-[1px] flex-shrink-0 flex-grow basis-0 bg-gray-200" />
                 </div>
                 <div className="flex items-center justify-between self-stretch">
