@@ -2,14 +2,16 @@ import Badge from '../components/badge';
 import Button from '../components/button/button';
 import Input from '../components/input';
 import IdentityRadioGroup from '../components/onboarding/IdentityRadioGroup';
-import UserRegistrationForm from '../components/onboarding/UserRegistrationForm';
+import Widget from '../components/identity-page/grid/Widget';
 import Checkbox from '../components/checkbox';
+import Divider from '../components/Divider';
 
 import { Communication, Users, Education } from 'untitledui-js';
 
 export default function ComponentsTesting() {
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center gap-5">
+    <div className="flex w-full flex-col items-center justify-center gap-10">
+      <Divider />
       <Button
         onClick={() => {
           const elements = document.querySelectorAll(
@@ -24,6 +26,7 @@ export default function ComponentsTesting() {
       >
         Disable all elements
       </Button>
+      <Divider />
       {/* Labels (primary) */}
       <div className="flex w-full items-center justify-center gap-4">
         <Badge>Label</Badge>
@@ -40,6 +43,7 @@ export default function ComponentsTesting() {
           Label
         </Badge>
       </div>
+      <Divider />
       {/* Buttons (primary) */}
       <div className="flex w-full items-center justify-center gap-4">
         <Button>Button</Button>
@@ -125,6 +129,7 @@ export default function ComponentsTesting() {
           <div className="h-[20px] w-[20px]" />
         </Button>
       </div>
+      <Divider />
       {/* Inputs */}
       <div className="flex w-full items-center justify-center gap-4">
         <Input
@@ -134,6 +139,7 @@ export default function ComponentsTesting() {
           className="w-[360px]"
         />
       </div>
+      <Divider />
       {/* Checkbox */}
       <div className="flex w-full items-center justify-center gap-4">
         <Checkbox />
@@ -157,8 +163,15 @@ export default function ComponentsTesting() {
           },
         ]}
       />
-      {/* Form */}
-      <UserRegistrationForm withErrors />
+      <Divider />
+      {/* Widget */}
+      <div className="flex w-full items-center justify-center gap-4">
+        <Widget size="tiny" variant="placeholder" />
+        <Widget size="long" variant="placeholder" />
+        <Widget size="tall" variant="placeholder" />
+        <Widget size="large" variant="placeholder" />
+      </div>
+      <Divider />
     </div>
   );
 }

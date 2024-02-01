@@ -49,9 +49,13 @@ export default {
           100: '#FEF0C7',
           600: '#DC6803',
         },
+        orange: {
+          500: '#FB6514',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
+        widget: ['Aptos', 'sans-serif'],
       },
       boxShadow: {
         primary: '0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
