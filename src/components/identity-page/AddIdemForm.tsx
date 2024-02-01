@@ -18,7 +18,7 @@ import {
 } from '../form';
 import Input from '../input';
 import TextArea from '../textarea';
-import Divider from '../Divider';
+import Divider from '../divider';
 
 const FormSchema = z.object({
   fieldType: z.enum(
