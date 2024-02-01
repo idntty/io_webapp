@@ -4,7 +4,7 @@ import Input from '../components/input';
 import IdentityRadioGroup from '../components/onboarding/IdentityRadioGroup';
 import Widget from '../components/identity-page/grid/Widget';
 import Checkbox from '../components/checkbox';
-import Divider from '../components/Divider';
+import Divider from '../components/divider';
 
 import { Communication, Users, Education } from 'untitledui-js';
 

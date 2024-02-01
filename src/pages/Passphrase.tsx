@@ -20,7 +20,7 @@ import {
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { generatePassphraseAndKeys } from '../lib/crypto';
 import { createPDF } from '../lib/utils';
-import Divider from '../components/Divider';
+import Divider from '../components/divider';
 
 export default function Passphrase() {
   const passphrase = useOnboardingStore((state) => state.passphrase);

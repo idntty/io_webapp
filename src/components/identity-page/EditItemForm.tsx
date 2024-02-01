@@ -18,7 +18,7 @@ import {
 } from '../form';
 import Input from '../input';
 import TextArea from '../textarea';
-import Divider from '../Divider';
+import Divider from '../divider';
 
 const FormSchema = z.object({
   // TODO: Figure out how to add date here

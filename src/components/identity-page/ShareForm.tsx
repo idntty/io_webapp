@@ -16,7 +16,7 @@ import {
 import Input from '../input';
 import TextArea from '../textarea';
 import Badge from '../badge';
-import Divider from '../Divider';
+import Divider from '../divider';
 
 const FormSchema = z.object({
   sharingType: z.enum(['Specific user', 'Public (For everyone)'], {
