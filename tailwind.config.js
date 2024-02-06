@@ -47,6 +47,7 @@ export default {
         },
         warning: {
           100: '#FEF0C7',
+          200: '#FEDF89',
           600: '#DC6803',
         },
         orange: {

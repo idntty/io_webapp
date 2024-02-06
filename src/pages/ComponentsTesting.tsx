@@ -3,6 +3,7 @@ import Button from '../components/button/button';
 import Input from '../components/input';
 import IdentityRadioGroup from '../components/onboarding/IdentityRadioGroup';
 import Widget from '../components/identity-page/grid/Widget';
+import EncryptedWidget from '../components/identity-page/grid/EncryptedWidget';
 import Checkbox from '../components/checkbox';
 import Divider from '../components/divider';
 
@@ -170,6 +171,12 @@ export default function ComponentsTesting() {
         <Widget size="long" variant="placeholder" />
         <Widget size="tall" variant="placeholder" />
         <Widget size="large" variant="placeholder" />
+      </div>
+      <div className="flex w-full items-center justify-center gap-4">
+        <EncryptedWidget size="tiny" />
+        <EncryptedWidget size="long" />
+        <EncryptedWidget size="tall" />
+        <EncryptedWidget size="large" />
       </div>
       <Divider />
     </div>

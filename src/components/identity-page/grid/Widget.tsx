@@ -1,10 +1,12 @@
 import * as React from 'react';
-
 import { cva, type VariantProps } from 'class-variance-authority';
+import { Shapes } from 'untitledui-js';
+
 import { cn } from '../../../lib/utils';
+import WidgetIcon from './WidgetIcon';
 
 const widgetVariants = cva(
-  '@container flex justify-center items-center shrink-0 rounded-[40px] border-solid bg-gray-25 font-widget',
+  '@container group relative flex justify-center items-center shrink-0 rounded-[40px] border-solid bg-gray-25 font-widget',
   {
     variants: {
       variant: {
@@ -54,7 +56,11 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             ref={ref}
             {...props}
           >
-            <div className="text-center text-6xl font-bold -tracking-[0.2px]">
+            <WidgetIcon
+              Icon={Shapes.Cube01}
+              strokeClassName="stroke-gray-900 group-hover:stroke-orange-500"
+            />
+            <div className="text-center text-6xl font-bold -tracking-[0.2px] text-gray-900">
               {placeholderTextBySize[size]}
             </div>
           </div>
