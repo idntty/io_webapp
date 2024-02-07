@@ -1,6 +1,9 @@
+import * as React from 'react';
 import { Communication } from 'untitledui-js';
 
-export default function Footer() {
+// make this have className prop
+
+const Footer: React.FC<React.ComponentPropsWithoutRef<'footer'>> = () => {
   return (
     <footer className="flex h-[60px] shrink-0 items-center justify-between self-stretch px-[300px] py-[20px]">
       <div className="text-sm text-gray-500">© Untitled UI 2077</div>
@@ -10,4 +13,6 @@ export default function Footer() {
       </div>
     </footer>
   );
-}
+};
+
+export default Footer;

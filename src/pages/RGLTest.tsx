@@ -14,19 +14,19 @@ import '../components/identity-page/grid/placeholder.css';
 
 const GridLayout = WidthProvider(RGL);
 
-export default function IdentityPage() {
+export default function RGLTest() {
   return (
-    <div className="flex h-screen flex-col bg-gray-50">
+    <div className="relative flex h-screen flex-col justify-between bg-gray-50">
       <Header />
-      <div className="relative flex h-full w-full items-center justify-center">
+      <div className="bg-brand-100 px-[300px]">
         <GridLayout
           layout={gridContent.map((obj) => obj.layout)}
           cols={4}
-          rowHeight={160}
-          width={840}
           margin={[40, 40]}
           isResizable={false}
-          className="relative left-[450px] h-full w-full self-center"
+          isBounded={false}
+          rowHeight={181}
+          className="bg-gray-100"
         >
           {gridContent.map((item: GridItemContent) => {
             return (
@@ -39,7 +39,7 @@ export default function IdentityPage() {
           })}
         </GridLayout>
       </div>
-      <Footer />
+      <Footer className="sticky bottom-0" />
     </div>
   );
 }
