@@ -1,6 +1,15 @@
 {
   "name": "idntty-app",
   "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "type-check": "tsc",
+    "dev": "vite",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "type": "module",
   "dependencies": {
     "@hookform/resolvers": "^3.3.3",
     "@liskhq/lisk-client": "^6.1.0",
@@ -63,13 +72,5 @@
     "typescript": "^5.2.2",
     "typescript-plugin-styled-components": "^3.0.0",
     "vite": "^5.0.8"
-  },
-  "private": true,
-  "scripts": {
-    "build": "tsc && vite build",
-    "dev": "vite",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
-  },
-  "type": "module"
+  }
 }
