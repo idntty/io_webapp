@@ -12,7 +12,6 @@ import LoginWithPasskey from './pages/LoginWithPasskey.tsx';
 import LoginWithoutPasskey from './pages/LoginWithoutPasskey.tsx';
 import IdentityPage from './pages/IdentityPage.tsx';
 import ComponentsTesting from './pages/ComponentsTesting.tsx';
-import RGLTest from './pages/RGLTest.tsx';
 import ShareForm from './components/identity-page/ShareForm.tsx';
 import AddItemForm from './components/identity-page/AddIdemForm.tsx';
 import EditItemForm from './components/identity-page/EditItemForm.tsx';
@@ -26,7 +25,6 @@ const router = createBrowserRouter([
   { path: '/login-without-passkey', element: <LoginWithoutPasskey /> },
   { path: '/identity-page', element: <IdentityPage /> },
   { path: '/components', element: <ComponentsTesting /> },
-  { path: '/rgl-test', element: <RGLTest /> },
   {
     path: '/share-form',
     element: (
