@@ -45,11 +45,6 @@ const EncryptedWidget = React.forwardRef<HTMLDivElement, EncryptedWidgetProps>(
         <div className="select-none text-wrap break-all text-center text-xs/[18px] font-normal text-gray-300">
           {text}
         </div>
-        {/* <img
-          src="/shield.png"
-          alt="shield"
-          className="absolute left-1/2 top-1/2 h-[75px] w-[75px] -translate-x-1/2 -translate-y-1/2 transform"
-        /> */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="100"
