@@ -21,7 +21,7 @@ const GridLayout = WidthProvider(RGL);
 export default function RGLTest() {
   const [gridContent, setGridContent] =
     useState<GridItemContent[]>(defaultGridContent);
-  const [gridHeight, setGridHeight] = useState<number | null>(-1);
+  const [gridHeight, _] = useState<number | null>(-1);
 
   useEffect(() => {
     console.log(gridContent);

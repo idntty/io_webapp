@@ -28,6 +28,7 @@ module.exports = {
         allowSingleExtends: true,
       },
     ],
+    '@typescript-eslint/no-empty-function': 'off',
     'react/prop-types': 'off',
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': [

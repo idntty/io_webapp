@@ -17,7 +17,7 @@ const GridLayout = WidthProvider(RGL);
 export default function IdentityPage() {
   return (
     <div className="flex h-screen flex-col justify-between bg-gray-50">
-      <Header />
+      <Header onAddClick={() => {}} />
       <div className="relative flex h-[5px] w-full items-center justify-center">
         <GridLayout
           layout={defaultGridContent.map((obj) => obj.layout)}
