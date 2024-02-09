@@ -5,7 +5,7 @@ import Footer from '../components/identity-page/Footer';
 import Widget from '../components/identity-page/grid/Widget';
 import {
   type GridItemContent,
-  gridContent,
+  defaultGridContent,
 } from '../components/identity-page/grid/gridLayout';
 
 import 'react-grid-layout/css/styles.css';
@@ -16,11 +16,11 @@ const GridLayout = WidthProvider(RGL);
 
 export default function IdentityPage() {
   return (
-    <div className="flex h-screen flex-col bg-gray-50">
+    <div className="flex h-screen flex-col justify-between bg-gray-50">
       <Header />
-      <div className="relative flex h-full w-full items-center justify-center">
+      <div className="relative flex h-[5px] w-full items-center justify-center">
         <GridLayout
-          layout={gridContent.map((obj) => obj.layout)}
+          layout={defaultGridContent.map((obj) => obj.layout)}
           cols={4}
           rowHeight={160}
           width={840}
@@ -28,7 +28,7 @@ export default function IdentityPage() {
           isResizable={false}
           className="relative left-[450px] h-full w-full self-center"
         >
-          {gridContent.map((item: GridItemContent) => {
+          {defaultGridContent.map((item: GridItemContent) => {
             return (
               <Widget
                 key={item.layout.i}

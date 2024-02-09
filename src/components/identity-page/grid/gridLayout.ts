@@ -1,4 +1,7 @@
-export type GridItemSize = 'tiny' | 'long' | 'tall' | 'large';
+import { uuidv4 } from '../../../lib/utils';
+
+export const ITEM_SIZES = ['tiny', 'long', 'tall', 'large'] as const;
+export type GridItemSize = (typeof ITEM_SIZES)[number];
 export interface ItemLayout {
   i: string;
   x: number;
@@ -15,33 +18,29 @@ export interface GridItemContent {
   layout: ItemLayout;
 }
 
-export const gridContent: GridItemContent[] = [
+export const defaultGridContent: GridItemContent[] = [
   {
     size: 'large',
-    layout: { x: 0, y: 0, w: 2, h: 2, i: 'a' },
+    layout: { x: 0, y: 0, w: 2, h: 2, i: uuidv4() },
   },
   {
     size: 'tiny',
-    layout: { x: 2, y: 0, w: 1, h: 1, i: 'b' },
+    layout: { x: 2, y: 0, w: 1, h: 1, i: uuidv4() },
   },
   {
     size: 'tall',
-    layout: { x: 3, y: 0, w: 1, h: 2, i: 'c' },
+    layout: { x: 3, y: 0, w: 1, h: 2, i: uuidv4() },
   },
   {
     size: 'tiny',
-    layout: { x: 2, y: 1, w: 1, h: 1, i: 'd' },
+    layout: { x: 2, y: 1, w: 1, h: 1, i: uuidv4() },
   },
   {
     size: 'long',
-    layout: { x: 0, y: 1, w: 2, h: 1, i: 'f' },
+    layout: { x: 0, y: 2, w: 2, h: 1, i: uuidv4() },
   },
   {
     size: 'tiny',
-    layout: { x: 2, y: 2, w: 1, h: 1, i: 'g' },
-  },
-  {
-    size: 'tiny',
-    layout: { x: 3, y: 2, w: 1, h: 1, i: 'h' },
+    layout: { x: 2, y: 2, w: 1, h: 1, i: uuidv4() },
   },
 ];

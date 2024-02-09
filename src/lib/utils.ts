@@ -6,10 +6,14 @@ import type { Font } from '@pdfme/common';
 import { template } from '../lib/pdfTemplate';
 import axios from 'axios';
 import { Buffer } from 'buffer';
+import { v4 } from 'uuid';
+import type { v4String } from '../types/uuid';
 
 const HOST = 'api.idntty.io';
 // const HOST = 'localhost';
 const PORT = 443;
+
+export const uuidv4 = v4 as v4String;
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

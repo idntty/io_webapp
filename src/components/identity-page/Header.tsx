@@ -1,7 +1,13 @@
-import Badge from '../badge';
 import { General, Arrow } from 'untitledui-js';
+import * as React from 'react';
 
-export default function Header() {
+import Badge from '../badge';
+
+export interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+  onAddClick: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ onAddClick }) => {
   return (
     <header className="flex justify-between self-stretch px-[300px] py-[20px]">
       <img className="h-[32px] w-[88.961px]" alt="Logo" src="/logo.svg" />
@@ -14,13 +20,17 @@ export default function Header() {
         </div>
       </div>
       <div className="flex items-center justify-center gap-[10px] px-0 py-[2px]">
-        <Badge variant="secondary" size="lg">
-          <General.Plus size="12" className="stroke-gray-500" />
-        </Badge>
+        <button onClick={onAddClick}>
+          <Badge variant="secondary" size="lg">
+            <General.Plus size="12" className="stroke-gray-500" />
+          </Badge>
+        </button>
         <Badge variant="secondary" size="lg">
           <Arrow.ArrowUpRight size="12" className="stroke-gray-500" />
         </Badge>
       </div>
     </header>
   );
-}
+};
+
+export default Header;
