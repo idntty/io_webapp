@@ -85,17 +85,18 @@ export default function RGLTest() {
   };
 
   return (
-    <div className="relative flex h-screen flex-col justify-between bg-gray-50">
+    <div className="relative flex h-screen flex-col justify-between overflow-auto bg-gray-50">
       <Header onAddClick={handleAddGridItemClick} />
       <div
-        style={{
-          height:
-            gridHeight === -1 || gridHeight === null ? '100%' : gridHeight,
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          width: '924px',
-          backgroundColor: 'rgb(244 235 255)',
-        }}
+        // style={{
+        //   height:
+        //     gridHeight === -1 || gridHeight === null ? '100%' : gridHeight,
+        //   marginLeft: 'auto',
+        //   marginRight: 'auto',
+        //   width: '924px',
+        //   backgroundColor: 'rgb(244 235 255)',
+        // }}
+        className="mx-auto w-[924px] bg-gray-100"
       >
         <GridLayout
           layout={gridContent.map((obj) => obj.layout)}
