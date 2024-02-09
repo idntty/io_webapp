@@ -86,17 +86,7 @@ export default function RGLTest() {
   return (
     <div className="relative flex h-screen flex-col justify-between overflow-auto bg-gray-50">
       <Header onAddClick={handleAddGridItemClick} />
-      <div
-        // style={{
-        //   height:
-        //     gridHeight === -1 || gridHeight === null ? '100%' : gridHeight,
-        //   marginLeft: 'auto',
-        //   marginRight: 'auto',
-        //   width: '924px',
-        //   backgroundColor: 'rgb(244 235 255)',
-        // }}
-        className="mx-auto w-[924px] bg-gray-100"
-      >
+      <div className="mx-auto w-[924px] bg-gray-100">
         <GridLayout
           layout={gridContent.map((obj) => obj.layout)}
           cols={4}
@@ -105,14 +95,6 @@ export default function RGLTest() {
           isBounded={false}
           rowHeight={181}
           className="bg-gray-100"
-          // innerRef={gridRef}
-          // onLayoutChange={() => {
-          //   if (gridRef.current) {
-          //     setGridHeight(gridRef.current.offsetHeight);
-          //     console.log('Grid height: ', gridRef.current.offsetHeight);
-          //   }
-          //   console.log('Outer div height: ', outerRef.current?.offsetHeight);
-          // }}
         >
           {gridContent.map((item: GridItemContent) => {
             return (
