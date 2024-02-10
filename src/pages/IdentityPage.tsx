@@ -1,5 +1,5 @@
 import RGL, { WidthProvider } from 'react-grid-layout';
-import { useEffect, useState } from 'react';
+import { useState, useCallback } from 'react';
 
 import { uuidv4 } from '../lib/utils';
 import Header from '../components/identity-page/Header';
@@ -21,10 +21,6 @@ const GridLayout = WidthProvider(RGL);
 export default function RGLTest() {
   const [gridContent, setGridContent] =
     useState<GridItemContent[]>(defaultGridContent);
-
-  useEffect(() => {
-    console.log(gridContent);
-  });
 
   function addGridItem(size: GridItemSize): void {
     const w = ['large', 'long'].includes(size) ? 2 : 1;
@@ -77,11 +73,15 @@ export default function RGLTest() {
     return true;
   }
 
+  // FIXME: Layout is only being re-rendered after a drag when adding a new item after deleting one
   const handleAddGridItemClick = () => {
     const randomSize =
       ITEM_SIZES[Math.floor(Math.random() * ITEM_SIZES.length)];
     addGridItem(randomSize);
   };
+
+  const handleDeleteGridItemClick = (id: string) =>
+    setGridContent((prev) => prev.filter((item) => item.layout.i !== id));
 
   return (
     <div className="relative flex h-screen flex-col justify-between overflow-auto bg-gray-50">
@@ -95,6 +95,14 @@ export default function RGLTest() {
           isBounded={false}
           rowHeight={181}
           className="bg-gray-100"
+          onDragStart={(...args) => {
+            const [, oldItem, , , event] = args;
+            if (
+              event.target instanceof Element &&
+              event.target.classList.contains('delete-handle')
+            )
+              handleDeleteGridItemClick(oldItem.i);
+          }}
         >
           {gridContent.map((item: GridItemContent) => {
             return (
