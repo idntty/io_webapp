@@ -1,5 +1,5 @@
 import RGL, { WidthProvider } from 'react-grid-layout';
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 
 import { uuidv4 } from '../lib/utils';
 import Header from '../components/identity-page/Header';
