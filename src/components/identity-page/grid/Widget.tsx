@@ -5,6 +5,7 @@ import { Shapes } from 'untitledui-js';
 import { cn } from '../../../lib/utils';
 import WidgetIcon from './WidgetIcon';
 import WidgetDelete from './WidgetDelete';
+import WidgetEdit from './WidgetEdit';
 
 const widgetVariants = cva(
   '@container group relative flex justify-center items-center shrink-0 rounded-[40px] border-solid bg-gray-25 font-widget',
@@ -41,10 +42,12 @@ const placeholderTextBySize = {
 
 export interface WidgetProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof widgetVariants> {}
+    VariantProps<typeof widgetVariants> {
+  text?: string;
+}
 
 const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
-  ({ className, variant, size, ...props }, ref) => {
+  ({ className, variant, size, text, ...props }, ref) => {
     // FIXME: Is there a better way to handle this?
     if (!size) {
       size = 'tiny';
@@ -63,8 +66,9 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             />
             <WidgetDelete />
             <div className="text-center text-6xl font-bold -tracking-[0.2px] text-gray-900">
-              {placeholderTextBySize[size]}
+              {text ?? placeholderTextBySize[size]}
             </div>
+            <WidgetEdit />
           </div>
         );
     }

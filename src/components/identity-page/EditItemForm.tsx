@@ -40,7 +40,12 @@ const widgetSizeVariants = [
   { type: 'large', sizeClassName: 'h-[80px] w-[80px]' },
 ];
 
-const EditItemForm: React.FC = () => {
+export interface EditItemFormProps {
+  onCancel: () => void;
+  onSubmit: () => void;
+}
+
+const EditItemForm: React.FC<EditItemFormProps> = ({ onCancel, onSubmit }) => {
   const form = useForm<EditItemFormSchemaType>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -51,7 +56,8 @@ const EditItemForm: React.FC = () => {
     mode: 'onChange',
   });
 
-  const onSubmit = (data: EditItemFormSchemaType) => {
+  const onFormSubmit = (data: EditItemFormSchemaType) => {
+    onSubmit();
     console.log(data);
   };
 
@@ -60,7 +66,7 @@ const EditItemForm: React.FC = () => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          void form.handleSubmit(onSubmit)(e);
+          void form.handleSubmit(onFormSubmit)(e);
         }}
         className="flex flex-col gap-[24px] self-stretch bg-white"
       >
@@ -75,7 +81,7 @@ const EditItemForm: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center gap-[12px]">
-              <Button size="md" variant="secondary-gray">
+              <Button onClick={onCancel} size="md" variant="secondary-gray">
                 Cancel
               </Button>
               <Button type="submit" size="md" variant="secondary-color">

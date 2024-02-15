@@ -1,4 +1,4 @@
-import RGL, { WidthProvider } from 'react-grid-layout';
+import { Responsive, WidthProvider } from 'react-grid-layout';
 import { useState } from 'react';
 
 import { uuidv4 } from '../lib/utils';
@@ -10,17 +10,23 @@ import {
   type GridItemSize,
   ITEM_SIZES,
   defaultGridContent,
+  convertTo2ColumnLayout,
 } from '../components/identity-page/grid/gridLayout';
+import EditItemForm from '../components/identity-page/EditItemForm';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import '../components/identity-page/grid/placeholder.css';
 
-const GridLayout = WidthProvider(RGL);
+const GridLayout = WidthProvider(Responsive);
 
-export default function RGLTest() {
+export default function IdentityPage() {
   const [gridContent, setGridContent] =
     useState<GridItemContent[]>(defaultGridContent);
+  const [lowerGridContent, setLowerGridContent] = useState<GridItemContent[]>(
+    [],
+  );
+  const [isGridSplit, setIsGridSplit] = useState(false);
 
   function addGridItem(size: GridItemSize): void {
     const w = ['large', 'long'].includes(size) ? 2 : 1;
@@ -73,6 +79,30 @@ export default function RGLTest() {
     return true;
   }
 
+  function splitGrid(widgetId: string): void {
+    const widget = gridContent.find((item) => item.layout.i === widgetId);
+    if (!widget) return;
+
+    const widgetRow = widget.layout.y + widget.layout.h;
+
+    const topGrid = gridContent.filter(
+      (item) =>
+        item.layout.y < widgetRow ||
+        (item.layout.y === widget.layout.y && item.layout.x <= widget.layout.x),
+    );
+    const bottomGrid = gridContent.filter((item) => item.layout.y >= widgetRow);
+
+    setGridContent(topGrid);
+    setLowerGridContent(bottomGrid);
+    setIsGridSplit(true);
+  }
+
+  function mergeGrids(): void {
+    setGridContent([...gridContent, ...lowerGridContent]);
+    setLowerGridContent([]);
+    setIsGridSplit(false);
+  }
+
   // FIXME: Layout is only being re-rendered after a drag when adding a new item after deleting one
   const handleAddGridItemClick = () => {
     const randomSize =
@@ -80,16 +110,36 @@ export default function RGLTest() {
     addGridItem(randomSize);
   };
 
-  const handleDeleteGridItemClick = (id: string) =>
-    setGridContent((prev) => prev.filter((item) => item.layout.i !== id));
+  const handleDeleteGridItemClick = (
+    id: string,
+    gridPosition: 'upper' | 'lower',
+  ) => {
+    if (gridPosition === 'upper') {
+      setGridContent((prev) => prev.filter((item) => item.layout.i !== id));
+    } else {
+      setLowerGridContent((prev) =>
+        prev.filter((item) => item.layout.i !== id),
+      );
+    }
+  };
 
   return (
     <div className="relative flex h-screen flex-col justify-between overflow-auto bg-gray-50">
       <Header onAddClick={handleAddGridItemClick} />
-      <div className="mx-auto w-[924px] bg-gray-100">
+      <div className="relative mx-auto w-[482px] bg-gray-100 lg:w-[924px]">
         <GridLayout
-          layout={gridContent.map((obj) => obj.layout)}
-          cols={4}
+          layouts={{
+            lg: gridContent.map((item) => item.layout),
+            md: convertTo2ColumnLayout(gridContent).map((item) => item.layout),
+          }}
+          cols={{
+            lg: 4,
+            md: 2,
+          }}
+          breakpoints={{
+            lg: 923,
+            md: 0,
+          }}
           margin={[40, 40]}
           isResizable={false}
           isBounded={false}
@@ -101,7 +151,25 @@ export default function RGLTest() {
               event.target instanceof Element &&
               event.target.classList.contains('delete-handle')
             )
-              handleDeleteGridItemClick(oldItem.i);
+              handleDeleteGridItemClick(oldItem.i, 'upper');
+            if (
+              event.target instanceof Element &&
+              event.target.classList.contains('edit-handle')
+            )
+              splitGrid(oldItem.i);
+          }}
+          onLayoutChange={(layout) => {
+            setGridContent((prev) =>
+              prev.map((item, index) => {
+                return {
+                  ...item,
+                  layout: {
+                    ...item.layout,
+                    ...layout[index],
+                  },
+                };
+              }),
+            );
           }}
         >
           {gridContent.map((item: GridItemContent) => {
@@ -114,6 +182,67 @@ export default function RGLTest() {
             );
           })}
         </GridLayout>
+        {isGridSplit && (
+          <div className="relative left-1/2 flex w-screen -translate-x-1/2 transform justify-center bg-white py-[20px]">
+            <div className="w-[840px]">
+              <EditItemForm onCancel={mergeGrids} onSubmit={mergeGrids} />
+            </div>
+          </div>
+        )}
+        {isGridSplit && (
+          <GridLayout
+            layouts={{
+              lg: lowerGridContent.map((item) => item.layout),
+              md: convertTo2ColumnLayout(lowerGridContent).map(
+                (item) => item.layout,
+              ),
+            }}
+            cols={{
+              lg: 4,
+              md: 2,
+            }}
+            breakpoints={{
+              lg: 923,
+              md: 0,
+            }}
+            margin={[40, 40]}
+            isResizable={false}
+            isBounded={false}
+            rowHeight={181}
+            className="bg-gray-100"
+            onDragStart={(...args) => {
+              const [, oldItem, , , event] = args;
+              if (
+                event.target instanceof Element &&
+                event.target.classList.contains('delete-handle')
+              )
+                handleDeleteGridItemClick(oldItem.i, 'lower');
+            }}
+            onLayoutChange={(layout) => {
+              setLowerGridContent((prev) =>
+                prev.map((item, index) => {
+                  return {
+                    ...item,
+                    layout: {
+                      ...item.layout,
+                      ...layout[index],
+                    },
+                  };
+                }),
+              );
+            }}
+          >
+            {lowerGridContent.map((item: GridItemContent) => {
+              return (
+                <Widget
+                  key={item.layout.i}
+                  size={item.size}
+                  variant="placeholder"
+                />
+              );
+            })}
+          </GridLayout>
+        )}
       </div>
       <Footer />
     </div>
