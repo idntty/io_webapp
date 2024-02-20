@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAppStore } from '../stores/appStore';
+import { useBadgeGridStore } from '../stores/appStore';
 
 import Header from '../components/app/Header';
 import Footer from '../components/app/Footer';
@@ -14,7 +14,7 @@ export default function BadgesPage() {
     lowerGridBadgeIDs,
     splitGridAtID,
     mergeGrids,
-  } = useAppStore();
+  } = useBadgeGridStore();
 
   const handleSplitGrid = (id: string) => {
     splitGridAtID(id);

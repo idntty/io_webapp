@@ -3,18 +3,18 @@ import { ImageBadgeType } from '../components/app/grid/ImageBadge';
 import { defaultBadges } from '../components/app/grid/badgeLayout';
 import { uuidv4 } from '../lib/utils';
 
-export interface AppState {
+export interface BadgeGridState {
   imageBadges: Record<string, ImageBadgeType>;
   upperGridBadgeIDs: string[];
   lowerGridBadgeIDs: string[];
 
   addImageBadge: (imageBadge: ImageBadgeType) => void;
   removeImageBadge: (id: string) => void;
-  splitGridAtID: (id: string) => void; // move all badges after the given id to the lower grid
+  splitGridAtID: (id: string) => void;
   mergeGrids: () => void;
 }
 
-export const useAppStore = create<AppState>()((set) => ({
+export const useBadgeGridStore = create<BadgeGridState>()((set) => ({
   imageBadges: defaultBadges,
   upperGridBadgeIDs: Object.keys(defaultBadges),
   lowerGridBadgeIDs: [],
