@@ -42,7 +42,7 @@ export default function LoginWithPasskey() {
       setPublicKey(publicKey);
       setWalletAddress(walletAddress);
 
-      navigate('/identity-page');
+      navigate('/app');
     } catch (error) {
       console.error(error);
     }
@@ -83,7 +83,7 @@ export default function LoginWithPasskey() {
       setPrivateData(privateData);
       console.log('privateData', privateData);
 
-      navigate('/identity-page');
+      navigate('/app');
     } catch (error) {
       console.error(error);
     }

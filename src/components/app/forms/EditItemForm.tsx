@@ -4,9 +4,9 @@ import * as z from 'zod';
 import { General, Security } from 'untitledui-js';
 import * as RadioGroup from '@radix-ui/react-radio-group';
 
-import { cn } from '../../lib/utils';
+import { cn } from '../../../lib/utils';
 
-import Button from '../button/button';
+import Button from '../../button/button';
 import {
   Form,
   FormControl,
@@ -15,10 +15,10 @@ import {
   FormLabel,
   FormMessage,
   FormDescription,
-} from '../form';
-import Input from '../input';
-import TextArea from '../textarea';
-import Divider from '../divider';
+} from '../../form';
+import Input from '../../input';
+import TextArea from '../../textarea';
+import Divider from '../../divider';
 
 const FormSchema = z.object({
   // TODO: Figure out how to add date here

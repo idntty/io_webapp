@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Arrow } from 'untitledui-js';
 
-import Button from '../button/button';
+import Button from '../../button/button';
 import {
   Form,
   FormControl,
@@ -12,11 +12,11 @@ import {
   FormLabel,
   FormMessage,
   FormDescription,
-} from '../form';
-import Input from '../input';
-import TextArea from '../textarea';
-import Badge from '../badge';
-import Divider from '../divider';
+} from '../../form';
+import Input from '../../input';
+import TextArea from '../../textarea';
+import Badge from '../../badge';
+import Divider from '../../divider';
 
 const FormSchema = z.object({
   sharingType: z.enum(['Specific user', 'Public (For everyone)'], {

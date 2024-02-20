@@ -2,21 +2,21 @@ import { Responsive, WidthProvider } from 'react-grid-layout';
 import { useState } from 'react';
 
 import { uuidv4 } from '../lib/utils';
-import Header from '../components/identity-page/Header';
-import Footer from '../components/identity-page/Footer';
-import Widget from '../components/identity-page/grid/Widget';
+import Header from '../components/app/Header';
+import Footer from '../components/app/Footer';
+import Widget from '../components/app/grid/Widget';
 import {
   type GridItemContent,
   type GridItemSize,
   ITEM_SIZES,
   defaultGridContent,
   convertTo2ColumnLayout,
-} from '../components/identity-page/grid/gridLayout';
-import EditItemForm from '../components/identity-page/EditItemForm';
+} from '../components/app/grid/gridLayout';
+import EditItemForm from '../components/app/forms/EditItemForm';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import '../components/identity-page/grid/placeholder.css';
+import '../components/app/grid/placeholder.css';
 
 const GridLayout = WidthProvider(Responsive);
 
@@ -125,7 +125,7 @@ export default function IdentityPage() {
 
   return (
     <div className="relative flex h-screen flex-col justify-between overflow-auto bg-gray-50">
-      <Header onAddClick={handleAddGridItemClick} />
+      <Header type="primary" onAddClick={handleAddGridItemClick} />
       <div className="relative mx-auto w-[482px] bg-gray-100 lg:w-[924px]">
         <GridLayout
           layouts={{
