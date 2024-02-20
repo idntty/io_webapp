@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useBadgeGridStore } from '../stores/appStore';
+import { useBadgeGridStore } from '../stores/badgeGridStore';
 
 import Header from '../components/app/Header';
 import Footer from '../components/app/Footer';
@@ -8,13 +8,15 @@ import EditItemForm from '../components/app/forms/EditItemForm';
 
 export default function BadgesPage() {
   const [isGridSplit, setIsGridSplit] = useState(false);
-  const {
-    imageBadges,
-    upperGridBadgeIDs,
-    lowerGridBadgeIDs,
-    splitGridAtID,
-    mergeGrids,
-  } = useBadgeGridStore();
+  const imageBadges = useBadgeGridStore((state) => state.imageBadges);
+  const upperGridBadgeIDs = useBadgeGridStore(
+    (state) => state.upperGridBadgeIDs,
+  );
+  const lowerGridBadgeIDs = useBadgeGridStore(
+    (state) => state.lowerGridBadgeIDs,
+  );
+  const splitGridAtID = useBadgeGridStore((state) => state.splitGridAtID);
+  const mergeGrids = useBadgeGridStore((state) => state.mergeGrids);
 
   const handleSplitGrid = (id: string) => {
     splitGridAtID(id);
