@@ -141,6 +141,7 @@ export default function IdentityPage() {
             md: 0,
           }}
           margin={[40, 40]}
+          compactType={'horizontal'}
           isResizable={false}
           isBounded={false}
           rowHeight={181}
@@ -206,6 +207,7 @@ export default function IdentityPage() {
               md: 0,
             }}
             margin={[40, 40]}
+            compactType={'horizontal'}
             isResizable={false}
             isBounded={false}
             rowHeight={181}
