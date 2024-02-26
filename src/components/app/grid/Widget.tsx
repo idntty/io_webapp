@@ -12,7 +12,7 @@ const widgetVariants = cva(
   {
     variants: {
       variant: {
-        placeholder: '',
+        text: '',
       },
       state: {
         default: 'border border-brand-200 hover:border-orange-500',
@@ -26,19 +26,12 @@ const widgetVariants = cva(
       },
     },
     defaultVariants: {
-      variant: 'placeholder',
+      variant: 'text',
       state: 'default',
       size: 'tiny',
     },
   },
 );
-
-const placeholderTextBySize = {
-  tiny: '1x1',
-  long: '1x2',
-  tall: '2x1',
-  large: '2x2',
-};
 
 export interface WidgetProps
   extends React.HTMLAttributes<HTMLDivElement>,
@@ -49,11 +42,8 @@ export interface WidgetProps
 const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
   ({ className, variant, size, text, ...props }, ref) => {
     // FIXME: Is there a better way to handle this?
-    if (!size) {
-      size = 'tiny';
-    }
     switch (variant) {
-      case 'placeholder':
+      case 'text':
         return (
           <div
             className={cn(widgetVariants({ variant, size }), className)}
@@ -65,8 +55,8 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
               strokeClassName="stroke-gray-900 group-hover:stroke-orange-500"
             />
             <WidgetDelete />
-            <div className="text-center text-6xl font-bold -tracking-[0.2px] text-gray-900">
-              {text ?? placeholderTextBySize[size]}
+            <div className="text-md text-center font-bold -tracking-[0.2px] text-gray-900">
+              {text ?? ''}
             </div>
             <WidgetEdit />
           </div>

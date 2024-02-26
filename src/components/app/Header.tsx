@@ -22,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ onAddClick, type }) => {
           {tabs[type][0]}
         </div>
         <div className="text-sm font-medium text-gray-700">
-          {tabs[type].slice(1).join('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')}
+          {tabs[type].slice(1).join('\t')}
         </div>
       </div>
       <div className="flex items-center justify-center gap-[10px] px-0 py-[2px]">
