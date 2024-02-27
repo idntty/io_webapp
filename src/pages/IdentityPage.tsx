@@ -16,16 +16,23 @@ const GridLayout = WidthProvider(Responsive);
 
 export default function IdentityPage() {
   const grid = useGridStore((state) => state.grid);
-  const upperGridIDs = useGridStore((state) => state.upperGridIDs);
-  const lowerGridIDs = useGridStore((state) => state.lowerGridIDs);
+  const upperGridLayout = useGridStore((state) => state.upperGridLayout);
+  const lowerGridLayout = useGridStore((state) => state.lowerGridLayout);
+
   const addGridItem = useGridStore((state) => state.addGridItem);
   const removeGridItem = useGridStore((state) => state.removeGridItem);
   const splitGridAtID = useGridStore((state) => state.splitGridAtID);
+  const updateUpperGridLayout = useGridStore(
+    (state) => state.updateUpperGridLayout,
+  );
+  const updateLowerGridLayout = useGridStore(
+    (state) => state.updateLowerGridLayout,
+  );
   const mergeGrids = useGridStore((state) => state.mergeGrids);
 
   const [isGridSplit, setIsGridSplit] = useState(false);
+  const [editedItemID, setEditedItemID] = useState<string | null>(null);
 
-  // FIXME: Layout is only being re-rendered after a drag when adding a new item after deleting one
   const handleAddGridItemClick = () => {
     const randomSize =
       ITEM_SIZES[Math.floor(Math.random() * ITEM_SIZES.length)];
@@ -37,6 +44,16 @@ export default function IdentityPage() {
   const handleMergeGrids = () => {
     mergeGrids();
     setIsGridSplit(false);
+    setEditedItemID(null);
+  };
+
+  const handleEditGridItemClick = (id: string) => {
+    if (isGridSplit) {
+      handleMergeGrids();
+    }
+    splitGridAtID(id);
+    setIsGridSplit(true);
+    setEditedItemID(id);
   };
 
   return (
@@ -45,8 +62,8 @@ export default function IdentityPage() {
       <div className="relative mx-auto w-[482px] bg-gray-100 lg:w-[924px]">
         <GridLayout
           layouts={{
-            lg: upperGridIDs.map((id) => grid[id].layout),
-            md: upperGridIDs.map((id) => grid[id].layout),
+            lg: upperGridLayout,
+            md: upperGridLayout,
           }}
           cols={{
             lg: 4,
@@ -63,44 +80,27 @@ export default function IdentityPage() {
           compactType={'horizontal'}
           className="bg-gray-100"
           onDragStart={(...args) => {
-            console.log('upperGridIDs:', upperGridIDs);
-            console.log('lowerGridIDs:', lowerGridIDs);
-            const [layout, oldItem, , , event] = args;
-            console.log(layout);
-            if (
-              event.target instanceof Element &&
-              event.target.classList.contains('delete-handle')
-            )
-              removeGridItem(oldItem.i);
-            if (
-              event.target instanceof Element &&
-              event.target.classList.contains('edit-handle')
-            ) {
-              splitGridAtID(oldItem.i);
-              setIsGridSplit(true);
-            }
+            console.log('upperGridLayout onDragStart:', upperGridLayout);
+            console.log('lowerGridLayout onDragStart:', lowerGridLayout);
+            console.log('layout onDragStart:', args[0]);
           }}
-          // onLayoutChange={(layout) => {
-          //   setGridContent((prev) =>
-          //     prev.map((item, index) => {
-          //       return {
-          //         ...item,
-          //         layout: {
-          //           ...item.layout,
-          //           ...layout[index],
-          //         },
-          //       };
-          //     }),
-          //   );
-          // }}
+          onLayoutChange={(layout) => {
+            console.log('layout onLayoutChange:', layout);
+            updateUpperGridLayout(layout);
+          }}
         >
-          {upperGridIDs.map((id) => {
+          {upperGridLayout.map((layout) => {
             return (
               <Widget
-                key={id}
-                size={grid[id].size}
+                key={layout.i}
+                size={grid[layout.i].size}
                 variant="text"
-                text={grid[id].layout.i}
+                state={
+                  isGridSplit && editedItemID === layout.i ? 'edit' : 'default'
+                }
+                text={layout.i}
+                onDeleteClick={() => removeGridItem(layout.i)}
+                onEditClick={() => handleEditGridItemClick(layout.i)}
               />
             );
           })}
@@ -118,8 +118,8 @@ export default function IdentityPage() {
         {isGridSplit && (
           <GridLayout
             layouts={{
-              lg: lowerGridIDs.map((id) => grid[id].layout),
-              md: lowerGridIDs.map((id) => grid[id].layout),
+              lg: lowerGridLayout,
+              md: lowerGridLayout,
             }}
             cols={{
               lg: 4,
@@ -133,28 +133,22 @@ export default function IdentityPage() {
             isResizable={false}
             isBounded={false}
             rowHeight={181}
+            compactType={null}
             className="bg-gray-100"
-            // onLayoutChange={(layout) => {
-            //   setLowerGridContent((prev) =>
-            //     prev.map((item, index) => {
-            //       return {
-            //         ...item,
-            //         layout: {
-            //           ...item.layout,
-            //           ...layout[index],
-            //         },
-            //       };
-            //     }),
-            //   );
-            // }}
+            onLayoutChange={(layout) => {
+              console.log('layout onLayoutChange:', layout);
+              updateLowerGridLayout(layout);
+            }}
           >
-            {lowerGridIDs.map((id) => {
+            {lowerGridLayout.map((layout) => {
               return (
                 <Widget
-                  key={id}
-                  size={grid[id].size}
+                  key={layout.i}
+                  size={grid[layout.i].size}
                   variant="text"
-                  text={grid[id].layout.i}
+                  text={layout.i}
+                  onDeleteClick={() => removeGridItem(layout.i)}
+                  onEditClick={() => handleEditGridItemClick(layout.i)}
                 />
               );
             })}

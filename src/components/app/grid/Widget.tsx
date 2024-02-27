@@ -37,16 +37,30 @@ export interface WidgetProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof widgetVariants> {
   text?: string;
+  onDeleteClick?: () => void;
+  onEditClick?: () => void;
 }
 
 const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
-  ({ className, variant, size, text, ...props }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      text,
+      state,
+      onDeleteClick,
+      onEditClick,
+      ...props
+    },
+    ref,
+  ) => {
     // FIXME: Is there a better way to handle this?
     switch (variant) {
       case 'text':
         return (
           <div
-            className={cn(widgetVariants({ variant, size }), className)}
+            className={cn(widgetVariants({ variant, size, state }), className)}
             ref={ref}
             {...props}
           >
@@ -54,11 +68,11 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
               Icon={Shapes.Cube01}
               strokeClassName="stroke-gray-900 group-hover:stroke-orange-500"
             />
-            <WidgetDelete />
+            {onDeleteClick && <WidgetDelete onDeleteClick={onDeleteClick} />}
             <div className="text-md text-center font-bold -tracking-[0.2px] text-gray-900">
               {text ?? ''}
             </div>
-            <WidgetEdit />
+            {onEditClick && <WidgetEdit onEditClick={onEditClick} />}
           </div>
         );
     }

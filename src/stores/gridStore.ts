@@ -1,31 +1,42 @@
 import { create } from 'zustand';
-import {
-  defaultGridContent,
-  type GridItem,
+import type {
+  GridItem,
+  GridItemLayout,
 } from '../components/app/grid/gridLayout';
+
+const compareLayoutsFn = (a: GridItemLayout, b: GridItemLayout) => {
+  if (a.y === b.y) {
+    return a.x - b.x;
+  }
+  return a.y - b.y;
+};
 
 export interface GridState {
   grid: Record<string, GridItem>;
-  upperGridIDs: string[];
-  lowerGridIDs: string[];
+  upperGridLayout: GridItemLayout[];
+  lowerGridLayout: GridItemLayout[];
 
   addGridItem: (item: GridItem) => void;
   removeGridItem: (id: string) => void;
   splitGridAtID: (id: string) => void;
+  updateUpperGridLayout: (layout: GridItemLayout[]) => void;
+  updateLowerGridLayout: (layout: GridItemLayout[]) => void;
   mergeGrids: () => void;
 }
 
 export const useGridStore = create<GridState>()((set) => ({
   grid: {},
-  upperGridIDs: [],
-  lowerGridIDs: [],
+  upperGridLayout: [],
+  lowerGridLayout: [],
 
   addGridItem: (item: GridItem) =>
     set((state) => {
       return {
         ...state,
         grid: { ...state.grid, [item.layout.i]: item },
-        upperGridIDs: [item.layout.i, ...state.upperGridIDs],
+        upperGridLayout: [item.layout, ...state.upperGridLayout].sort(
+          compareLayoutsFn,
+        ),
       };
     }),
 
@@ -35,22 +46,40 @@ export const useGridStore = create<GridState>()((set) => ({
       return {
         ...state,
         grid: restOfGrid,
-        upperGridIDs: state.upperGridIDs.filter((gridId) => gridId !== id),
+        upperGridLayout: state.upperGridLayout.filter(
+          (layout) => layout.i !== id,
+        ),
+        lowerGridLayout: state.lowerGridLayout.filter(
+          (layout) => layout.i !== id,
+        ),
       };
     }),
 
   splitGridAtID: (id: string) =>
     set((state) => {
-      const index = state.upperGridIDs.indexOf(id);
-      if (index === -1) return state;
-
+      const index = state.upperGridLayout.findIndex(
+        (layout) => layout.i === id,
+      );
       return {
         ...state,
-        upperGridIDs: state.upperGridIDs.slice(0, index + 1),
-        lowerGridIDs: [
-          ...state.lowerGridIDs,
-          ...state.upperGridIDs.slice(index + 1),
-        ],
+        upperGridLayout: state.upperGridLayout.slice(0, index + 1),
+        lowerGridLayout: state.upperGridLayout.slice(index + 1),
+      };
+    }),
+
+  updateUpperGridLayout: (layout: GridItemLayout[]) =>
+    set((state) => {
+      return {
+        ...state,
+        upperGridLayout: layout.sort(compareLayoutsFn),
+      };
+    }),
+
+  updateLowerGridLayout: (layout: GridItemLayout[]) =>
+    set((state) => {
+      return {
+        ...state,
+        lowerGridLayout: layout,
       };
     }),
 
@@ -58,8 +87,11 @@ export const useGridStore = create<GridState>()((set) => ({
     set((state) => {
       return {
         ...state,
-        upperGridIDs: [...state.upperGridIDs, ...state.lowerGridIDs],
-        lowerGridIDs: [],
+        upperGridLayout: [
+          ...state.upperGridLayout.sort(compareLayoutsFn),
+          ...state.lowerGridLayout.sort(compareLayoutsFn),
+        ],
+        lowerGridLayout: [],
       };
     }),
 }));
