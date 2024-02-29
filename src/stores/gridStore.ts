@@ -15,6 +15,7 @@ export interface GridState {
   grid: Record<string, GridItem>;
   upperGridLayout: GridItemLayout[];
   lowerGridLayout: GridItemLayout[];
+  savedYOffset: number;
 
   addGridItem: (item: GridItem) => void;
   removeGridItem: (id: string) => void;
@@ -28,6 +29,7 @@ export const useGridStore = create<GridState>()((set) => ({
   grid: {},
   upperGridLayout: [],
   lowerGridLayout: [],
+  savedYOffset: 0,
 
   addGridItem: (item: GridItem) =>
     set((state) => {
@@ -60,10 +62,23 @@ export const useGridStore = create<GridState>()((set) => ({
       const index = state.upperGridLayout.findIndex(
         (layout) => layout.i === id,
       );
+      const lowerGridLayoutMinY = state.upperGridLayout
+        .slice(index + 1)
+        .reduce((minY, layout) => {
+          return Math.min(minY, layout.y);
+        }, Infinity);
       return {
         ...state,
         upperGridLayout: state.upperGridLayout.slice(0, index + 1),
-        lowerGridLayout: state.upperGridLayout.slice(index + 1),
+        lowerGridLayout: state.upperGridLayout
+          .slice(index + 1)
+          .map((layout) => {
+            return {
+              ...layout,
+              y: layout.y - lowerGridLayoutMinY,
+            };
+          }),
+        savedYOffset: lowerGridLayoutMinY,
       };
     }),
 
@@ -89,7 +104,12 @@ export const useGridStore = create<GridState>()((set) => ({
         ...state,
         upperGridLayout: [
           ...state.upperGridLayout.sort(compareLayoutsFn),
-          ...state.lowerGridLayout.sort(compareLayoutsFn),
+          ...state.lowerGridLayout.sort(compareLayoutsFn).map((layout) => {
+            return {
+              ...layout,
+              y: layout.y + state.savedYOffset,
+            };
+          }),
         ],
         lowerGridLayout: [],
       };
