@@ -6,6 +6,7 @@ import * as RadioGroup from '@radix-ui/react-radio-group';
 
 import { cn } from '../../../lib/utils';
 
+import { ITEM_SIZES } from '../../../types/grid';
 import Button from '../../button/button';
 import {
   Form,
@@ -28,7 +29,7 @@ const FormSchema = z.object({
   hashSalt: z.string().min(1, {
     message: 'Please enter a hash salt.',
   }),
-  widgetSize: z.enum(['tiny', 'long', 'tall', 'large']),
+  widgetSize: z.enum(ITEM_SIZES),
 });
 
 export type EditItemFormSchemaType = z.infer<typeof FormSchema>;

@@ -12,7 +12,7 @@ const widgetVariants = cva(
   {
     variants: {
       variant: {
-        placeholder: '',
+        text: '',
       },
       state: {
         default: 'border border-brand-200 hover:border-orange-500',
@@ -26,37 +26,41 @@ const widgetVariants = cva(
       },
     },
     defaultVariants: {
-      variant: 'placeholder',
+      variant: 'text',
       state: 'default',
       size: 'tiny',
     },
   },
 );
 
-const placeholderTextBySize = {
-  tiny: '1x1',
-  long: '1x2',
-  tall: '2x1',
-  large: '2x2',
-};
-
 export interface WidgetProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof widgetVariants> {
   text?: string;
+  onDeleteClick?: () => void;
+  onEditClick?: () => void;
 }
 
 const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
-  ({ className, variant, size, text, ...props }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      text,
+      state,
+      onDeleteClick,
+      onEditClick,
+      ...props
+    },
+    ref,
+  ) => {
     // FIXME: Is there a better way to handle this?
-    if (!size) {
-      size = 'tiny';
-    }
     switch (variant) {
-      case 'placeholder':
+      case 'text':
         return (
           <div
-            className={cn(widgetVariants({ variant, size }), className)}
+            className={cn(widgetVariants({ variant, size, state }), className)}
             ref={ref}
             {...props}
           >
@@ -64,11 +68,11 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
               Icon={Shapes.Cube01}
               strokeClassName="stroke-gray-900 group-hover:stroke-orange-500"
             />
-            <WidgetDelete />
-            <div className="text-center text-6xl font-bold -tracking-[0.2px] text-gray-900">
-              {text ?? placeholderTextBySize[size]}
+            {onDeleteClick && <WidgetDelete onDeleteClick={onDeleteClick} />}
+            <div className="text-md text-center font-bold -tracking-[0.2px] text-gray-900">
+              {text ?? ''}
             </div>
-            <WidgetEdit />
+            {onEditClick && <WidgetEdit onEditClick={onEditClick} />}
           </div>
         );
     }
