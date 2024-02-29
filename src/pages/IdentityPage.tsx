@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Header from '../components/app/Header';
 import Footer from '../components/app/Footer';
 import Widget from '../components/app/grid/Widget';
-import { ITEM_SIZES } from '../components/app/grid/types';
+import { ITEM_SIZES } from '../types/grid';
 import { useGridStore } from '../stores/gridStore';
 import EditItemForm from '../components/app/forms/EditItemForm';
 

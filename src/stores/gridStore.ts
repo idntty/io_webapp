@@ -1,16 +1,55 @@
 import { create } from 'zustand';
 import { uuidv4 } from '../lib/utils';
-import type {
-  GridItem,
-  GridItemSize,
-  GridItemLayout,
-} from '../components/app/grid/types';
+import type { GridItem, GridItemSize, GridItemLayout } from '../types/grid';
 
 const compareLayoutsFn = (a: GridItemLayout, b: GridItemLayout) => {
   if (a.y === b.y) {
     return a.x - b.x;
   }
   return a.y - b.y;
+};
+
+const findNewItemPosition = (
+  grid: GridItemLayout[],
+  itemW: number,
+  itemH: number,
+) => {
+  let itemX = 0;
+  let itemY = 0;
+
+  let maxStartingY = 0;
+  let maxY = 0;
+  grid.forEach((layout) => {
+    maxStartingY = Math.max(maxStartingY, layout.y);
+    maxY = Math.max(maxY, layout.y + layout.h);
+  });
+
+  let spaceFound = false;
+  for (let y = maxStartingY; y <= maxY && !spaceFound; y++) {
+    for (let x = 0; x < 4; x++) {
+      const isSpaceAvailable = grid.every(
+        (layout) =>
+          x + itemW <= 4 &&
+          (layout.y >= y + itemH ||
+            layout.y + layout.h <= y ||
+            layout.x + layout.w <= x ||
+            layout.x >= x + itemW),
+      );
+      if (isSpaceAvailable) {
+        itemX = x;
+        itemY = y;
+        spaceFound = true;
+        break;
+      }
+    }
+  }
+
+  if (!spaceFound) {
+    itemX = 0;
+    itemY = maxY;
+  }
+
+  return { itemX, itemY };
 };
 
 export interface GridState {
@@ -37,40 +76,12 @@ export const useGridStore = create<GridState>()((set) => ({
     set((state) => {
       const itemW = ['large', 'long'].includes(size) ? 2 : 1;
       const itemH = ['large', 'tall'].includes(size) ? 2 : 1;
-      let itemX = 0;
-      let itemY = 0;
 
-      let maxStartingY = 0;
-      let maxY = 0;
-      state.upperGridLayout.forEach((layout) => {
-        maxStartingY = Math.max(maxStartingY, layout.y);
-        maxY = Math.max(maxY, layout.y + layout.h);
-      });
-
-      let spaceFound = false;
-      for (let y = maxStartingY; y <= maxY && !spaceFound; y++) {
-        for (let x = 0; x < 4; x++) {
-          const isSpaceAvailable = state.upperGridLayout.every(
-            (layout) =>
-              x + itemW <= 4 &&
-              (layout.y >= y + itemH ||
-                layout.y + layout.h <= y ||
-                layout.x + layout.w <= x ||
-                layout.x >= x + itemW),
-          );
-          if (isSpaceAvailable) {
-            itemX = x;
-            itemY = y;
-            spaceFound = true;
-            break;
-          }
-        }
-      }
-
-      if (!spaceFound) {
-        itemX = 0;
-        itemY = maxY;
-      }
+      const { itemX, itemY } = findNewItemPosition(
+        state.upperGridLayout,
+        itemW,
+        itemH,
+      );
 
       const item: GridItem = {
         size,
