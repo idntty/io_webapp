@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Header from '../components/app/Header';
 import Footer from '../components/app/Footer';
 import Widget from '../components/app/grid/Widget';
-import { ITEM_SIZES, createGridItem } from '../components/app/grid/gridLayout';
+import { ITEM_SIZES } from '../components/app/grid/types';
 import { useGridStore } from '../stores/gridStore';
 import EditItemForm from '../components/app/forms/EditItemForm';
 
@@ -36,9 +36,7 @@ export default function IdentityPage() {
   const handleAddGridItemClick = () => {
     const randomSize =
       ITEM_SIZES[Math.floor(Math.random() * ITEM_SIZES.length)];
-    const newItem = createGridItem(randomSize);
-    console.log('createGridItem', newItem);
-    addGridItem(newItem);
+    addGridItem(randomSize);
   };
 
   const handleMergeGrids = () => {

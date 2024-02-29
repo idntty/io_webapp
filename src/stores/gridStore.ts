@@ -1,8 +1,10 @@
 import { create } from 'zustand';
+import { uuidv4 } from '../lib/utils';
 import type {
   GridItem,
+  GridItemSize,
   GridItemLayout,
-} from '../components/app/grid/gridLayout';
+} from '../components/app/grid/types';
 
 const compareLayoutsFn = (a: GridItemLayout, b: GridItemLayout) => {
   if (a.y === b.y) {
@@ -17,7 +19,7 @@ export interface GridState {
   lowerGridLayout: GridItemLayout[];
   savedYOffset: number;
 
-  addGridItem: (item: GridItem) => void;
+  addGridItem: (size: GridItemSize) => void;
   removeGridItem: (id: string) => void;
   splitGridAtID: (id: string) => void;
   updateUpperGridLayout: (layout: GridItemLayout[]) => void;
@@ -31,12 +33,61 @@ export const useGridStore = create<GridState>()((set) => ({
   lowerGridLayout: [],
   savedYOffset: 0,
 
-  addGridItem: (item: GridItem) =>
+  addGridItem: (size: GridItemSize) =>
     set((state) => {
+      const itemW = ['large', 'long'].includes(size) ? 2 : 1;
+      const itemH = ['large', 'tall'].includes(size) ? 2 : 1;
+      let itemX = 0;
+      let itemY = 0;
+
+      let maxStartingY = 0;
+      let maxY = 0;
+      state.upperGridLayout.forEach((layout) => {
+        maxStartingY = Math.max(maxStartingY, layout.y);
+        maxY = Math.max(maxY, layout.y + layout.h);
+      });
+
+      let spaceFound = false;
+      for (let y = maxStartingY; y <= maxY && !spaceFound; y++) {
+        for (let x = 0; x < 4; x++) {
+          const isSpaceAvailable = state.upperGridLayout.every(
+            (layout) =>
+              x + itemW <= 4 &&
+              (layout.y >= y + itemH ||
+                layout.y + layout.h <= y ||
+                layout.x + layout.w <= x ||
+                layout.x >= x + itemW),
+          );
+          if (isSpaceAvailable) {
+            itemX = x;
+            itemY = y;
+            spaceFound = true;
+            break;
+          }
+        }
+      }
+
+      if (!spaceFound) {
+        itemX = 0;
+        itemY = maxY;
+      }
+
+      const item: GridItem = {
+        size,
+        layout: {
+          i: uuidv4(),
+          x: itemX,
+          y: itemY,
+          w: itemW,
+          h: itemH,
+        },
+        content: `${itemW}x${itemH}`,
+      };
+
       return {
         ...state,
         grid: { ...state.grid, [item.layout.i]: item },
-        upperGridLayout: [item.layout, ...state.upperGridLayout].sort(
+        upperGridLayout: [...state.upperGridLayout, item.layout].sort(
           compareLayoutsFn,
         ),
       };
