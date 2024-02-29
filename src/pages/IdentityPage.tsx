@@ -76,7 +76,6 @@ export default function IdentityPage() {
           isResizable={false}
           isBounded={false}
           rowHeight={181}
-          compactType={'horizontal'}
           className="bg-gray-100"
           onDragStart={(...args) => {
             console.log('upperGridLayout onDragStart:', upperGridLayout);
@@ -129,7 +128,6 @@ export default function IdentityPage() {
               md: 0,
             }}
             margin={[40, 40]}
-            compactType={'horizontal'}
             isResizable={false}
             isBounded={false}
             rowHeight={181}
