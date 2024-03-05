@@ -107,6 +107,8 @@ export default function IdentityPage() {
           <div className="relative left-1/2 flex w-screen -translate-x-1/2 transform justify-center bg-white py-[20px]">
             <div className="w-[840px]">
               <EditItemForm
+                // editedItemID can't be null based on handleEditGridItemClick
+                editedItemID={editedItemID!}
                 onCancel={handleMergeGrids}
                 onSubmit={handleMergeGrids}
               />

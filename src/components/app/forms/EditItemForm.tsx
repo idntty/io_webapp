@@ -6,6 +6,7 @@ import * as RadioGroup from '@radix-ui/react-radio-group';
 
 import { cn } from '../../../lib/utils';
 
+import { useGridStore } from '../../../stores/gridStore';
 import { ITEM_SIZES } from '../../../types/grid';
 import Button from '../../button/button';
 import {
@@ -42,11 +43,18 @@ const widgetSizeVariants = [
 ];
 
 export interface EditItemFormProps {
+  editedItemID: string;
   onCancel: () => void;
   onSubmit: () => void;
 }
 
-const EditItemForm: React.FC<EditItemFormProps> = ({ onCancel, onSubmit }) => {
+const EditItemForm: React.FC<EditItemFormProps> = ({
+  editedItemID,
+  onCancel,
+  onSubmit,
+}) => {
+  const grid = useGridStore((state) => state.grid);
+  const changeGridItemSize = useGridStore((state) => state.changeGridItemSize);
   const form = useForm<EditItemFormSchemaType>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -60,6 +68,9 @@ const EditItemForm: React.FC<EditItemFormProps> = ({ onCancel, onSubmit }) => {
   const onFormSubmit = (data: EditItemFormSchemaType) => {
     onSubmit();
     console.log(data);
+    if (grid[editedItemID].size !== data.widgetSize) {
+      changeGridItemSize(editedItemID, data.widgetSize);
+    }
   };
 
   return (
