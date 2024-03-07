@@ -1,13 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { General, Security } from 'untitledui-js';
+import { General, Security, Editor, Time } from 'untitledui-js';
 import * as RadioGroup from '@radix-ui/react-radio-group';
 
-import { cn } from '../../../lib/utils';
+import { cn, typedObjectKeys } from '../../../lib/utils';
 
 import { useGridStore } from '../../../stores/gridStore';
-import { ITEM_SIZES } from '../../../types/grid';
+import { GridItem, ITEM_SIZES } from '../../../types/grid';
 import Button from '../../button/button';
 import {
   Form,
@@ -22,16 +22,60 @@ import Input from '../../input';
 import TextArea from '../../textarea';
 import Divider from '../../divider';
 
-const FormSchema = z.object({
-  // TODO: Figure out how to add date here
-  value: z.string().min(1, {
+const FIELDS = {
+  Name: { schemaName: 'textValue', htmlType: 'text', widgetType: 'name' },
+  Bio: { schemaName: 'textAreaValue', htmlType: 'textarea', widgetType: 'bio' },
+  'Date of Birth': {
+    schemaName: 'dateValue',
+    htmlType: 'date',
+    widgetType: 'age',
+  },
+} as const;
+const [firstField, ...restFields] = typedObjectKeys(FIELDS);
+
+// FIXME: (very) temporary solution
+const getDefaultValues = (editedGridItem: GridItem) => {
+  const fieldType = Object.entries(FIELDS).find(
+    ([, { widgetType }]) => widgetType === editedGridItem.type,
+  )?.[0] as 'Name' | 'Bio' | 'Date of Birth';
+  // only one of textValue, textAreaValue, dateValue should be defined, based on fieldType
+  const textValue = (
+    fieldType === 'Name' ? editedGridItem.content : undefined
+  ) as string | undefined;
+  const textAreaValue = (
+    fieldType === 'Bio' ? editedGridItem.content : undefined
+  ) as string | undefined;
+  const dateValue = (
+    fieldType === 'Date of Birth' ? editedGridItem.content : undefined
+  ) as Date | undefined;
+  return {
+    fieldType,
+    textValue,
+    textAreaValue,
+    dateValue,
+    hashSalt: '',
+    widgetSize: editedGridItem.size,
+  };
+};
+
+const FormSchema = z
+  .object({
+    fieldType: z.enum([firstField, ...restFields], {
+      required_error: 'Please select a field type.',
+    }),
+    textValue: z.string().optional(),
+    textAreaValue: z.string().optional(),
+    dateValue: z.coerce.date().optional(),
+    hashSalt: z.string().min(1, {
+      message: 'Please enter a hash salt.',
+    }),
+    widgetSize: z.enum(ITEM_SIZES),
+  })
+  // one of the fields is required
+  .refine((data) => data.textValue ?? data.textAreaValue ?? data.dateValue, {
     message: 'Please enter a value.',
-  }),
-  hashSalt: z.string().min(1, {
-    message: 'Please enter a hash salt.',
-  }),
-  widgetSize: z.enum(ITEM_SIZES),
-});
+    path: ['textValue', 'textAreaValue', 'dateValue'],
+  });
 
 export type EditItemFormSchemaType = z.infer<typeof FormSchema>;
 
@@ -54,23 +98,24 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
   onSubmit,
 }) => {
   const grid = useGridStore((state) => state.grid);
-  const changeGridItemSize = useGridStore((state) => state.changeGridItemSize);
+  const addNewGridItem = useGridStore((state) => state.addNewGridItem);
+  const updateGridItem = useGridStore((state) => state.updateGridItem);
+
   const form = useForm<EditItemFormSchemaType>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      value: '',
-      hashSalt: '',
-      widgetSize: 'tiny',
-    },
+    defaultValues: getDefaultValues(grid[editedItemID]),
     mode: 'onChange',
   });
 
   const onFormSubmit = (data: EditItemFormSchemaType) => {
     onSubmit();
     console.log(data);
-    if (grid[editedItemID].size !== data.widgetSize) {
-      changeGridItemSize(editedItemID, data.widgetSize);
-    }
+    updateGridItem(editedItemID, {
+      size: data.widgetSize,
+      type: FIELDS[data.fieldType].widgetType,
+      content: data.textValue ?? data.textAreaValue ?? data.dateValue ?? '',
+    });
+    addNewGridItem('tiny');
   };
 
   return (
@@ -89,7 +134,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                 Private data
               </div>
               <div className="self-stretch text-sm font-normal text-gray-500">
-                Edit the data in your profile
+                Add the details to your profile
               </div>
             </div>
             <div className="flex items-center gap-[12px]">
@@ -99,7 +144,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
               <Button type="submit" size="md" variant="secondary-color">
                 Save
               </Button>
-              <Button size="md" variant="primary">
+              <Button type="submit" size="md" variant="primary">
                 Save & Sync
               </Button>
             </div>
@@ -109,33 +154,85 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
         <div className="flex flex-col gap-[20px] self-stretch">
           <FormField
             control={form.control}
-            name="value"
+            name="fieldType"
             render={({ field }) => (
               <FormItem className="flex gap-[32px] self-stretch">
                 <div className="flex w-[280px] flex-col">
                   <FormLabel className="self-stretch text-sm font-medium text-gray-700">
-                    Value
+                    Field type
                   </FormLabel>
                   <FormDescription className="self-stretch text-sm font-normal text-gray-500">
-                    Your very private data
+                    Select the type of data to be filled
                   </FormDescription>
                 </div>
                 <div className="flex w-[512px] flex-col gap-[6px]">
                   <FormControl>
-                    <TextArea
+                    <Input
                       className="self-stretch"
-                      maxLength={400}
-                      placeholder="I'm a Product Designer based in Melbourne, Australia. I specialise in UX/UI design, brand strategy, and Webflow development."
+                      Icon={General.SearchMD}
+                      placeholder="Name"
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage className="text-sm font-normal">
-                    {400 - form.getValues('value').length} characters left
-                  </FormMessage>
+                  <FormMessage className="text-sm font-normal" />
                 </div>
               </FormItem>
             )}
           />
+          {FIELDS[form.watch('fieldType')] && (
+            <FormField
+              control={form.control}
+              // want to use the value of fieldType to determine which field to show
+              name={FIELDS[form.watch('fieldType')].schemaName}
+              render={({ field }) => (
+                <FormItem className="flex gap-[32px] self-stretch">
+                  <div className="flex w-[280px] flex-col">
+                    <FormLabel className="self-stretch text-sm font-medium text-gray-700">
+                      Value
+                    </FormLabel>
+                    <FormDescription className="self-stretch text-sm font-normal text-gray-500">
+                      Your very private data
+                    </FormDescription>
+                  </div>
+                  <div className="flex w-[512px] flex-col gap-[6px]">
+                    <FormControl>
+                      {
+                        // FIXME: Help TS with understanding types
+                        field.name === 'dateValue' ? (
+                          // @ts-expect-error - TS doesn't know that field.name is 'dateValue'
+                          <Input
+                            className="self-stretch"
+                            type="date"
+                            Icon={Time.Calender}
+                            {...field}
+                          />
+                        ) : field.name === 'textAreaValue' ? (
+                          // @ts-expect-error - TS doesn't know that field.name is 'textAreaValue'
+                          <TextArea
+                            type="text"
+                            className="self-stretch"
+                            placeholder="I'm a Product Designer based in Melbourne, Australia. I specialise in UX/UI design, brand strategy, and Webflow development."
+                            maxLength={400}
+                            {...field}
+                          />
+                        ) : field.name === 'textValue' ? (
+                          // @ts-expect-error - TS doesn't know that field.name is 'textValue'
+                          <Input
+                            className="self-stretch"
+                            placeholder="John Doe"
+                            type="text"
+                            Icon={Editor.TextInput}
+                            {...field}
+                          />
+                        ) : null
+                      }
+                    </FormControl>
+                    <FormMessage className="text-sm font-normal" />
+                  </div>
+                </FormItem>
+              )}
+            />
+          )}
           <FormField
             control={form.control}
             name="hashSalt"
@@ -179,7 +276,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                 <div className="flex w-[512px] flex-col gap-[6px]">
                   <RadioGroup.Root
                     onValueChange={field.onChange}
-                    defaultValue="tiny"
+                    defaultValue={field.value}
                     className="flex items-center gap-[20px]"
                   >
                     {widgetSizeVariants.map(

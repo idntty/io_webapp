@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Header from '../components/app/Header';
 import Footer from '../components/app/Footer';
 import Widget from '../components/app/grid/Widget';
-import { ITEM_SIZES } from '../types/grid';
 import { useGridStore } from '../stores/gridStore';
 import EditItemForm from '../components/app/forms/EditItemForm';
 
@@ -19,7 +18,8 @@ export default function IdentityPage() {
   const upperGridLayout = useGridStore((state) => state.upperGridLayout);
   const lowerGridLayout = useGridStore((state) => state.lowerGridLayout);
 
-  const addGridItem = useGridStore((state) => state.addGridItem);
+  const addNewGridItem = useGridStore((state) => state.addNewGridItem);
+  const removeNewGridItem = useGridStore((state) => state.removeNewGridItem);
   const removeGridItem = useGridStore((state) => state.removeGridItem);
   const splitGridAtID = useGridStore((state) => state.splitGridAtID);
   const updateUpperGridLayout = useGridStore(
@@ -30,13 +30,19 @@ export default function IdentityPage() {
   );
   const mergeGrids = useGridStore((state) => state.mergeGrids);
 
+  const [isGridEditable, setIsGridEditable] = useState(false);
   const [isGridSplit, setIsGridSplit] = useState(false);
   const [editedItemID, setEditedItemID] = useState<string | null>(null);
 
-  const handleAddGridItemClick = () => {
-    const randomSize =
-      ITEM_SIZES[Math.floor(Math.random() * ITEM_SIZES.length)];
-    addGridItem(randomSize);
+  const handleToggleEditClick = () => {
+    setIsGridEditable((prev) => {
+      if (!prev) {
+        addNewGridItem('tiny');
+      } else {
+        removeNewGridItem();
+      }
+      return !prev;
+    });
   };
 
   const handleMergeGrids = () => {
@@ -56,7 +62,7 @@ export default function IdentityPage() {
 
   return (
     <div className="relative flex h-screen flex-col justify-between overflow-auto bg-gray-50">
-      <Header type="primary" onAddClick={handleAddGridItemClick} />
+      <Header type="primary" onToggleEditClick={handleToggleEditClick} />
       <div className="relative mx-auto w-[482px] bg-gray-100 lg:w-[924px]">
         <GridLayout
           layouts={{
@@ -74,6 +80,7 @@ export default function IdentityPage() {
           margin={[40, 40]}
           compactType={'horizontal'}
           isResizable={false}
+          isDraggable={isGridEditable}
           isBounded={false}
           rowHeight={181}
           className="bg-gray-100"
@@ -92,12 +99,16 @@ export default function IdentityPage() {
               <Widget
                 key={layout.i}
                 size={grid[layout.i].size}
-                variant="text"
+                type={grid[layout.i].type}
                 state={
                   isGridSplit && editedItemID === layout.i ? 'edit' : 'default'
                 }
-                text={layout.i}
-                onDeleteClick={() => removeGridItem(layout.i)}
+                value={grid[layout.i].content}
+                onDeleteClick={
+                  grid[layout.i].type !== 'new'
+                    ? () => removeGridItem(layout.i)
+                    : undefined
+                }
                 onEditClick={() => handleEditGridItemClick(layout.i)}
               />
             );
@@ -145,8 +156,8 @@ export default function IdentityPage() {
                 <Widget
                   key={layout.i}
                   size={grid[layout.i].size}
-                  variant="text"
-                  text={layout.i}
+                  type={grid[layout.i].type}
+                  value={layout.i}
                   onDeleteClick={() => removeGridItem(layout.i)}
                   onEditClick={() => handleEditGridItemClick(layout.i)}
                 />

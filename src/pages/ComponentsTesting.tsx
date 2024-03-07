@@ -167,10 +167,10 @@ export default function ComponentsTesting() {
       <Divider />
       {/* Widget */}
       <div className="flex w-full items-center justify-center gap-4">
-        <Widget size="tiny" variant="text" text="1x1" />
-        <Widget size="long" variant="text" text="2x1" />
-        <Widget size="tall" variant="text" text="1x2" />
-        <Widget size="large" variant="text" text="2x2" />
+        <Widget size="tiny" value="1x1" />
+        <Widget size="long" value="2x1" />
+        <Widget size="tall" value="1x2" />
+        <Widget size="large" value="2x2" />
       </div>
       <div className="flex w-full items-center justify-center gap-4">
         <EncryptedWidget size="tiny" />

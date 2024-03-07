@@ -7,9 +7,11 @@ export interface GridItemLayout {
   w: number;
   h: number;
 }
-export type GridItemContent = string;
+export type GridItemContent = string | Date;
+export type GridItemType = 'name' | 'bio' | 'age' | 'new';
 export interface GridItem {
   size: GridItemSize;
   layout: GridItemLayout;
   content: GridItemContent;
+  type: GridItemType;
 }

@@ -1,10 +1,10 @@
-import { General, Arrow } from 'untitledui-js';
+import { Arrow, Editor } from 'untitledui-js';
 import * as React from 'react';
 
 import Badge from '../badge';
 
 export interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
-  onAddClick?: () => void;
+  onToggleEditClick?: () => void;
   type: 'primary' | 'badges';
 }
 
@@ -13,7 +13,7 @@ const tabs = {
   badges: ['Badges', 'Collections'],
 };
 
-const Header: React.FC<HeaderProps> = ({ onAddClick, type }) => {
+const Header: React.FC<HeaderProps> = ({ onToggleEditClick, type }) => {
   return (
     <header className="flex justify-between self-stretch px-[300px] py-[20px]">
       <img className="h-[32px] w-[88.961px]" alt="Logo" src="/logo.svg" />
@@ -26,9 +26,9 @@ const Header: React.FC<HeaderProps> = ({ onAddClick, type }) => {
         </div>
       </div>
       <div className="flex items-center justify-center gap-[10px] px-0 py-[2px]">
-        <button onClick={onAddClick}>
+        <button onClick={onToggleEditClick}>
           <Badge variant="secondary" size="lg">
-            <General.Plus size="12" className="stroke-gray-500" />
+            <Editor.PencilLine size="12" className="stroke-gray-500" />
           </Badge>
         </button>
         <Badge variant="secondary" size="lg">

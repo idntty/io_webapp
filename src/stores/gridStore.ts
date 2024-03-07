@@ -65,13 +65,14 @@ export interface GridState {
   lowerGridLayout: GridItemLayout[];
   savedYOffset: number;
 
-  addGridItem: (size: GridItemSize) => void;
+  addNewGridItem: (size: GridItemSize) => void;
+  removeNewGridItem: () => void;
   removeGridItem: (id: string) => void;
   splitGridAtID: (id: string) => void;
   updateUpperGridLayout: (layout: GridItemLayout[]) => void;
   updateLowerGridLayout: (layout: GridItemLayout[]) => void;
   mergeGrids: () => void;
-  changeGridItemSize: (id: string, newSize: GridItemSize) => void;
+  updateGridItem: (id: string, newItem: Omit<GridItem, 'layout'>) => void;
 }
 
 export const useGridStore = create<GridState>()((set) => ({
@@ -80,7 +81,7 @@ export const useGridStore = create<GridState>()((set) => ({
   lowerGridLayout: [],
   savedYOffset: 0,
 
-  addGridItem: (size: GridItemSize) =>
+  addNewGridItem: (size: GridItemSize) =>
     set((state) => {
       const { itemW, itemH } = sizeToDimensions(size);
 
@@ -90,16 +91,19 @@ export const useGridStore = create<GridState>()((set) => ({
         itemH,
       );
 
+      const id = uuidv4();
+
       const item: GridItem = {
         size,
         layout: {
-          i: uuidv4(),
+          i: id,
           x: itemX,
           y: itemY,
           w: itemW,
           h: itemH,
         },
-        content: `${itemW}x${itemH}`,
+        content: id,
+        type: 'new',
       };
 
       return {
@@ -107,6 +111,19 @@ export const useGridStore = create<GridState>()((set) => ({
         grid: { ...state.grid, [item.layout.i]: item },
         upperGridLayout: [...state.upperGridLayout, item.layout].sort(
           compareLayoutsFn,
+        ),
+      };
+    }),
+
+  removeNewGridItem: () =>
+    set((state) => {
+      return {
+        ...state,
+        grid: Object.fromEntries(
+          Object.entries(state.grid).filter(([_, item]) => item.type !== 'new'),
+        ),
+        upperGridLayout: state.upperGridLayout.filter(
+          (layout) => state.grid[layout.i].type !== 'new',
         ),
       };
     }),
@@ -184,17 +201,18 @@ export const useGridStore = create<GridState>()((set) => ({
       };
     }),
 
-  changeGridItemSize: (id: string, newSize: GridItemSize) =>
+  updateGridItem: (id: string, newItem: Omit<GridItem, 'layout'>) =>
     set((state) => {
-      const { itemW, itemH } = sizeToDimensions(newSize);
+      const { itemW, itemH } = sizeToDimensions(newItem.size);
       return {
         ...state,
         grid: {
           ...state.grid,
           [id]: {
             ...state.grid[id],
-            size: newSize,
-            content: `${itemW}x${itemH}`,
+            size: newItem.size,
+            type: newItem.type,
+            content: newItem.content,
           },
         },
         upperGridLayout: state.upperGridLayout.map((layout) => {

@@ -47,6 +47,8 @@ export default function BadgesPage() {
           <div className="relative left-1/2 flex w-screen -translate-x-1/2 transform justify-center bg-white py-[20px]">
             <div className="w-[840px]">
               <EditItemForm
+                // FIXME: Temporarily hardcoding the editedItemID
+                editedItemID="temp"
                 onCancel={handleMergeGrids}
                 onSubmit={handleMergeGrids}
               />

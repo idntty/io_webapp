@@ -19,6 +19,16 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function typedObjectKeys<T extends object>(obj: T) {
+  return Object.keys(obj) as (keyof typeof obj)[];
+}
+
+export const calculateAge = (date: Date) => {
+  return Math.floor(
+    (new Date().getTime() - date.getTime()) / (1000 * 60 * 60 * 24 * 365.25),
+  );
+};
+
 export const createPDF = async (
   passphrase: string[],
   publicKey: Buffer,
