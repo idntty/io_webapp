@@ -20,6 +20,7 @@ const widgetVariants = cva(
         name: '',
         bio: '',
         age: '',
+        badge: '',
         new: 'border-[5px] border-orange-500',
       },
       size: {

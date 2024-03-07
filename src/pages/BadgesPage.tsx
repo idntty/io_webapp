@@ -15,14 +15,14 @@ export default function BadgesPage() {
   const lowerGridBadgeIDs = useBadgeGridStore(
     (state) => state.lowerGridBadgeIDs,
   );
-  const splitGridAtID = useBadgeGridStore((state) => state.splitGridAtID);
+  // const splitGridAtID = useBadgeGridStore((state) => state.splitGridAtID);
   const mergeGrids = useBadgeGridStore((state) => state.mergeGrids);
 
-  const handleSplitGrid = (id: string) => {
-    splitGridAtID(id);
-    setIsGridSplit(true);
-    console.log('Splitting grid at:', id);
-  };
+  // const handleSplitGrid = (id: string) => {
+  //   splitGridAtID(id);
+  //   setIsGridSplit(true);
+  //   console.log('Splitting grid at:', id);
+  // };
 
   const handleMergeGrids = () => {
     mergeGrids();
@@ -36,11 +36,7 @@ export default function BadgesPage() {
       <div className="relative mx-auto w-[482px] lg:w-[924px]">
         <div className="grid grid-cols-2 gap-[40px] py-[20px] lg:grid-cols-4">
           {upperGridBadgeIDs.map((id) => (
-            <ImageBadge
-              key={id}
-              onInfoClick={() => handleSplitGrid(id)}
-              {...imageBadges[id]}
-            />
+            <ImageBadge key={id} {...imageBadges[id]} />
           ))}
         </div>
         {isGridSplit && (

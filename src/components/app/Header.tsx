@@ -21,7 +21,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleEditClick, type }) => {
         <div className="flex items-center justify-center rounded-2xl bg-white px-[10px] py-[2px] text-center text-sm font-medium text-gray-700">
           {tabs[type][0]}
         </div>
-        <div className="text-sm font-medium text-gray-700">
+        <div className="self-center text-sm font-medium text-gray-700">
           {tabs[type].slice(1).join('\t')}
         </div>
       </div>

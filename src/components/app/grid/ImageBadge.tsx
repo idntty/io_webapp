@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import { cn } from '../../../lib/utils';
-import WidgetInfo from './WidgetInfo';
 
 export interface ImageBadgeType {
   imgURL: string;
@@ -9,22 +8,19 @@ export interface ImageBadgeType {
 
 export interface ImageBadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    ImageBadgeType {
-  onInfoClick?: () => void;
-}
+    ImageBadgeType {}
 
 const ImageBadge = React.forwardRef<HTMLDivElement, ImageBadgeProps>(
-  ({ className, imgURL, onInfoClick, ...props }, ref) => {
+  ({ className, imgURL, ...props }, ref) => {
     return (
       <div
         className={cn(
-          'group relative flex h-[180px] w-[180px] shrink-0 items-center justify-center rounded-[40px] border border-solid border-transparent bg-gray-25 hover:border-orange-500',
+          'relative flex h-[180px] w-[180px] shrink-0 items-center justify-center rounded-[40px] border border-solid border-transparent bg-gray-25 hover:border-orange-500 group-aria-checked:border-brand-300',
           className,
         )}
         ref={ref}
         {...props}
       >
-        <WidgetInfo onClick={onInfoClick} />
         <img src={imgURL} alt="badge" className="object-cover" />
       </div>
     );
