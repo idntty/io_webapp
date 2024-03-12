@@ -23,6 +23,18 @@ import Input from '../../input';
 import TextArea from '../../textarea';
 import Divider from '../../divider';
 import ImageBadge from '../grid/ImageBadge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../select';
+
+const getRandomHashSalt = () =>
+  Array.from({ length: 3 })
+    .map(() => Math.random().toString(36).slice(2).toUpperCase())
+    .join('');
 
 const FIELDS = {
   Name: { schemaName: 'textValue', htmlType: 'text', widgetType: 'name' },
@@ -55,7 +67,7 @@ const getDefaultValues = (editedGridItem: GridItem) => {
     textValue,
     textAreaValue,
     dateValue,
-    hashSalt: '',
+    hashSalt: getRandomHashSalt(),
     widgetSize: editedGridItem.size,
   };
 };
@@ -188,14 +200,23 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                     </FormDescription>
                   </div>
                   <div className="flex w-[512px] flex-col gap-[6px]">
-                    <FormControl>
-                      <Input
-                        className="self-stretch"
-                        Icon={General.SearchMD}
-                        placeholder="Name"
-                        {...field}
-                      />
-                    </FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a field type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Name">Name</SelectItem>
+                        <SelectItem value="Bio">Bio</SelectItem>
+                        <SelectItem value="Date of Birth">
+                          Date of Birth
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage className="text-sm font-normal" />
                   </div>
                 </FormItem>

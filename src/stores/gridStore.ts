@@ -125,6 +125,9 @@ export const useGridStore = create<GridState>()((set) => ({
         upperGridLayout: state.upperGridLayout.filter(
           (layout) => state.grid[layout.i].type !== 'new',
         ),
+        lowerGridLayout: state.lowerGridLayout.filter(
+          (layout) => state.grid[layout.i].type !== 'new',
+        ),
       };
     }),
 
