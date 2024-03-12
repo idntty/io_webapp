@@ -42,6 +42,7 @@ export interface WidgetProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof widgetVariants> {
   value?: GridItemContent;
+  isEditable?: boolean;
   onDeleteClick?: () => void;
   onEditClick?: () => void;
 }
@@ -54,6 +55,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
       size,
       value,
       state,
+      isEditable,
       onDeleteClick,
       onEditClick,
       ...props
@@ -65,7 +67,11 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
       case 'name':
         return (
           <div
-            className={cn(widgetVariants({ type, size, state }), className)}
+            className={cn(
+              widgetVariants({ type, size, state }),
+              'select-none' && isEditable,
+              className,
+            )}
             ref={ref}
             {...props}
           >
@@ -73,17 +79,25 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
               Icon={Users.User01}
               strokeClassName="stroke-gray-900 group-hover:stroke-orange-500"
             />
-            {onDeleteClick && <WidgetDelete onDeleteClick={onDeleteClick} />}
+            {isEditable && onDeleteClick && (
+              <WidgetDelete onDeleteClick={onDeleteClick} />
+            )}
             <div className="text-center text-3xl/[38px] font-bold -tracking-[0.2px] text-gray-900">
               {value?.toString() ?? ''}
             </div>
-            {onEditClick && <WidgetEdit onEditClick={onEditClick} />}
+            {isEditable && onEditClick && (
+              <WidgetEdit onEditClick={onEditClick} />
+            )}
           </div>
         );
       case 'bio':
         return (
           <div
-            className={cn(widgetVariants({ type, size, state }), className)}
+            className={cn(
+              widgetVariants({ type, size, state }),
+              'select-none' && isEditable,
+              className,
+            )}
             ref={ref}
             {...props}
           >
@@ -91,11 +105,15 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
               Icon={General.Bookmark}
               strokeClassName="stroke-gray-900 group-hover:stroke-orange-500"
             />
-            {onDeleteClick && <WidgetDelete onDeleteClick={onDeleteClick} />}
+            {isEditable && onDeleteClick && (
+              <WidgetDelete onDeleteClick={onDeleteClick} />
+            )}
             <div className="text-center text-base font-medium -tracking-[0.2px] text-gray-900">
               {value?.toString() ?? ''}
             </div>
-            {onEditClick && <WidgetEdit onEditClick={onEditClick} />}
+            {isEditable && onEditClick && (
+              <WidgetEdit onEditClick={onEditClick} />
+            )}
           </div>
         );
       case 'age':
@@ -104,6 +122,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             className={cn(
               'flex-col gap-[5px]',
               widgetVariants({ type, size, state }),
+              'select-none' && isEditable,
               className,
             )}
             ref={ref}
@@ -113,14 +132,38 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
               Icon={General.HeartRounded}
               strokeClassName="stroke-gray-900 group-hover:stroke-orange-500"
             />
-            {onDeleteClick && <WidgetDelete onDeleteClick={onDeleteClick} />}
+            {isEditable && onDeleteClick && (
+              <WidgetDelete onDeleteClick={onDeleteClick} />
+            )}
             <div className="text-center text-7xl/[90px] font-bold -tracking-[1.44px] text-gray-900">
               {value instanceof Date ? calculateAge(value) : value ?? ''}
             </div>
             <div className="text-center text-2xl font-normal text-gray-900">
               years old
             </div>
-            {onEditClick && <WidgetEdit onEditClick={onEditClick} />}
+            {isEditable && onEditClick && (
+              <WidgetEdit onEditClick={onEditClick} />
+            )}
+          </div>
+        );
+      case 'badge':
+        return (
+          <div
+            className={cn(widgetVariants({ type, size, state }), className)}
+            ref={ref}
+            {...props}
+          >
+            {isEditable && onDeleteClick && (
+              <WidgetDelete onDeleteClick={onDeleteClick} />
+            )}
+            <img
+              src={value?.toString() ?? ''}
+              alt="badge"
+              className="object-cover"
+            />
+            {isEditable && onEditClick && (
+              <WidgetEdit onEditClick={onEditClick} />
+            )}
           </div>
         );
       case 'new':

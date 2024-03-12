@@ -87,6 +87,7 @@ const FormSchema = z
     widgetSize: z.enum(ITEM_SIZES),
   })
   // one of the fields is required
+  // FIXME: path is not working
   .refine((data) => data.textValue ?? data.textAreaValue ?? data.dateValue, {
     message: 'Please enter a value.',
     path: ['textValue', 'textAreaValue', 'dateValue'],
@@ -136,6 +137,16 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
     addNewGridItem('tiny');
   };
 
+  const onBadgeSelect = () => {
+    onSubmit();
+    updateGridItem(editedItemID, {
+      size: 'tiny',
+      type: 'badge',
+      content: `badges/${selectedBadge}.png`,
+    });
+    addNewGridItem('tiny');
+  };
+
   return (
     <Form {...form}>
       <form
@@ -174,6 +185,9 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                 </Button>
                 <Button type="submit" size="md" variant="primary">
                   Save & Sync
+                </Button>
+                <Button onClick={onBadgeSelect} size="md" variant="primary">
+                  Save Badge
                 </Button>
               </div>
             </div>
