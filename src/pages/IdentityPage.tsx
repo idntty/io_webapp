@@ -7,6 +7,7 @@ import Footer from '../components/app/Footer';
 import Widget from '../components/app/grid/Widget';
 import { useGridStore } from '../stores/gridStore';
 import EditItemForm from '../components/app/forms/EditItemForm';
+import ShareForm from '../components/app/forms/ShareForm';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -31,9 +32,15 @@ export default function IdentityPage() {
   );
   const mergeGrids = useGridStore((state) => state.mergeGrids);
 
+  const [isShareFormOpen, setIsShareFormOpen] = useState(false);
+
   const [isGridEditable, setIsGridEditable] = useState(false);
   const [isGridSplit, setIsGridSplit] = useState(false);
   const [editedItemID, setEditedItemID] = useState<string | null>(null);
+
+  const handleShareClick = () => {
+    setIsShareFormOpen((prev) => !prev);
+  };
 
   const handleToggleEditClick = () => {
     setIsGridEditable((prev) => {
@@ -66,9 +73,20 @@ export default function IdentityPage() {
       defaultValue="all"
       className="relative flex h-screen flex-col justify-between overflow-auto bg-gray-50"
     >
-      <Header type="primary" onToggleEditClick={handleToggleEditClick} />
+      <Header
+        type="primary"
+        onToggleEditClick={handleToggleEditClick}
+        onShareClick={handleShareClick}
+      />
       <TabsContent value="all">
         <div className="relative mx-auto w-[482px] bg-gray-100 lg:w-[924px]">
+          {isShareFormOpen && (
+            <div className="relative left-1/2 flex w-screen -translate-x-1/2 transform justify-center bg-white py-[20px]">
+              <div className="w-[840px]">
+                <ShareForm />
+              </div>
+            </div>
+          )}
           <GridLayout
             layouts={{
               lg: upperGridLayout,

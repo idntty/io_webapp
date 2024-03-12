@@ -6,10 +6,11 @@ import { TabsList, TabsTrigger } from '../tabs';
 
 export interface HeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   onToggleEditClick?: () => void;
+  onShareClick?: () => void;
   type: 'primary' | 'badges';
 }
 
-const Header: React.FC<HeaderProps> = ({ onToggleEditClick }) => {
+const Header: React.FC<HeaderProps> = ({ onToggleEditClick, onShareClick }) => {
   return (
     <header className="flex justify-between self-stretch px-[300px] py-[20px]">
       <img className="h-[32px] w-[88.961px]" alt="Logo" src="/logo.svg" />
@@ -25,9 +26,11 @@ const Header: React.FC<HeaderProps> = ({ onToggleEditClick }) => {
             <Editor.PencilLine size="12" className="stroke-gray-500" />
           </Badge>
         </button>
-        <Badge variant="secondary" size="lg">
-          <Arrow.ArrowUpRight size="12" className="stroke-gray-500" />
-        </Badge>
+        <button onClick={onShareClick}>
+          <Badge variant="secondary" size="lg">
+            <Arrow.ArrowUpRight size="12" className="stroke-gray-500" />
+          </Badge>
+        </button>
       </div>
     </header>
   );
