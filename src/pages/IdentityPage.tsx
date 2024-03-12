@@ -183,7 +183,7 @@ export default function IdentityPage() {
                     key={layout.i}
                     size={grid[layout.i].size}
                     type={grid[layout.i].type}
-                    value={layout.i}
+                    value={grid[layout.i].content}
                     isEditable={isGridEditable}
                     onDeleteClick={() => removeGridItem(layout.i)}
                     onEditClick={() => handleEditGridItemClick(layout.i)}
