@@ -354,36 +354,40 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                 )}
               />
               <Divider />
-              <FormItem className="flex gap-[32px] self-stretch">
-                <div className="flex w-[280px] flex-col">
-                  <FormLabel className="self-stretch text-sm font-medium text-gray-700">
-                    Validated by
-                  </FormLabel>
-                  <FormDescription className="self-stretch text-sm font-normal text-gray-500">
-                    Your private data confirmed by other users
-                  </FormDescription>
-                </div>
-                {/* Gap is 20px - 12px = 8px */}
-                <div className="flex gap-[20px]">
-                  <div className="flex">
-                    {Array.from({ length: 10 }).map((_, index) => (
-                      <div
-                        key={index}
-                        className="mr-[-12px] h-[40px] w-[40px] rounded-full border-[1.5px] border-solid border-white bg-gray-300"
-                      ></div>
-                    ))}
-                    <div className="mr-[-12px] flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-full border-[2px] border-solid border-white bg-brand-50 px-0 py-[8px] text-center text-base font-medium text-brand-600">
-                      +5
+              {grid[editedItemID].type !== 'new' && (
+                <>
+                  <FormItem className="flex gap-[32px] self-stretch">
+                    <div className="flex w-[280px] flex-col">
+                      <FormLabel className="self-stretch text-sm font-medium text-gray-700">
+                        Validated by
+                      </FormLabel>
+                      <FormDescription className="self-stretch text-sm font-normal text-gray-500">
+                        Your private data confirmed by other users
+                      </FormDescription>
                     </div>
-                  </div>
-                </div>
-                <button className="flex h-[40px] w-[40px] items-center justify-center rounded-full border border-dashed border-gray-300 bg-white p-[8px]">
-                  <div className="flex items-center justify-center rounded-xl p-[4px]">
-                    <General.Plus size="16" className="stroke-gray-400" />
-                  </div>
-                </button>
-              </FormItem>
-              <Divider />
+                    {/* Gap is 20px - 12px = 8px */}
+                    <div className="flex gap-[20px]">
+                      <div className="flex">
+                        {Array.from({ length: 10 }).map((_, index) => (
+                          <div
+                            key={index}
+                            className="mr-[-12px] h-[40px] w-[40px] rounded-full border-[1.5px] border-solid border-white bg-gray-300"
+                          ></div>
+                        ))}
+                        <div className="mr-[-12px] flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-full border-[2px] border-solid border-white bg-brand-50 px-0 py-[8px] text-center text-base font-medium text-brand-600">
+                          +5
+                        </div>
+                      </div>
+                    </div>
+                    <button className="flex h-[40px] w-[40px] items-center justify-center rounded-full border border-dashed border-gray-300 bg-white p-[8px]">
+                      <div className="flex items-center justify-center rounded-xl p-[4px]">
+                        <General.Plus size="16" className="stroke-gray-400" />
+                      </div>
+                    </button>
+                  </FormItem>
+                  <Divider />
+                </>
+              )}
               <FormItem className="flex gap-[32px] self-stretch">
                 <div className="flex w-[280px] flex-col">
                   <FormLabel className="self-stretch text-sm font-medium text-gray-700">

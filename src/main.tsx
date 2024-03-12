@@ -13,9 +13,8 @@ import LoginWithoutPasskey from './pages/LoginWithoutPasskey.tsx';
 import IdentityPage from './pages/IdentityPage.tsx';
 import ComponentsTesting from './pages/ComponentsTesting.tsx';
 import ShareForm from './components/app/forms/ShareForm.tsx';
-import AddItemForm from './components/app/forms/AddIdemForm.tsx';
 import BadgesPage from './pages/BadgesPage.tsx';
-// import EditItemForm from './components/app/EditItemForm.tsx';
+import AddBadgeForm from './components/app/forms/AddBadgeForm.tsx';
 
 const router = createBrowserRouter([
   { path: '/', element: <IdentitySelection /> },
@@ -36,10 +35,10 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/add-item-form',
+    path: '/add-badge-form',
     element: (
       <div className="flex justify-center self-stretch px-[300px] py-[20px]">
-        <AddItemForm />
+        <AddBadgeForm />
       </div>
     ),
   },

@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { Arrow } from 'untitledui-js';
 
 import Button from '../../button/button';
 import {
@@ -17,6 +16,13 @@ import Input from '../../input';
 import TextArea from '../../textarea';
 import Badge from '../../badge';
 import Divider from '../../divider';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../select';
 
 const FormSchema = z.object({
   sharingType: z.enum(['Specific user', 'Public (For everyone)'], {
@@ -109,14 +115,24 @@ const ShareForm: React.FC = () => {
                   </FormDescription>
                 </div>
                 <div className="flex w-[512px] flex-col gap-[6px]">
-                  <FormControl>
-                    <Input
-                      className="self-stretch"
-                      placeholder="Specific user"
-                      Icon={Arrow.ChevronDown}
-                      {...field}
-                    />
-                  </FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a sharing type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Specific user">
+                        Specific user
+                      </SelectItem>
+                      <SelectItem value="Public (For everyone)">
+                        Public (For everyone)
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage className="text-sm font-normal">
                     {form.getValues('sharingType') === 'Specific user'
                       ? 'If you select this option, the selected data will be unencrypted and available to specific user'
