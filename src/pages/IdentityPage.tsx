@@ -1,6 +1,7 @@
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { useState } from 'react';
 
+import { Tabs, TabsContent } from '../components/tabs';
 import Header from '../components/app/Header';
 import Footer from '../components/app/Footer';
 import Widget from '../components/app/grid/Widget';
@@ -61,76 +62,17 @@ export default function IdentityPage() {
   };
 
   return (
-    <div className="relative flex h-screen flex-col justify-between overflow-auto bg-gray-50">
+    <Tabs
+      defaultValue="all"
+      className="relative flex h-screen flex-col justify-between overflow-auto bg-gray-50"
+    >
       <Header type="primary" onToggleEditClick={handleToggleEditClick} />
-      <div className="relative mx-auto w-[482px] bg-gray-100 lg:w-[924px]">
-        <GridLayout
-          layouts={{
-            lg: upperGridLayout,
-            md: upperGridLayout,
-          }}
-          cols={{
-            lg: 4,
-            md: 2,
-          }}
-          breakpoints={{
-            lg: 923,
-            md: 0,
-          }}
-          margin={[40, 40]}
-          compactType={'horizontal'}
-          isResizable={false}
-          isDraggable={isGridEditable}
-          isBounded={false}
-          rowHeight={181}
-          className="bg-gray-100"
-          onDragStart={(...args) => {
-            console.log('upperGridLayout onDragStart:', upperGridLayout);
-            console.log('lowerGridLayout onDragStart:', lowerGridLayout);
-            console.log('layout onDragStart:', args[0]);
-          }}
-          onLayoutChange={(layout) => {
-            console.log('layout onLayoutChange:', layout);
-            updateUpperGridLayout(layout);
-          }}
-        >
-          {upperGridLayout.map((layout) => {
-            return (
-              <Widget
-                key={layout.i}
-                size={grid[layout.i].size}
-                type={grid[layout.i].type}
-                state={
-                  isGridSplit && editedItemID === layout.i ? 'edit' : 'default'
-                }
-                value={grid[layout.i].content}
-                onDeleteClick={
-                  grid[layout.i].type !== 'new'
-                    ? () => removeGridItem(layout.i)
-                    : undefined
-                }
-                onEditClick={() => handleEditGridItemClick(layout.i)}
-              />
-            );
-          })}
-        </GridLayout>
-        {isGridSplit && (
-          <div className="relative left-1/2 flex w-screen -translate-x-1/2 transform justify-center bg-white py-[20px]">
-            <div className="w-[840px]">
-              <EditItemForm
-                // editedItemID can't be null based on handleEditGridItemClick
-                editedItemID={editedItemID!}
-                onCancel={handleMergeGrids}
-                onSubmit={handleMergeGrids}
-              />
-            </div>
-          </div>
-        )}
-        {isGridSplit && (
+      <TabsContent value="all">
+        <div className="relative mx-auto w-[482px] bg-gray-100 lg:w-[924px]">
           <GridLayout
             layouts={{
-              lg: lowerGridLayout,
-              md: lowerGridLayout,
+              lg: upperGridLayout,
+              md: upperGridLayout,
             }}
             cols={{
               lg: 4,
@@ -141,32 +83,98 @@ export default function IdentityPage() {
               md: 0,
             }}
             margin={[40, 40]}
+            compactType={'horizontal'}
             isResizable={false}
+            isDraggable={isGridEditable}
             isBounded={false}
             rowHeight={181}
-            compactType={null}
             className="bg-gray-100"
+            onDragStart={(...args) => {
+              console.log('upperGridLayout onDragStart:', upperGridLayout);
+              console.log('lowerGridLayout onDragStart:', lowerGridLayout);
+              console.log('layout onDragStart:', args[0]);
+            }}
             onLayoutChange={(layout) => {
               console.log('layout onLayoutChange:', layout);
-              updateLowerGridLayout(layout);
+              updateUpperGridLayout(layout);
             }}
           >
-            {lowerGridLayout.map((layout) => {
+            {upperGridLayout.map((layout) => {
               return (
                 <Widget
                   key={layout.i}
                   size={grid[layout.i].size}
                   type={grid[layout.i].type}
-                  value={layout.i}
-                  onDeleteClick={() => removeGridItem(layout.i)}
+                  state={
+                    isGridSplit && editedItemID === layout.i
+                      ? 'edit'
+                      : 'default'
+                  }
+                  value={grid[layout.i].content}
+                  onDeleteClick={
+                    grid[layout.i].type !== 'new'
+                      ? () => removeGridItem(layout.i)
+                      : undefined
+                  }
                   onEditClick={() => handleEditGridItemClick(layout.i)}
                 />
               );
             })}
           </GridLayout>
-        )}
-      </div>
+          {isGridSplit && (
+            <div className="relative left-1/2 flex w-screen -translate-x-1/2 transform justify-center bg-white py-[20px]">
+              <div className="w-[840px]">
+                <EditItemForm
+                  // editedItemID can't be null based on handleEditGridItemClick
+                  editedItemID={editedItemID!}
+                  onCancel={handleMergeGrids}
+                  onSubmit={handleMergeGrids}
+                />
+              </div>
+            </div>
+          )}
+          {isGridSplit && (
+            <GridLayout
+              layouts={{
+                lg: lowerGridLayout,
+                md: lowerGridLayout,
+              }}
+              cols={{
+                lg: 4,
+                md: 2,
+              }}
+              breakpoints={{
+                lg: 923,
+                md: 0,
+              }}
+              margin={[40, 40]}
+              isResizable={false}
+              isBounded={false}
+              rowHeight={181}
+              compactType={null}
+              className="bg-gray-100"
+              onLayoutChange={(layout) => {
+                console.log('layout onLayoutChange:', layout);
+                updateLowerGridLayout(layout);
+              }}
+            >
+              {lowerGridLayout.map((layout) => {
+                return (
+                  <Widget
+                    key={layout.i}
+                    size={grid[layout.i].size}
+                    type={grid[layout.i].type}
+                    value={layout.i}
+                    onDeleteClick={() => removeGridItem(layout.i)}
+                    onEditClick={() => handleEditGridItemClick(layout.i)}
+                  />
+                );
+              })}
+            </GridLayout>
+          )}
+        </div>
+      </TabsContent>
       <Footer />
-    </div>
+    </Tabs>
   );
 }
