@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { General, Security, Editor, Time } from 'untitledui-js';
+import { General, Security, Editor, Time, Arrow } from 'untitledui-js';
 import * as RadioGroup from '@radix-ui/react-radio-group';
 import { useState } from 'react';
 
@@ -24,12 +24,13 @@ import TextArea from '../../textarea';
 import Divider from '../../divider';
 import ImageBadge from '../grid/ImageBadge';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../../select';
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from '../../command';
+import { Popover, PopoverContent, PopoverTrigger } from '../../popover';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../tabs';
 
 const getRandomHashSalt = () =>
@@ -115,6 +116,8 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
 }) => {
   const [tab, setTab] = useState<'private' | 'badge'>('private');
   const [selectedBadge, setSelectedBadge] = useState<string>('1');
+
+  const [fieldTypePopoverOpen, setFieldTypePopoverOpen] = useState(false);
 
   const grid = useGridStore((state) => state.grid);
   const addNewGridItem = useGridStore((state) => state.addNewGridItem);
@@ -213,23 +216,63 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                       </FormDescription>
                     </div>
                     <div className="flex w-[512px] flex-col gap-[6px]">
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
+                      <Popover
+                        open={fieldTypePopoverOpen}
+                        onOpenChange={setFieldTypePopoverOpen}
                       >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a field type" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="Name">Name</SelectItem>
-                          <SelectItem value="Bio">Bio</SelectItem>
-                          <SelectItem value="Date of Birth">
-                            Date of Birth
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
+                        <PopoverTrigger asChild>
+                          <Button
+                            size="md"
+                            variant="secondary-gray"
+                            role="combobox"
+                            aria-expanded={fieldTypePopoverOpen}
+                            className="w-full justify-between"
+                          >
+                            {field.value ?? 'Select field type...'}
+                            <Arrow.ChevronSelectorVertical
+                              size="20"
+                              className="stroke-gray-500"
+                            />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-full p-0">
+                          <Command>
+                            <CommandInput placeholder="Search field type..." />
+                            <CommandEmpty>No field type found</CommandEmpty>
+                            <CommandGroup>
+                              {/* {Object.entries(FIELDS).map(([key]) => (
+                                <CommandItem
+                                  key={key}
+                                  value={key}
+                                  onSelect={() => {
+                                    field.onChange(key);
+                                    setFieldTypePopoverOpen(false);
+                                  }}
+                                >
+                                  <General.Check
+                                    size="20"
+                                    className="stroke-brand-600"
+                                  />
+                                  {key}
+                                </CommandItem>
+                              ))} */}
+                              {/* <CommandItem
+                                value="Name"
+                                onSelect={() => {
+                                  field.onChange('Name');
+                                  setFieldTypePopoverOpen(false);
+                                }}
+                              >
+                                <General.Check
+                                  size="20"
+                                  className="stroke-brand-600"
+                                />
+                                Name
+                              </CommandItem> */}
+                            </CommandGroup>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
                       <FormMessage className="text-sm font-normal" />
                     </div>
                   </FormItem>
