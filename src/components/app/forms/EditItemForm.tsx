@@ -134,7 +134,9 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
       type: FIELDS[data.fieldType].widgetType,
       content: data.textValue ?? data.textAreaValue ?? data.dateValue ?? '',
     });
-    addNewGridItem('tiny');
+    if (grid[editedItemID].type === 'new') {
+      addNewGridItem('tiny');
+    }
   };
 
   const onBadgeSelect = () => {
@@ -144,7 +146,9 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
       type: 'badge',
       content: `badges/${selectedBadge}.png`,
     });
-    addNewGridItem('tiny');
+    if (grid[editedItemID].type === 'new') {
+      addNewGridItem('tiny');
+    }
   };
 
   return (
