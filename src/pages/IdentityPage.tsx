@@ -83,7 +83,7 @@ export default function IdentityPage() {
           {isShareFormOpen && (
             <div className="relative left-1/2 flex w-screen -translate-x-1/2 transform justify-center bg-white py-[20px]">
               <div className="w-[840px]">
-                <ShareForm />
+                <ShareForm onCancel={handleShareClick} />
               </div>
             </div>
           )}

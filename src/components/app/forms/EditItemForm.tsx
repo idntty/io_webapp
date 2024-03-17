@@ -65,7 +65,7 @@ const getDefaultValues = (editedGridItem: GridItem) => {
     fieldType === 'Date of Birth' ? editedGridItem.content : undefined
   ) as Date | undefined;
   return {
-    fieldType,
+    fieldType: 'Name' as const,
     textValue,
     textAreaValue,
     dateValue,
@@ -235,7 +235,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                             />
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-full p-0">
+                        <PopoverContent className="w-[512px] p-0">
                           <Command>
                             <CommandInput placeholder="Search field type..." />
                             <CommandEmpty>No field type found</CommandEmpty>
@@ -257,6 +257,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                                 </CommandItem>
                               ))} */}
                               {/* <CommandItem
+                                key={1}
                                 value="Name"
                                 onSelect={() => {
                                   field.onChange('Name');

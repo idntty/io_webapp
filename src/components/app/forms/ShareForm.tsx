@@ -49,7 +49,11 @@ const FormSchema = z.object({
 
 export type ShareFormSchemaType = z.infer<typeof FormSchema>;
 
-const ShareForm: React.FC = () => {
+export interface ShareFormProps {
+  onCancel: () => void;
+}
+
+const ShareForm: React.FC<ShareFormProps> = ({ onCancel }) => {
   const form = useForm<ShareFormSchemaType>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -84,7 +88,12 @@ const ShareForm: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center gap-[12px]">
-              <Button size="md" variant="secondary-gray">
+              <Button
+                onClick={onCancel}
+                type="button"
+                size="md"
+                variant="secondary-gray"
+              >
                 Cancel
               </Button>
               {form.getValues('sharingType') === 'Specific user' ? (
