@@ -21,6 +21,7 @@ const widgetVariants = cva(
         bio: '',
         age: '',
         badge: '',
+        other: '',
         new: 'border-[5px] border-orange-500',
       },
       size: {
@@ -65,6 +66,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
     // FIXME: Needs a rewrite
     switch (type) {
       case 'name':
+      case 'other':
         return (
           <div
             className={cn(

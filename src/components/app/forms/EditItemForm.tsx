@@ -1,14 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { General, Security, Editor, Time, Arrow } from 'untitledui-js';
+import { General, Security, Editor, Time } from 'untitledui-js';
 import * as RadioGroup from '@radix-ui/react-radio-group';
 import { useState } from 'react';
+import { ReactSearchAutocomplete } from 'react-search-autocomplete';
 
-import { cn, typedObjectKeys } from '../../../lib/utils';
+import { cn } from '../../../lib/utils';
 
-import { useGridStore } from '../../../stores/gridStore';
-import { GridItem, ITEM_SIZES } from '../../../types/grid';
+import { useGridStore } from '../../../stores/gridStores';
+import { GridItem, GridItemType, ITEM_SIZES } from '../../../types/grid';
 import Button from '../../button/button';
 import {
   Form,
@@ -23,14 +24,6 @@ import Input from '../../input';
 import TextArea from '../../textarea';
 import Divider from '../../divider';
 import ImageBadge from '../grid/ImageBadge';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from '../../command';
-import { Popover, PopoverContent, PopoverTrigger } from '../../popover';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../tabs';
 
 const getRandomHashSalt = () =>
@@ -46,8 +39,19 @@ const FIELDS = {
     htmlType: 'date',
     widgetType: 'age',
   },
-} as const;
-const [firstField, ...restFields] = typedObjectKeys(FIELDS);
+};
+
+// FIXME: a (very) temporary solution
+const getWidgetTypeOrOther = (fieldType: string) => {
+  return (FIELDS[fieldType as keyof typeof FIELDS]?.widgetType ??
+    'other') as GridItemType;
+};
+
+// FIXME: a (very) temporary solution
+const getSchemaNameOrTextValue = (fieldType: string) => {
+  return (FIELDS[fieldType as keyof typeof FIELDS]?.schemaName ??
+    'textValue') as 'textValue' | 'textAreaValue' | 'dateValue';
+};
 
 // FIXME: a (very) temporary solution
 const getDefaultValues = (editedGridItem: GridItem) => {
@@ -65,7 +69,7 @@ const getDefaultValues = (editedGridItem: GridItem) => {
     fieldType === 'Date of Birth' ? editedGridItem.content : undefined
   ) as Date | undefined;
   return {
-    fieldType: 'Name' as const,
+    fieldType,
     textValue,
     textAreaValue,
     dateValue,
@@ -74,9 +78,15 @@ const getDefaultValues = (editedGridItem: GridItem) => {
   };
 };
 
-const FormSchema = z
+const searchableFieldTypes = Object.keys(FIELDS).map((key, index) => ({
+  id: index,
+  name: key,
+}));
+type SearchableFieldType = (typeof searchableFieldTypes)[number];
+
+const FieldsSchema = z
   .object({
-    fieldType: z.enum([firstField, ...restFields], {
+    fieldType: z.string({
       required_error: 'Please select a field type.',
     }),
     textValue: z.string().optional(),
@@ -93,6 +103,11 @@ const FormSchema = z
     message: 'Please enter a value.',
     path: ['textValue', 'textAreaValue', 'dateValue'],
   });
+
+const BadgeSchema = z.object({
+  selectedBadge: z.string(),
+});
+const FormSchema = z.union([FieldsSchema, BadgeSchema]);
 
 export type EditItemFormSchemaType = z.infer<typeof FormSchema>;
 
@@ -115,9 +130,6 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
   onSubmit,
 }) => {
   const [tab, setTab] = useState<'private' | 'badge'>('private');
-  const [selectedBadge, setSelectedBadge] = useState<string>('1');
-
-  const [fieldTypePopoverOpen, setFieldTypePopoverOpen] = useState(false);
 
   const grid = useGridStore((state) => state.grid);
   const addNewGridItem = useGridStore((state) => state.addNewGridItem);
@@ -132,23 +144,19 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
   const onFormSubmit = (data: EditItemFormSchemaType) => {
     onSubmit();
     console.log(data);
-    updateGridItem(editedItemID, {
-      size: data.widgetSize,
-      type: FIELDS[data.fieldType].widgetType,
-      content: data.textValue ?? data.textAreaValue ?? data.dateValue ?? '',
-    });
-    if (grid[editedItemID].type === 'new') {
-      addNewGridItem('tiny');
+    if ('selectedBadge' in data) {
+      updateGridItem(editedItemID, {
+        size: 'tiny',
+        type: 'badge',
+        content: `badges/${data.selectedBadge}.png`,
+      });
+    } else {
+      updateGridItem(editedItemID, {
+        size: data.widgetSize,
+        type: getWidgetTypeOrOther(data.fieldType),
+        content: data.textValue ?? data.textAreaValue ?? data.dateValue ?? '',
+      });
     }
-  };
-
-  const onBadgeSelect = () => {
-    onSubmit();
-    updateGridItem(editedItemID, {
-      size: 'tiny',
-      type: 'badge',
-      content: `badges/${selectedBadge}.png`,
-    });
     if (grid[editedItemID].type === 'new') {
       addNewGridItem('tiny');
     }
@@ -159,7 +167,9 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          void form.handleSubmit(onFormSubmit)(e);
+          void form.handleSubmit(onFormSubmit, (errors) => {
+            console.log(errors);
+          })(e);
         }}
       >
         <Tabs
@@ -193,9 +203,6 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                 <Button type="submit" size="md" variant="primary">
                   Save & Sync
                 </Button>
-                <Button onClick={onBadgeSelect} size="md" variant="primary">
-                  Save Badge
-                </Button>
               </div>
             </div>
             <Divider />
@@ -215,75 +222,53 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                         Select the type of data to be filled
                       </FormDescription>
                     </div>
-                    <div className="flex w-[512px] flex-col gap-[6px]">
-                      <Popover
-                        open={fieldTypePopoverOpen}
-                        onOpenChange={setFieldTypePopoverOpen}
-                      >
-                        <PopoverTrigger asChild>
-                          <Button
-                            size="md"
-                            variant="secondary-gray"
-                            role="combobox"
-                            aria-expanded={fieldTypePopoverOpen}
-                            className="w-full justify-between"
-                          >
-                            {field.value ?? 'Select field type...'}
-                            <Arrow.ChevronSelectorVertical
-                              size="20"
-                              className="stroke-gray-500"
-                            />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[512px] p-0">
-                          <Command>
-                            <CommandInput placeholder="Search field type..." />
-                            <CommandEmpty>No field type found</CommandEmpty>
-                            <CommandGroup>
-                              {/* {Object.entries(FIELDS).map(([key]) => (
-                                <CommandItem
-                                  key={key}
-                                  value={key}
-                                  onSelect={() => {
-                                    field.onChange(key);
-                                    setFieldTypePopoverOpen(false);
-                                  }}
-                                >
-                                  <General.Check
-                                    size="20"
-                                    className="stroke-brand-600"
-                                  />
-                                  {key}
-                                </CommandItem>
-                              ))} */}
-                              {/* <CommandItem
-                                key={1}
-                                value="Name"
-                                onSelect={() => {
-                                  field.onChange('Name');
-                                  setFieldTypePopoverOpen(false);
-                                }}
-                              >
-                                <General.Check
-                                  size="20"
-                                  className="stroke-brand-600"
-                                />
-                                Name
-                              </CommandItem> */}
-                            </CommandGroup>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
+                    <div className="relative flex w-[512px] flex-col gap-[6px] overflow-visible">
+                      <General.SearchMD
+                        size="20"
+                        className="absolute left-[15px] top-[13px] z-[100] stroke-gray-500"
+                      />
+                      <ReactSearchAutocomplete<SearchableFieldType>
+                        items={searchableFieldTypes}
+                        onSearch={(string: string) => {
+                          field.onChange(string);
+                        }}
+                        onSelect={(item: SearchableFieldType) => {
+                          field.onChange(item.name);
+                        }}
+                        formatResult={(item: SearchableFieldType) => {
+                          return (
+                            <div className="relative flex w-full cursor-pointer select-none items-center justify-between gap-[8px] px-[14px] py-[10px] text-base outline-none data-[disabled]:pointer-events-none">
+                              {item.name}
+                            </div>
+                          );
+                        }}
+                        placeholder="Search for a field type"
+                        styling={{
+                          height: '44px',
+                          border: '1px solid #D0D5DD',
+                          borderRadius: '8px',
+                          backgroundColor: 'white',
+                          boxShadow: '0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
+                          hoverBackgroundColor: 'white',
+                          color: '#101828',
+                          fontSize: '16px',
+                          fontFamily: 'Inter',
+                          iconColor: 'white',
+                          lineColor: '#101828',
+                          placeholderColor: '#667085',
+                          searchIconMargin: '0 0 0 9px',
+                        }}
+                      />
                       <FormMessage className="text-sm font-normal" />
                     </div>
                   </FormItem>
                 )}
               />
-              {FIELDS[form.watch('fieldType')] && (
+              {form.watch('fieldType') !== '' && (
                 <FormField
                   control={form.control}
                   // want to use the value of fieldType to determine which field to show
-                  name={FIELDS[form.watch('fieldType')].schemaName}
+                  name={getSchemaNameOrTextValue(form.watch('fieldType'))}
                   render={({ field }) => (
                     <FormItem className="flex gap-[32px] self-stretch">
                       <div className="flex w-[280px] flex-col">
@@ -458,22 +443,31 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
             </div>
           </TabsContent>
           <TabsContent value="badge">
-            <RadioGroup.Root
-              className="grid grid-cols-2 gap-[40px] py-[20px] lg:grid-cols-4"
-              defaultValue={selectedBadge}
-              onValueChange={(value) => setSelectedBadge(value)}
-            >
-              {Array.from({ length: 10 }).map((_, index) => (
-                <RadioGroup.Item
-                  key={index}
-                  value={(index + 1).toString()}
-                  id={(index + 1).toString()}
-                  className="group cursor-pointer disabled:cursor-not-allowed"
-                >
-                  <ImageBadge imgURL={`badges/${index + 1}.png`} />
-                </RadioGroup.Item>
-              ))}
-            </RadioGroup.Root>
+            <FormField
+              control={form.control}
+              name="selectedBadge"
+              render={({ field }) => (
+                <FormItem>
+                  <RadioGroup.Root
+                    className="grid grid-cols-2 gap-[40px] py-[20px] lg:grid-cols-4"
+                    defaultValue={field.value}
+                    onValueChange={field.onChange}
+                  >
+                    {Array.from({ length: 10 }).map((_, index) => (
+                      <FormControl key={index}>
+                        <RadioGroup.Item
+                          value={(index + 1).toString()}
+                          id={(index + 1).toString()}
+                          className="group cursor-pointer disabled:cursor-not-allowed"
+                        >
+                          <ImageBadge imgURL={`badges/${index + 1}.png`} />
+                        </RadioGroup.Item>
+                      </FormControl>
+                    ))}
+                  </RadioGroup.Root>
+                </FormItem>
+              )}
+            />
           </TabsContent>
         </Tabs>
       </form>

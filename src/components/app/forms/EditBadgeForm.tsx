@@ -6,6 +6,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { General } from 'untitledui-js';
 
+import { useBadgeStore } from '../../../stores/gridStores';
 import Button from '../../button/button';
 import {
   Form,
@@ -47,9 +48,24 @@ const FormSchema = z.object({
   collection: z.enum(['Partner Badges']),
 });
 
-export type AddBadgeFormSchemaType = z.infer<typeof FormSchema>;
+export type EditBadgeFormSchemaType = z.infer<typeof FormSchema>;
 
-const AddBadgeForm: React.FC = () => {
+export interface EditBadgeFormProps {
+  editedBadgeID: string;
+  onCancel: () => void;
+  onSubmit: () => void;
+}
+
+const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
+  editedBadgeID,
+  onCancel,
+  onSubmit,
+}) => {
+  const badgeGrid = useBadgeStore((state) => state.grid);
+  const addNewBadgeGridItem = useBadgeStore((state) => state.addNewGridItem);
+  const updateBadgeGridItem = useBadgeStore((state) => state.updateGridItem);
+  const removeBadgeGridItem = useBadgeStore((state) => state.removeGridItem);
+
   const [file, setFile] = useState<File | null>(null);
   const handleFileChange = (file: File) => setFile(file);
   const handleFileUpload = async () => {
@@ -74,10 +90,11 @@ const AddBadgeForm: React.FC = () => {
       } catch (error) {
         console.error(error);
       }
+      return file.name;
     }
   };
 
-  const form = useForm<AddBadgeFormSchemaType>({
+  const form = useForm<EditBadgeFormSchemaType>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       badgeName: '',
@@ -87,7 +104,8 @@ const AddBadgeForm: React.FC = () => {
     mode: 'onChange',
   });
 
-  const onSubmit = (data: AddBadgeFormSchemaType) => {
+  const onFormSubmit = (data: EditBadgeFormSchemaType) => {
+    onSubmit();
     console.log(data);
     console.log(file);
     handleFileUpload()
@@ -97,6 +115,21 @@ const AddBadgeForm: React.FC = () => {
       .catch((error) => {
         console.error(error);
       });
+    updateBadgeGridItem(editedBadgeID, {
+      size: 'tiny',
+      type: 'other',
+      content: data.badgeName,
+    });
+    if (badgeGrid[editedBadgeID].type === 'new') {
+      addNewBadgeGridItem('tiny');
+    }
+  };
+
+  const handleDeleteClick = () => {
+    if (badgeGrid[editedBadgeID].type !== 'new') {
+      removeBadgeGridItem(editedBadgeID);
+    }
+    onCancel();
   };
 
   return (
@@ -104,7 +137,7 @@ const AddBadgeForm: React.FC = () => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          void form.handleSubmit(onSubmit)(e);
+          void form.handleSubmit(onFormSubmit)(e);
         }}
         className="flex flex-col gap-[24px] self-stretch bg-white"
       >
@@ -119,10 +152,14 @@ const AddBadgeForm: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center gap-[12px]">
-              <Button size="md" variant="secondary-gray">
+              <Button onClick={onCancel} size="md" variant="secondary-gray">
                 Cancel
               </Button>
-              <Button size="md" variant="destructive">
+              <Button
+                onClick={handleDeleteClick}
+                size="md"
+                variant="destructive"
+              >
                 Delete
               </Button>
               <Button type="submit" size="md" variant="primary">
@@ -320,4 +357,4 @@ const AddBadgeForm: React.FC = () => {
   );
 };
 
-export default AddBadgeForm;
+export default EditBadgeForm;

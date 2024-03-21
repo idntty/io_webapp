@@ -8,7 +8,7 @@ export interface GridItemLayout {
   h: number;
 }
 export type GridItemContent = string | Date;
-export type GridItemType = 'name' | 'bio' | 'age' | 'badge' | 'new';
+export type GridItemType = 'name' | 'bio' | 'age' | 'badge' | 'other' | 'new';
 export interface GridItem {
   size: GridItemSize;
   layout: GridItemLayout;

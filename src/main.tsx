@@ -14,7 +14,6 @@ import IdentityPage from './pages/IdentityPage.tsx';
 import ComponentsTesting from './pages/ComponentsTesting.tsx';
 import ShareForm from './components/app/forms/ShareForm.tsx';
 import BadgesPage from './pages/BadgesPage.tsx';
-import AddBadgeForm from './components/app/forms/AddBadgeForm.tsx';
 
 const router = createBrowserRouter([
   { path: '/', element: <IdentitySelection /> },
@@ -30,15 +29,7 @@ const router = createBrowserRouter([
     path: '/share-form',
     element: (
       <div className="flex justify-center self-stretch px-[300px] py-[20px]">
-        <ShareForm />
-      </div>
-    ),
-  },
-  {
-    path: '/add-badge-form',
-    element: (
-      <div className="flex justify-center self-stretch px-[300px] py-[20px]">
-        <AddBadgeForm />
+        <ShareForm onCancel={() => {}} />
       </div>
     ),
   },
