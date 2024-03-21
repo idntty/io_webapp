@@ -1,6 +1,7 @@
 import { Responsive, WidthProvider } from 'react-grid-layout';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
+import type { OnboardingStore } from '../types/localStorage';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/tabs';
 import Header from '../components/app/Header';
 import Footer from '../components/app/Footer';
@@ -17,6 +18,10 @@ import '../components/app/grid/placeholder.css';
 const GridLayout = WidthProvider(Responsive);
 
 export default function IdentityPage() {
+  const [identity, setIdentity] = useState<'personal' | 'authority'>(
+    'personal',
+  );
+
   const grid = useGridStore((state) => state.grid);
   const upperGridLayout = useGridStore((state) => state.upperGridLayout);
   const lowerGridLayout = useGridStore((state) => state.lowerGridLayout);
@@ -108,17 +113,31 @@ export default function IdentityPage() {
     setEditedBadgeID(id);
   };
 
+  useEffect(() => {
+    try {
+      const onboardingStore = JSON.parse(
+        localStorage.getItem('onboardingStore') ?? '',
+      ) as OnboardingStore;
+      if (onboardingStore.state.identity) {
+        setIdentity(onboardingStore.state.identity);
+      }
+    } catch (e) {
+      console.error('Error parsing onboardingStore:', e);
+    }
+  }, []);
+
   return (
-    <div className="">
+    <div className="flex min-h-screen flex-col bg-gray-50">
       <Tabs
         defaultValue="all"
-        className="relative flex min-h-[47vh] flex-col justify-between overflow-auto bg-gray-50"
+        className="relative flex flex-grow flex-col justify-between overflow-auto bg-gray-50"
       >
         <Header
           type="primary"
           onToggleEditClick={handleToggleEditClick}
           onShareClick={handleShareClick}
         />
+        <div className="flex-grow"></div>
         <TabsContent value="all">
           <div className="relative mx-auto w-[482px] bg-gray-100 lg:w-[924px]">
             {isShareFormOpen && (
@@ -235,89 +254,26 @@ export default function IdentityPage() {
             )}
           </div>
         </TabsContent>
+        <div className="flex-grow"></div>
       </Tabs>
-      <Tabs
-        defaultValue="badges"
-        className="relative flex min-h-[47vh] flex-col justify-between overflow-auto bg-gray-50"
-      >
-        <div className="flex justify-center self-stretch px-[300px] py-[20px]">
-          <TabsList>
-            <TabsTrigger value="badges">Badges</TabsTrigger>
-            <TabsTrigger value="collections">Collections</TabsTrigger>
-          </TabsList>
-        </div>
-        <TabsContent value="badges">
-          <div className="relative mx-auto w-[482px] bg-gray-100 lg:w-[924px]">
-            <GridLayout
-              layouts={{
-                lg: upperBadgeLayout,
-                md: upperBadgeLayout,
-              }}
-              cols={{
-                lg: 4,
-                md: 2,
-              }}
-              breakpoints={{
-                lg: 923,
-                md: 0,
-              }}
-              margin={[40, 40]}
-              compactType={'horizontal'}
-              isResizable={false}
-              isDraggable={areGridsEditable}
-              isBounded={false}
-              rowHeight={181}
-              className="bg-gray-100"
-              onDragStart={(...args) => {
-                console.log('upperGridLayout onDragStart:', upperBadgeLayout);
-                console.log('lowerGridLayout onDragStart:', lowerBadgeLayout);
-                console.log('layout onDragStart:', args[0]);
-              }}
-              onLayoutChange={(layout) => {
-                console.log('layout onLayoutChange:', layout);
-                updateUpperBadgeLayout(layout);
-              }}
-            >
-              {upperBadgeLayout.map((layout) => {
-                return (
-                  <Widget
-                    key={layout.i}
-                    size={badgeGrid[layout.i].size}
-                    type={badgeGrid[layout.i].type}
-                    state={
-                      isBadgeGridSplit && editedBadgeID === layout.i
-                        ? 'edit'
-                        : 'default'
-                    }
-                    value={badgeGrid[layout.i].content}
-                    isEditable={areGridsEditable}
-                    onDeleteClick={
-                      badgeGrid[layout.i].type !== 'new'
-                        ? () => removeBadgeGridItem(layout.i)
-                        : undefined
-                    }
-                    onEditClick={() => handleEditBadgeGridItemClick(layout.i)}
-                  />
-                );
-              })}
-            </GridLayout>
-            {isBadgeGridSplit && (
-              <div className="relative left-1/2 flex w-screen -translate-x-1/2 transform justify-center bg-white py-[20px]">
-                <div className="w-[840px]">
-                  <EditBadgeForm
-                    // editedBadgeID can't be null based on handleEditBadgeGridItemClick
-                    editedBadgeID={editedBadgeID!}
-                    onCancel={handleMergeBadgeGrids}
-                    onSubmit={handleMergeBadgeGrids}
-                  />
-                </div>
-              </div>
-            )}
-            {isBadgeGridSplit && (
+      {identity === 'authority' && (
+        <Tabs
+          defaultValue="badges"
+          className="relative flex flex-grow flex-col justify-between overflow-auto bg-gray-50"
+        >
+          <div className="flex justify-center self-stretch px-[300px] py-[20px]">
+            <TabsList>
+              <TabsTrigger value="badges">Badges</TabsTrigger>
+              <TabsTrigger value="collections">Collections</TabsTrigger>
+            </TabsList>
+          </div>
+          <div className="flex-grow"></div>
+          <TabsContent value="badges">
+            <div className="relative mx-auto w-[482px] bg-gray-100 lg:w-[924px]">
               <GridLayout
                 layouts={{
-                  lg: lowerBadgeLayout,
-                  md: lowerBadgeLayout,
+                  lg: upperBadgeLayout,
+                  md: upperBadgeLayout,
                 }}
                 cols={{
                   lg: 4,
@@ -328,34 +284,104 @@ export default function IdentityPage() {
                   md: 0,
                 }}
                 margin={[40, 40]}
+                compactType={'horizontal'}
                 isResizable={false}
+                isDraggable={areGridsEditable}
                 isBounded={false}
                 rowHeight={181}
-                compactType={null}
                 className="bg-gray-100"
+                onDragStart={(...args) => {
+                  console.log('upperGridLayout onDragStart:', upperBadgeLayout);
+                  console.log('lowerGridLayout onDragStart:', lowerBadgeLayout);
+                  console.log('layout onDragStart:', args[0]);
+                }}
                 onLayoutChange={(layout) => {
                   console.log('layout onLayoutChange:', layout);
-                  updateLowerBadgeLayout(layout);
+                  updateUpperBadgeLayout(layout);
                 }}
               >
-                {lowerBadgeLayout.map((layout) => {
+                {upperBadgeLayout.map((layout) => {
                   return (
                     <Widget
                       key={layout.i}
                       size={badgeGrid[layout.i].size}
                       type={badgeGrid[layout.i].type}
+                      state={
+                        isBadgeGridSplit && editedBadgeID === layout.i
+                          ? 'edit'
+                          : 'default'
+                      }
                       value={badgeGrid[layout.i].content}
                       isEditable={areGridsEditable}
-                      onDeleteClick={() => removeBadgeGridItem(layout.i)}
+                      onDeleteClick={
+                        badgeGrid[layout.i].type !== 'new'
+                          ? () => removeBadgeGridItem(layout.i)
+                          : undefined
+                      }
                       onEditClick={() => handleEditBadgeGridItemClick(layout.i)}
                     />
                   );
                 })}
               </GridLayout>
-            )}
-          </div>
-        </TabsContent>
-      </Tabs>
+              {isBadgeGridSplit && (
+                <div className="relative left-1/2 flex w-screen -translate-x-1/2 transform justify-center bg-white py-[20px]">
+                  <div className="w-[840px]">
+                    <EditBadgeForm
+                      // editedBadgeID can't be null based on handleEditBadgeGridItemClick
+                      editedBadgeID={editedBadgeID!}
+                      onCancel={handleMergeBadgeGrids}
+                      onSubmit={handleMergeBadgeGrids}
+                    />
+                  </div>
+                </div>
+              )}
+              {isBadgeGridSplit && (
+                <GridLayout
+                  layouts={{
+                    lg: lowerBadgeLayout,
+                    md: lowerBadgeLayout,
+                  }}
+                  cols={{
+                    lg: 4,
+                    md: 2,
+                  }}
+                  breakpoints={{
+                    lg: 923,
+                    md: 0,
+                  }}
+                  margin={[40, 40]}
+                  isResizable={false}
+                  isBounded={false}
+                  rowHeight={181}
+                  compactType={null}
+                  className="bg-gray-100"
+                  onLayoutChange={(layout) => {
+                    console.log('layout onLayoutChange:', layout);
+                    updateLowerBadgeLayout(layout);
+                  }}
+                >
+                  {lowerBadgeLayout.map((layout) => {
+                    return (
+                      <Widget
+                        key={layout.i}
+                        size={badgeGrid[layout.i].size}
+                        type={badgeGrid[layout.i].type}
+                        value={badgeGrid[layout.i].content}
+                        isEditable={areGridsEditable}
+                        onDeleteClick={() => removeBadgeGridItem(layout.i)}
+                        onEditClick={() =>
+                          handleEditBadgeGridItemClick(layout.i)
+                        }
+                      />
+                    );
+                  })}
+                </GridLayout>
+              )}
+            </div>
+          </TabsContent>
+          <div className="flex-grow"></div>
+        </Tabs>
+      )}
       <Footer />
     </div>
   );

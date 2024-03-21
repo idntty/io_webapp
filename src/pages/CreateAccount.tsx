@@ -55,7 +55,7 @@ export default function CreateAccount() {
       setEncryptedMessage(Buffer.from(encryptedMessage).toString('hex'));
 
       await sendMessageToServer(encryptedMessage, nonce);
-      navigate('/app');
+      navigate('/identity-page');
     } catch (error) {
       console.error(error);
     }
@@ -97,7 +97,10 @@ export default function CreateAccount() {
                 <div className="h-[1px] flex-shrink-0 flex-grow basis-0 bg-gray-200" />
               </div>
               {/* FIXME: Fix hardcoded width and having to use has-[:disabled]:*/}
-              <Link to="/app" className="has-[:disabled]:pointer-events-none">
+              <Link
+                to="/identity-page"
+                className="has-[:disabled]:pointer-events-none"
+              >
                 <Button
                   size="lg"
                   variant="secondary-color"

@@ -46,7 +46,7 @@ export default function LoginWithoutPasskey() {
         }
         await saveMnemonic(passphrase.split(' '), webAuthnPublicKey);
       }
-      navigate('/app');
+      navigate('/identity-page');
     } catch (error) {
       console.error(error);
     }
