@@ -302,7 +302,7 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
                 handleChange={handleFileChange}
                 name="file"
                 types={['SVG', 'PNG', 'JPG', 'JPEG', 'GIF']}
-                required={true}
+                required={badgeGrid[editedBadgeID].type === 'new'}
                 hoverTitle=" "
               >
                 <div className="flex flex-col items-center gap-[4px] self-stretch rounded-lg border border-solid border-gray-200 bg-white py-[16px]">
