@@ -1,3 +1,5 @@
+'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -10,7 +12,7 @@ import {
   Alerts,
   Education,
 } from 'untitledui-js';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
 import Button from '../button/button';
 import {
@@ -114,7 +116,7 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
   withLabels,
   withErrors,
 }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const form = useForm<UserRegistrationFormSchemaType>({
     resolver: zodResolver(FormSchema),
@@ -135,7 +137,7 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
 
   const onSubmit = (data: UserRegistrationFormSchemaType) => {
     setPrivateData(data);
-    navigate('/create-account');
+    router.push('/create-account');
   };
 
   return (

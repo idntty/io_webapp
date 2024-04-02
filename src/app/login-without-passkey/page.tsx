@@ -1,19 +1,21 @@
+'use client';
+
 import { General } from 'untitledui-js';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
-import Header from '../components/onboarding/Header';
-import Footer from '../components/onboarding/Footer';
-import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
-import Checkbox from '../components/checkbox';
-import Button from '../components/button/button';
-import { generateKeysAndAdress } from '../lib/crypto';
-import { useOnboardingStore } from '../stores/onboardingStore';
-import { registerWithPasskey } from '../lib/passkeys';
-import { saveMnemonic } from '../lib/crypto';
+import Header from '../../components/onboarding/Header';
+import Footer from '../../components/onboarding/Footer';
+import TextAndSupportingText from '../../components/onboarding/TextAndSupportingText';
+import Checkbox from '../../components/checkbox';
+import Button from '../../components/button/button';
+import { generateKeysAndAdress } from '../../lib/crypto';
+import { useOnboardingStore } from '../../stores/onboardingStore';
+import { registerWithPasskey } from '../../lib/passkeys';
+import { saveMnemonic } from '../../lib/crypto';
 
 export default function LoginWithoutPasskey() {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const setPassphrase = useOnboardingStore((state) => state.setPassphrase);
   const setPrivateKey = useOnboardingStore((state) => state.setPrivateKey);
@@ -46,7 +48,7 @@ export default function LoginWithoutPasskey() {
         }
         await saveMnemonic(passphrase.split(' '), webAuthnPublicKey);
       }
-      navigate('/identity-page');
+      router.push('/identity-page');
     } catch (error) {
       console.error(error);
     }

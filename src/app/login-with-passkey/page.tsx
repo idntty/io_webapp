@@ -1,23 +1,25 @@
-import { Security, General } from 'untitledui-js';
-import { useNavigate } from 'react-router-dom';
+'use client';
 
-import Button from '../components/button/button';
-import Footer from '../components/onboarding/Footer';
-import Header from '../components/onboarding/Header';
-import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
-import { UserRegistrationFormSchemaType } from '../components/onboarding/UserRegistrationForm';
+import { Security, General } from 'untitledui-js';
+import { useRouter } from 'next/navigation';
+
+import Button from '../../components/button/button';
+import Footer from '../../components/onboarding/Footer';
+import Header from '../../components/onboarding/Header';
+import TextAndSupportingText from '../../components/onboarding/TextAndSupportingText';
+import { UserRegistrationFormSchemaType } from '../../components/onboarding/UserRegistrationForm';
 import {
   generateKeysAndAdress,
   loadMnemonic,
   convertKeys,
   decryptMessage,
-} from '../lib/crypto';
-import { useOnboardingStore } from '../stores/onboardingStore';
-import { loginWithPasskey } from '../lib/passkeys';
-import { getMessageFromServer } from '../lib/utils';
+} from '../../lib/crypto';
+import { useOnboardingStore } from '../../stores/onboardingStore';
+import { loginWithPasskey } from '../../lib/passkeys';
+import { getMessageFromServer } from '../../lib/utils';
 
 export default function LoginWithPasskey() {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const setPassphrase = useOnboardingStore((state) => state.setPassphrase);
   const setPrivateKey = useOnboardingStore((state) => state.setPrivateKey);
@@ -42,7 +44,7 @@ export default function LoginWithPasskey() {
       setPublicKey(publicKey);
       setWalletAddress(walletAddress);
 
-      navigate('/identity-page');
+      router.push('/identity-page');
     } catch (error) {
       console.error(error);
     }
@@ -83,7 +85,7 @@ export default function LoginWithPasskey() {
       setPrivateData(privateData);
       console.log('privateData', privateData);
 
-      navigate('/identity-page');
+      router.push('/identity-page');
     } catch (error) {
       console.error(error);
     }

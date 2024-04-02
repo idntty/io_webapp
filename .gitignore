@@ -12,6 +12,7 @@ node_modules
 next-env.d.ts
 dist
 dist-ssr
+out
 *.local
 .turbo
 

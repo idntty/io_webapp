@@ -148,7 +148,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
       updateGridItem(editedItemID, {
         size: 'tiny',
         type: 'badge',
-        content: `badges/${data.selectedBadge}.png`,
+        content: `/badges/${data.selectedBadge}.png`,
       });
     } else {
       updateGridItem(editedItemID, {
@@ -460,7 +460,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                           id={(index + 1).toString()}
                           className="group cursor-pointer disabled:cursor-not-allowed"
                         >
-                          <ImageBadge imgURL={`badges/${index + 1}.png`} />
+                          <ImageBadge imgURL={`/badges/${index + 1}.png`} />
                         </RadioGroup.Item>
                       </FormControl>
                     ))}

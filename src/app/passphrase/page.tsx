@@ -1,26 +1,28 @@
+'use client';
+
 import { Arrow, General, Alerts } from 'untitledui-js';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
-import Header from '../components/onboarding/Header';
-import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
-import Badge from '../components/badge';
-import Button from '../components/button/button';
-import Checkbox from '../components/checkbox';
-import Footer from '../components/onboarding/Footer';
-import LoginPrompt from '../components/onboarding/LoginPrompt';
+import Header from '../../components/onboarding/Header';
+import TextAndSupportingText from '../../components/onboarding/TextAndSupportingText';
+import Badge from '../../components/badge';
+import Button from '../../components/button/button';
+import Checkbox from '../../components/checkbox';
+import Footer from '../../components/onboarding/Footer';
+import LoginPrompt from '../../components/onboarding/LoginPrompt';
 import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogTitle,
-} from '../components/alert-dialog';
+} from '../../components/alert-dialog';
 
-import { useOnboardingStore } from '../stores/onboardingStore';
-import { generatePassphraseAndKeys } from '../lib/crypto';
-import { createPDF } from '../lib/utils';
-import Divider from '../components/divider';
+import { useOnboardingStore } from '../../stores/onboardingStore';
+import { generatePassphraseAndKeys } from '../../lib/crypto';
+import { createPDF } from '../../lib/utils';
+import Divider from '../../components/divider';
 
 export default function Passphrase() {
   const passphrase = useOnboardingStore((state) => state.passphrase);
@@ -210,7 +212,7 @@ export default function Passphrase() {
                 </div>
                 {/* FIXME: Fix hardcoded width and having to use has-[:disabled]:*/}
                 <Link
-                  to="/private-data"
+                  href="/private-data"
                   className="has-[:disabled]:pointer-events-none"
                 >
                   <Button

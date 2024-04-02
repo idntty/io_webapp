@@ -1,5 +1,7 @@
+'use client';
+
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 import IdentityRadioGroup from '../components/onboarding/IdentityRadioGroup';
 import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
@@ -49,7 +51,7 @@ export default function IdentitySelection() {
             />
             {/* FIXME: Fix hardcoded width and having to use has-[:disabled]:*/}
             <Link
-              to="/passphrase"
+              href="/passphrase"
               className="has-[:disabled]:pointer-events-none"
             >
               <Button

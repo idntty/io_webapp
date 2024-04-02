@@ -1,19 +1,22 @@
-import { Link, useNavigate } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Security } from 'untitledui-js';
 import { Buffer } from 'buffer';
 
-import Header from '../components/onboarding/Header';
-import Footer from '../components/onboarding/Footer';
-import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
-import Button from '../components/button/button';
+import Header from '../../components/onboarding/Header';
+import Footer from '../../components/onboarding/Footer';
+import TextAndSupportingText from '../../components/onboarding/TextAndSupportingText';
+import Button from '../../components/button/button';
 
-import { useOnboardingStore } from '../stores/onboardingStore';
-import { registerWithPasskey } from '../lib/passkeys';
-import { saveMnemonic, convertKeys, encryptMessage } from '../lib/crypto';
-import { sendMessageToServer } from '../lib/utils';
+import { useOnboardingStore } from '../../stores/onboardingStore';
+import { registerWithPasskey } from '../../lib/passkeys';
+import { saveMnemonic, convertKeys, encryptMessage } from '../../lib/crypto';
+import { sendMessageToServer } from '../../lib/utils';
 
 export default function CreateAccount() {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const publicKey = useOnboardingStore((state) => state.publicKey);
   const privateKey = useOnboardingStore((state) => state.privateKey);
@@ -55,7 +58,7 @@ export default function CreateAccount() {
       setEncryptedMessage(Buffer.from(encryptedMessage).toString('hex'));
 
       await sendMessageToServer(encryptedMessage, nonce);
-      navigate('/identity-page');
+      router.push('/identity-page');
     } catch (error) {
       console.error(error);
     }
@@ -98,7 +101,7 @@ export default function CreateAccount() {
               </div>
               {/* FIXME: Fix hardcoded width and having to use has-[:disabled]:*/}
               <Link
-                to="/identity-page"
+                href="/identity-page"
                 className="has-[:disabled]:pointer-events-none"
               >
                 <Button

@@ -2,7 +2,8 @@ node_modules/
 dist/
 .prettierrc
 .eslintrc.cjs
-postcss.config.js
+postcss.config.cjs
 tailwind.config.js
 vite.config.ts
 env.d.ts
+next.config.mjs

@@ -1,11 +1,13 @@
-import Badge from '../components/badge';
-import Button from '../components/button/button';
-import Input from '../components/input';
-import IdentityRadioGroup from '../components/onboarding/IdentityRadioGroup';
-import Widget from '../components/app/grid/Widget';
-import EncryptedWidget from '../components/app/grid/EncryptedWidget';
-import Checkbox from '../components/checkbox';
-import Divider from '../components/divider';
+'use client';
+
+import Badge from '../../components/badge';
+import Button from '../../components/button/button';
+import Input from '../../components/input';
+import IdentityRadioGroup from '../../components/onboarding/IdentityRadioGroup';
+import Widget from '../../components/app/grid/Widget';
+import EncryptedWidget from '../../components/app/grid/EncryptedWidget';
+import Checkbox from '../../components/checkbox';
+import Divider from '../../components/divider';
 
 import { Communication, Users, Education } from 'untitledui-js';
 
