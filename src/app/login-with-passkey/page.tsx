@@ -58,13 +58,21 @@ export default function LoginWithPasskey() {
   };
 
   const login = async () => {
+    const localPublicKey = localStorage.getItem('publicKey');
+
+    if (!localPublicKey) {
+      throw new Error('Public key was not found');
+    }
+
     try {
-      const response = await loginWithPasskey();
+      const response = await loginWithPasskey(
+        Buffer.from(localPublicKey, 'hex'),
+      );
       const webAuthnPublicKey = response.webAuthnPublicKey;
       if (!webAuthnPublicKey) {
         throw new Error('Did not get webAuthnPublicKey from server');
       }
-      const { phrase, privateKey, publicKey, walletAddress } =
+      const { phrase, publicKey, privateKey, walletAddress } =
         await loadMnemonic(webAuthnPublicKey);
       console.log(phrase.split(' '));
       setPassphrase(phrase.split(' '));
@@ -72,7 +80,7 @@ export default function LoginWithPasskey() {
       setPublicKey(publicKey);
       setWalletAddress(walletAddress);
 
-      const { encryptedMessage, nonce } = await getMessageFromServer();
+      const { encryptedMessage, nonce } = await getMessageFromServer(publicKey);
       const { convertedPrivateKey } = await convertKeys(publicKey, privateKey);
       const decryptedMessage = await decryptMessage(
         encryptedMessage,

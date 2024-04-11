@@ -48,6 +48,10 @@ export default function CreateAccount() {
         throw new Error('WebAuthn public key was not generated');
       }
       await saveMnemonic(passphrase, webAuthnPublicKey);
+
+      // FIXME: Must be a better way
+      localStorage.setItem('publicKey', publicKey.toString('hex'));
+
       const { convertedPrivateKey } = await convertKeys(publicKey, privateKey);
       const { encryptedMessage, nonce } = await encryptMessage(
         convertedPrivateKey,
@@ -57,7 +61,7 @@ export default function CreateAccount() {
       // FIXME: Remove later
       setEncryptedMessage(Buffer.from(encryptedMessage).toString('hex'));
 
-      await sendMessageToServer(encryptedMessage, nonce);
+      await sendMessageToServer(encryptedMessage, nonce, publicKey);
       router.push('/identity-page');
     } catch (error) {
       console.error(error);

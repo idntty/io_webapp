@@ -11,8 +11,9 @@ import {
 } from '@simplewebauthn/typescript-types';
 
 const HOST = 'api.idntty.io';
-// const HOST = 'localhost';
-const PORT = 443;
+// const HOST = 'localhost:8000';
+const PROTOCOL = 'https';
+// const PROTOCOL = 'http';
 
 export interface VerificationResponse {
   verified: boolean;
@@ -23,9 +24,10 @@ export const registerWithPasskey = async (publicKey: Buffer) => {
   let registrationResponse: RegistrationResponseJSON;
   try {
     const response = await axios.get<PublicKeyCredentialCreationOptionsJSON>(
-      `https://${HOST}:${PORT}/register`,
+      `${PROTOCOL}://${HOST}/register`,
       {
-        params: { userID: publicKey.toString('hex') },
+        params: { publicKey: publicKey.toString('hex'), username: 'username' },
+        withCredentials: true,
       },
     );
     const options = response.data;
@@ -39,18 +41,25 @@ export const registerWithPasskey = async (publicKey: Buffer) => {
   }
 
   const verificationResponse = await axios.post<VerificationResponse>(
-    `https://${HOST}:${PORT}/register/verify`,
+    `${PROTOCOL}://${HOST}/register/verify`,
     registrationResponse,
+    {
+      withCredentials: true,
+    },
   );
   console.log('Got registration verification response:', verificationResponse);
   return verificationResponse.data;
 };
 
-export const loginWithPasskey = async () => {
+export const loginWithPasskey = async (publicKey: Buffer) => {
   let authenticationResponse: AuthenticationResponseJSON;
   try {
     const response = await axios.get<PublicKeyCredentialRequestOptionsJSON>(
-      `https://${HOST}:${PORT}/login`,
+      `${PROTOCOL}://${HOST}/login`,
+      {
+        params: { publicKey: publicKey.toString('hex') },
+        withCredentials: true,
+      },
     );
     const options = response.data;
     console.log('Got authentication options:', options);
@@ -63,8 +72,11 @@ export const loginWithPasskey = async () => {
   }
 
   const verificationResponse = await axios.post<VerificationResponse>(
-    `https://${HOST}:${PORT}/login/verify`,
+    `${PROTOCOL}://${HOST}/login/verify`,
     authenticationResponse,
+    {
+      withCredentials: true,
+    },
   );
   console.log(
     'Got authentication verification response:',

@@ -10,8 +10,9 @@ import { v4 } from 'uuid';
 import type { v4String } from '../types/uuid';
 
 const HOST = 'api.idntty.io';
-// const HOST = 'localhost';
-const PORT = 443;
+// const HOST = 'localhost:8000';
+const PROTOCOL = 'https';
+// const PROTOCOL = 'http';
 
 export const uuidv4 = v4 as v4String;
 
@@ -80,24 +81,35 @@ interface SendMessageToServerResponse {
 export const sendMessageToServer = async (
   encryptedMessage: Uint8Array,
   nonce: Uint8Array,
+  publicKey: Buffer,
 ) => {
   return axios.post<SendMessageToServerResponse>(
-    `https://${HOST}:${PORT}/message/send`,
+    `${PROTOCOL}://${HOST}/message/send`,
     {
       message: Buffer.from(encryptedMessage).toString('hex'),
       nonce: Buffer.from(nonce).toString('hex'),
+      publicKey: publicKey.toString('hex'),
+    },
+    {
+      withCredentials: true,
     },
   );
 };
 
 interface GetMessageFromServerResponse {
+  id: number;
   message: string;
   nonce: string;
+  user_id: string;
 }
 
-export const getMessageFromServer = async () => {
+export const getMessageFromServer = async (publicKey: Buffer) => {
   const response = await axios.get<GetMessageFromServerResponse>(
-    `https://${HOST}:${PORT}/message/get`,
+    `${PROTOCOL}://${HOST}/message/get`,
+    {
+      params: { publicKey: publicKey.toString('hex') },
+      withCredentials: true,
+    },
   );
   const { message, nonce } = response.data;
   return {
