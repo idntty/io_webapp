@@ -28,10 +28,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../select';
+import { useOnboardingStore } from '../../../stores/onboardingStore';
 
 const HOST = 'api.idntty.io';
-// const HOST = 'localhost';
-const PORT = 443;
+// const HOST = 'localhost:8000';
 
 const FormSchema = z.object({
   badgeName: z.string().min(1, {
@@ -66,32 +66,56 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
   const updateBadgeGridItem = useBadgeStore((state) => state.updateGridItem);
   const removeBadgeGridItem = useBadgeStore((state) => state.removeGridItem);
 
+  const publicKey = useOnboardingStore((state) => state.publicKey);
+
   const [file, setFile] = useState<File | null>(null);
   const handleFileChange = (file: File) => setFile(file);
   const handleFileUpload = async () => {
-    if (file) {
-      const formData = new FormData();
-      formData.append('file', file);
+    if (file && publicKey) {
       try {
-        const response = await axios.post(
-          `https://${HOST}:${PORT}/upload`,
-          formData,
+        const urlResponse = await axios.post<{
+          url: string;
+          newFileName: string;
+        }>(
+          `https://${HOST}/get-upload-url`,
           {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
+            userID: publicKey.toString('hex'),
+            fileName: file.name,
+            contentType: file.type,
+          },
+          {
+            withCredentials: true,
           },
         );
-        if (response.status === 200) {
-          console.log(response.data);
+        if (urlResponse.status === 200) {
+          const { url, newFileName } = urlResponse.data;
+
+          const uploadResponse = await axios.put(url, file, {
+            headers: {
+              'Content-Type': file.type,
+            },
+          });
+
+          if (uploadResponse.status === 200) {
+            console.log('File uploaded to S3');
+          } else {
+            console.error(
+              'Failed to upload file to S3:',
+              uploadResponse.statusText,
+            );
+          }
+
+          return newFileName;
         } else {
-          console.error(response.statusText);
+          console.error('Failed to get presigned URL:', urlResponse.statusText);
         }
       } catch (error) {
-        console.error(error);
+        console.error('Error during file upload:', error);
       }
-      return file.name;
+    } else {
+      console.error('File or public key not found');
     }
+    return null;
   };
 
   const form = useForm<EditBadgeFormSchemaType>({
@@ -109,20 +133,21 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
     console.log(data);
     console.log(file);
     handleFileUpload()
-      .then(() => {
-        console.log('File uploaded');
+      .then((newFileName) => {
+        if (newFileName) {
+          updateBadgeGridItem(editedBadgeID, {
+            size: 'tiny',
+            type: 'badge',
+            content: `https://d1nyjrmwcoi38d.cloudfront.net/${newFileName}`,
+          });
+          if (badgeGrid[editedBadgeID].type === 'new') {
+            addNewBadgeGridItem('tiny');
+          }
+        }
       })
       .catch((error) => {
         console.error(error);
       });
-    updateBadgeGridItem(editedBadgeID, {
-      size: 'tiny',
-      type: 'other',
-      content: data.badgeName,
-    });
-    if (badgeGrid[editedBadgeID].type === 'new') {
-      addNewBadgeGridItem('tiny');
-    }
   };
 
   const handleDeleteClick = () => {
