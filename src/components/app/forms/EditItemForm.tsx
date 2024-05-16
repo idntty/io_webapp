@@ -6,8 +6,9 @@ import * as RadioGroup from '@radix-ui/react-radio-group';
 import { useState } from 'react';
 import { ReactSearchAutocomplete } from 'react-search-autocomplete';
 
-import { cn } from '../../../lib/utils';
+import { cn, saveDataToServer } from '../../../lib/utils';
 
+import { encryptGridItemContent } from '../../../lib/crypto';
 import { useGridStore } from '../../../stores/gridStores';
 import { GridItem, GridItemType, ITEM_SIZES } from '../../../types/grid';
 import Button from '../../button/button';
@@ -25,6 +26,23 @@ import TextArea from '../../textarea';
 import Divider from '../../divider';
 import ImageBadge from '../grid/ImageBadge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../tabs';
+
+const handleSendEncryptedData = async (uuid: string, content: string) => {
+  const { encryptedMessage, nonce } = await encryptGridItemContent(content);
+  const data = [
+    {
+      uuid,
+      value: Buffer.from(encryptedMessage).toString(),
+      nonce: Buffer.from(nonce).toString(),
+    },
+  ];
+  const publicKey = localStorage.getItem('publicKey');
+  if (!publicKey) {
+    throw new Error('Public key not found');
+  }
+  console.log('Saving data to server:', data);
+  return saveDataToServer(publicKey, 'private', data);
+};
 
 const getRandomHashSalt = () =>
   Array.from({ length: 3 })
@@ -151,11 +169,18 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
         content: `/badges/${data.selectedBadge}.png`,
       });
     } else {
+      const content =
+        data.textValue ?? data.textAreaValue ?? data.dateValue ?? '';
       updateGridItem(editedItemID, {
         size: data.widgetSize,
         type: getWidgetTypeOrOther(data.fieldType),
-        content: data.textValue ?? data.textAreaValue ?? data.dateValue ?? '',
+        content,
       });
+      handleSendEncryptedData(editedItemID, content.toString()).catch(
+        (error) => {
+          console.error(error);
+        },
+      );
     }
     if (grid[editedItemID].type === 'new') {
       addNewGridItem('tiny');

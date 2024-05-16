@@ -15,6 +15,7 @@ const widgetVariants = cva(
       state: {
         default: 'border border-brand-200 hover:border-orange-500',
         edit: 'border-[5px] border-orange-500',
+        selected: 'border-[5px] border-pink-500',
       },
       type: {
         name: '',

@@ -13,7 +13,7 @@ import Button from '../../components/button/button';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { registerWithPasskey } from '../../lib/passkeys';
 import { saveMnemonic, convertKeys, encryptMessage } from '../../lib/crypto';
-import { sendMessageToServer } from '../../lib/utils';
+// import { sendMessageToServer } from '../../lib/utils';
 
 export default function CreateAccount() {
   const router = useRouter();
@@ -61,7 +61,11 @@ export default function CreateAccount() {
       // FIXME: Remove later
       setEncryptedMessage(Buffer.from(encryptedMessage).toString('hex'));
 
-      await sendMessageToServer(encryptedMessage, nonce, publicKey);
+      // FIXME: Do smth with the data, used to post to /message/send
+      // await sendMessageToServer(encryptedMessage, nonce, publicKey);
+      console.log('Encrypted message: ', encryptedMessage);
+      console.log('Nonce: ', nonce);
+
       router.push('/identity-page');
     } catch (error) {
       console.error(error);

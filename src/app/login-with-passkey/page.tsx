@@ -11,12 +11,12 @@ import { UserRegistrationFormSchemaType } from '../../components/onboarding/User
 import {
   generateKeysAndAdress,
   loadMnemonic,
-  convertKeys,
-  decryptMessage,
+  //  convertKeys,
+  //  decryptMessage,
 } from '../../lib/crypto';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { loginWithPasskey } from '../../lib/passkeys';
-import { getMessageFromServer } from '../../lib/utils';
+// import { getMessageFromServer } from '../../lib/utils';
 
 export default function LoginWithPasskey() {
   const router = useRouter();
@@ -80,18 +80,29 @@ export default function LoginWithPasskey() {
       setPublicKey(publicKey);
       setWalletAddress(walletAddress);
 
-      const { encryptedMessage, nonce } = await getMessageFromServer(publicKey);
-      const { convertedPrivateKey } = await convertKeys(publicKey, privateKey);
-      const decryptedMessage = await decryptMessage(
-        encryptedMessage,
-        nonce,
-        convertedPrivateKey,
-      );
-      const privateData = JSON.parse(
-        atob(decryptedMessage),
-      ) as UserRegistrationFormSchemaType;
+      // FIXME: Change after figuring out what we are doing with the form data
+      // const { encryptedMessage, nonce } = await getMessageFromServer(publicKey);
+      // const { convertedPrivateKey } = await convertKeys(publicKey, privateKey);
+      // const decryptedMessage = await decryptMessage(
+      //   encryptedMessage,
+      //   nonce,
+      //   convertedPrivateKey,
+      // );
+      // const privateData = JSON.parse(
+      //   atob(decryptedMessage),
+      // ) as UserRegistrationFormSchemaType;
+      const privateData = {
+        fullName: '',
+        citezenship: '',
+        phone: '',
+        email: '',
+        placeOfBirth: '',
+        currentLocation: '',
+        nationalID: '',
+        passportNumber: '',
+      } as UserRegistrationFormSchemaType;
       setPrivateData(privateData);
-      console.log('privateData', privateData);
+      console.log('privateData: ', privateData, '(empty for now)');
 
       router.push('/identity-page');
     } catch (error) {

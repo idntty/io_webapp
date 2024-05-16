@@ -1,3 +1,5 @@
+// TODO: Remove unused
+
 import { create } from 'zustand';
 import { ImageBadgeType } from '../components/app/grid/ImageBadge';
 import { defaultBadges } from '../components/app/grid/badgeLayout';

@@ -1,6 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { Buffer } from 'buffer';
+import { saveDataToServer } from '../../../lib/utils';
+import { encryptGridItemContent } from '../../../lib/crypto';
+
+import { useGridStore } from '../../../stores/gridStores';
 
 import Button from '../../button/button';
 import {
@@ -24,36 +29,110 @@ import {
   SelectValue,
 } from '../../select';
 
-const FormSchema = z.object({
-  sharingType: z.enum(['Specific user', 'Public (For everyone)'], {
-    // FIXME: Error messages are not showing up
-    invalid_type_error: 'Select a sharing type.',
-    required_error: 'Please select a sharing type.',
-  }),
-  recepient: z
-    .string()
-    .min(1, {
-      message: "Please enter the recepient's public key.",
-    })
-    .optional(),
-  message: z
-    .string()
-    .min(1, {
-      message: 'Please complete your bio.',
-    })
-    .max(400, {
-      message: 'Please keep your bio under 400 characters.',
-    })
-    .optional(),
-});
+const FormSchema = z
+  .object({
+    sharingType: z.enum(['Specific user', 'Public (For everyone)'], {
+      // FIXME: Error messages are not showing up
+      invalid_type_error: 'Select a sharing type.',
+      required_error: 'Please select a sharing type.',
+    }),
+    recepient: z.string().optional(),
+    message: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.sharingType === 'Specific user') {
+      if (!data.recepient || data.recepient.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['recepient'],
+          message: "Please enter the recipient's public key.",
+        });
+      }
+      if (!data.message || data.message.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['message'],
+          message: 'Please complete your bio.',
+        });
+      }
+    }
+
+    if (data.recepient && data.recepient.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.too_small,
+        minimum: 1,
+        type: 'string',
+        inclusive: true,
+        path: ['recepient'],
+        message: "Please enter the recipient's public key.",
+      });
+    }
+
+    if (data.message) {
+      if (data.message.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.too_small,
+          minimum: 1,
+          type: 'string',
+          inclusive: true,
+          path: ['message'],
+          message: 'Please complete your bio.',
+        });
+      } else if (data.message.length > 400) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.too_big,
+          maximum: 400,
+          type: 'string',
+          inclusive: true,
+          path: ['message'],
+          message: 'Please keep your bio under 400 characters.',
+        });
+      }
+    }
+  });
 
 export type ShareFormSchemaType = z.infer<typeof FormSchema>;
 
 export interface ShareFormProps {
   onCancel: () => void;
+  selectedForSharing: string[];
 }
 
-const ShareForm: React.FC<ShareFormProps> = ({ onCancel }) => {
+const ShareForm: React.FC<ShareFormProps> = ({
+  onCancel,
+  selectedForSharing,
+}) => {
+  const grid = useGridStore((state) => state.grid);
+
+  const handleShareData = async (publicKey: string, sharedWith?: string) => {
+    if (sharedWith) {
+      const encryptedData = await Promise.all(
+        selectedForSharing.map(async (id) => {
+          const { encryptedMessage: value, nonce } =
+            await encryptGridItemContent(
+              grid[id].content.toString(),
+              sharedWith,
+            );
+          return {
+            uuid: id,
+            value: Buffer.from(value).toString(),
+            nonce: Buffer.from(nonce).toString(),
+          };
+        }),
+      );
+
+      await saveDataToServer(publicKey, 'shared', encryptedData, sharedWith);
+    } else {
+      const data = selectedForSharing.map((id) => ({
+        uuid: id,
+        value: grid[id].content.toString(),
+        nonce: Buffer.from([0x00]).toString(),
+      }));
+
+      await saveDataToServer(publicKey, 'public', data);
+    }
+  };
+
   const form = useForm<ShareFormSchemaType>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -66,6 +145,24 @@ const ShareForm: React.FC<ShareFormProps> = ({ onCancel }) => {
 
   const onSubmit = (data: ShareFormSchemaType) => {
     console.log(data);
+    const publicKey = localStorage.getItem('publicKey');
+    if (!publicKey) {
+      throw new Error('Public key not found');
+    }
+
+    if (data.sharingType === 'Public (For everyone)') {
+      handleShareData(publicKey).catch((error) => {
+        console.error(error);
+      });
+    } else {
+      handleShareData(publicKey, data.recepient).catch((error) => {
+        console.error(error);
+      });
+    }
+  };
+
+  const handleCancel = () => {
+    onCancel();
   };
 
   return (
@@ -89,7 +186,7 @@ const ShareForm: React.FC<ShareFormProps> = ({ onCancel }) => {
             </div>
             <div className="flex items-center gap-[12px]">
               <Button
-                onClick={onCancel}
+                onClick={handleCancel}
                 type="button"
                 size="md"
                 variant="secondary-gray"
@@ -225,9 +322,9 @@ const ShareForm: React.FC<ShareFormProps> = ({ onCancel }) => {
               </FormDescription>
             </div>
             <div className="flex items-center justify-center gap-[20px]">
-              {['Full name', 'Date of birth', 'Bio'].map((name, index) => (
+              {selectedForSharing.map((id, index) => (
                 <Badge key={index} size="md" variant="secondary">
-                  {name}
+                  {grid[id].type}
                 </Badge>
               ))}
             </div>

@@ -5,9 +5,9 @@ import { generate } from '@pdfme/generator';
 import type { Font } from '@pdfme/common';
 import { template } from '../lib/pdfTemplate';
 import axios from 'axios';
-import { Buffer } from 'buffer';
 import { v4 } from 'uuid';
 import type { v4String } from '../types/uuid';
+import type { GridItem } from '../types/grid';
 
 const HOST = 'api.idntty.io';
 // const HOST = 'localhost:8000';
@@ -74,46 +74,71 @@ export const createPDF = async (
   window.open(URL.createObjectURL(blob));
 };
 
-interface SendMessageToServerResponse {
-  success: boolean;
+export function extractLayout(grid: Record<string, GridItem>) {
+  const result: Record<string, Omit<GridItem, 'content'>> = {};
+
+  for (const key in grid) {
+    const { content: _, ...rest } = grid[key]; // Destructure to exclude content
+    result[key] = rest;
+  }
+
+  return result;
 }
 
-export const sendMessageToServer = async (
-  encryptedMessage: Uint8Array,
-  nonce: Uint8Array,
-  publicKey: Buffer,
+export const sendLayoutToServer = async (
+  publicKey: string,
+  layout: Record<string, Omit<GridItem, 'content'>>,
 ) => {
-  return axios.post<SendMessageToServerResponse>(
-    `${PROTOCOL}://${HOST}/message/send`,
-    {
-      message: Buffer.from(encryptedMessage).toString('hex'),
-      nonce: Buffer.from(nonce).toString('hex'),
-      publicKey: publicKey.toString('hex'),
-    },
+  return axios.post(
+    `${PROTOCOL}://${HOST}/layout/update`,
+    { publicKey, layout },
     {
       withCredentials: true,
     },
   );
 };
 
-interface GetMessageFromServerResponse {
-  id: number;
-  message: string;
+export interface DataEntry {
+  uuid: string;
+  value: string;
   nonce: string;
-  user_id: string;
 }
 
-export const getMessageFromServer = async (publicKey: Buffer) => {
-  const response = await axios.get<GetMessageFromServerResponse>(
-    `${PROTOCOL}://${HOST}/message/get`,
+export const saveDataToServer = async (
+  publicKey: string,
+  domain: 'private' | 'public' | 'shared',
+  data: DataEntry[],
+  sharedWith?: string,
+) => {
+  if (domain === 'shared' && !sharedWith) {
+    throw new Error('sharedWith is required for shared data');
+  }
+
+  console.log(
+    'Calling saveDataToServer with publicKey: ',
+    publicKey,
+    ' domain: ',
+    domain,
+    ' data: ',
+    data,
+    ' sharedWith: ',
+    sharedWith,
+  );
+
+  const dbDomain =
+    domain === 'private' ? publicKey : domain === 'shared' ? sharedWith : '';
+
+  const response = await axios.post(
+    `${PROTOCOL}://${HOST}/data/save`,
     {
-      params: { publicKey: publicKey.toString('hex') },
+      publicKey,
+      domains: [dbDomain],
+      data,
+    },
+    {
       withCredentials: true,
     },
   );
-  const { message, nonce } = response.data;
-  return {
-    encryptedMessage: Buffer.from(message, 'hex'),
-    nonce: Buffer.from(nonce, 'hex'),
-  };
+
+  console.log(response.data);
 };

@@ -99,6 +99,28 @@ export const convertKeys = async (publicKey: Buffer, privateKey: Buffer) => {
   return { convertedPublicKey, convertedPrivateKey };
 };
 
+export const convertPublicKey = async (publicKey: Buffer) => {
+  await _sodium.ready;
+  const sodium = _sodium;
+
+  const convertedPublicKey = Buffer.from(
+    sodium.crypto_sign_ed25519_pk_to_curve25519(publicKey),
+  );
+
+  return { convertedPublicKey };
+};
+
+export const convertPrivateKey = async (privateKey: Buffer) => {
+  await _sodium.ready;
+  const sodium = _sodium;
+
+  const convertedPrivateKey = Buffer.from(
+    sodium.crypto_sign_ed25519_sk_to_curve25519(privateKey),
+  );
+
+  return { convertedPrivateKey };
+};
+
 export const encryptMessage = async (
   convertedPrivateKey: Uint8Array,
   messageToEncrypt: string,
@@ -130,4 +152,54 @@ export const decryptMessage = async (
   );
 
   return Buffer.from(message).toString('utf-8');
+};
+
+const encryptSharedMessage = async (
+  convertedPrivateKey: Uint8Array,
+  convertedRecepientPublicKey: Uint8Array,
+  messageToEncrypt: string,
+) => {
+  await _sodium.ready;
+  const sodium = _sodium;
+
+  const nonce = sodium.randombytes_buf(sodium.crypto_secretbox_NONCEBYTES);
+  const encryptedMessage = sodium.crypto_box_easy(
+    Buffer.from(messageToEncrypt),
+    nonce,
+    convertedRecepientPublicKey,
+    convertedPrivateKey,
+  );
+
+  return { encryptedMessage, nonce };
+};
+
+export const encryptGridItemContent = async (
+  content: string,
+  sharedWith?: string,
+) => {
+  const webAuthnPublicKey = localStorage.getItem('webAuthnPublicKey');
+  if (!webAuthnPublicKey) {
+    throw new Error('WebAuthn public key not found');
+  }
+  const { publicKey, privateKey } = await loadMnemonic(webAuthnPublicKey);
+  const { convertedPrivateKey } = await convertKeys(publicKey, privateKey);
+
+  if (sharedWith) {
+    const recepientPublicKey = Buffer.from(sharedWith, 'hex');
+    const { convertedPublicKey: convertedRecepientPublicKey } =
+      await convertPublicKey(recepientPublicKey);
+    const { encryptedMessage, nonce } = await encryptSharedMessage(
+      convertedPrivateKey,
+      convertedRecepientPublicKey,
+      content,
+    );
+    return { encryptedMessage, nonce };
+  }
+
+  const { encryptedMessage, nonce } = await encryptMessage(
+    convertedPrivateKey,
+    content,
+  );
+
+  return { encryptedMessage, nonce };
 };

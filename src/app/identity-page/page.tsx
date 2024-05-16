@@ -3,6 +3,7 @@
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { useState, useEffect } from 'react';
 
+import { extractLayout, sendLayoutToServer } from '../../lib/utils';
 import type { OnboardingStore } from '../../types/localStorage';
 import {
   Tabs,
@@ -64,6 +65,7 @@ export default function IdentityPage() {
   const mergeBadgeGrids = useBadgeStore((state) => state.mergeGrids);
 
   const [isShareFormOpen, setIsShareFormOpen] = useState(false);
+  const [selectedForSharing, setSelectedForSharing] = useState<string[]>([]);
 
   const [areGridsEditable, setAreGridsEditable] = useState(false);
 
@@ -133,6 +135,32 @@ export default function IdentityPage() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!areGridsEditable) {
+      const filteredGrid = Object.fromEntries(
+        Object.entries(grid).filter(([_, value]) => value.type !== 'new'),
+      );
+
+      const layout = extractLayout(filteredGrid);
+
+      const publicKey = localStorage.getItem('publicKey');
+      if (publicKey) {
+        sendLayoutToServer(publicKey, layout)
+          .then(() => {
+            console.log('Layout sent to server:', layout);
+          })
+          .catch((error) => {
+            console.error('Error sending layout to server:', error);
+          });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [areGridsEditable]);
+
+  useEffect(() => {
+    setSelectedForSharing([]);
+  }, [isShareFormOpen]);
+
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
       <Tabs
@@ -150,7 +178,10 @@ export default function IdentityPage() {
             {isShareFormOpen && (
               <div className="relative left-1/2 flex w-screen -translate-x-1/2 transform justify-center bg-white py-[20px]">
                 <div className="w-[840px]">
-                  <ShareForm onCancel={handleShareClick} />
+                  <ShareForm
+                    onCancel={handleShareClick}
+                    selectedForSharing={selectedForSharing}
+                  />
                 </div>
               </div>
             )}
@@ -180,7 +211,7 @@ export default function IdentityPage() {
                 console.log('layout onDragStart:', args[0]);
               }}
               onLayoutChange={(layout) => {
-                console.log('layout onLayoutChange:', layout);
+                console.log('layout onLayoutChange:', layout, grid);
                 updateUpperGridLayout(layout);
               }}
             >
@@ -193,7 +224,11 @@ export default function IdentityPage() {
                     state={
                       isGridSplit && editedItemID === layout.i
                         ? 'edit'
-                        : 'default'
+                        : selectedForSharing.includes(layout.i) &&
+                            !areGridsEditable &&
+                            isShareFormOpen
+                          ? 'selected'
+                          : 'default'
                     }
                     value={grid[layout.i].content}
                     isEditable={areGridsEditable}
@@ -203,6 +238,14 @@ export default function IdentityPage() {
                         : undefined
                     }
                     onEditClick={() => handleEditGridItemClick(layout.i)}
+                    onClick={() =>
+                      setSelectedForSharing((prev) => {
+                        if (prev.includes(layout.i)) {
+                          return prev.filter((item) => item !== layout.i);
+                        }
+                        return [...prev, layout.i];
+                      })
+                    }
                   />
                 );
               })}
