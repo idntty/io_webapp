@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Communication } from 'untitledui-js';
+import Link from 'next/link';
 
 // make this have className prop
 
@@ -9,7 +10,12 @@ const Footer: React.FC<React.ComponentPropsWithoutRef<'footer'>> = () => {
       <div className="text-sm text-gray-500">© Untitled UI 2077</div>
       <div className="flex items-center gap-[8px]">
         <Communication.Mail01 size="16" className="stroke-gray-500" />
-        <div className="text-sm text-gray-500">help@untitledui.com</div>
+        <Link
+          href="mailto:help@untitledui.com"
+          className="text-sm text-gray-500"
+        >
+          help@untitledui.com
+        </Link>
       </div>
     </footer>
   );

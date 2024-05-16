@@ -115,8 +115,8 @@ const ShareForm: React.FC<ShareFormProps> = ({
             );
           return {
             uuid: id,
-            value: Buffer.from(value).toString(),
-            nonce: Buffer.from(nonce).toString(),
+            value: Buffer.from(value).toString('hex'),
+            nonce: Buffer.from(nonce).toString('hex'),
           };
         }),
       );
@@ -126,7 +126,7 @@ const ShareForm: React.FC<ShareFormProps> = ({
       const data = selectedForSharing.map((id) => ({
         uuid: id,
         value: grid[id].content.toString(),
-        nonce: Buffer.from([0x00]).toString(),
+        nonce: '',
       }));
 
       await saveDataToServer(publicKey, 'public', data);

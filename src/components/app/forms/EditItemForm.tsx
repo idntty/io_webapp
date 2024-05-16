@@ -32,8 +32,8 @@ const handleSendEncryptedData = async (uuid: string, content: string) => {
   const data = [
     {
       uuid,
-      value: Buffer.from(encryptedMessage).toString(),
-      nonce: Buffer.from(nonce).toString(),
+      value: Buffer.from(encryptedMessage).toString('hex'),
+      nonce: Buffer.from(nonce).toString('hex'),
     },
   ];
   const publicKey = localStorage.getItem('publicKey');
