@@ -1,6 +1,7 @@
 import { passphrase, cryptography } from '@liskhq/lisk-client/browser';
 import _sodium from 'libsodium-wrappers-sumo';
 import { Buffer } from 'buffer';
+import { SignJWT, type JWTPayload } from 'jose';
 
 const PATH = "m/44'/134'/0'";
 
@@ -203,3 +204,18 @@ export const encryptGridItemContent = async (
 
   return { encryptedMessage, nonce };
 };
+
+export async function createJWT(
+  privateKey: string,
+  publicKey: string,
+  payload: JWTPayload,
+) {
+  const jwt = await new SignJWT(payload)
+    .setProtectedHeader({ alg: 'EdDSA' })
+    .setIssuedAt()
+    .setIssuer(publicKey)
+    .setExpirationTime('1d')
+    .sign(Buffer.from(privateKey, 'hex'));
+
+  return jwt;
+}

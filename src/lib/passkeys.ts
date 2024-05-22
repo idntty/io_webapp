@@ -26,7 +26,7 @@ export const registerWithPasskey = async (publicKey: Buffer) => {
     const response = await axios.get<PublicKeyCredentialCreationOptionsJSON>(
       `${PROTOCOL}://${HOST}/register`,
       {
-        params: { publicKey: publicKey.toString('hex'), username: 'username' },
+        params: { publicKey: publicKey.toString('hex') },
         withCredentials: true,
       },
     );
@@ -42,7 +42,7 @@ export const registerWithPasskey = async (publicKey: Buffer) => {
 
   const verificationResponse = await axios.post<VerificationResponse>(
     `${PROTOCOL}://${HOST}/register/verify`,
-    registrationResponse,
+    { registrationResponse, publicKey: publicKey.toString('hex') },
     {
       withCredentials: true,
     },
@@ -82,7 +82,7 @@ export const loginWithPasskey = async (publicKey: Buffer) => {
 
   const verificationResponse = await axios.post<VerificationResponse>(
     `${PROTOCOL}://${HOST}/login/verify`,
-    authenticationResponse,
+    { authenticationResponse, publicKey: publicKey.toString('hex') },
     {
       withCredentials: true,
     },
