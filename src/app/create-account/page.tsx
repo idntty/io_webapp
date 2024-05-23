@@ -12,8 +12,13 @@ import Button from '../../components/button/button';
 
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { registerWithPasskey } from '../../lib/passkeys';
-import { saveMnemonic, convertKeys, encryptMessage } from '../../lib/crypto';
-// import { sendMessageToServer } from '../../lib/utils';
+import {
+  saveMnemonic,
+  convertKeys,
+  encryptMessage,
+  toPrivateKeyObject,
+  createJWT,
+} from '../../lib/crypto';
 
 export default function CreateAccount() {
   const router = useRouter();
@@ -51,6 +56,14 @@ export default function CreateAccount() {
 
       // FIXME: Must be a better way
       localStorage.setItem('publicKey', publicKey.toString('hex'));
+
+      const jwt = await createJWT(
+        await toPrivateKeyObject(privateKey),
+        publicKey.toString('hex'),
+        {},
+      );
+
+      localStorage.setItem('jwt', jwt);
 
       const { convertedPrivateKey } = await convertKeys(publicKey, privateKey);
       const { encryptedMessage, nonce } = await encryptMessage(

@@ -73,17 +73,24 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
   const handleFileUpload = async () => {
     if (file && publicKey) {
       try {
+        const jwt = localStorage.getItem('jwt');
+        if (!jwt) {
+          throw new Error('JWT not found');
+        }
         const urlResponse = await axios.post<{
           url: string;
           newFileName: string;
         }>(
           `https://${HOST}/get-upload-url`,
           {
-            userID: publicKey.toString('hex'),
+            publicKey: publicKey.toString('hex'),
             fileName: file.name,
             contentType: file.type,
           },
           {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
             withCredentials: true,
           },
         );

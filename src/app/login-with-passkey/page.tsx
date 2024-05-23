@@ -11,8 +11,8 @@ import { UserRegistrationFormSchemaType } from '../../components/onboarding/User
 import {
   generateKeysAndAdress,
   loadMnemonic,
-  //  convertKeys,
-  //  decryptMessage,
+  toPrivateKeyObject,
+  createJWT,
 } from '../../lib/crypto';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { loginWithPasskey } from '../../lib/passkeys';
@@ -79,6 +79,14 @@ export default function LoginWithPasskey() {
       setPrivateKey(privateKey);
       setPublicKey(publicKey);
       setWalletAddress(walletAddress);
+
+      const jwt = await createJWT(
+        await toPrivateKeyObject(privateKey),
+        publicKey.toString('hex'),
+        {},
+      );
+
+      localStorage.setItem('jwt', jwt);
 
       // FIXME: Change after figuring out what we are doing with the form data
       // const { encryptedMessage, nonce } = await getMessageFromServer(publicKey);

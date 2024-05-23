@@ -11,6 +11,7 @@
   "type": "module",
   "dependencies": {
     "@hookform/resolvers": "^3.3.3",
+    "@jacobbubu/webcrypto-ed25519": "^1.0.0",
     "@liskhq/lisk-client": "^6.1.0",
     "@pdfme/common": "^3.2.1",
     "@pdfme/generator": "^3.2.1",

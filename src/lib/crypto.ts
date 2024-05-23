@@ -1,7 +1,13 @@
 import { passphrase, cryptography } from '@liskhq/lisk-client/browser';
 import _sodium from 'libsodium-wrappers-sumo';
 import { Buffer } from 'buffer';
-import { SignJWT, type JWTPayload } from 'jose';
+import {
+  SignJWT,
+  type JWTPayload,
+  importPKCS8,
+  importSPKI,
+  type KeyLike,
+} from 'jose';
 
 const PATH = "m/44'/134'/0'";
 
@@ -205,8 +211,40 @@ export const encryptGridItemContent = async (
   return { encryptedMessage, nonce };
 };
 
+export async function toPrivateKeyObject(rawPrivateKey: Buffer) {
+  await _sodium.ready;
+  const sodium = _sodium;
+
+  return importPKCS8(
+    `-----BEGIN PRIVATE KEY-----\n${sodium.to_base64(
+      Buffer.concat([
+        Buffer.from('302e020100300506032b657004220420', 'hex'),
+        rawPrivateKey.subarray(0, 32),
+      ]),
+      sodium.base64_variants.ORIGINAL,
+    )}\n-----END PRIVATE KEY-----`,
+    'EdDSA',
+  );
+}
+
+export async function toPublicKeyObject(rawPublicKey: Buffer) {
+  await _sodium.ready;
+  const sodium = _sodium;
+
+  return importSPKI(
+    `-----BEGIN PUBLIC KEY-----\n${sodium.to_base64(
+      Buffer.concat([
+        Buffer.from('302a300506032b6570032100', 'hex'),
+        rawPublicKey,
+      ]),
+      sodium.base64_variants.ORIGINAL,
+    )}\n-----END PUBLIC KEY-----`,
+    'EdDSA',
+  );
+}
+
 export async function createJWT(
-  privateKey: string,
+  privateKey: KeyLike,
   publicKey: string,
   payload: JWTPayload,
 ) {
@@ -215,7 +253,7 @@ export async function createJWT(
     .setIssuedAt()
     .setIssuer(publicKey)
     .setExpirationTime('1d')
-    .sign(Buffer.from(privateKey, 'hex'));
+    .sign(privateKey);
 
   return jwt;
 }

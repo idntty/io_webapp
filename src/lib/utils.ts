@@ -89,10 +89,17 @@ export const sendLayoutToServer = async (
   publicKey: string,
   layout: Record<string, Omit<GridItem, 'content'>>,
 ) => {
+  const jwt = localStorage.getItem('jwt');
+  if (!jwt) {
+    throw new Error('JWT not found');
+  }
   return axios.post(
     `${PROTOCOL}://${HOST}/layout/update`,
     { publicKey, layout },
     {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
       withCredentials: true,
     },
   );
@@ -112,6 +119,11 @@ export const saveDataToServer = async (
 ) => {
   if (domain === 'shared' && !sharedWith) {
     throw new Error('sharedWith is required for shared data');
+  }
+
+  const jwt = localStorage.getItem('jwt');
+  if (!jwt) {
+    throw new Error('JWT not found');
   }
 
   console.log(
@@ -136,6 +148,9 @@ export const saveDataToServer = async (
       data,
     },
     {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
       withCredentials: true,
     },
   );

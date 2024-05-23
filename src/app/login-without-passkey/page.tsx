@@ -12,7 +12,7 @@ import Button from '../../components/button/button';
 import { generateKeysAndAdress } from '../../lib/crypto';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { registerWithPasskey } from '../../lib/passkeys';
-import { saveMnemonic } from '../../lib/crypto';
+import { saveMnemonic, toPrivateKeyObject, createJWT } from '../../lib/crypto';
 
 export default function LoginWithoutPasskey() {
   const router = useRouter();
@@ -39,6 +39,16 @@ export default function LoginWithoutPasskey() {
       setPrivateKey(privateKey);
       setPublicKey(publicKey);
       setWalletAddress(walletAddress);
+
+      localStorage.setItem('publicKey', publicKey.toString('hex'));
+
+      const jwt = await createJWT(
+        await toPrivateKeyObject(privateKey),
+        publicKey.toString('hex'),
+        {},
+      );
+
+      localStorage.setItem('jwt', jwt);
 
       if (doEncrypt) {
         const response = await registerWithPasskey(publicKey);
