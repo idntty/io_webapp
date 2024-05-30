@@ -184,12 +184,18 @@ export const encryptGridItemContent = async (
   content: string,
   sharedWith?: string,
 ) => {
-  const webAuthnPublicKey = localStorage.getItem('webAuthnPublicKey');
-  if (!webAuthnPublicKey) {
-    throw new Error('WebAuthn public key not found');
+  const publicKey = localStorage.getItem('publicKey');
+  const privateKey = sessionStorage.getItem('privateKey');
+  if (!publicKey) {
+    throw new Error('Public key was not found');
   }
-  const { publicKey, privateKey } = await loadMnemonic(webAuthnPublicKey);
-  const { convertedPrivateKey } = await convertKeys(publicKey, privateKey);
+  if (!privateKey) {
+    throw new Error('Private key was not found');
+  }
+  const { convertedPrivateKey } = await convertKeys(
+    Buffer.from(publicKey, 'hex'),
+    Buffer.from(privateKey, 'hex'),
+  );
 
   if (sharedWith) {
     const recepientPublicKey = Buffer.from(sharedWith, 'hex');

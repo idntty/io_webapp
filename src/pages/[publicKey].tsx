@@ -3,28 +3,22 @@
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { useState, useEffect } from 'react';
 
-import { extractLayout, sendLayoutToServer } from '../../lib/utils';
-import type { OnboardingStore } from '../../types/localStorage';
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from '../../components/tabs';
-import Header from '../../components/app/Header';
-import Footer from '../../components/app/Footer';
-import Widget from '../../components/app/grid/Widget';
-import { useGridStore, useBadgeStore } from '../../stores/gridStores';
-import EditItemForm from '../../components/app/forms/EditItemForm';
-import EditBadgeForm from '../../components/app/forms/EditBadgeForm';
-import ShareForm from '../../components/app/forms/ShareForm';
+import { extractLayout, sendLayoutToServer } from '../lib/utils';
+import type { OnboardingStore } from '../types/localStorage';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/tabs';
+import Header from '../components/app/Header';
+import Footer from '../components/app/Footer';
+import Widget from '../components/app/grid/Widget';
+import { useGridStore, useBadgeStore } from '../stores/gridStores';
+import EditItemForm from '../components/app/forms/EditItemForm';
+import EditBadgeForm from '../components/app/forms/EditBadgeForm';
+import ShareForm from '../components/app/forms/ShareForm';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import '../../components/app/grid/placeholder.css';
+// import '../components/app/grid/placeholder.css';
 
 const GridLayout = WidthProvider(Responsive);
-
 export default function IdentityPage() {
   const [identity, setIdentity] = useState<'personal' | 'authority'>(
     'personal',

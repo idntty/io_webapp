@@ -5,20 +5,20 @@ import { useRouter } from 'next/navigation';
 import { Security } from 'untitledui-js';
 import { Buffer } from 'buffer';
 
-import Header from '../../components/onboarding/Header';
-import Footer from '../../components/onboarding/Footer';
-import TextAndSupportingText from '../../components/onboarding/TextAndSupportingText';
-import Button from '../../components/button/button';
+import Header from '../components/onboarding/Header';
+import Footer from '../components/onboarding/Footer';
+import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
+import Button from '../components/button/button';
 
-import { useOnboardingStore } from '../../stores/onboardingStore';
-import { registerWithPasskey } from '../../lib/passkeys';
+import { useOnboardingStore } from '../stores/onboardingStore';
+import { registerWithPasskey } from '../lib/passkeys';
 import {
   saveMnemonic,
   convertKeys,
   encryptMessage,
   toPrivateKeyObject,
   createJWT,
-} from '../../lib/crypto';
+} from '../lib/crypto';
 
 export default function CreateAccount() {
   const router = useRouter();
@@ -54,7 +54,6 @@ export default function CreateAccount() {
       }
       await saveMnemonic(passphrase, webAuthnPublicKey);
 
-      // FIXME: Must be a better way
       localStorage.setItem('publicKey', publicKey.toString('hex'));
 
       const jwt = await createJWT(
@@ -64,6 +63,8 @@ export default function CreateAccount() {
       );
 
       localStorage.setItem('jwt', jwt);
+
+      sessionStorage.setItem('privateKey', privateKey.toString('hex'));
 
       const { convertedPrivateKey } = await convertKeys(publicKey, privateKey);
       const { encryptedMessage, nonce } = await encryptMessage(
@@ -79,7 +80,7 @@ export default function CreateAccount() {
       console.log('Encrypted message: ', encryptedMessage);
       console.log('Nonce: ', nonce);
 
-      router.push('/identity-page');
+      router.push(`/${publicKey.toString('hex')}`);
     } catch (error) {
       console.error(error);
     }
@@ -122,7 +123,7 @@ export default function CreateAccount() {
               </div>
               {/* FIXME: Fix hardcoded width and having to use has-[:disabled]:*/}
               <Link
-                href="/identity-page"
+                href={`/${localStorage.getItem('publicKey')}`}
                 className="has-[:disabled]:pointer-events-none"
               >
                 <Button

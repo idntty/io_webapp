@@ -4,15 +4,15 @@ import { General } from 'untitledui-js';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import Header from '../../components/onboarding/Header';
-import Footer from '../../components/onboarding/Footer';
-import TextAndSupportingText from '../../components/onboarding/TextAndSupportingText';
-import Checkbox from '../../components/checkbox';
-import Button from '../../components/button/button';
-import { generateKeysAndAdress } from '../../lib/crypto';
-import { useOnboardingStore } from '../../stores/onboardingStore';
-import { registerWithPasskey } from '../../lib/passkeys';
-import { saveMnemonic, toPrivateKeyObject, createJWT } from '../../lib/crypto';
+import Header from '../components/onboarding/Header';
+import Footer from '../components/onboarding/Footer';
+import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
+import Checkbox from '../components/checkbox';
+import Button from '../components/button/button';
+import { generateKeysAndAdress } from '../lib/crypto';
+import { useOnboardingStore } from '../stores/onboardingStore';
+import { registerWithPasskey } from '../lib/passkeys';
+import { saveMnemonic, toPrivateKeyObject, createJWT } from '../lib/crypto';
 
 export default function LoginWithoutPasskey() {
   const router = useRouter();
@@ -50,6 +50,8 @@ export default function LoginWithoutPasskey() {
 
       localStorage.setItem('jwt', jwt);
 
+      sessionStorage.setItem('privateKey', privateKey.toString('hex'));
+
       if (doEncrypt) {
         const response = await registerWithPasskey(publicKey);
         const webAuthnPublicKey = response.webAuthnPublicKey;
@@ -58,7 +60,7 @@ export default function LoginWithoutPasskey() {
         }
         await saveMnemonic(passphrase.split(' '), webAuthnPublicKey);
       }
-      router.push('/identity-page');
+      router.push(`/${publicKey.toString('hex')}`);
     } catch (error) {
       console.error(error);
     }

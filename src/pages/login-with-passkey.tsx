@@ -3,20 +3,20 @@
 import { Security, General } from 'untitledui-js';
 import { useRouter } from 'next/navigation';
 
-import Button from '../../components/button/button';
-import Footer from '../../components/onboarding/Footer';
-import Header from '../../components/onboarding/Header';
-import TextAndSupportingText from '../../components/onboarding/TextAndSupportingText';
-import { UserRegistrationFormSchemaType } from '../../components/onboarding/UserRegistrationForm';
+import Button from '../components/button/button';
+import Footer from '../components/onboarding/Footer';
+import Header from '../components/onboarding/Header';
+import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
+import { UserRegistrationFormSchemaType } from '../components/onboarding/UserRegistrationForm';
 import {
   generateKeysAndAdress,
   loadMnemonic,
   toPrivateKeyObject,
   createJWT,
-} from '../../lib/crypto';
-import { useOnboardingStore } from '../../stores/onboardingStore';
-import { loginWithPasskey } from '../../lib/passkeys';
-// import { getMessageFromServer } from '../../lib/utils';
+} from '../lib/crypto';
+import { useOnboardingStore } from '../stores/onboardingStore';
+import { loginWithPasskey } from '../lib/passkeys';
+// import { getMessageFromServer } from '../lib/utils';
 
 export default function LoginWithPasskey() {
   const router = useRouter();
@@ -44,7 +44,7 @@ export default function LoginWithPasskey() {
       setPublicKey(publicKey);
       setWalletAddress(walletAddress);
 
-      router.push('/identity-page');
+      router.push(`/${publicKey.toString('hex')}`);
     } catch (error) {
       console.error(error);
     }
@@ -88,6 +88,8 @@ export default function LoginWithPasskey() {
 
       localStorage.setItem('jwt', jwt);
 
+      sessionStorage.setItem('privateKey', privateKey.toString('hex'));
+
       // FIXME: Change after figuring out what we are doing with the form data
       // const { encryptedMessage, nonce } = await getMessageFromServer(publicKey);
       // const { convertedPrivateKey } = await convertKeys(publicKey, privateKey);
@@ -112,7 +114,7 @@ export default function LoginWithPasskey() {
       setPrivateData(privateData);
       console.log('privateData: ', privateData, '(empty for now)');
 
-      router.push('/identity-page');
+      `/${publicKey.toString('hex')}`;
     } catch (error) {
       console.error(error);
     }
