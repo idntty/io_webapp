@@ -180,6 +180,25 @@ const encryptSharedMessage = async (
   return { encryptedMessage, nonce };
 };
 
+const decryptSharedMessage = async (
+  encryptedMessage: Buffer,
+  nonce: Buffer,
+  convertedPrivateKey: Buffer,
+  convertedRecepientPublicKey: Buffer,
+) => {
+  await _sodium.ready;
+  const sodium = _sodium;
+
+  const message = sodium.crypto_box_open_easy(
+    encryptedMessage,
+    nonce,
+    convertedRecepientPublicKey,
+    convertedPrivateKey,
+  );
+
+  return Buffer.from(message).toString('utf-8');
+};
+
 export const encryptGridItemContent = async (
   content: string,
   sharedWith?: string,
@@ -217,6 +236,39 @@ export const encryptGridItemContent = async (
   return { encryptedMessage, nonce };
 };
 
+export const decryptGridItemContent = async (
+  encryptedMessage: Buffer,
+  nonce: Buffer,
+  sharedWith?: string,
+) => {
+  const publicKey = localStorage.getItem('publicKey');
+  const privateKey = sessionStorage.getItem('privateKey');
+  if (!publicKey) {
+    throw new Error('Public key was not found');
+  }
+  if (!privateKey) {
+    throw new Error('Private key was not found');
+  }
+  const { convertedPrivateKey } = await convertKeys(
+    Buffer.from(publicKey, 'hex'),
+    Buffer.from(privateKey, 'hex'),
+  );
+
+  if (sharedWith) {
+    const recepientPublicKey = Buffer.from(sharedWith, 'hex');
+    const { convertedPublicKey: convertedRecepientPublicKey } =
+      await convertPublicKey(recepientPublicKey);
+    return decryptSharedMessage(
+      encryptedMessage,
+      nonce,
+      convertedPrivateKey,
+      convertedRecepientPublicKey,
+    );
+  }
+
+  return decryptMessage(encryptedMessage, nonce, convertedPrivateKey);
+};
+
 export async function toPrivateKeyObject(rawPrivateKey: Buffer) {
   await _sodium.ready;
   const sodium = _sodium;
@@ -249,7 +301,7 @@ export async function toPublicKeyObject(rawPublicKey: Buffer) {
   );
 }
 
-export async function createJWT(
+export async function _createJWT(
   privateKey: KeyLike,
   publicKey: string,
   payload: JWTPayload,
@@ -262,4 +314,44 @@ export async function createJWT(
     .sign(privateKey);
 
   return jwt;
+}
+
+export async function createJWT(
+  privateKey: Buffer,
+  publicKey: string,
+  customPayload: JWTPayload,
+) {
+  await _sodium.ready;
+  const sodium = _sodium;
+
+  const header = {
+    alg: 'EdDSA',
+  };
+
+  const payload: JWTPayload = {
+    iat: Math.floor(Date.now() / 1000),
+    iss: publicKey,
+    exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
+    ...customPayload,
+  };
+
+  const encodedHeader = sodium.to_base64(
+    Buffer.from(JSON.stringify(header)),
+    sodium.base64_variants.URLSAFE_NO_PADDING,
+  );
+  const encodedPayload = sodium.to_base64(
+    Buffer.from(JSON.stringify(payload)),
+    sodium.base64_variants.URLSAFE_NO_PADDING,
+  );
+
+  const data = `${encodedHeader}.${encodedPayload}`;
+
+  const signature = sodium.crypto_sign_detached(data, privateKey);
+
+  const encodedSignature = sodium.to_base64(
+    signature,
+    sodium.base64_variants.URLSAFE_NO_PADDING,
+  );
+
+  return `${data}.${encodedSignature}`;
 }

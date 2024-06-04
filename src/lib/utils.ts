@@ -4,10 +4,11 @@ import { text, image, barcodes } from '@pdfme/schemas';
 import { generate } from '@pdfme/generator';
 import type { Font } from '@pdfme/common';
 import { template } from '../lib/pdfTemplate';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { v4 } from 'uuid';
 import type { v4String } from '../types/uuid';
-import type { GridItem } from '../types/grid';
+import type { GridItem, GridItemLayout } from '../types/grid';
+import { decryptGridItemContent } from './crypto';
 
 const HOST = 'api.idntty.io';
 // const HOST = 'localhost:8000';
@@ -74,7 +75,7 @@ export const createPDF = async (
   window.open(URL.createObjectURL(blob));
 };
 
-export function extractLayout(grid: Record<string, GridItem>) {
+export const extractLayout = (grid: Record<string, GridItem>) => {
   const result: Record<string, Omit<GridItem, 'content'>> = {};
 
   for (const key in grid) {
@@ -83,13 +84,13 @@ export function extractLayout(grid: Record<string, GridItem>) {
   }
 
   return result;
-}
+};
 
 export const sendLayoutToServer = async (
   publicKey: string,
   layout: Record<string, Omit<GridItem, 'content'>>,
 ) => {
-  const jwt = localStorage.getItem('jwt');
+  const jwt = sessionStorage.getItem('jwt');
   if (!jwt) {
     throw new Error('JWT not found');
   }
@@ -103,6 +104,14 @@ export const sendLayoutToServer = async (
       withCredentials: true,
     },
   );
+};
+
+export const getLayoutFromServer = async (publicKey: string) => {
+  const layout: AxiosResponse<Record<string, Omit<GridItem, 'content'>>> =
+    await axios.get(`${PROTOCOL}://${HOST}/layout?publicKey=${publicKey}`, {
+      withCredentials: true,
+    });
+  return layout.data;
 };
 
 export interface DataEntry {
@@ -121,7 +130,7 @@ export const saveDataToServer = async (
     throw new Error('sharedWith is required for shared data');
   }
 
-  const jwt = localStorage.getItem('jwt');
+  const jwt = sessionStorage.getItem('jwt');
   if (!jwt) {
     throw new Error('JWT not found');
   }
@@ -156,4 +165,154 @@ export const saveDataToServer = async (
   );
 
   console.log(response.data);
+};
+
+export const getDataFromServer = async (
+  forPublicKey: string, // Public key of the user whose data is being fetched
+  ownPublicKey?: string, // Public key of the user who is fetching the data
+) => {
+  const publicData: AxiosResponse<DataEntry[]> = await axios.get(
+    `${PROTOCOL}://${HOST}/data/public`,
+    {
+      params: { publicKey: forPublicKey },
+    },
+  );
+
+  if (!ownPublicKey) {
+    return { public: publicData.data };
+  }
+
+  const jwt = sessionStorage.getItem('jwt');
+  if (!jwt) {
+    throw new Error('JWT not found');
+  }
+
+  const sharedData: AxiosResponse<DataEntry[]> = await axios.get(
+    `${PROTOCOL}://${HOST}/data/shared`,
+    {
+      params: { publicKey: forPublicKey, forPublicKey: ownPublicKey },
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+      withCredentials: true,
+    },
+  );
+
+  if (forPublicKey !== ownPublicKey) {
+    return { public: publicData.data, shared: sharedData.data };
+  }
+
+  const privateData: AxiosResponse<DataEntry[]> = await axios.get(
+    `${PROTOCOL}://${HOST}/data/private`,
+    {
+      params: { publicKey: forPublicKey },
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+      withCredentials: true,
+    },
+  );
+
+  return {
+    public: publicData.data,
+    shared: sharedData.data,
+    private: privateData.data,
+  };
+};
+
+export const createGridFromLayoutAndData = async (
+  layout: Record<string, Omit<GridItem, 'content'>>,
+  data: {
+    public: DataEntry[];
+    shared?: DataEntry[];
+    private?: DataEntry[];
+  },
+) => {
+  console.log('createGridFromLayoutAndData called with layout: ', layout);
+
+  const grid: Record<string, GridItem> = {};
+  const upperGridLayout: GridItemLayout[] = [];
+
+  // this function needs to create a grid (both the grid object and the layout array) from the layout and data
+  // the layout input argument is already almost a grid object, but it's missing the content field
+  // that needs to be filled in from the data argument
+  // the upperGridLayout array is easily created from the layout argument
+
+  // regarding the data argument, it contains three arrays: public, shared, and private
+  // the public data should be displayed in the grid as is
+  // the private and shared data should be decrypted before being displayed in the grid
+  // if decryption is not possible, content = '' should be used
+  // when creating the actual grid, the content field should be filled with data
+  // following the precedence: private, shared, public
+
+  const privateData: Record<string, string> = {};
+  if (data.private) {
+    for (const entry of data.private) {
+      try {
+        const decrypted = await decryptGridItemContent(
+          Buffer.from(entry.value, 'hex'),
+          Buffer.from(entry.nonce, 'hex'),
+        );
+        privateData[entry.uuid] = decrypted;
+      } catch (e) {
+        privateData[entry.uuid] = '';
+        console.error('Failed to decrypt private data entry: ', entry);
+        console.error(e);
+      }
+    }
+  }
+
+  const sharedData: Record<string, string> = {};
+  if (data.shared) {
+    const ownPublicKey = localStorage.getItem('publicKey');
+    if (!ownPublicKey) {
+      throw new Error('Own public key not found but shared data is present');
+    }
+    for (const entry of data.shared) {
+      try {
+        const decrypted = await decryptGridItemContent(
+          Buffer.from(entry.value, 'hex'),
+          Buffer.from(entry.nonce, 'hex'),
+          ownPublicKey,
+        );
+        sharedData[entry.uuid] = decrypted;
+      } catch (e) {
+        sharedData[entry.uuid] = '';
+        console.error('Failed to decrypt shared data entry: ', entry);
+        console.error(e);
+      }
+    }
+  }
+
+  const publicData = data.public.reduce(
+    (acc: Record<string, string>, entry) => {
+      acc[entry.uuid] = entry.value;
+      return acc;
+    },
+    {},
+  );
+
+  for (const key in layout) {
+    console.log('Processing key: ', key);
+    const item = layout[key];
+    console.log('Item: ', item);
+    const content =
+      privateData[key] || sharedData[key] || publicData[key] || '';
+    console.log('Content: ', content);
+
+    grid[key] = {
+      ...item,
+      content,
+    };
+
+    upperGridLayout.push({
+      i: key,
+      x: item.layout.x,
+      y: item.layout.y,
+      w: item.layout.w,
+      h: item.layout.h,
+    });
+  }
+
+  return { grid, upperGridLayout };
 };

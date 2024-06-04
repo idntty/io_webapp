@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist, subscribeWithSelector } from 'zustand/middleware';
+import { subscribeWithSelector } from 'zustand/middleware';
 import { uuidv4 } from '../lib/utils';
 import type { GridItem, GridItemSize, GridItemLayout } from '../types/grid';
 
@@ -70,179 +70,181 @@ export interface GridState {
   removeNewGridItem: () => void;
   removeGridItem: (id: string) => void;
   splitGridAtID: (id: string) => void;
+  updateGrid: (grid: Record<string, GridItem>) => void;
   updateUpperGridLayout: (layout: GridItemLayout[]) => void;
   updateLowerGridLayout: (layout: GridItemLayout[]) => void;
   mergeGrids: () => void;
   updateGridItem: (id: string, newItem: Omit<GridItem, 'layout'>) => void;
 }
 
-const createGridStore = (name: string) =>
+const createGridStore = () =>
   create<GridState>()(
-    persist(
-      subscribeWithSelector((set) => ({
-        grid: {},
-        upperGridLayout: [],
-        lowerGridLayout: [],
-        savedYOffset: 0,
+    subscribeWithSelector((set) => ({
+      grid: {},
+      upperGridLayout: [],
+      lowerGridLayout: [],
+      savedYOffset: 0,
 
-        addNewGridItem: (size: GridItemSize) =>
-          set((state) => {
-            const { itemW, itemH } = sizeToDimensions(size);
+      addNewGridItem: (size: GridItemSize) =>
+        set((state) => {
+          const { itemW, itemH } = sizeToDimensions(size);
 
-            const { itemX, itemY } = findNewItemPosition(
-              state.upperGridLayout,
-              itemW,
-              itemH,
-            );
+          const { itemX, itemY } = findNewItemPosition(
+            state.upperGridLayout,
+            itemW,
+            itemH,
+          );
 
-            const id = uuidv4();
+          const id = uuidv4();
 
-            const item: GridItem = {
-              size,
-              layout: {
-                i: id,
-                x: itemX,
-                y: itemY,
-                w: itemW,
-                h: itemH,
-              },
-              content: id,
-              type: 'new',
-            };
+          const item: GridItem = {
+            size,
+            layout: {
+              i: id,
+              x: itemX,
+              y: itemY,
+              w: itemW,
+              h: itemH,
+            },
+            content: id,
+            type: 'new',
+          };
 
-            return {
-              ...state,
-              grid: { ...state.grid, [item.layout.i]: item },
-              upperGridLayout: [...state.upperGridLayout, item.layout].sort(
-                compareLayoutsFn,
+          return {
+            ...state,
+            grid: { ...state.grid, [item.layout.i]: item },
+            upperGridLayout: [...state.upperGridLayout, item.layout].sort(
+              compareLayoutsFn,
+            ),
+          };
+        }),
+
+      removeNewGridItem: () =>
+        set((state) => {
+          return {
+            ...state,
+            grid: Object.fromEntries(
+              Object.entries(state.grid).filter(
+                ([_, item]) => item.type !== 'new',
               ),
-            };
-          }),
+            ),
+            upperGridLayout: state.upperGridLayout.filter(
+              (layout) => state.grid[layout.i].type !== 'new',
+            ),
+            lowerGridLayout: state.lowerGridLayout.filter(
+              (layout) => state.grid[layout.i].type !== 'new',
+            ),
+          };
+        }),
 
-        removeNewGridItem: () =>
-          set((state) => {
-            return {
-              ...state,
-              grid: Object.fromEntries(
-                Object.entries(state.grid).filter(
-                  ([_, item]) => item.type !== 'new',
-                ),
-              ),
-              upperGridLayout: state.upperGridLayout.filter(
-                (layout) => state.grid[layout.i].type !== 'new',
-              ),
-              lowerGridLayout: state.lowerGridLayout.filter(
-                (layout) => state.grid[layout.i].type !== 'new',
-              ),
-            };
-          }),
+      removeGridItem: (id: string) =>
+        set((state) => {
+          const { [id]: _, ...restOfGrid } = state.grid;
+          return {
+            ...state,
+            grid: restOfGrid,
+            upperGridLayout: state.upperGridLayout.filter(
+              (layout) => layout.i !== id,
+            ),
+            lowerGridLayout: state.lowerGridLayout.filter(
+              (layout) => layout.i !== id,
+            ),
+          };
+        }),
 
-        removeGridItem: (id: string) =>
-          set((state) => {
-            const { [id]: _, ...restOfGrid } = state.grid;
-            return {
-              ...state,
-              grid: restOfGrid,
-              upperGridLayout: state.upperGridLayout.filter(
-                (layout) => layout.i !== id,
-              ),
-              lowerGridLayout: state.lowerGridLayout.filter(
-                (layout) => layout.i !== id,
-              ),
-            };
-          }),
-
-        splitGridAtID: (id: string) =>
-          set((state) => {
-            const index = state.upperGridLayout.findIndex(
-              (layout) => layout.i === id,
-            );
-            const lowerGridLayoutMinY = state.upperGridLayout
+      splitGridAtID: (id: string) =>
+        set((state) => {
+          const index = state.upperGridLayout.findIndex(
+            (layout) => layout.i === id,
+          );
+          const lowerGridLayoutMinY = state.upperGridLayout
+            .slice(index + 1)
+            .reduce((minY, layout) => {
+              return Math.min(minY, layout.y);
+            }, Infinity);
+          return {
+            ...state,
+            upperGridLayout: state.upperGridLayout.slice(0, index + 1),
+            lowerGridLayout: state.upperGridLayout
               .slice(index + 1)
-              .reduce((minY, layout) => {
-                return Math.min(minY, layout.y);
-              }, Infinity);
-            return {
-              ...state,
-              upperGridLayout: state.upperGridLayout.slice(0, index + 1),
-              lowerGridLayout: state.upperGridLayout
-                .slice(index + 1)
-                .map((layout) => {
-                  return {
-                    ...layout,
-                    y: layout.y - lowerGridLayoutMinY,
-                  };
-                }),
-              savedYOffset: lowerGridLayoutMinY,
-            };
-          }),
-
-        updateUpperGridLayout: (layout: GridItemLayout[]) =>
-          set((state) => {
-            return {
-              ...state,
-              upperGridLayout: layout.sort(compareLayoutsFn),
-            };
-          }),
-
-        updateLowerGridLayout: (layout: GridItemLayout[]) =>
-          set((state) => {
-            return {
-              ...state,
-              lowerGridLayout: layout,
-            };
-          }),
-
-        mergeGrids: () =>
-          set((state) => {
-            return {
-              ...state,
-              upperGridLayout: [
-                ...state.upperGridLayout.sort(compareLayoutsFn),
-                ...state.lowerGridLayout
-                  .sort(compareLayoutsFn)
-                  .map((layout) => {
-                    return {
-                      ...layout,
-                      y: layout.y + state.savedYOffset,
-                    };
-                  }),
-              ],
-              lowerGridLayout: [],
-            };
-          }),
-
-        updateGridItem: (id: string, newItem: Omit<GridItem, 'layout'>) =>
-          set((state) => {
-            const { itemW, itemH } = sizeToDimensions(newItem.size);
-            return {
-              ...state,
-              grid: {
-                ...state.grid,
-                [id]: {
-                  ...state.grid[id],
-                  size: newItem.size,
-                  type: newItem.type,
-                  content: newItem.content,
-                },
-              },
-              upperGridLayout: state.upperGridLayout.map((layout) => {
-                if (layout.i === id) {
-                  return {
-                    ...layout,
-                    w: itemW,
-                    h: itemH,
-                  };
-                }
-                return layout;
+              .map((layout) => {
+                return {
+                  ...layout,
+                  y: layout.y - lowerGridLayoutMinY,
+                };
               }),
-            };
-          }),
-      })),
-      {
-        name,
-      },
-    ),
+            savedYOffset: lowerGridLayoutMinY,
+          };
+        }),
+
+      updateGrid: (grid: Record<string, GridItem>) =>
+        set((state) => {
+          return {
+            ...state,
+            grid,
+          };
+        }),
+
+      updateUpperGridLayout: (layout: GridItemLayout[]) =>
+        set((state) => {
+          return {
+            ...state,
+            upperGridLayout: layout.sort(compareLayoutsFn),
+          };
+        }),
+
+      updateLowerGridLayout: (layout: GridItemLayout[]) =>
+        set((state) => {
+          return {
+            ...state,
+            lowerGridLayout: layout,
+          };
+        }),
+
+      mergeGrids: () =>
+        set((state) => {
+          return {
+            ...state,
+            upperGridLayout: [
+              ...state.upperGridLayout.sort(compareLayoutsFn),
+              ...state.lowerGridLayout.sort(compareLayoutsFn).map((layout) => {
+                return {
+                  ...layout,
+                  y: layout.y + state.savedYOffset,
+                };
+              }),
+            ],
+            lowerGridLayout: [],
+          };
+        }),
+
+      updateGridItem: (id: string, newItem: Omit<GridItem, 'layout'>) =>
+        set((state) => {
+          const { itemW, itemH } = sizeToDimensions(newItem.size);
+          return {
+            ...state,
+            grid: {
+              ...state.grid,
+              [id]: {
+                ...state.grid[id],
+                size: newItem.size,
+                type: newItem.type,
+                content: newItem.content,
+              },
+            },
+            upperGridLayout: state.upperGridLayout.map((layout) => {
+              if (layout.i === id) {
+                return {
+                  ...layout,
+                  w: itemW,
+                  h: itemH,
+                };
+              }
+              return layout;
+            }),
+          };
+        }),
+    })),
   );
-export const useGridStore = createGridStore('gridStore');
-export const useBadgeStore = createGridStore('badgeStore');
+export const useGridStore = createGridStore();
+export const useBadgeStore = createGridStore();

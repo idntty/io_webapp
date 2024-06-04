@@ -8,12 +8,7 @@ import Footer from '../components/onboarding/Footer';
 import Header from '../components/onboarding/Header';
 import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
 import { UserRegistrationFormSchemaType } from '../components/onboarding/UserRegistrationForm';
-import {
-  generateKeysAndAdress,
-  loadMnemonic,
-  toPrivateKeyObject,
-  createJWT,
-} from '../lib/crypto';
+import { generateKeysAndAdress, loadMnemonic, createJWT } from '../lib/crypto';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { loginWithPasskey } from '../lib/passkeys';
 // import { getMessageFromServer } from '../lib/utils';
@@ -81,12 +76,13 @@ export default function LoginWithPasskey() {
       setWalletAddress(walletAddress);
 
       const jwt = await createJWT(
-        await toPrivateKeyObject(privateKey),
+        // await toPrivateKeyObject(privateKey),
+        privateKey,
         publicKey.toString('hex'),
         {},
       );
 
-      localStorage.setItem('jwt', jwt);
+      sessionStorage.setItem('jwt', jwt);
 
       sessionStorage.setItem('privateKey', privateKey.toString('hex'));
 
@@ -114,7 +110,7 @@ export default function LoginWithPasskey() {
       setPrivateData(privateData);
       console.log('privateData: ', privateData, '(empty for now)');
 
-      `/${publicKey.toString('hex')}`;
+      router.push(`/${publicKey.toString('hex')}`);
     } catch (error) {
       console.error(error);
     }

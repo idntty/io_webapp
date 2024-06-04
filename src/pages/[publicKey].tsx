@@ -2,13 +2,23 @@
 
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
-import { extractLayout, sendLayoutToServer } from '../lib/utils';
+import { loginWithPasskey } from '../lib/passkeys';
+import { loadMnemonic, createJWT } from '../lib/crypto';
+import {
+  extractLayout,
+  sendLayoutToServer,
+  getLayoutFromServer,
+  getDataFromServer,
+  createGridFromLayoutAndData,
+} from '../lib/utils';
 import type { OnboardingStore } from '../types/localStorage';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/tabs';
 import Header from '../components/app/Header';
 import Footer from '../components/app/Footer';
 import Widget from '../components/app/grid/Widget';
+import EncryptedWidget from '../components/app/grid/EncryptedWidget';
 import { useGridStore, useBadgeStore } from '../stores/gridStores';
 import EditItemForm from '../components/app/forms/EditItemForm';
 import EditBadgeForm from '../components/app/forms/EditBadgeForm';
@@ -20,6 +30,14 @@ import 'react-resizable/css/styles.css';
 
 const GridLayout = WidthProvider(Responsive);
 export default function IdentityPage() {
+  const router = useRouter();
+
+  const [_userStatus, setUserStatus] = useState<'anon' | 'owner' | 'guest'>(
+    'anon',
+  );
+  const [_isLoggedIn, setIsLoggedIn] = useState(false);
+  const [dataFetched, setDataFetched] = useState(false);
+
   const [identity, setIdentity] = useState<'personal' | 'authority'>(
     'personal',
   );
@@ -32,6 +50,7 @@ export default function IdentityPage() {
   const removeNewGridItem = useGridStore((state) => state.removeNewGridItem);
   const removeGridItem = useGridStore((state) => state.removeGridItem);
   const splitGridAtID = useGridStore((state) => state.splitGridAtID);
+  const updateGrid = useGridStore((state) => state.updateGrid);
   const updateUpperGridLayout = useGridStore(
     (state) => state.updateUpperGridLayout,
   );
@@ -117,6 +136,108 @@ export default function IdentityPage() {
   };
 
   useEffect(() => {
+    if (!router.isReady) {
+      return;
+    }
+
+    console.log('Checking auth and user status');
+
+    const localStoragePublicKey = localStorage.getItem('publicKey');
+    const sessionStoragePrivateKey = sessionStorage.getItem('privateKey');
+    console.log('localStoragePublicKey:', localStoragePublicKey);
+    console.log('sessionStoragePrivateKey:', sessionStoragePrivateKey);
+    console.log('routePublicKey:', router.query.publicKey);
+
+    let userStatus: 'anon' | 'owner' | 'guest' = 'anon';
+    let isLoggedIn = false;
+    if (!localStoragePublicKey) {
+      userStatus = 'anon';
+      isLoggedIn = false;
+      console.log('anon, not logged in');
+    } else if (localStoragePublicKey === router.query.publicKey) {
+      userStatus = 'owner';
+      isLoggedIn = sessionStoragePrivateKey !== null;
+      console.log(isLoggedIn ? 'owner, logged in' : 'owner, not logged in');
+    } else {
+      userStatus = 'guest';
+      isLoggedIn = sessionStoragePrivateKey !== null;
+      console.log(isLoggedIn ? 'guest, logged in' : 'guest, not logged in');
+    }
+
+    if (!isLoggedIn && userStatus !== 'anon') {
+      console.log('Logging in');
+      const login = async () => {
+        try {
+          const response = await loginWithPasskey(
+            Buffer.from(localStoragePublicKey!, 'hex'),
+          );
+          const webAuthnPublicKey = response.webAuthnPublicKey;
+          if (!webAuthnPublicKey) {
+            throw new Error('Did not get webAuthnPublicKey from server');
+          }
+          const { privateKey } = await loadMnemonic(webAuthnPublicKey);
+
+          const jwt = await createJWT(
+            // await toPrivateKeyObject(privateKey),
+            privateKey,
+            localStoragePublicKey!,
+            {},
+          );
+
+          sessionStorage.setItem('jwt', jwt);
+
+          sessionStorage.setItem('privateKey', privateKey.toString('hex'));
+
+          isLoggedIn = true;
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      login()
+        .then(() => {
+          setUserStatus(userStatus);
+          setIsLoggedIn(isLoggedIn);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+
+    const createGrid = async () => {
+      try {
+        const layout = await getLayoutFromServer(
+          router.query.publicKey as string,
+        );
+        console.log('Fetched layout:', layout);
+        const data = await getDataFromServer(
+          router.query.publicKey as string,
+          localStoragePublicKey ?? undefined,
+        );
+        console.log('Fetched data:', data);
+        const { grid, upperGridLayout } = await createGridFromLayoutAndData(
+          layout,
+          data,
+        );
+        updateGrid(grid);
+        updateUpperGridLayout(upperGridLayout);
+        console.log('Created grid:', grid, upperGridLayout);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    createGrid()
+      .then(() => {
+        setDataFetched(true);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady]);
+
+  useEffect(() => {
     try {
       const onboardingStore = JSON.parse(
         localStorage.getItem('onboardingStore') ?? '',
@@ -130,7 +251,7 @@ export default function IdentityPage() {
   }, []);
 
   useEffect(() => {
-    if (!areGridsEditable) {
+    if (!areGridsEditable && dataFetched) {
       const filteredGrid = Object.fromEntries(
         Object.entries(grid).filter(([_, value]) => value.type !== 'new'),
       );
@@ -149,7 +270,7 @@ export default function IdentityPage() {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [areGridsEditable]);
+  }, [areGridsEditable, dataFetched]);
 
   useEffect(() => {
     setSelectedForSharing([]);
@@ -210,6 +331,14 @@ export default function IdentityPage() {
               }}
             >
               {upperGridLayout.map((layout) => {
+                if (grid[layout.i].content === '') {
+                  return (
+                    <EncryptedWidget
+                      key={layout.i}
+                      size={grid[layout.i].size}
+                    />
+                  );
+                }
                 return (
                   <Widget
                     key={layout.i}

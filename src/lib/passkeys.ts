@@ -49,14 +49,6 @@ export const registerWithPasskey = async (publicKey: Buffer) => {
   );
   console.log('Got registration verification response:', verificationResponse);
 
-  // FIXME: TEMPORARY
-  if (verificationResponse.data.webAuthnPublicKey) {
-    localStorage.setItem(
-      'webAuthnPublicKey',
-      verificationResponse.data.webAuthnPublicKey,
-    );
-  }
-
   return verificationResponse.data;
 };
 
@@ -91,14 +83,6 @@ export const loginWithPasskey = async (publicKey: Buffer) => {
     'Got authentication verification response:',
     verificationResponse,
   );
-
-  // FIXME: TEMPORARY
-  if (verificationResponse.data.webAuthnPublicKey) {
-    localStorage.setItem(
-      'webAuthnPublicKey',
-      verificationResponse.data.webAuthnPublicKey,
-    );
-  }
 
   return verificationResponse.data;
 };

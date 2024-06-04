@@ -16,7 +16,6 @@ import {
   saveMnemonic,
   convertKeys,
   encryptMessage,
-  toPrivateKeyObject,
   createJWT,
 } from '../lib/crypto';
 
@@ -57,13 +56,13 @@ export default function CreateAccount() {
       localStorage.setItem('publicKey', publicKey.toString('hex'));
 
       const jwt = await createJWT(
-        await toPrivateKeyObject(privateKey),
+        // await toPrivateKeyObject(privateKey),
+        privateKey,
         publicKey.toString('hex'),
         {},
       );
 
-      localStorage.setItem('jwt', jwt);
-
+      sessionStorage.setItem('jwt', jwt);
       sessionStorage.setItem('privateKey', privateKey.toString('hex'));
 
       const { convertedPrivateKey } = await convertKeys(publicKey, privateKey);
@@ -123,7 +122,7 @@ export default function CreateAccount() {
               </div>
               {/* FIXME: Fix hardcoded width and having to use has-[:disabled]:*/}
               <Link
-                href={`/${localStorage.getItem('publicKey')}`}
+                href={`/${publicKey?.toString('hex') ?? ''}`}
                 className="has-[:disabled]:pointer-events-none"
               >
                 <Button

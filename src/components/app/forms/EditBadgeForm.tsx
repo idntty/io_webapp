@@ -73,7 +73,7 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
   const handleFileUpload = async () => {
     if (file && publicKey) {
       try {
-        const jwt = localStorage.getItem('jwt');
+        const jwt = sessionStorage.getItem('jwt');
         if (!jwt) {
           throw new Error('JWT not found');
         }

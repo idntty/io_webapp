@@ -12,7 +12,7 @@ import Button from '../components/button/button';
 import { generateKeysAndAdress } from '../lib/crypto';
 import { useOnboardingStore } from '../stores/onboardingStore';
 import { registerWithPasskey } from '../lib/passkeys';
-import { saveMnemonic, toPrivateKeyObject, createJWT } from '../lib/crypto';
+import { saveMnemonic, createJWT } from '../lib/crypto';
 
 export default function LoginWithoutPasskey() {
   const router = useRouter();
@@ -43,12 +43,13 @@ export default function LoginWithoutPasskey() {
       localStorage.setItem('publicKey', publicKey.toString('hex'));
 
       const jwt = await createJWT(
-        await toPrivateKeyObject(privateKey),
+        // await toPrivateKeyObject(privateKey),
+        privateKey,
         publicKey.toString('hex'),
         {},
       );
 
-      localStorage.setItem('jwt', jwt);
+      sessionStorage.setItem('jwt', jwt);
 
       sessionStorage.setItem('privateKey', privateKey.toString('hex'));
 
