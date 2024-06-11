@@ -169,7 +169,7 @@ const encryptSharedMessage = async (
   await _sodium.ready;
   const sodium = _sodium;
 
-  const nonce = sodium.randombytes_buf(sodium.crypto_secretbox_NONCEBYTES);
+  const nonce = sodium.randombytes_buf(sodium.crypto_box_NONCEBYTES);
   const encryptedMessage = sodium.crypto_box_easy(
     Buffer.from(messageToEncrypt),
     nonce,
@@ -184,7 +184,7 @@ const decryptSharedMessage = async (
   encryptedMessage: Buffer,
   nonce: Buffer,
   convertedPrivateKey: Buffer,
-  convertedRecepientPublicKey: Buffer,
+  convertedSenderPublicKey: Buffer,
 ) => {
   await _sodium.ready;
   const sodium = _sodium;
@@ -192,7 +192,7 @@ const decryptSharedMessage = async (
   const message = sodium.crypto_box_open_easy(
     encryptedMessage,
     nonce,
-    convertedRecepientPublicKey,
+    convertedSenderPublicKey,
     convertedPrivateKey,
   );
 
@@ -239,7 +239,7 @@ export const encryptGridItemContent = async (
 export const decryptGridItemContent = async (
   encryptedMessage: Buffer,
   nonce: Buffer,
-  sharedWith?: string,
+  sharedBy?: string,
 ) => {
   const publicKey = localStorage.getItem('publicKey');
   const privateKey = sessionStorage.getItem('privateKey');
@@ -254,15 +254,15 @@ export const decryptGridItemContent = async (
     Buffer.from(privateKey, 'hex'),
   );
 
-  if (sharedWith) {
-    const recepientPublicKey = Buffer.from(sharedWith, 'hex');
-    const { convertedPublicKey: convertedRecepientPublicKey } =
-      await convertPublicKey(recepientPublicKey);
+  if (sharedBy) {
+    const senderPublicKey = Buffer.from(sharedBy, 'hex');
+    const { convertedPublicKey: convertedSenderPublicKey } =
+      await convertPublicKey(senderPublicKey);
     return decryptSharedMessage(
       encryptedMessage,
       nonce,
       convertedPrivateKey,
-      convertedRecepientPublicKey,
+      convertedSenderPublicKey,
     );
   }
 

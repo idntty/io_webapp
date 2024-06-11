@@ -171,6 +171,12 @@ export const getDataFromServer = async (
   forPublicKey: string, // Public key of the user whose data is being fetched
   ownPublicKey?: string, // Public key of the user who is fetching the data
 ) => {
+  console.log(
+    'Calling getDataFromServer with forPublicKey: ',
+    forPublicKey,
+    ' ownPublicKey: ',
+    ownPublicKey,
+  );
   const publicData: AxiosResponse<DataEntry[]> = await axios.get(
     `${PROTOCOL}://${HOST}/data/public`,
     {
@@ -227,8 +233,10 @@ export const createGridFromLayoutAndData = async (
     shared?: DataEntry[];
     private?: DataEntry[];
   },
+  pageOwnerPublicKey: string,
 ) => {
   console.log('createGridFromLayoutAndData called with layout: ', layout);
+  console.log('createGridFromLayoutAndData called with data: ', data);
 
   const grid: Record<string, GridItem> = {};
   const upperGridLayout: GridItemLayout[] = [];
@@ -264,16 +272,12 @@ export const createGridFromLayoutAndData = async (
 
   const sharedData: Record<string, string> = {};
   if (data.shared) {
-    const ownPublicKey = localStorage.getItem('publicKey');
-    if (!ownPublicKey) {
-      throw new Error('Own public key not found but shared data is present');
-    }
     for (const entry of data.shared) {
       try {
         const decrypted = await decryptGridItemContent(
           Buffer.from(entry.value, 'hex'),
           Buffer.from(entry.nonce, 'hex'),
-          ownPublicKey,
+          pageOwnerPublicKey,
         );
         sharedData[entry.uuid] = decrypted;
       } catch (e) {

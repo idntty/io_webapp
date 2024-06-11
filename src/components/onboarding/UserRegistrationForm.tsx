@@ -137,7 +137,7 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
 
   const onSubmit = (data: UserRegistrationFormSchemaType) => {
     setPrivateData(data);
-    router.push('/create-account');
+    router.push('/account/signup');
   };
 
   return (

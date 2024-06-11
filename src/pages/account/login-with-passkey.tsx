@@ -3,14 +3,18 @@
 import { Security, General } from 'untitledui-js';
 import { useRouter } from 'next/navigation';
 
-import Button from '../components/button/button';
-import Footer from '../components/onboarding/Footer';
-import Header from '../components/onboarding/Header';
-import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
-import { UserRegistrationFormSchemaType } from '../components/onboarding/UserRegistrationForm';
-import { generateKeysAndAdress, loadMnemonic, createJWT } from '../lib/crypto';
-import { useOnboardingStore } from '../stores/onboardingStore';
-import { loginWithPasskey } from '../lib/passkeys';
+import Button from '../../components/button/button';
+import Footer from '../../components/onboarding/Footer';
+import Header from '../../components/onboarding/Header';
+import TextAndSupportingText from '../../components/onboarding/TextAndSupportingText';
+import { UserRegistrationFormSchemaType } from '../../components/onboarding/UserRegistrationForm';
+import {
+  generateKeysAndAdress,
+  loadMnemonic,
+  createJWT,
+} from '../../lib/crypto';
+import { useOnboardingStore } from '../../stores/onboardingStore';
+import { loginWithPasskey } from '../../lib/passkeys';
 // import { getMessageFromServer } from '../lib/utils';
 
 export default function LoginWithPasskey() {

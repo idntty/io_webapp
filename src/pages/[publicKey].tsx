@@ -164,45 +164,33 @@ export default function IdentityPage() {
       console.log(isLoggedIn ? 'guest, logged in' : 'guest, not logged in');
     }
 
-    if (!isLoggedIn && userStatus !== 'anon') {
-      console.log('Logging in');
-      const login = async () => {
-        try {
-          const response = await loginWithPasskey(
-            Buffer.from(localStoragePublicKey!, 'hex'),
-          );
-          const webAuthnPublicKey = response.webAuthnPublicKey;
-          if (!webAuthnPublicKey) {
-            throw new Error('Did not get webAuthnPublicKey from server');
-          }
-          const { privateKey } = await loadMnemonic(webAuthnPublicKey);
-
-          const jwt = await createJWT(
-            // await toPrivateKeyObject(privateKey),
-            privateKey,
-            localStoragePublicKey!,
-            {},
-          );
-
-          sessionStorage.setItem('jwt', jwt);
-
-          sessionStorage.setItem('privateKey', privateKey.toString('hex'));
-
-          isLoggedIn = true;
-        } catch (error) {
-          console.error(error);
+    const login = async () => {
+      try {
+        const response = await loginWithPasskey(
+          Buffer.from(localStoragePublicKey!, 'hex'),
+        );
+        const webAuthnPublicKey = response.webAuthnPublicKey;
+        if (!webAuthnPublicKey) {
+          throw new Error('Did not get webAuthnPublicKey from server');
         }
-      };
+        const { privateKey } = await loadMnemonic(webAuthnPublicKey);
 
-      login()
-        .then(() => {
-          setUserStatus(userStatus);
-          setIsLoggedIn(isLoggedIn);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
+        const jwt = await createJWT(
+          // await toPrivateKeyObject(privateKey),
+          privateKey,
+          localStoragePublicKey!,
+          {},
+        );
+
+        sessionStorage.setItem('jwt', jwt);
+
+        sessionStorage.setItem('privateKey', privateKey.toString('hex'));
+
+        isLoggedIn = true;
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
     const createGrid = async () => {
       try {
@@ -218,6 +206,7 @@ export default function IdentityPage() {
         const { grid, upperGridLayout } = await createGridFromLayoutAndData(
           layout,
           data,
+          router.query.publicKey as string,
         );
         updateGrid(grid);
         updateUpperGridLayout(upperGridLayout);
@@ -227,13 +216,20 @@ export default function IdentityPage() {
       }
     };
 
-    createGrid()
-      .then(() => {
-        setDataFetched(true);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    const onLoad = async () => {
+      if (!isLoggedIn && userStatus !== 'anon') {
+        console.log('Logging in');
+        await login();
+        setUserStatus(userStatus);
+        setIsLoggedIn(isLoggedIn);
+      }
+      await createGrid();
+      setDataFetched(true);
+    };
+
+    onLoad().catch((error) => {
+      console.error(error);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady]);
 

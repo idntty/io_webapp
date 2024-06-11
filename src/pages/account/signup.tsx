@@ -5,19 +5,19 @@ import { useRouter } from 'next/navigation';
 import { Security } from 'untitledui-js';
 import { Buffer } from 'buffer';
 
-import Header from '../components/onboarding/Header';
-import Footer from '../components/onboarding/Footer';
-import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
-import Button from '../components/button/button';
+import Header from '../../components/onboarding/Header';
+import Footer from '../../components/onboarding/Footer';
+import TextAndSupportingText from '../../components/onboarding/TextAndSupportingText';
+import Button from '../../components/button/button';
 
-import { useOnboardingStore } from '../stores/onboardingStore';
-import { registerWithPasskey } from '../lib/passkeys';
+import { useOnboardingStore } from '../../stores/onboardingStore';
+import { registerWithPasskey } from '../../lib/passkeys';
 import {
   saveMnemonic,
   convertKeys,
   encryptMessage,
   createJWT,
-} from '../lib/crypto';
+} from '../../lib/crypto';
 
 export default function CreateAccount() {
   const router = useRouter();

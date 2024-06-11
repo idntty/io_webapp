@@ -3,14 +3,14 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-import IdentityRadioGroup from '../components/onboarding/IdentityRadioGroup';
-import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
-import Button from '../components/button/button';
-import Header from '../components/onboarding/Header';
-import LoginPrompt from '../components/onboarding/LoginPrompt';
+import IdentityRadioGroup from '../../components/onboarding/IdentityRadioGroup';
+import TextAndSupportingText from '../../components/onboarding/TextAndSupportingText';
+import Button from '../../components/button/button';
+import Header from '../../components/onboarding/Header';
+import LoginPrompt from '../../components/onboarding/LoginPrompt';
 import { Users, Education } from 'untitledui-js';
-import Footer from '../components/onboarding/Footer';
-import { useOnboardingStore } from '../stores/onboardingStore';
+import Footer from '../../components/onboarding/Footer';
+import { useOnboardingStore } from '../../stores/onboardingStore';
 
 export default function IdentitySelection() {
   const [isIdentitySelected, setIsIdentitySelected] = useState(false);
@@ -51,7 +51,7 @@ export default function IdentitySelection() {
             />
             {/* FIXME: Fix hardcoded width and having to use has-[:disabled]:*/}
             <Link
-              href="/passphrase"
+              href="/account/key"
               className="has-[:disabled]:pointer-events-none"
             >
               <Button

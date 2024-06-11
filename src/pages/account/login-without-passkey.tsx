@@ -4,15 +4,15 @@ import { General } from 'untitledui-js';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import Header from '../components/onboarding/Header';
-import Footer from '../components/onboarding/Footer';
-import TextAndSupportingText from '../components/onboarding/TextAndSupportingText';
-import Checkbox from '../components/checkbox';
-import Button from '../components/button/button';
-import { generateKeysAndAdress } from '../lib/crypto';
-import { useOnboardingStore } from '../stores/onboardingStore';
-import { registerWithPasskey } from '../lib/passkeys';
-import { saveMnemonic, createJWT } from '../lib/crypto';
+import Header from '../../components/onboarding/Header';
+import Footer from '../../components/onboarding/Footer';
+import TextAndSupportingText from '../../components/onboarding/TextAndSupportingText';
+import Checkbox from '../../components/checkbox';
+import Button from '../../components/button/button';
+import { generateKeysAndAdress } from '../../lib/crypto';
+import { useOnboardingStore } from '../../stores/onboardingStore';
+import { registerWithPasskey } from '../../lib/passkeys';
+import { saveMnemonic, createJWT } from '../../lib/crypto';
 
 export default function LoginWithoutPasskey() {
   const router = useRouter();

@@ -6,7 +6,7 @@ export default function LoginPrompt() {
       <div className="text-gray-500">Already have an account?</div>
       <Link
         className="font-semibold text-brand-700 no-underline"
-        href="/login-with-passkey"
+        href="/account/login-with-passkey"
       >
         Log in
       </Link>
