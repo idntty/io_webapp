@@ -1,5 +1,8 @@
 'use client';
 
+import { useEffect } from 'react';
+import { Communication, Users, Education } from 'untitledui-js';
+
 import Badge from '../components/badge';
 import Button from '../components/button/button';
 import Input from '../components/input';
@@ -9,9 +12,17 @@ import EncryptedWidget from '../components/app/grid/EncryptedWidget';
 import Checkbox from '../components/checkbox';
 import Divider from '../components/divider';
 
-import { Communication, Users, Education } from 'untitledui-js';
+import { getClient } from '../lib/apiClient';
 
 export default function ComponentsTesting() {
+  useEffect(() => {
+    const run = async () => {
+      await getClient();
+    };
+
+    run().catch(console.error);
+  });
+
   return (
     <div className="flex w-full flex-col items-center justify-center gap-10">
       <Divider />

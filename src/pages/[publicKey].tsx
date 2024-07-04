@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 
 import { loginWithPasskey } from '../lib/passkeys';
 import { loadMnemonic, createJWT } from '../lib/crypto';
+import { removeFeature } from '../lib/apiClient';
 import {
   extractLayout,
   sendLayoutToServer,
@@ -124,6 +125,26 @@ export default function IdentityPage() {
     splitGridAtID(id);
     setIsGridSplit(true);
     setEditedItemID(id);
+  };
+
+  const handleDeleteGridItemClick = (id: string) => {
+    removeGridItem(id);
+
+    const publicKey = localStorage.getItem('publicKey');
+    if (!publicKey) {
+      throw new Error('Public key not found');
+    }
+    const privateKey = sessionStorage.getItem('privateKey');
+    if (!privateKey) {
+      throw new Error('Private key not found');
+    }
+    removeFeature([{ uuid: id }], privateKey, publicKey)
+      .then(() => {
+        console.log('Feature removed');
+      })
+      .catch((error) => {
+        console.error('Error removing feature:', error);
+      });
   };
 
   const handleEditBadgeGridItemClick = (id: string) => {
@@ -353,7 +374,7 @@ export default function IdentityPage() {
                     isEditable={areGridsEditable}
                     onDeleteClick={
                       grid[layout.i].type !== 'new'
-                        ? () => removeGridItem(layout.i)
+                        ? () => handleDeleteGridItemClick(layout.i)
                         : undefined
                     }
                     onEditClick={() => handleEditGridItemClick(layout.i)}
@@ -414,7 +435,7 @@ export default function IdentityPage() {
                       type={grid[layout.i].type}
                       value={grid[layout.i].content}
                       isEditable={areGridsEditable}
-                      onDeleteClick={() => removeGridItem(layout.i)}
+                      onDeleteClick={() => handleDeleteGridItemClick(layout.i)}
                       onEditClick={() => handleEditGridItemClick(layout.i)}
                     />
                   );

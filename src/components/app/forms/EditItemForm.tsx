@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { ReactSearchAutocomplete } from 'react-search-autocomplete';
 
 import { cn, saveDataToServer } from '../../../lib/utils';
+import { setFeature, getSetFeatureCost } from '../../../lib/apiClient';
 
 import { encryptGridItemContent } from '../../../lib/crypto';
 import { useGridStore } from '../../../stores/gridStores';
@@ -40,8 +41,15 @@ const handleSendEncryptedData = async (uuid: string, content: string) => {
   if (!publicKey) {
     throw new Error('Public key not found');
   }
+  const privateKey = sessionStorage.getItem('privateKey');
+  if (!privateKey) {
+    throw new Error('Private key not found');
+  }
   console.log('Saving data to server:', data);
-  return saveDataToServer(publicKey, 'private', data);
+  return Promise.all([
+    saveDataToServer(publicKey, 'private', data),
+    setFeature(data, privateKey, publicKey),
+  ]);
 };
 
 const getRandomHashSalt = () =>
@@ -153,6 +161,8 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
   const addNewGridItem = useGridStore((state) => state.addNewGridItem);
   const updateGridItem = useGridStore((state) => state.updateGridItem);
 
+  const [transactionCost, setTransactionCost] = useState<bigint>(0n);
+
   const form = useForm<EditItemFormSchemaType>({
     resolver: zodResolver(FormSchema),
     defaultValues: getDefaultValues(grid[editedItemID]),
@@ -176,15 +186,38 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
         type: getWidgetTypeOrOther(data.fieldType),
         content,
       });
-      handleSendEncryptedData(editedItemID, content.toString()).catch(
-        (error) => {
+      handleSendEncryptedData(editedItemID, content.toString())
+        .then(([_, { transactionId }]) => {
+          console.log('Send tx to node, id:', transactionId);
+        })
+        .catch((error) => {
           console.error(error);
-        },
-      );
+        });
     }
     if (grid[editedItemID].type === 'new') {
       addNewGridItem('tiny');
     }
+  };
+
+  const updateTransactionCost = async (uuid: string, content: string) => {
+    const { encryptedMessage, nonce } = await encryptGridItemContent(content);
+    const data = [
+      {
+        uuid,
+        value: Buffer.from(encryptedMessage).toString('hex'),
+        nonce: Buffer.from(nonce).toString('hex'),
+      },
+    ];
+    const publicKey = localStorage.getItem('publicKey');
+    if (!publicKey) {
+      throw new Error('Public key not found');
+    }
+    const privateKey = sessionStorage.getItem('privateKey');
+    if (!privateKey) {
+      throw new Error('Private key not found');
+    }
+
+    setTransactionCost(await getSetFeatureCost(data, privateKey, publicKey));
   };
 
   return (
@@ -315,6 +348,13 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                                 type="date"
                                 Icon={Time.Calender}
                                 {...field}
+                                onChange={(e) => {
+                                  updateTransactionCost(
+                                    editedItemID,
+                                    field.value?.toString() ?? '',
+                                  ).catch(console.error);
+                                  field.onChange(e);
+                                }}
                               />
                             ) : field.name === 'textAreaValue' ? (
                               // @ts-expect-error - TS doesn't know that field.name is 'textAreaValue'
@@ -324,6 +364,13 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                                 placeholder="I'm a Product Designer based in Melbourne, Australia. I specialise in UX/UI design, brand strategy, and Webflow development."
                                 maxLength={400}
                                 {...field}
+                                onChange={(e) => {
+                                  updateTransactionCost(
+                                    editedItemID,
+                                    field.value?.toString() ?? '',
+                                  ).catch(console.error);
+                                  field.onChange(e);
+                                }}
                               />
                             ) : field.name === 'textValue' ? (
                               // @ts-expect-error - TS doesn't know that field.name is 'textValue'
@@ -333,6 +380,13 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                                 type="text"
                                 Icon={Editor.TextInput}
                                 {...field}
+                                onChange={(e) => {
+                                  updateTransactionCost(
+                                    editedItemID,
+                                    field.value?.toString() ?? '',
+                                  ).catch(console.error);
+                                  field.onChange(e);
+                                }}
                               />
                             ) : null
                           }
@@ -457,7 +511,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                 </div>
                 <div className="flex w-[512px] flex-col">
                   <div className="text-5xl/[60px] font-medium -tracking-[0.96px] text-gray-500">
-                    0,0176/idn
+                    {`${transactionCost} IDN`}
                   </div>
                   {/* <div className="text-sm text-error-500">
                 Insufficient funds for{' '}
