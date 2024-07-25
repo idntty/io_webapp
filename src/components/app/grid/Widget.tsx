@@ -1,12 +1,16 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { General, Users } from 'untitledui-js';
+import { General, Users, Maps, Communication } from 'untitledui-js';
+import lookup from 'country-code-lookup';
+import Link from 'next/link';
 
-import { cn, calculateAge } from '../../../lib/utils';
+import { cn, calculateAge, getFlagEmoji } from '../../../lib/utils';
 import type { GridItemContent } from '../../../types/grid';
 import WidgetIcon from './WidgetIcon';
 import WidgetDelete from './WidgetDelete';
 import WidgetEdit from './WidgetEdit';
+
+const countryCodes = lookup.countries.map((country) => country.iso2);
 
 const widgetVariants = cva(
   '@container group relative flex justify-center items-center shrink-0 rounded-[40px] border-solid bg-gray-25 font-widget',
@@ -21,6 +25,10 @@ const widgetVariants = cva(
         name: '',
         bio: '',
         age: '',
+        phone: '',
+        email: '',
+        citizenship: '',
+        location: '',
         badge: '',
         other: '',
         new: 'border-[5px] border-orange-500',
@@ -49,6 +57,31 @@ export interface WidgetProps
   onEditClick?: () => void;
 }
 
+const expandCountryCode = (code: string, includeName: boolean) => {
+  if (countryCodes.includes(code)) {
+    return (
+      getFlagEmoji(code) +
+      (includeName ? ` ${lookup.byIso(code)?.country}` : '')
+    );
+  }
+  return code;
+};
+
+const expandEmailPhone = (value: string, fullSize: boolean) => {
+  if (value.includes('@')) {
+    return (
+      <Link className="no-underline" href={`mailto:${value}`}>
+        {fullSize ? value : '✉️'}
+      </Link>
+    );
+  }
+  return (
+    <Link className="no-underline" href={`tel:${value}`}>
+      {fullSize ? value : '📞'}
+    </Link>
+  );
+};
+
 const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
   (
     {
@@ -72,7 +105,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
           <div
             className={cn(
               widgetVariants({ type, size, state }),
-              'select-none' && isEditable,
+              isEditable && 'select-none',
               className,
             )}
             ref={ref}
@@ -93,12 +126,44 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             )}
           </div>
         );
+      case 'phone':
+      case 'email':
+        return (
+          <div
+            className={cn(
+              widgetVariants({ type, size, state }),
+              isEditable && 'select-none',
+              className,
+            )}
+            ref={ref}
+            {...props}
+          >
+            <WidgetIcon
+              Icon={
+                type === 'phone' ? Communication.Phone : Communication.Mail01
+              }
+              strokeClassName="stroke-gray-900 group-hover:stroke-orange-500"
+            />
+            {isEditable && onDeleteClick && (
+              <WidgetDelete onDeleteClick={onDeleteClick} />
+            )}
+            <div className="text-center text-3xl/[38px] font-bold -tracking-[0.2px] text-gray-900">
+              {expandEmailPhone(
+                value?.toString() ?? '',
+                size !== 'tiny' && size !== 'tall',
+              )}
+            </div>
+            {isEditable && onEditClick && (
+              <WidgetEdit onEditClick={onEditClick} />
+            )}
+          </div>
+        );
       case 'bio':
         return (
           <div
             className={cn(
               widgetVariants({ type, size, state }),
-              'select-none' && isEditable,
+              isEditable && 'select-none',
               className,
             )}
             ref={ref}
@@ -125,7 +190,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             className={cn(
               'flex-col gap-[5px]',
               widgetVariants({ type, size, state }),
-              'select-none' && isEditable,
+              isEditable && 'select-none',
               className,
             )}
             ref={ref}
@@ -143,6 +208,36 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             </div>
             <div className="text-center text-2xl font-normal text-gray-900">
               years old
+            </div>
+            {isEditable && onEditClick && (
+              <WidgetEdit onEditClick={onEditClick} />
+            )}
+          </div>
+        );
+      case 'citizenship':
+      case 'location':
+        return (
+          <div
+            className={cn(
+              widgetVariants({ type, size, state }),
+
+              className,
+            )}
+            ref={ref}
+            {...props}
+          >
+            <WidgetIcon
+              Icon={Maps.Flag01}
+              strokeClassName="stroke-gray-900 group-hover:stroke-orange-500"
+            />
+            {isEditable && onDeleteClick && (
+              <WidgetDelete onDeleteClick={onDeleteClick} />
+            )}
+            <div className="text-center text-5xl/[38px] font-bold -tracking-[0.2px] text-gray-900">
+              {expandCountryCode(
+                value?.toString() ?? '',
+                size !== 'tiny' && size !== 'tall',
+              )}
             </div>
             {isEditable && onEditClick && (
               <WidgetEdit onEditClick={onEditClick} />

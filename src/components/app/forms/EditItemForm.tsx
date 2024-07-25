@@ -65,6 +65,18 @@ const FIELDS = {
     htmlType: 'date',
     widgetType: 'age',
   },
+  Phone: { schemaName: 'textValue', htmlType: 'tel', widgetType: 'phone' },
+  Email: { schemaName: 'textValue', htmlType: 'email', widgetType: 'email' },
+  Citizenship: {
+    schemaName: 'textValue',
+    htmlType: 'text',
+    widgetType: 'citizenship',
+  },
+  Location: {
+    schemaName: 'textValue',
+    htmlType: 'text',
+    widgetType: 'location',
+  },
 };
 
 // FIXME: a (very) temporary solution
@@ -83,10 +95,19 @@ const getSchemaNameOrTextValue = (fieldType: string) => {
 const getDefaultValues = (editedGridItem: GridItem) => {
   const fieldType = Object.entries(FIELDS).find(
     ([, { widgetType }]) => widgetType === editedGridItem.type,
-  )?.[0] as 'Name' | 'Bio' | 'Date of Birth';
+  )?.[0] as
+    | 'Name'
+    | 'Bio'
+    | 'Date of Birth'
+    | 'Phone'
+    | 'Email'
+    | 'Citizenship'
+    | 'Location';
   // only one of textValue, textAreaValue, dateValue should be defined, based on fieldType
   const textValue = (
-    fieldType === 'Name' ? editedGridItem.content : undefined
+    fieldType in ['Name', 'Phone', 'Email', 'Citizenship', 'Location']
+      ? editedGridItem.content
+      : undefined
   ) as string | undefined;
   const textAreaValue = (
     fieldType === 'Bio' ? editedGridItem.content : undefined
@@ -376,7 +397,15 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                               // @ts-expect-error - TS doesn't know that field.name is 'textValue'
                               <Input
                                 className="self-stretch"
-                                placeholder="John Doe"
+                                placeholder={
+                                  {
+                                    Name: 'John Doe',
+                                    Phone: '+12223334444',
+                                    Email: 'johndoe@gmail.com',
+                                    Citizenship: 'RU',
+                                    Location: 'RU',
+                                  }[form.watch('fieldType')]
+                                }
                                 type="text"
                                 Icon={Editor.TextInput}
                                 {...field}
