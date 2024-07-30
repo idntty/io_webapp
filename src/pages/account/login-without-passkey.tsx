@@ -1,6 +1,6 @@
 'use client';
 
-import { General } from 'untitledui-js';
+import { Copy01 } from 'untitledui-js';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -107,7 +107,7 @@ export default function LoginWithoutPasskey() {
                   className="w-[360px] has-[:disabled]:pointer-events-none"
                   onClick={handleLogin}
                 >
-                  <General.Copy01 className="stroke-current" size="20" />
+                  <Copy01 className="stroke-current" size="20" />
                   Paste and login
                 </Button>
               </div>

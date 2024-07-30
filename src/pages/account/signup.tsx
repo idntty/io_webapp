@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Security } from 'untitledui-js';
+import { Shield01 } from 'untitledui-js';
 import { Buffer } from 'buffer';
 
 import Header from '../../components/onboarding/Header';
@@ -109,7 +109,7 @@ export default function CreateAccount() {
                 className="w-[360px]"
                 onClick={handleCreateAccount}
               >
-                <Security.Shield01 className="stroke-current" size="20" />
+                <Shield01 className="stroke-current" size="20" />
                 Create my account
               </Button>
               <div className="flex items-center gap-[8px] self-stretch">

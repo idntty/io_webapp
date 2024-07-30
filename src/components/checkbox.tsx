@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
-import { General } from 'untitledui-js';
+import { Check } from 'untitledui-js';
 
 import { cn } from '../lib/utils';
 
@@ -18,7 +18,7 @@ const Checkbox = React.forwardRef<
     {...props}
   >
     <CheckboxPrimitive.Indicator>
-      <General.Check
+      <Check
         className="shrink-0 stroke-brand-600 stroke-[3.34] group-disabled:stroke-gray-200"
         size="12"
       />

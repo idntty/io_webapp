@@ -3,6 +3,14 @@ const nextConfig = {
   output: 'export',
   trailingSlash: true,
   reactStrictMode: false,
+  webpack: (config, { isServer }) => {
+    config.module.rules.push({
+      test: /\.d\.ts$/,
+      loader: 'ignore-loader',
+    });
+
+    return config;
+  },
 };
 
 export default nextConfig;

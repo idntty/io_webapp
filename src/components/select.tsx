@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as SelectPrimitive from '@radix-ui/react-select';
-import { Arrow, General } from 'untitledui-js';
+import { ChevronDown, ChevronUp, Check } from 'untitledui-js';
 
 import { cn } from '../lib/utils';
 
@@ -24,13 +24,13 @@ const SelectTrigger = React.forwardRef<
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <Arrow.ChevronDown
+      <ChevronDown
         size="20"
         className="hidden stroke-gray-500 group-data-[state=closed]:block"
       />
     </SelectPrimitive.Icon>
     <SelectPrimitive.Icon asChild>
-      <Arrow.ChevronUp
+      <ChevronUp
         size="20"
         className="hidden stroke-gray-500 group-data-[state=open]:block"
       />
@@ -47,7 +47,7 @@ const SelectContent = React.forwardRef<
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        'shadow-popover relative z-50 max-h-[320px] overflow-hidden rounded-lg border bg-white text-base text-gray-900 data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
+        'relative z-50 max-h-[320px] overflow-hidden rounded-lg border bg-white text-base text-gray-900 shadow-popover data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
         className,
       )}
       position="popper"
@@ -80,7 +80,7 @@ const SelectItem = React.forwardRef<
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
     <span className="flex items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <General.Check size="20" className="stroke-brand-600" />
+        <Check size="20" className="stroke-brand-600" />
       </SelectPrimitive.ItemIndicator>
     </span>
   </SelectPrimitive.Item>

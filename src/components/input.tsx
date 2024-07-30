@@ -1,6 +1,6 @@
 import * as React from 'react';
 // import { cva, type VariantProps } from 'class-variance-authority';
-import { type SVGComponentProps, Alerts, General } from 'untitledui-js';
+import { type SVGComponentProps, AlertCircle, HelpCircle } from 'untitledui-js';
 
 import { cn } from '../lib/utils';
 
@@ -41,9 +41,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           </div>
           {withHelpIcon &&
             (props['aria-invalid'] ? (
-              <Alerts.AlertCircle size="16" className={'stroke-error-500'} />
+              <AlertCircle size="16" className={'stroke-error-500'} />
             ) : (
-              <General.HelpCircle size="16" className={'stroke-gray-400'} />
+              <HelpCircle size="16" className={'stroke-gray-400'} />
             ))}
         </div>
       </div>

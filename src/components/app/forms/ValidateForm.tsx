@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { General } from 'untitledui-js';
+import { Plus } from 'untitledui-js';
 
 import { useGridStore } from '../../../stores/gridStores';
 
@@ -108,7 +108,7 @@ const ValidateForm: React.FC<ValidateFormProps> = ({
             </div>
             <button className="flex h-[40px] w-[40px] items-center justify-center rounded-full border border-dashed border-gray-300 bg-white p-[8px]">
               <div className="flex items-center justify-center rounded-xl p-[4px]">
-                <General.Plus size="16" className="stroke-gray-400" />
+                <Plus size="16" className="stroke-gray-400" />
               </div>
             </button>
           </FormItem>

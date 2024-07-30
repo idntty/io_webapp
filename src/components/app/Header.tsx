@@ -1,4 +1,4 @@
-import { Arrow, Editor } from 'untitledui-js';
+import { ArrowUpRight, PencilLine } from 'untitledui-js';
 import * as React from 'react';
 
 import Badge from '../badge';
@@ -23,12 +23,12 @@ const Header: React.FC<HeaderProps> = ({ onToggleEditClick, onShareClick }) => {
       <div className="flex items-center justify-center gap-[10px] px-0 py-[2px]">
         <button onClick={onToggleEditClick}>
           <Badge variant="secondary" size="lg">
-            <Editor.PencilLine size="12" className="stroke-gray-500" />
+            <PencilLine size="12" className="stroke-gray-500" />
           </Badge>
         </button>
         <button onClick={onShareClick}>
           <Badge variant="secondary" size="lg">
-            <Arrow.ArrowUpRight size="12" className="stroke-gray-500" />
+            <ArrowUpRight size="12" className="stroke-gray-500" />
           </Badge>
         </button>
       </div>

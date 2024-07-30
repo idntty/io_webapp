@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Communication, Users, Education } from 'untitledui-js';
+import { Mail01, User01, BriefCase01 } from 'untitledui-js';
 
 import Badge from '../components/badge';
 import Button from '../components/button/button';
@@ -149,7 +149,7 @@ export default function ComponentsTesting() {
         <Input
           withHelpIcon
           placeholder="Placeholder"
-          Icon={Communication.Mail01}
+          Icon={Mail01}
           className="w-[360px]"
         />
       </div>
@@ -166,14 +166,14 @@ export default function ComponentsTesting() {
             title: 'Personal',
             description:
               'Personal data is private and securely encrypted. It is only accessible with your consent.',
-            Icon: Users.User01,
+            Icon: User01,
           },
           {
             type: 'authority',
             title: 'Authority',
             description:
               'All data is public and accessible to everyone. Used by companies & communities.',
-            Icon: Education.BriefCase01,
+            Icon: BriefCase01,
           },
         ]}
       />

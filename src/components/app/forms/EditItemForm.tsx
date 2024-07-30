@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { General, Security, Editor, Time } from 'untitledui-js';
+import { SearchMD, Plus, Key01, TextInput, Calendar } from 'untitledui-js';
 import * as RadioGroup from '@radix-ui/react-radio-group';
 import { useState } from 'react';
 import { ReactSearchAutocomplete } from 'react-search-autocomplete';
@@ -302,7 +302,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                       </FormDescription>
                     </div>
                     <div className="relative flex w-[512px] flex-col gap-[6px] overflow-visible">
-                      <General.SearchMD
+                      <SearchMD
                         size="20"
                         className="absolute left-[15px] top-[13px] z-[100] stroke-gray-500"
                       />
@@ -367,7 +367,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                               <Input
                                 className="self-stretch"
                                 type="date"
-                                Icon={Time.Calender}
+                                Icon={Calendar}
                                 {...field}
                                 onChange={(e) => {
                                   updateTransactionCost(
@@ -407,7 +407,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                                   }[form.watch('fieldType')]
                                 }
                                 type="text"
-                                Icon={Editor.TextInput}
+                                Icon={TextInput}
                                 {...field}
                                 onChange={(e) => {
                                   updateTransactionCost(
@@ -446,7 +446,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                           className="self-stretch"
                           placeholder="D72E8AF6048D51372B1A3F9BC0D72E8AF6048D6048D"
                           // FIXME: This is not the right key icon
-                          Icon={Security.Key01}
+                          Icon={Key01}
                           {...field}
                         />
                       </FormControl>
@@ -522,7 +522,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                     </div>
                     <button className="flex h-[40px] w-[40px] items-center justify-center rounded-full border border-dashed border-gray-300 bg-white p-[8px]">
                       <div className="flex items-center justify-center rounded-xl p-[4px]">
-                        <General.Plus size="16" className="stroke-gray-400" />
+                        <Plus size="16" className="stroke-gray-400" />
                       </div>
                     </button>
                   </FormItem>

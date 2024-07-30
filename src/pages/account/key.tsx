@@ -1,6 +1,6 @@
 'use client';
 
-import { Arrow, General, Alerts } from 'untitledui-js';
+import { RefreshCW02, Copy01, Edit05, AlertTriangle } from 'untitledui-js';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -129,7 +129,7 @@ export default function Passphrase() {
                   shape="square"
                   onClick={handleGenerate}
                 >
-                  <Arrow.RefreshCW02 className="stroke-gray-700" />
+                  <RefreshCW02 className="stroke-gray-700" />
                 </Button>
                 <Button
                   size="lg"
@@ -138,7 +138,7 @@ export default function Passphrase() {
                   // TODO: Add some kind of toast to indicate that the passphrase was copied or not
                   onClick={handleCopyClick}
                 >
-                  <General.Copy01 className="stroke-gray-700" />
+                  <Copy01 className="stroke-gray-700" />
                 </Button>
                 <Button
                   size="lg"
@@ -146,7 +146,7 @@ export default function Passphrase() {
                   shape="square"
                   onClick={handlePasteClick}
                 >
-                  <General.Edit05 className="stroke-gray-700" />
+                  <Edit05 className="stroke-gray-700" />
                 </Button>
                 <AlertDialog
                   open={isAlertDialogOpen}
@@ -154,7 +154,7 @@ export default function Passphrase() {
                 >
                   <AlertDialogContent className="flex gap-[24px]">
                     <div className="flex h-[40px] w-[40px] items-center justify-center rounded-[20px] bg-warning-100 p-[10px]">
-                      <Alerts.AlertTriangle
+                      <AlertTriangle
                         size="20"
                         className="flex-shrink-0 stroke-warning-600 stroke-2"
                       />

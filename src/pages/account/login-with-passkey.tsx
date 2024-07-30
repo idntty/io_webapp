@@ -1,6 +1,6 @@
 'use client';
 
-import { Security, General } from 'untitledui-js';
+import { Shield01, Copy01 } from 'untitledui-js';
 import { useRouter } from 'next/navigation';
 
 import Button from '../../components/button/button';
@@ -144,7 +144,7 @@ export default function LoginWithPasskey() {
                 className="w-[360px] has-[:disabled]:pointer-events-none"
                 onClick={handleLogin}
               >
-                <Security.Shield01 className="stroke-current" size="20" />
+                <Shield01 className="stroke-current" size="20" />
                 Seamless Re-entry
               </Button>
               <div className="flex items-center gap-[8px] self-stretch">
@@ -162,7 +162,7 @@ export default function LoginWithPasskey() {
                 className="w-[360px] has-[:disabled]:pointer-events-none"
                 onClick={handleLoginWithPassphrase}
               >
-                <General.Copy01 className="stroke-current" size="20" />
+                <Copy01 className="stroke-current" size="20" />
                 Paste and login
               </Button>
             </div>

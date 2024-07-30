@@ -1,6 +1,13 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { General, Users, Maps, Communication } from 'untitledui-js';
+import {
+  Bookmark,
+  HeartRounded,
+  User01,
+  Flag01,
+  Phone,
+  Mail01,
+} from 'untitledui-js';
 import lookup from 'country-code-lookup';
 import Link from 'next/link';
 
@@ -112,7 +119,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             {...props}
           >
             <WidgetIcon
-              Icon={Users.User01}
+              Icon={User01}
               strokeClassName="stroke-gray-900 group-hover:stroke-orange-500"
             />
             {isEditable && onDeleteClick && (
@@ -139,9 +146,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             {...props}
           >
             <WidgetIcon
-              Icon={
-                type === 'phone' ? Communication.Phone : Communication.Mail01
-              }
+              Icon={type === 'phone' ? Phone : Mail01}
               strokeClassName="stroke-gray-900 group-hover:stroke-orange-500"
             />
             {isEditable && onDeleteClick && (
@@ -170,7 +175,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             {...props}
           >
             <WidgetIcon
-              Icon={General.Bookmark}
+              Icon={Bookmark}
               strokeClassName="stroke-gray-900 group-hover:stroke-orange-500"
             />
             {isEditable && onDeleteClick && (
@@ -197,14 +202,14 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             {...props}
           >
             <WidgetIcon
-              Icon={General.HeartRounded}
+              Icon={HeartRounded}
               strokeClassName="stroke-gray-900 group-hover:stroke-orange-500"
             />
             {isEditable && onDeleteClick && (
               <WidgetDelete onDeleteClick={onDeleteClick} />
             )}
             <div className="text-center text-7xl/[90px] font-bold -tracking-[1.44px] text-gray-900">
-              {value instanceof Date ? calculateAge(value) : value ?? ''}
+              {value instanceof Date ? calculateAge(value) : (value ?? '')}
             </div>
             <div className="text-center text-2xl font-normal text-gray-900">
               years old
@@ -227,7 +232,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             {...props}
           >
             <WidgetIcon
-              Icon={Maps.Flag01}
+              Icon={Flag01}
               strokeClassName="stroke-gray-900 group-hover:stroke-orange-500"
             />
             {isEditable && onDeleteClick && (

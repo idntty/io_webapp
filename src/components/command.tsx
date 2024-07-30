@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Command as CommandPrimitive } from 'cmdk';
-import { General } from 'untitledui-js';
+import { SearchMD } from 'untitledui-js';
 
 import { cn } from '../lib/utils';
 
@@ -29,7 +29,7 @@ const CommandInput = React.forwardRef<
     className="flex shrink-0 grow basis-0 items-center gap-[8px] self-stretch rounded-lg border border-solid border-gray-300 bg-white px-[14px] py-[10px] shadow-primary has-[:focus]:border-brand-300 has-[:disabled]:bg-gray-50 has-[:focus]:shadow-color-focused [&:has([aria-invalid='true'])]:border-error-300 [&:has([aria-invalid='true'])]:has-[:focus]:shadow-error-focused"
     cmdk-input-wrapper=""
   >
-    <General.SearchMD size="20" className="stroke-gray-500" />
+    <SearchMD size="20" className="stroke-gray-500" />
     <CommandPrimitive.Input
       ref={ref}
       className={cn(

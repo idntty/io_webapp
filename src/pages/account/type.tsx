@@ -8,7 +8,7 @@ import TextAndSupportingText from '../../components/onboarding/TextAndSupporting
 import Button from '../../components/button/button';
 import Header from '../../components/onboarding/Header';
 import LoginPrompt from '../../components/onboarding/LoginPrompt';
-import { Users, Education } from 'untitledui-js';
+import { User01, BriefCase01 } from 'untitledui-js';
 import Footer from '../../components/onboarding/Footer';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 
@@ -38,14 +38,14 @@ export default function IdentitySelection() {
                   title: 'Personal',
                   description:
                     'Personal data is private and securely encrypted. It is only accessible with your consent.',
-                  Icon: Users.User01,
+                  Icon: User01,
                 },
                 {
                   type: 'authority',
                   title: 'Authority',
                   description:
                     'All data is public and accessible to everyone. Used by companies & communities.',
-                  Icon: Education.BriefCase01,
+                  Icon: BriefCase01,
                 },
               ]}
             />

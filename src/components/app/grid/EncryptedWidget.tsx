@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { Shapes } from 'untitledui-js';
+import { Cube01 } from 'untitledui-js';
 
 import { cn } from '../../../lib/utils';
 import WidgetIcon from './WidgetIcon';
@@ -41,7 +41,7 @@ const EncryptedWidget = React.forwardRef<HTMLDivElement, EncryptedWidgetProps>(
         ref={ref}
         {...props}
       >
-        <WidgetIcon Icon={Shapes.Cube01} strokeClassName="stroke-warning-200" />
+        <WidgetIcon Icon={Cube01} strokeClassName="stroke-warning-200" />
         <div className="select-none text-wrap break-all text-center text-xs/[18px] font-normal text-gray-300">
           {text}
         </div>

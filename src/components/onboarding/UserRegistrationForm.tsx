@@ -5,12 +5,14 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import validator from 'validator';
 import {
-  Users,
-  Maps,
-  Communication,
-  General,
-  Alerts,
-  Education,
+  User01,
+  Flag01,
+  MarkerPin01,
+  Phone,
+  Mail01,
+  Home02,
+  AlertCircle,
+  BookOpen01,
 } from 'untitledui-js';
 import { useRouter } from 'next/navigation';
 
@@ -61,49 +63,49 @@ const formFields = [
     name: 'fullName',
     label: 'Full name',
     placeholder: 'Full name',
-    Icon: Users.User01,
+    Icon: User01,
   },
   {
     name: 'citezenship',
     label: 'Citezenship',
     placeholder: 'Citezenship',
-    Icon: Maps.Flag01,
+    Icon: Flag01,
   },
   {
     name: 'phone',
     label: 'Phone',
     placeholder: '+1 123 474 87 67',
-    Icon: Communication.Phone,
+    Icon: Phone,
   },
   {
     name: 'email',
     label: 'Email',
     placeholder: 'olivia@untitledui.com',
-    Icon: Communication.Mail01,
+    Icon: Mail01,
   },
   {
     name: 'placeOfBirth',
     label: 'Place of birth',
     placeholder: 'Place of Birth',
-    Icon: General.Home02,
+    Icon: Home02,
   },
   {
     name: 'currentLocation',
     label: 'Current location',
     placeholder: 'Current location',
-    Icon: Maps.MarkerPin01,
+    Icon: MarkerPin01,
   },
   {
     name: 'nationalID',
     label: 'National Identification Number',
     placeholder: 'National Identification Number',
-    Icon: Alerts.AlertCircle,
+    Icon: AlertCircle,
   },
   {
     name: 'passportNumber',
     label: 'Passport Number',
     placeholder: 'Passport Number',
-    Icon: Education.BookOpen01,
+    Icon: BookOpen01,
   },
 ];
 

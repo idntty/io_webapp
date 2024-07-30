@@ -4,7 +4,7 @@ import * as z from 'zod';
 import { FileUploader } from 'react-drag-drop-files';
 import { useState } from 'react';
 import axios from 'axios';
-import { General } from 'untitledui-js';
+import { UploadCloud01 } from 'untitledui-js';
 
 import { useBadgeStore } from '../../../stores/gridStores';
 import Button from '../../button/button';
@@ -340,7 +340,7 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
                 <div className="flex flex-col items-center gap-[4px] self-stretch rounded-lg border border-solid border-gray-200 bg-white py-[16px]">
                   <div className="flex flex-col items-center gap-[12px] self-stretch">
                     <div className="flex h-[40px] w-[40px] items-center justify-center rounded-[28px] border-[6px] border-solid border-gray-50 bg-gray-100 p-[10px]">
-                      <General.UploadCloud01
+                      <UploadCloud01
                         size="20"
                         className="shrink-0 stroke-gray-600"
                       />
