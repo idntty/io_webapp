@@ -71,6 +71,7 @@ export default {
           800: '#9C2A10',
           900: '#7E2410',
         },
+        neutral: '#2C3A4B',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

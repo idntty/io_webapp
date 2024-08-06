@@ -4,6 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { Avatar, AvatarImage, AvatarFallback } from '../../avatar';
 import Badge from '../../badge';
+import { generateSVGAvatar } from '../../../lib/avatar';
 
 export interface Notification {
   user: string;
@@ -22,7 +23,7 @@ export const notificationColumns: ColumnDef<Notification>[] = [
       return (
         <div className="flex items-center gap-[12px]">
           <Avatar>
-            <AvatarImage src="" />
+            <AvatarImage src={generateSVGAvatar(publicKey)} />
             <AvatarFallback>{`${publicKey.slice(0, 1)}..${publicKey.slice(-1)}`}</AvatarFallback>
           </Avatar>
           {`${publicKey.slice(0, 4)} **** **** ${publicKey.slice(-4)}`}

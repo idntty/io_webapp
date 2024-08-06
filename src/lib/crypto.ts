@@ -16,7 +16,7 @@ export const generateKeysAndAdress = async (phrase: string) => {
     await cryptography.ed.getPrivateKeyFromPhraseAndPath(phrase, PATH);
   const publicKey: Buffer =
     cryptography.ed.getPublicKeyFromPrivateKey(privateKey);
-  const address = cryptography.address.getAddressFromPublicKey(publicKey);
+  const address = cryptography.address.getLisk32AddressFromPublicKey(publicKey);
   return { privateKey, publicKey, walletAddress: address };
 };
 

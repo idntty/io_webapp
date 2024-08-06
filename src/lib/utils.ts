@@ -42,12 +42,12 @@ export const getFlagEmoji = (countryCode: string) => {
 export const createPDF = async (
   passphrase: string[],
   publicKey: Buffer,
-  walletAddress: Buffer,
+  walletAddress: string,
 ) => {
   const plugins = { text, image, qrcode: barcodes.qrcode };
   const inputs = [
     {
-      wallet_address: walletAddress.toString('hex'),
+      wallet_address: walletAddress,
       public_key: publicKey.toString('hex'),
       ph_word1: passphrase[0],
       ph_word7: passphrase[6],

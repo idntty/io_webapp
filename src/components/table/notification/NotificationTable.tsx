@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import { useState, useEffect } from 'react';
 import {
   ColumnDef,
   flexRender,
@@ -12,7 +11,6 @@ import {
 import * as RadioGroup from '@radix-ui/react-radio-group';
 import { ArrowLeft, ArrowRight } from 'untitledui-js';
 import { DateRange } from 'react-day-picker';
-import { addDays } from 'date-fns';
 
 import {
   Table,
@@ -25,21 +23,23 @@ import {
 import Button from '../../button/button';
 import { DatePickerWithRange } from '../../date-range-picker';
 
-export interface NotificationTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
-  // refetch: (startDate?: Date, endDate?: Date) => void;
+import { Notification } from './notificationColumns';
+
+export interface NotificationTableProps {
+  columns: ColumnDef<Notification>[];
+  data: Notification[];
+  dateRange: DateRange | undefined;
+  setDateRange: React.Dispatch<React.SetStateAction<DateRange | undefined>>;
+  initialDateRange: DateRange | undefined;
 }
 
-export function NotificationTable<TData, TValue>({
+export function NotificationTable({
   columns,
   data,
-}: NotificationTableProps<TData, TValue>) {
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: new Date(2022, 0, 20),
-    to: addDays(new Date(2022, 0, 20), 20),
-  });
-
+  dateRange,
+  setDateRange,
+  initialDateRange,
+}: NotificationTableProps) {
   const table = useReactTable({
     data,
     columns,
@@ -65,7 +65,10 @@ export function NotificationTable<TData, TValue>({
   return (
     <div className="mx-[20px] flex flex-col gap-[24px]">
       <div className="flex gap-[12px] py-[12px]">
-        <DatePickerWithRange date={date} setDate={setDate} />
+        <DatePickerWithRange
+          date={dateRange ?? initialDateRange}
+          setDate={setDateRange}
+        />
       </div>
       <div className="rounded-lg border border-gray-200 bg-white shadow-table">
         <Table>
@@ -129,35 +132,35 @@ export function NotificationTable<TData, TValue>({
           <RadioGroup.Root
             className="flex gap-[2px]"
             value={getCurrentPageLabel()}
-            onValueChange={(value) => table.setPageIndex(parseInt(value))}
+            onValueChange={(value) => table.setPageIndex(parseInt(value) - 1)}
           >
             {table.getPageCount() <= 7
               ? [...Array(table.getPageCount()).keys()].map((page) => (
                   <RadioGroup.Item
                     key={page}
-                    value={page.toString()}
+                    value={(page + 1).toString()}
                     className={paginationButtonClassname}
                   >
-                    {page}
+                    {page + 1}
                   </RadioGroup.Item>
                 ))
               : [
-                  ...Array.from({ length: 3 }, (_, i) => i + 1),
+                  ...Array.from({ length: 3 }, (_, i) => i),
                   '...',
                   ...Array.from(
                     { length: 3 },
-                    (_, i) => i + table.getPageCount() - 2,
+                    (_, i) => i + table.getPageCount() - 3,
                   ),
                 ].map((page) => {
                   if (page === '...') {
                     return (
                       <RadioGroup.Item
                         key={page}
-                        value={page.toString()}
+                        value={(page + 1).toString()}
                         className={paginationButtonClassname}
                         disabled={true}
                       >
-                        {page}
+                        {page + 1}
                       </RadioGroup.Item>
                     );
                   }

@@ -7,7 +7,7 @@ export interface OnboardingState {
   passphrase: string[];
   privateKey?: Buffer;
   publicKey?: Buffer;
-  walletAddress?: Buffer;
+  walletAddress?: string;
   privateData?: UserRegistrationFormSchemaType;
   isAuthenticated: boolean;
 
@@ -19,7 +19,7 @@ export interface OnboardingState {
   setPassphrase: (passphrase: string[]) => void;
   setPrivateKey: (privateKey: Buffer) => void;
   setPublicKey: (publicKey: Buffer) => void;
-  setWalletAddress: (walletAddress: Buffer) => void;
+  setWalletAddress: (walletAddress: string) => void;
   setPrivateData: (privateData: UserRegistrationFormSchemaType) => void;
   setIsAuthenticated: (isAuthenticated: boolean) => void;
 }

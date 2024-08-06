@@ -18,11 +18,12 @@ import {
   AlertDialogDescription,
   AlertDialogTitle,
 } from '../../components/alert-dialog';
+import Divider from '../../components/divider';
 
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { generatePassphraseAndKeys } from '../../lib/crypto';
 import { createPDF } from '../../lib/utils';
-import Divider from '../../components/divider';
+import { generateSVGAvatar } from '../../lib/avatar';
 
 export default function Passphrase() {
   const passphrase = useOnboardingStore((state) => state.passphrase);
@@ -104,6 +105,7 @@ export default function Passphrase() {
     handleGenerate();
   }, [handleGenerate]);
 
+  // 187px 61px 188px 69px
   return (
     <div className="box-border flex h-screen w-screen flex-row items-center self-stretch overflow-hidden bg-white text-base text-black">
       <div className="flex flex-shrink-0 flex-grow basis-0 flex-col items-center justify-between self-stretch">
@@ -230,7 +232,20 @@ export default function Passphrase() {
         </main>
         <Footer />
       </div>
-      <div className="hidden shrink-0 grow basis-0 flex-col items-center justify-between self-stretch bg-gray-50 md:flex"></div>
+      <div className="hidden shrink-0 grow basis-0 flex-col items-center gap-[50px] self-stretch bg-gray-50 pb-[188px] pl-[69px] pr-[61px] pt-[187px] md:flex">
+        {publicKey && (
+          <img
+            src={generateSVGAvatar(publicKey.toString('hex'))}
+            alt="Avatar"
+          />
+        )}
+        {walletAddress && (
+          <div className="text-neutral text-lg/[27px]">
+            Your idntty address:{' '}
+            <span className="font-semibold">{walletAddress}</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
