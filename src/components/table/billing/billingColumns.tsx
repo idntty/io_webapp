@@ -66,7 +66,7 @@ export const billingColumns: ColumnDef<Billing>[] = [
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       const link = row.getValue('link') as string;
 
-      return <div className="flex items-center gap-[8px]"></div>;
+      return <div className="flex items-center gap-[8px]">{link}</div>;
     },
   },
 ];
