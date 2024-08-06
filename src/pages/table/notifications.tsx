@@ -13,14 +13,6 @@ import {
   notificationColumns,
 } from '../../components/table/notification/notificationColumns';
 
-// {
-//   "id": 52,
-//   "public_key": "19b3e079eca717018f5844b25ca7435fb5bf10d2197ab941ea89cd1d25705c1c",
-//   "for_public_key": "19b3e079eca717018f5844b25ca7435fb5bf10d2197ab941ea89cd1d25705c1a",
-//   "type": "share",
-//   "data": "{\"features\":[\"53de4a96-be72-4c42-bb33-a6a5066d3643\",\"b8fb5e57-6018-4f95-8bb2-8c2c00d49359\",\"42dc5407-91ba-4427-ae4a-f2e76e5a7e4a\"]}",
-//   "timestamp": "2024-09-21T04:00:47.000Z"
-// }
 interface NotificationResponse {
   id: number;
   public_key: string;
