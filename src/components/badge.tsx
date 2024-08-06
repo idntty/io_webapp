@@ -10,6 +10,8 @@ const badgeVariants = cva(
       variant: {
         primary: 'bg-brand-50 text-brand-700',
         secondary: 'bg-gray-100 text-gray-700',
+        success: 'bg-success-50 text-success-700',
+        error: 'bg-error-50 text-error-700',
       },
       size: {
         sm: 'px-[8px] py-[2px] text-xs/4',
@@ -25,19 +27,33 @@ const badgeVariants = cva(
 );
 
 export type BadgeProps = React.HTMLAttributes<HTMLDivElement> &
-  VariantProps<typeof badgeVariants>;
+  VariantProps<typeof badgeVariants> & {
+    withDot?: boolean;
+  };
 
 const Badge: React.FC<BadgeProps> = ({
   className,
   variant,
   size,
+  withDot = false,
+  children,
   ...props
 }) => {
   return (
-    <div
-      className={cn(badgeVariants({ variant, size }), className)}
-      {...props}
-    />
+    <div className={cn(badgeVariants({ variant, size }), className)} {...props}>
+      {withDot && (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="8"
+          height="8"
+          viewBox="0 0 8 8"
+          className={cn(badgeVariants({ variant }), 'fill-current')}
+        >
+          <circle cx="4" cy="4.00037" r="3" />
+        </svg>
+      )}
+      {children}
+    </div>
   );
 };
 

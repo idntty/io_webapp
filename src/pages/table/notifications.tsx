@@ -7,11 +7,11 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { DateRange } from 'react-day-picker';
 
-import { NotificationTable } from '../components/table/notification/NotificationTable';
+import { NotificationTable } from '../../components/table/notification/NotificationTable';
 import {
   Notification,
   notificationColumns,
-} from '../components/table/notification/notificationColumns';
+} from '../../components/table/notification/notificationColumns';
 
 // {
 //   "id": 52,
@@ -56,7 +56,7 @@ export default function Table() {
       'https://api.idntty.io/get-notifications',
       { params, withCredentials: true },
     );
-    const formattedData = data.map((notification) => ({
+    const formattedData: Notification[] = data.map((notification) => ({
       user: notification.public_key,
       sharedDate: format(new Date(notification.timestamp), 'dd.MM.yyyy'),
       // sharedLabels: (JSON.parse(notification.data) as { features: string[] }).features,
