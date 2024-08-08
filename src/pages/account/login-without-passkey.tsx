@@ -23,6 +23,7 @@ export default function LoginWithoutPasskey() {
   const setWalletAddress = useOnboardingStore(
     (state) => state.setWalletAddress,
   );
+  const identity = useOnboardingStore((state) => state.identity);
   const [doEncrypt, setDoEncrypt] = useState(false);
 
   const login = async () => {
@@ -54,7 +55,10 @@ export default function LoginWithoutPasskey() {
       sessionStorage.setItem('privateKey', privateKey.toString('hex'));
 
       if (doEncrypt) {
-        const response = await registerWithPasskey(publicKey);
+        const response = await registerWithPasskey(
+          publicKey,
+          identity === 'authority',
+        );
         const webAuthnPublicKey = response.webAuthnPublicKey;
         if (!webAuthnPublicKey) {
           throw new Error('WebAuthn public key was not generated');

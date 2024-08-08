@@ -26,6 +26,7 @@ export default function CreateAccount() {
   const privateKey = useOnboardingStore((state) => state.privateKey);
   const passphrase = useOnboardingStore((state) => state.passphrase);
   const privateData = useOnboardingStore((state) => state.privateData);
+  const identity = useOnboardingStore((state) => state.identity);
 
   // FIXME: Remove later
   const setEncryptedMessage = useOnboardingStore(
@@ -46,7 +47,10 @@ export default function CreateAccount() {
       throw new Error('Private data was not generated');
     }
     try {
-      const response = await registerWithPasskey(publicKey);
+      const response = await registerWithPasskey(
+        publicKey,
+        identity === 'authority',
+      );
       const webAuthnPublicKey = response.webAuthnPublicKey;
       if (!webAuthnPublicKey) {
         throw new Error('WebAuthn public key was not generated');
