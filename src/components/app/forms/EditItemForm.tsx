@@ -6,7 +6,7 @@ import * as RadioGroup from '@radix-ui/react-radio-group';
 import { useState } from 'react';
 import { ReactSearchAutocomplete } from 'react-search-autocomplete';
 
-import { cn, saveDataToServer } from '../../../lib/utils';
+import { cn, saveDataToServer, getUserIdentity } from '../../../lib/utils';
 import { setFeature, getSetFeatureCost } from '../../../lib/apiClient';
 
 import { encryptGridItemContent } from '../../../lib/crypto';
@@ -28,15 +28,7 @@ import Divider from '../../divider';
 import ImageBadge from '../grid/ImageBadge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../tabs';
 
-const handleSendEncryptedData = async (uuid: string, content: string) => {
-  const { encryptedMessage, nonce } = await encryptGridItemContent(content);
-  const data = [
-    {
-      uuid,
-      value: Buffer.from(encryptedMessage).toString('hex'),
-      nonce: Buffer.from(nonce).toString('hex'),
-    },
-  ];
+const handleSendData = async (uuid: string, content: string) => {
   const publicKey = localStorage.getItem('publicKey');
   if (!publicKey) {
     throw new Error('Public key not found');
@@ -45,6 +37,31 @@ const handleSendEncryptedData = async (uuid: string, content: string) => {
   if (!privateKey) {
     throw new Error('Private key not found');
   }
+
+  const userIdentity = await getUserIdentity(publicKey);
+  if (userIdentity.isAuthority) {
+    const data = [
+      {
+        uuid,
+        value: content,
+        nonce: '',
+      },
+    ];
+    console.log('Saving data to server:', data);
+    return Promise.all([
+      saveDataToServer(publicKey, 'public', data),
+      setFeature(data, privateKey, publicKey),
+    ]);
+  }
+
+  const { encryptedMessage, nonce } = await encryptGridItemContent(content);
+  const data = [
+    {
+      uuid,
+      value: Buffer.from(encryptedMessage).toString('hex'),
+      nonce: Buffer.from(nonce).toString('hex'),
+    },
+  ];
   console.log('Saving data to server:', data);
   return Promise.all([
     saveDataToServer(publicKey, 'private', data),
@@ -207,7 +224,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
         type: getWidgetTypeOrOther(data.fieldType),
         content,
       });
-      handleSendEncryptedData(editedItemID, content.toString())
+      handleSendData(editedItemID, content.toString())
         .then(([_, { transactionId }]) => {
           console.log('Send tx to node, id:', transactionId);
         })
