@@ -20,7 +20,10 @@ export interface VerificationResponse {
   webAuthnPublicKey?: string;
 }
 
-export const registerWithPasskey = async (publicKey: Buffer) => {
+export const registerWithPasskey = async (
+  publicKey: Buffer,
+  isAuthority: boolean,
+) => {
   let registrationResponse: RegistrationResponseJSON;
   try {
     const response = await axios.get<PublicKeyCredentialCreationOptionsJSON>(
@@ -42,7 +45,7 @@ export const registerWithPasskey = async (publicKey: Buffer) => {
 
   const verificationResponse = await axios.post<VerificationResponse>(
     `${PROTOCOL}://${HOST}/register/verify`,
-    { registrationResponse, publicKey: publicKey.toString('hex') },
+    { registrationResponse, publicKey: publicKey.toString('hex'), isAuthority },
     {
       withCredentials: true,
     },

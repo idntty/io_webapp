@@ -13,8 +13,8 @@ import {
   getLayoutFromServer,
   getDataFromServer,
   createGridFromLayoutAndData,
+  getUserIdentity,
 } from '../lib/utils';
-import type { OnboardingStore } from '../types/localStorage';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/tabs';
 import Header from '../components/app/Header';
 import Footer from '../components/app/Footer';
@@ -244,6 +244,10 @@ export default function IdentityPage() {
         setUserStatus(userStatus);
         setIsLoggedIn(isLoggedIn);
       }
+      const userIdentity = await getUserIdentity(
+        router.query.publicKey as string,
+      );
+      setIdentity(userIdentity.isAuthority ? 'authority' : 'personal');
       await createGrid();
       setDataFetched(true);
     };
@@ -253,19 +257,6 @@ export default function IdentityPage() {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady]);
-
-  useEffect(() => {
-    try {
-      const onboardingStore = JSON.parse(
-        localStorage.getItem('onboardingStore') ?? '',
-      ) as OnboardingStore;
-      if (onboardingStore.state.identity) {
-        setIdentity(onboardingStore.state.identity);
-      }
-    } catch (e) {
-      console.error('Error parsing onboardingStore:', e);
-    }
-  }, []);
 
   useEffect(() => {
     if (!areGridsEditable && dataFetched) {

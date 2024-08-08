@@ -236,6 +236,17 @@ export const getDataFromServer = async (
   };
 };
 
+export const getUserIdentity = async (publicKey: string) => {
+  const response = await axios.get<{ isAuthority: boolean }>(
+    `${PROTOCOL}://${HOST}/get-user-idntty`,
+    {
+      params: { publicKey },
+      withCredentials: true,
+    },
+  );
+  return response.data;
+};
+
 export const createGridFromLayoutAndData = async (
   layout: Record<string, Omit<GridItem, 'content'>>,
   data: {
