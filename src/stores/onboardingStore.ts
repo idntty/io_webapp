@@ -1,6 +1,9 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { UserRegistrationFormSchemaType } from '../components/onboarding/UserRegistrationForm';
+import {
+  UserRegistrationFormPersonalSchemaType,
+  UserRegistrationFormAuthoritySchemaType,
+} from '../components/onboarding/UserRegistrationForm';
 
 export interface OnboardingState {
   identity?: 'personal' | 'authority';
@@ -8,7 +11,9 @@ export interface OnboardingState {
   privateKey?: Buffer;
   publicKey?: Buffer;
   walletAddress?: string;
-  privateData?: UserRegistrationFormSchemaType;
+  privateData?:
+    | UserRegistrationFormPersonalSchemaType
+    | UserRegistrationFormAuthoritySchemaType;
   isAuthenticated: boolean;
 
   // FIXME: Remove later
@@ -20,7 +25,21 @@ export interface OnboardingState {
   setPrivateKey: (privateKey: Buffer) => void;
   setPublicKey: (publicKey: Buffer) => void;
   setWalletAddress: (walletAddress: string) => void;
-  setPrivateData: (privateData: UserRegistrationFormSchemaType) => void;
+  setPrivateData: (
+    privateData:
+      | UserRegistrationFormPersonalSchemaType
+      | UserRegistrationFormAuthoritySchemaType,
+  ) => void;
+  updatePrivateData<
+    T extends
+      | UserRegistrationFormPersonalSchemaType
+      | UserRegistrationFormAuthoritySchemaType,
+    K extends keyof T,
+  >(
+    this: void,
+    key: K,
+    value: T[K],
+  ): void;
   setIsAuthenticated: (isAuthenticated: boolean) => void;
 }
 
@@ -45,6 +64,24 @@ export const useOnboardingStore = create<OnboardingState>()(
       setPublicKey: (publicKey) => set({ publicKey }),
       setWalletAddress: (walletAddress) => set({ walletAddress }),
       setPrivateData: (privateData) => set({ privateData }),
+      updatePrivateData: (key, value) =>
+        set((state) => {
+          console.log('state', state);
+          if (state.privateData) {
+            return {
+              privateData: {
+                ...state.privateData,
+                [key]: value,
+              },
+            };
+          }
+          return {
+            privateData: {
+              fullName: '', // FIXME: Figure out a way to not use this trick
+              [key]: value,
+            },
+          };
+        }),
       setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
     }),
     {

@@ -68,6 +68,7 @@ export interface GridState {
 
   addNewGridItem: (size: GridItemSize) => void;
   removeNewGridItem: () => void;
+  addGridItem: (item: Omit<GridItem, 'layout'>) => void;
   removeGridItem: (id: string) => void;
   splitGridAtID: (id: string) => void;
   updateGrid: (grid: Record<string, GridItem>) => void;
@@ -133,6 +134,38 @@ const createGridStore = () =>
             ),
             lowerGridLayout: state.lowerGridLayout.filter(
               (layout) => state.grid[layout.i].type !== 'new',
+            ),
+          };
+        }),
+
+      addGridItem: (item: Omit<GridItem, 'layout'>) =>
+        set((state) => {
+          const { itemW, itemH } = sizeToDimensions(item.size);
+
+          const { itemX, itemY } = findNewItemPosition(
+            state.upperGridLayout,
+            itemW,
+            itemH,
+          );
+
+          const id = uuidv4();
+
+          const newItem: GridItem = {
+            ...item,
+            layout: {
+              i: id,
+              x: itemX,
+              y: itemY,
+              w: itemW,
+              h: itemH,
+            },
+          };
+
+          return {
+            ...state,
+            grid: { ...state.grid, [newItem.layout.i]: newItem },
+            upperGridLayout: [...state.upperGridLayout, newItem.layout].sort(
+              compareLayoutsFn,
             ),
           };
         }),

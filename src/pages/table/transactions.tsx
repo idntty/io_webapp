@@ -13,14 +13,26 @@ import {
 } from '../../components/table/transaction/transactionColumns';
 import { TransactionTable } from '../../components/table/transaction/TransactionTable';
 
+// {
+//   "id": 23,
+//   "tx_id": "461163aaeee76856da3ac194bfb3ae071624d5fb625bd5048f3dfd20ffa21756",
+//   "block_height": 81740,
+//   "price": "145000",
+//   "public_key": "d831474ffb14200762f733d0010a3217c46a53a39ec17946df8c3b4be4b95d5e",
+//   "for_public_key": null,
+//   "type": "setFeature",
+//   "data": "{\"features\":[{\"label\":\"test\",\"value\":\"test\"}]}",
+//   "timestamp": "2024-09-05T02:36:52.000Z"
+// }
 interface TransactionResponse {
   id: number;
+  tx_id: string;
   public_key: string;
   for_public_key: string;
-  type: 'share';
+  type: 'setFeature';
   data: string;
-  blockHeight: number;
-  status: 'processing' | 'validated' | 'invalidated';
+  block_height: number;
+  price: string;
   timestamp: string;
 }
 
@@ -50,15 +62,22 @@ export default function Table() {
       'https://api.idntty.io/get-transactions',
       { params, withCredentials: true },
     );
+
+    console.log(data);
     const formattedData: Transaction[] = data.map((transaction) => ({
       user: transaction.public_key,
-      blockHeight: transaction.blockHeight,
-      status: transaction.status,
+      blockHeight: transaction.block_height,
+      status: 'Validated',
       sharedDate: format(new Date(transaction.timestamp), 'dd.MM.yyyy'),
-      // sharedLabels: (JSON.parse(notification.data) as { features: string[] }).features,
-      sharedLabels: ['Email', 'Phone', 'Name', 'Bio']
-        .sort(() => 0.5 - Math.random())
-        .slice(0, Math.floor(Math.random() * 4 + 1)),
+      // "data": "{\"features\":[{\"label\":\"test\",\"value\":\"test\"}]}"
+      sharedLabels: (
+        JSON.parse(transaction.data) as {
+          features: { label: string; value: string }[];
+        }
+      ).features.map((feature) => feature.label),
+      // sharedLabels: ['Email', 'Phone', 'Name', 'Bio']
+      //   .sort(() => 0.5 - Math.random())
+      //   .slice(0, Math.floor(Math.random() * 4 + 1)),
     }));
 
     if (!initialFetchCompleted && formattedData.length > 0) {
@@ -79,7 +98,7 @@ export default function Table() {
   };
 
   const { data } = useQuery<Transaction[], Error>({
-    queryKey: ['notifications', dateRange],
+    queryKey: ['transactions', dateRange],
     queryFn: () => fetchTransactions(dateRange?.from, dateRange?.to),
   });
 

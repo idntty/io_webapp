@@ -10,7 +10,7 @@ export interface Transaction {
   user: string;
   sharedDate: string;
   blockHeight: number;
-  status: 'processing' | 'validated' | 'invalidated';
+  status: 'Processing' | 'Validated' | 'Invalidated';
   sharedLabels: string[];
 }
 
@@ -41,17 +41,17 @@ export const transactionColumns: ColumnDef<Transaction>[] = [
     cell: ({ row }) => {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       const status = row.getValue('status') as
-        | 'processing'
-        | 'validated'
-        | 'invalidated';
+        | 'Processing'
+        | 'Validated'
+        | 'Invalidated';
 
       return (
         <Badge
           size="md"
           variant={
-            status === 'processing'
+            status === 'Processing'
               ? 'secondary'
-              : status === 'validated'
+              : status === 'Validated'
                 ? 'success'
                 : 'error'
           }

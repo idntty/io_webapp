@@ -7,7 +7,6 @@ import Button from '../../components/button/button';
 import Footer from '../../components/onboarding/Footer';
 import Header from '../../components/onboarding/Header';
 import TextAndSupportingText from '../../components/onboarding/TextAndSupportingText';
-import { UserRegistrationFormSchemaType } from '../../components/onboarding/UserRegistrationForm';
 import {
   generateKeysAndAdress,
   loadMnemonic,
@@ -26,7 +25,6 @@ export default function LoginWithPasskey() {
   const setWalletAddress = useOnboardingStore(
     (state) => state.setWalletAddress,
   );
-  const setPrivateData = useOnboardingStore((state) => state.setPrivateData);
 
   const loginWithPassphrase = async () => {
     try {
@@ -101,18 +99,18 @@ export default function LoginWithPasskey() {
       // const privateData = JSON.parse(
       //   atob(decryptedMessage),
       // ) as UserRegistrationFormSchemaType;
-      const privateData = {
-        fullName: '',
-        citezenship: '',
-        phone: '',
-        email: '',
-        placeOfBirth: '',
-        currentLocation: '',
-        nationalID: '',
-        passportNumber: '',
-      } as UserRegistrationFormSchemaType;
-      setPrivateData(privateData);
-      console.log('privateData: ', privateData, '(empty for now)');
+      // const privateData = {
+      //   fullName: '',
+      //   citezenship: '',
+      //   phone: '',
+      //   email: '',
+      //   placeOfBirth: '',
+      //   currentLocation: '',
+      //   nationalID: '',
+      //   passportNumber: '',
+      // } as UserRegistrationFormSchemaType;
+      // setPrivateData(privateData);
+      // console.log('privateData: ', privateData, '(empty for now)');
 
       router.push(`/${publicKey.toString('hex')}`);
     } catch (error) {

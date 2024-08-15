@@ -4,7 +4,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../lib/utils';
 
 const badgeVariants = cva(
-  'inline-flex justify-center items-center rounded-2xl font-medium text-center',
+  'inline-flex justify-center items-center rounded-2xl font-medium text-center gap-[6px]',
   {
     variants: {
       variant: {
@@ -39,6 +39,13 @@ const Badge: React.FC<BadgeProps> = ({
   children,
   ...props
 }) => {
+  const dotColor = {
+    primary: 'text-brand-700',
+    secondary: 'text-gray-700',
+    success: 'text-success-700',
+    error: 'text-error-700',
+  }[variant ?? 'primary'];
+
   return (
     <div className={cn(badgeVariants({ variant, size }), className)} {...props}>
       {withDot && (
@@ -47,7 +54,7 @@ const Badge: React.FC<BadgeProps> = ({
           width="8"
           height="8"
           viewBox="0 0 8 8"
-          className={cn(badgeVariants({ variant }), 'fill-current')}
+          className={cn(dotColor, 'fill-current')}
         >
           <circle cx="4" cy="4.00037" r="3" />
         </svg>
