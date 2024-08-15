@@ -21,7 +21,7 @@ const MetricItem: React.FC<MetricItemProps> = ({ title, value, subvalue }) => {
             {value}
           </div>
           {subvalue && (
-            <div className="self-stretch text-[24px]/[32px] text-gray-900">
+            <div className="self-end text-[24px]/[32px] text-gray-900">
               {subvalue}
             </div>
           )}
