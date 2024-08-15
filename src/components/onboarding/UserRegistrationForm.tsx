@@ -45,7 +45,15 @@ const PersonalSchema = z.object({
     .optional(),
   currentLocation: z.string().optional(),
   bio: z.string().optional(),
-  file: z.instanceof(File).optional(),
+  file: z
+    .unknown()
+    .refine((file) => {
+      if (typeof File !== 'undefined') {
+        return file instanceof File;
+      }
+      return true;
+    })
+    .optional(),
   email: z
     .string()
     .email({
@@ -66,7 +74,15 @@ const AuthoritySchema = z.object({
     .optional()
     .or(z.literal('')),
   location: z.string().optional(),
-  file: z.instanceof(File).optional(),
+  file: z
+    .unknown()
+    .refine((file) => {
+      if (typeof File !== 'undefined') {
+        return file instanceof File;
+      }
+      return true;
+    })
+    .optional(),
   bio: z.string().optional(),
 });
 
