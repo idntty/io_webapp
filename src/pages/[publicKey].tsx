@@ -291,7 +291,7 @@ export default function IdentityPage() {
         className="relative flex flex-grow flex-col justify-between overflow-auto bg-gray-50"
       >
         <Header
-          type="primary"
+          tabsType="primary"
           onToggleEditClick={handleToggleEditClick}
           onShareClick={handleShareClick}
         />
