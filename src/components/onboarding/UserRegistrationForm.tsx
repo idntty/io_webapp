@@ -169,10 +169,10 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
   const setPrivateData = useOnboardingStore((state) => state.setPrivateData);
 
   const addGridItem = useGridStore((state) => state.addGridItem);
-  const updateGrid = useGridStore((state) => state.updateGrid);
-  const updateUpperGridLayout = useGridStore(
-    (state) => state.updateUpperGridLayout,
-  );
+  // const updateGrid = useGridStore((state) => state.updateGrid);
+  // const updateUpperGridLayout = useGridStore(
+  //   (state) => state.updateUpperGridLayout,
+  // );
 
   const personalForm = useForm<UserRegistrationFormPersonalSchemaType>({
     resolver: zodResolver(PersonalSchema),
