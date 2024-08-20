@@ -262,18 +262,6 @@ export const createGridFromLayoutAndData = async (
   const grid: Record<string, GridItem> = {};
   const upperGridLayout: GridItemLayout[] = [];
 
-  // this function needs to create a grid (both the grid object and the layout array) from the layout and data
-  // the layout input argument is already almost a grid object, but it's missing the content field
-  // that needs to be filled in from the data argument
-  // the upperGridLayout array is easily created from the layout argument
-
-  // regarding the data argument, it contains three arrays: public, shared, and private
-  // the public data should be displayed in the grid as is
-  // the private and shared data should be decrypted before being displayed in the grid
-  // if decryption is not possible, content = '' should be used
-  // when creating the actual grid, the content field should be filled with data
-  // following the precedence: private, shared, public
-
   const privateData: Record<string, string> = {};
   if (data.private) {
     for (const entry of data.private) {
@@ -340,4 +328,41 @@ export const createGridFromLayoutAndData = async (
   }
 
   return { grid, upperGridLayout };
+};
+
+export const getBadgeIDsFromServer = async (publicKey: string) => {
+  const response = await axios.get<string[]>(
+    `${PROTOCOL}://${HOST}/get-uploaded-images`,
+    {
+      params: { publicKey },
+      withCredentials: true,
+    },
+  );
+  return response.data;
+};
+
+export const createBadgeGridFromIDs = (badgeIDs: string[]) => {
+  const badgeGrid: Record<string, GridItem> = {};
+  const upperBadgeGridLayout: GridItemLayout[] = [];
+
+  for (const id of badgeIDs) {
+    const layout = {
+      i: id,
+      x: 1,
+      y: 1,
+      w: 1,
+      h: 1,
+    };
+
+    badgeGrid[id] = {
+      size: 'tiny',
+      type: 'badge',
+      content: `https://d1nyjrmwcoi38d.cloudfront.net/${id}`,
+      layout,
+    };
+
+    upperBadgeGridLayout.push(layout);
+  }
+
+  return { badgeGrid, upperBadgeGridLayout };
 };

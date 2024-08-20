@@ -3,6 +3,7 @@
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
 
 import { loginWithPasskey } from '../lib/passkeys';
 import { loadMnemonic, createJWT } from '../lib/crypto';
@@ -14,6 +15,8 @@ import {
   getDataFromServer,
   createGridFromLayoutAndData,
   getUserIdentity,
+  getBadgeIDsFromServer,
+  createBadgeGridFromIDs,
 } from '../lib/utils';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/tabs';
 import Header from '../components/app/Header';
@@ -76,6 +79,7 @@ export default function IdentityPage() {
   const updateLowerBadgeLayout = useBadgeStore(
     (state) => state.updateLowerGridLayout,
   );
+  const updateBadgeGrid = useBadgeStore((state) => state.updateGrid);
   const mergeBadgeGrids = useBadgeStore((state) => state.mergeGrids);
 
   const [isShareFormOpen, setIsShareFormOpen] = useState(false);
@@ -88,6 +92,14 @@ export default function IdentityPage() {
 
   const [isBadgeGridSplit, setIsBadgeGridSplit] = useState(false);
   const [editedBadgeID, setEditedBadgeID] = useState<string | null>(null);
+
+  const { data: badgeIDs, refetch: refetchBadgeIDs } = useQuery<
+    string[],
+    Error
+  >({
+    queryKey: ['badgeIDs', router.query.publicKey],
+    queryFn: () => getBadgeIDsFromServer(router.query.publicKey as string),
+  });
 
   const handleShareClick = () => {
     setIsShareFormOpen((prev) => !prev);
@@ -279,6 +291,15 @@ export default function IdentityPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [areGridsEditable, dataFetched]);
+
+  useEffect(() => {
+    if (badgeIDs) {
+      const { badgeGrid, upperBadgeGridLayout } =
+        createBadgeGridFromIDs(badgeIDs);
+      updateBadgeGrid(badgeGrid);
+      updateUpperBadgeLayout(upperBadgeGridLayout);
+    }
+  }, [badgeIDs, updateBadgeGrid, updateUpperBadgeLayout]);
 
   useEffect(() => {
     setSelectedForSharing([]);
@@ -512,6 +533,7 @@ export default function IdentityPage() {
                       editedBadgeID={editedBadgeID!}
                       onCancel={handleMergeBadgeGrids}
                       onSubmit={handleMergeBadgeGrids}
+                      refetch={refetchBadgeIDs}
                     />
                   </div>
                 </div>

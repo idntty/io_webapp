@@ -565,7 +565,7 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
                             updatePrivateData(field.name, e.target.value);
                             if (itemIDs[field.name]) {
                               updateGridItem(itemIDs[field.name]!, {
-                                size: 'tiny',
+                                size: 'long',
                                 // @ts-expect-error ???
                                 type: fieldsToWidgets[
                                   field.name
@@ -576,7 +576,7 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
                               updateItemID(
                                 field.name,
                                 addGridItem({
-                                  size: 'tiny',
+                                  size: 'long',
                                   // @ts-expect-error ???
                                   type: fieldsToWidgets[
                                     field.name

@@ -28,6 +28,7 @@ import {
   SelectValue,
 } from '../../select';
 import { useOnboardingStore } from '../../../stores/onboardingStore';
+import { QueryObserverResult } from '@tanstack/react-query';
 
 const HOST = 'api.idntty.io';
 // const HOST = 'localhost:8000';
@@ -53,12 +54,14 @@ export interface EditBadgeFormProps {
   editedBadgeID: string;
   onCancel: () => void;
   onSubmit: () => void;
+  refetch: () => Promise<QueryObserverResult<string[], Error>>;
 }
 
 const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
   editedBadgeID,
   onCancel,
   onSubmit,
+  refetch,
 }) => {
   const badgeGrid = useBadgeStore((state) => state.grid);
   const addNewBadgeGridItem = useBadgeStore((state) => state.addNewGridItem);
@@ -83,7 +86,7 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
           `https://${HOST}/get-upload-url`,
           {
             publicKey: publicKey.toString('hex'),
-            // fileName: file.name,
+            fileName: file.name,
             contentType: file.type,
           },
           {
@@ -149,6 +152,13 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
           if (badgeGrid[editedBadgeID].type === 'new') {
             addNewBadgeGridItem('tiny');
           }
+          refetch()
+            .then(() => {
+              console.log('Refetched badge IDs');
+            })
+            .catch((error) => {
+              console.error(error);
+            });
         }
       })
       .catch((error) => {
