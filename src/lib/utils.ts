@@ -348,8 +348,8 @@ export const createBadgeGridFromIDs = (badgeIDs: string[]) => {
   for (const id of badgeIDs) {
     const layout = {
       i: id,
-      x: 1,
-      y: 1,
+      x: 0,
+      y: 0,
       w: 1,
       h: 1,
     };
