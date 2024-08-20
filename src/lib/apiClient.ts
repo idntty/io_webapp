@@ -113,3 +113,38 @@ export const removeFeature = async (
   );
   return client.transaction.send(txWithFee);
 };
+
+export const createBadge = async (
+  data: string,
+  privateKey: string,
+  publicKey: string,
+) => {
+  const client = await getClient();
+
+  const tx = await client.transaction.create(
+    {
+      module: 'badge',
+      command: 'createBadge',
+      fee: '0',
+      senderPublicKey: publicKey,
+      params: {
+        id: data,
+      },
+    },
+    privateKey,
+  );
+
+  const txWithFee = await client.transaction.create(
+    {
+      module: 'badge',
+      command: 'createBadge',
+      fee: client.transaction.computeMinFee(tx),
+      senderPublicKey: publicKey,
+      params: {
+        id: data,
+      },
+    },
+    privateKey,
+  );
+  return client.transaction.send(txWithFee);
+};

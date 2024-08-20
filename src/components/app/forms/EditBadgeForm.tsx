@@ -27,7 +27,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../select';
-import { useOnboardingStore } from '../../../stores/onboardingStore';
 import { QueryObserverResult } from '@tanstack/react-query';
 
 const HOST = 'api.idntty.io';
@@ -68,7 +67,7 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
   const updateBadgeGridItem = useBadgeStore((state) => state.updateGridItem);
   const removeBadgeGridItem = useBadgeStore((state) => state.removeGridItem);
 
-  const publicKey = useOnboardingStore((state) => state.publicKey);
+  const publicKey = localStorage.getItem('publicKey');
 
   const [file, setFile] = useState<File | null>(null);
   const handleFileChange = (file: File) => setFile(file);
@@ -85,7 +84,7 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
         }>(
           `https://${HOST}/get-upload-url`,
           {
-            publicKey: publicKey.toString('hex'),
+            publicKey,
             fileName: file.name,
             contentType: file.type,
           },
