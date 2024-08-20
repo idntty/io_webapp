@@ -83,7 +83,7 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
           `https://${HOST}/get-upload-url`,
           {
             publicKey: publicKey.toString('hex'),
-            fileName: file.name,
+            // fileName: file.name,
             contentType: file.type,
           },
           {
