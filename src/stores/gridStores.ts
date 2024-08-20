@@ -65,10 +65,11 @@ export interface GridState {
   upperGridLayout: GridItemLayout[];
   lowerGridLayout: GridItemLayout[];
   savedYOffset: number;
+  itemIDs: Record<string, string | undefined>;
 
   addNewGridItem: (size: GridItemSize) => void;
   removeNewGridItem: () => void;
-  addGridItem: (item: Omit<GridItem, 'layout'>) => void;
+  addGridItem: (item: Omit<GridItem, 'layout'>) => string;
   removeGridItem: (id: string) => void;
   splitGridAtID: (id: string) => void;
   updateGrid: (grid: Record<string, GridItem>) => void;
@@ -76,6 +77,7 @@ export interface GridState {
   updateLowerGridLayout: (layout: GridItemLayout[]) => void;
   mergeGrids: () => void;
   updateGridItem: (id: string, newItem: Omit<GridItem, 'layout'>) => void;
+  updateItemID: (item: string, id: string) => void;
 }
 
 const createGridStore = () =>
@@ -85,6 +87,19 @@ const createGridStore = () =>
       upperGridLayout: [],
       lowerGridLayout: [],
       savedYOffset: 0,
+      itemIDs: {
+        fullName: undefined,
+        dateOfBirth: undefined,
+        currentLocation: undefined,
+        email: undefined,
+
+        authorityName: undefined,
+        websiteURL: undefined,
+        location: undefined,
+
+        file: undefined,
+        bio: undefined,
+      },
 
       addNewGridItem: (size: GridItemSize) =>
         set((state) => {
@@ -138,17 +153,23 @@ const createGridStore = () =>
           };
         }),
 
-      addGridItem: (item: Omit<GridItem, 'layout'>) =>
+      addGridItem: (item: Omit<GridItem, 'layout'>) => {
+        const id = uuidv4();
+
         set((state) => {
+          console.log('addGridItem', item);
+
           const { itemW, itemH } = sizeToDimensions(item.size);
+          console.log('itemW, itemH', itemW, itemH);
 
           const { itemX, itemY } = findNewItemPosition(
             state.upperGridLayout,
             itemW,
             itemH,
           );
+          console.log('itemX, itemY', itemX, itemY);
 
-          const id = uuidv4();
+          console.log('id', id);
 
           const newItem: GridItem = {
             ...item,
@@ -160,6 +181,7 @@ const createGridStore = () =>
               h: itemH,
             },
           };
+          console.log('newItem', newItem);
 
           return {
             ...state,
@@ -168,7 +190,10 @@ const createGridStore = () =>
               compareLayoutsFn,
             ),
           };
-        }),
+        });
+
+        return id;
+      },
 
       removeGridItem: (id: string) =>
         set((state) => {
@@ -277,6 +302,18 @@ const createGridStore = () =>
             }),
           };
         }),
+
+      updateItemID: (item: string, id: string) => {
+        set((state) => {
+          return {
+            ...state,
+            itemIDs: {
+              ...state.itemIDs,
+              [item]: id,
+            },
+          };
+        });
+      },
     })),
   );
 export const useGridStore = createGridStore();

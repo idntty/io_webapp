@@ -66,7 +66,6 @@ export const useOnboardingStore = create<OnboardingState>()(
       setPrivateData: (privateData) => set({ privateData }),
       updatePrivateData: (key, value) =>
         set((state) => {
-          console.log('state', state);
           if (state.privateData) {
             return {
               privateData: {

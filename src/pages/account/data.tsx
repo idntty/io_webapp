@@ -6,17 +6,23 @@ import TextAndSupportingText from '../../components/onboarding/TextAndSupporting
 import UserRegistrationForm from '../../components/onboarding/UserRegistrationForm';
 import Widget from '../../components/app/grid/Widget';
 
-import GridLayout from 'react-grid-layout';
-import { useOnboardingStore } from '../../stores/onboardingStore';
+import { Responsive, WidthProvider } from 'react-grid-layout';
+
+const GridLayout = WidthProvider(Responsive);
+
+// import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useGridStore } from '../../stores/gridStores';
 
 export default function PrivateData() {
-  const privateData = useOnboardingStore((state) => state.privateData);
+  // const privateData = useOnboardingStore((state) => state.privateData);
 
   const grid = useGridStore((state) => state.grid);
   const upperGridLayout = useGridStore((state) => state.upperGridLayout);
+  const updateUpperGridLayout = useGridStore(
+    (state) => state.updateUpperGridLayout,
+  );
 
-  console.log('privateData', Object.entries(privateData ?? {}));
+  // console.log('privateData', Object.entries(privateData ?? {}));
 
   return (
     <div className="box-border flex h-screen w-screen flex-row overflow-hidden bg-white text-base">
@@ -36,8 +42,18 @@ export default function PrivateData() {
       <div className="relative flex flex-grow flex-col justify-between overflow-auto bg-gray-50">
         <div className="relative mx-auto w-[482px] bg-gray-100 lg:w-[924px]">
           <GridLayout
-            layout={upperGridLayout}
-            cols={4}
+            layouts={{
+              lg: upperGridLayout,
+              md: upperGridLayout,
+            }}
+            cols={{
+              lg: 4,
+              md: 2,
+            }}
+            breakpoints={{
+              lg: 923,
+              md: 0,
+            }}
             margin={[40, 40]}
             compactType={'horizontal'}
             isResizable={false}
@@ -45,6 +61,10 @@ export default function PrivateData() {
             isBounded={false}
             rowHeight={181}
             className="bg-gray-100"
+            onLayoutChange={(layout) => {
+              console.log('layout onLayoutChange:', layout, grid);
+              updateUpperGridLayout(layout);
+            }}
           >
             {upperGridLayout.map((layout) => {
               return (

@@ -185,10 +185,10 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
   const setPrivateData = useOnboardingStore((state) => state.setPrivateData);
 
   const addGridItem = useGridStore((state) => state.addGridItem);
-  // const updateGrid = useGridStore((state) => state.updateGrid);
-  // const updateUpperGridLayout = useGridStore(
-  //   (state) => state.updateUpperGridLayout,
-  // );
+  const updateGridItem = useGridStore((state) => state.updateGridItem);
+
+  const itemIDs = useGridStore((state) => state.itemIDs);
+  const updateItemID = useGridStore((state) => state.updateItemID);
 
   const personalForm = useForm<UserRegistrationFormPersonalSchemaType>({
     resolver: zodResolver(PersonalSchema),
@@ -258,11 +258,30 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
                       field.onChange(e);
                       // @ts-expect-error ???
                       updatePrivateData('fullName', e.target.value);
-                      addGridItem({
-                        size: 'tiny',
-                        type: fieldsToWidgets.fullName,
-                        content: e.target.value,
-                      });
+                      if (itemIDs.fullName) {
+                        updateGridItem(itemIDs.fullName, {
+                          size: 'tiny',
+                          type: fieldsToWidgets.fullName,
+                          content: e.target.value,
+                        });
+                      } else {
+                        // setWidgetIDs((prev) => ({
+                        //   ...prev,
+                        //   fullName: addGridItem({
+                        //     size: 'tiny',
+                        //     type: fieldsToWidgets.fullName,
+                        //     content: e.target.value,
+                        //   }),
+                        // }));
+                        updateItemID(
+                          'fullName',
+                          addGridItem({
+                            size: 'tiny',
+                            type: fieldsToWidgets.fullName,
+                            content: e.target.value,
+                          }),
+                        );
+                      }
                     }}
                   />
                 </FormControl>
@@ -314,11 +333,30 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
                           onChange={(e) => {
                             field.onChange(e);
                             updatePrivateData('bio', e.target.value);
-                            addGridItem({
-                              size: 'long',
-                              type: fieldsToWidgets.bio,
-                              content: e.target.value,
-                            });
+                            if (itemIDs.bio) {
+                              updateGridItem(itemIDs.bio, {
+                                size: 'long',
+                                type: fieldsToWidgets.bio,
+                                content: e.target.value,
+                              });
+                            } else {
+                              // setWidgetIDs((prev) => ({
+                              //   ...prev,
+                              //   bio: addGridItem({
+                              //     size: 'long',
+                              //     type: fieldsToWidgets.bio,
+                              //     content: e.target.value,
+                              //   }),
+                              // }));
+                              updateItemID(
+                                'bio',
+                                addGridItem({
+                                  size: 'long',
+                                  type: fieldsToWidgets.bio,
+                                  content: e.target.value,
+                                }),
+                              );
+                            }
                           }}
                         />
                       ) : (
@@ -332,12 +370,39 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
                             field.onChange(e);
                             // @ts-expect-error ???
                             updatePrivateData(field.name, e.target.value);
-                            addGridItem({
-                              size: 'long',
-                              // @ts-expect-error ???
-                              type: fieldsToWidgets[field.name] as GridItemType,
-                              content: e.target.value,
-                            });
+                            if (itemIDs[field.name]) {
+                              updateGridItem(itemIDs[field.name]!, {
+                                size: 'tiny',
+                                // @ts-expect-error ???
+                                type: fieldsToWidgets[
+                                  field.name
+                                ] as GridItemType,
+                                content: e.target.value,
+                              });
+                            } else {
+                              // setWidgetIDs((prev) => ({
+                              //   ...prev,
+                              //   [field.name]: addGridItem({
+                              //     size: 'long',
+                              //     // @ts-expect-error ???
+                              //     type: fieldsToWidgets[
+                              //       field.name
+                              //     ] as GridItemType,
+                              //     content: e.target.value,
+                              //   }),
+                              // }));
+                              updateItemID(
+                                field.name,
+                                addGridItem({
+                                  size: 'tiny',
+                                  // @ts-expect-error ???
+                                  type: fieldsToWidgets[
+                                    field.name
+                                  ] as GridItemType,
+                                  content: e.target.value,
+                                }),
+                              );
+                            }
                           }}
                         />
                       )}
@@ -397,11 +462,30 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
                       field.onChange(e);
                       // @ts-expect-error ???
                       updatePrivateData('authorityName', e.target.value);
-                      addGridItem({
-                        size: 'tiny',
-                        type: fieldsToWidgets.authorityName,
-                        content: e.target.value,
-                      });
+                      if (itemIDs.authorityName) {
+                        updateGridItem(itemIDs.authorityName, {
+                          size: 'tiny',
+                          type: fieldsToWidgets.authorityName,
+                          content: e.target.value,
+                        });
+                      } else {
+                        // setWidgetIDs((prev) => ({
+                        //   ...prev,
+                        //   authorityName: addGridItem({
+                        //     size: 'tiny',
+                        //     type: fieldsToWidgets.authorityName,
+                        //     content: e.target.value,
+                        //   }),
+                        // }));
+                        updateItemID(
+                          'authorityName',
+                          addGridItem({
+                            size: 'tiny',
+                            type: fieldsToWidgets.authorityName,
+                            content: e.target.value,
+                          }),
+                        );
+                      }
                     }}
                   />
                 </FormControl>
@@ -453,11 +537,30 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
                           onChange={(e) => {
                             field.onChange(e);
                             updatePrivateData('bio', e.target.value);
-                            addGridItem({
-                              size: 'long',
-                              type: fieldsToWidgets.bio,
-                              content: e.target.value,
-                            });
+                            if (itemIDs.bio) {
+                              updateGridItem(itemIDs.bio, {
+                                size: 'long',
+                                type: fieldsToWidgets.bio,
+                                content: e.target.value,
+                              });
+                            } else {
+                              // setWidgetIDs((prev) => ({
+                              //   ...prev,
+                              //   bio: addGridItem({
+                              //     size: 'long',
+                              //     type: fieldsToWidgets.bio,
+                              //     content: e.target.value,
+                              //   }),
+                              // }));
+                              updateItemID(
+                                'bio',
+                                addGridItem({
+                                  size: 'long',
+                                  type: fieldsToWidgets.bio,
+                                  content: e.target.value,
+                                }),
+                              );
+                            }
                           }}
                         />
                       ) : (
@@ -471,12 +574,39 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
                             field.onChange(e);
                             // @ts-expect-error ???
                             updatePrivateData(field.name, e.target.value);
-                            addGridItem({
-                              size: 'long',
-                              // @ts-expect-error ???
-                              type: fieldsToWidgets[field.name] as GridItemType,
-                              content: e.target.value,
-                            });
+                            if (itemIDs[field.name]) {
+                              updateGridItem(itemIDs[field.name]!, {
+                                size: 'tiny',
+                                // @ts-expect-error ???
+                                type: fieldsToWidgets[
+                                  field.name
+                                ] as GridItemType,
+                                content: e.target.value,
+                              });
+                            } else {
+                              // setWidgetIDs((prev) => ({
+                              //   ...prev,
+                              //   [field.name]: addGridItem({
+                              //     size: 'long',
+                              //     // @ts-expect-error ???
+                              //     type: fieldsToWidgets[
+                              //       field.name
+                              //     ] as GridItemType,
+                              //     content: e.target.value,
+                              //   }),
+                              // }));
+                              updateItemID(
+                                field.name,
+                                addGridItem({
+                                  size: 'tiny',
+                                  // @ts-expect-error ???
+                                  type: fieldsToWidgets[
+                                    field.name
+                                  ] as GridItemType,
+                                  content: e.target.value,
+                                }),
+                              );
+                            }
                           }}
                         />
                       )}
