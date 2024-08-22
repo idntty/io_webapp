@@ -197,7 +197,7 @@ const AssignForm: React.FC<AssignFormProps> = ({
             <div className="flex items-center justify-center gap-[20px]">
               {selectedForAssignment.map((id, index) => (
                 <Badge key={index} size="md" variant="secondary">
-                  {badgeGrid[id].type}
+                  {badgeGrid[id].content.toString().split('/')[1]}
                 </Badge>
               ))}
             </div>
