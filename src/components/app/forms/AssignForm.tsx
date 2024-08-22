@@ -1,8 +1,10 @@
+import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import { useBadgeStore } from '../../../stores/gridStores';
+import { getIssueBadgeCost, issueBadge } from '../../../lib/apiClient';
 
 import Button from '../../button/button';
 import {
@@ -42,7 +44,24 @@ const AssignForm: React.FC<AssignFormProps> = ({
   onCancel,
   selectedForAssignment,
 }) => {
-  const transactionCost = 145000;
+  const [transactionCost, setTransactionCost] = useState<bigint>(0n);
+
+  const updateTransactionCost = async (
+    recipientAddress: string,
+    ids: string[],
+  ) => {
+    const data = { recipientAddress, ids };
+    const publicKey = localStorage.getItem('publicKey');
+    if (!publicKey) {
+      throw new Error('Public key not found');
+    }
+    const privateKey = sessionStorage.getItem('privateKey');
+    if (!privateKey) {
+      throw new Error('Private key not found');
+    }
+
+    setTransactionCost(await getIssueBadgeCost(data, privateKey, publicKey));
+  };
 
   const badgeGrid = useBadgeStore((state) => state.grid);
 
@@ -65,11 +84,24 @@ const AssignForm: React.FC<AssignFormProps> = ({
     if (!privateKey) {
       throw new Error('Private key not found');
     }
+
+    issueBadge(
+      { recipientAddress: data.recipient, ids: selectedForAssignment },
+      privateKey,
+      publicKey,
+    ).catch(console.error);
   };
 
   const handleCancel = () => {
     onCancel();
   };
+
+  useEffect(() => {
+    updateTransactionCost(
+      form.getValues('recipient'),
+      selectedForAssignment,
+    ).catch(console.error);
+  }, [form, selectedForAssignment]);
 
   return (
     <Form {...form}>
@@ -126,6 +158,13 @@ const AssignForm: React.FC<AssignFormProps> = ({
                       className="self-stretch"
                       placeholder="AAAAC3NzaC1lZDI1NTE5AAAAILYAIoV2OKRSh/DcM3TicD/NK/4T"
                       {...field}
+                      onChange={(e) => {
+                        updateTransactionCost(
+                          field.value,
+                          selectedForAssignment,
+                        ).catch(console.error);
+                        field.onChange(e);
+                      }}
                     />
                   </FormControl>
                   <FormMessage className="text-sm font-normal" />

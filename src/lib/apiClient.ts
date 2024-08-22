@@ -114,7 +114,7 @@ export const removeFeature = async (
   return client.transaction.send(txWithFee);
 };
 
-export const createBadge = async (
+export const getCreateBadgeCost = async (
   data: string,
   privateKey: string,
   publicKey: string,
@@ -134,11 +134,21 @@ export const createBadge = async (
     privateKey,
   );
 
+  return client.transaction.computeMinFee(tx);
+};
+
+export const createBadge = async (
+  data: string,
+  privateKey: string,
+  publicKey: string,
+) => {
+  const client = await getClient();
+
   const txWithFee = await client.transaction.create(
     {
       module: 'badge',
       command: 'createBadge',
-      fee: client.transaction.computeMinFee(tx),
+      fee: await getCreateBadgeCost(data, privateKey, publicKey),
       senderPublicKey: publicKey,
       params: {
         id: data,
@@ -146,5 +156,54 @@ export const createBadge = async (
     },
     privateKey,
   );
+
+  return client.transaction.send(txWithFee);
+};
+
+export const getIssueBadgeCost = async (
+  data: { recipientAddress: string; ids: string[] },
+  privateKey: string,
+  publicKey: string,
+) => {
+  const client = await getClient();
+
+  const tx = await client.transaction.create(
+    {
+      module: 'badge',
+      command: 'issueBadge',
+      fee: '0',
+      senderPublicKey: publicKey,
+      params: {
+        recipientAddress: data.recipientAddress,
+        ids: data.ids,
+      },
+    },
+    privateKey,
+  );
+
+  return client.transaction.computeMinFee(tx);
+};
+
+export const issueBadge = async (
+  data: { recipientAddress: string; ids: string[] },
+  privateKey: string,
+  publicKey: string,
+) => {
+  const client = await getClient();
+
+  const txWithFee = await client.transaction.create(
+    {
+      module: 'badge',
+      command: 'issueBadge',
+      fee: await getIssueBadgeCost(data, privateKey, publicKey),
+      senderPublicKey: publicKey,
+      params: {
+        recipientAddress: data.recipientAddress,
+        ids: data.ids,
+      },
+    },
+    privateKey,
+  );
+
   return client.transaction.send(txWithFee);
 };
