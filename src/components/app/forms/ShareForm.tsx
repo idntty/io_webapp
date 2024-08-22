@@ -36,15 +36,15 @@ const FormSchema = z
       invalid_type_error: 'Select a sharing type.',
       required_error: 'Please select a sharing type.',
     }),
-    recepient: z.string().optional(),
+    recipient: z.string().optional(),
     message: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.sharingType === 'Specific user') {
-      if (!data.recepient || data.recepient.length === 0) {
+      if (!data.recipient || data.recipient.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          path: ['recepient'],
+          path: ['recipient'],
           message: "Please enter the recipient's public key.",
         });
       }
@@ -57,13 +57,13 @@ const FormSchema = z
       }
     }
 
-    if (data.recepient && data.recepient.length === 0) {
+    if (data.recipient && data.recipient.length === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.too_small,
         minimum: 1,
         type: 'string',
         inclusive: true,
-        path: ['recepient'],
+        path: ['recipient'],
         message: "Please enter the recipient's public key.",
       });
     }
@@ -137,7 +137,7 @@ const ShareForm: React.FC<ShareFormProps> = ({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       sharingType: 'Specific user',
-      recepient: '',
+      recipient: '',
       message: '',
     },
     mode: 'onChange',
@@ -155,7 +155,7 @@ const ShareForm: React.FC<ShareFormProps> = ({
         console.error(error);
       });
     } else {
-      handleShareData(publicKey, data.recepient).catch((error) => {
+      handleShareData(publicKey, data.recipient).catch((error) => {
         console.error(error);
       });
     }
@@ -253,7 +253,7 @@ const ShareForm: React.FC<ShareFormProps> = ({
             <>
               <FormField
                 control={form.control}
-                name="recepient"
+                name="recipient"
                 render={({ field }) => (
                   <FormItem className="flex gap-[32px] self-stretch">
                     <div className="flex w-[280px] flex-col">

@@ -27,6 +27,7 @@ import { useGridStore, useBadgeStore } from '../stores/gridStores';
 import EditItemForm from '../components/app/forms/EditItemForm';
 import EditBadgeForm from '../components/app/forms/EditBadgeForm';
 import ShareForm from '../components/app/forms/ShareForm';
+import AssignForm from '../components/app/forms/AssignForm';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -82,8 +83,8 @@ export default function IdentityPage() {
   const updateBadgeGrid = useBadgeStore((state) => state.updateGrid);
   const mergeBadgeGrids = useBadgeStore((state) => state.mergeGrids);
 
-  const [isShareFormOpen, setIsShareFormOpen] = useState(false);
-  const [selectedForSharing, setSelectedForSharing] = useState<string[]>([]);
+  const [isShareOrAssignFormOpen, setIsShareOrAssignFormOpen] = useState(false);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   const [areGridsEditable, setAreGridsEditable] = useState(false);
 
@@ -102,7 +103,7 @@ export default function IdentityPage() {
   });
 
   const handleShareClick = () => {
-    setIsShareFormOpen((prev) => !prev);
+    setIsShareOrAssignFormOpen((prev) => !prev);
   };
 
   const handleToggleEditClick = () => {
@@ -271,24 +272,28 @@ export default function IdentityPage() {
   }, [router.isReady]);
 
   useEffect(() => {
-    if (!areGridsEditable && dataFetched) {
-      const filteredGrid = Object.fromEntries(
-        Object.entries(grid).filter(([_, value]) => value.type !== 'new'),
-      );
+    const timeout = setTimeout(() => {
+      if (!areGridsEditable && dataFetched) {
+        const filteredGrid = Object.fromEntries(
+          Object.entries(grid).filter(([_, value]) => value.type !== 'new'),
+        );
 
-      const layout = extractLayout(filteredGrid);
+        const layout = extractLayout(filteredGrid);
 
-      const publicKey = localStorage.getItem('publicKey');
-      if (publicKey) {
-        sendLayoutToServer(publicKey, layout)
-          .then(() => {
-            console.log('Layout sent to server:', layout);
-          })
-          .catch((error) => {
-            console.error('Error sending layout to server:', error);
-          });
+        const publicKey = localStorage.getItem('publicKey');
+        if (publicKey) {
+          sendLayoutToServer(publicKey, layout)
+            .then(() => {
+              console.log('Layout sent to server:', layout);
+            })
+            .catch((error) => {
+              console.error('Error sending layout to server:', error);
+            });
+        }
       }
-    }
+    }, 2000);
+
+    return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [areGridsEditable, dataFetched]);
 
@@ -302,8 +307,8 @@ export default function IdentityPage() {
   }, [badgeIDs, updateBadgeGrid, updateUpperBadgeLayout]);
 
   useEffect(() => {
-    setSelectedForSharing([]);
-  }, [isShareFormOpen]);
+    setSelectedItems([]);
+  }, [isShareOrAssignFormOpen]);
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
@@ -317,108 +322,30 @@ export default function IdentityPage() {
           onShareClick={handleShareClick}
         />
         <div className="flex-grow"></div>
-        <TabsContent value="all">
-          <div className="relative mx-auto w-[482px] bg-gray-100 lg:w-[924px]">
-            {isShareFormOpen && (
-              <div className="relative left-1/2 flex w-screen -translate-x-1/2 transform justify-center bg-white py-[20px]">
-                <div className="w-[840px]">
-                  <ShareForm
-                    onCancel={handleShareClick}
-                    selectedForSharing={selectedForSharing}
-                  />
+        {!(identity === 'authority' && isShareOrAssignFormOpen) && (
+          <TabsContent value="all">
+            <div className="relative mx-auto w-[482px] bg-gray-100 lg:w-[924px]">
+              {isShareOrAssignFormOpen && (
+                <div className="relative left-1/2 flex w-screen -translate-x-1/2 transform justify-center bg-white py-[20px]">
+                  <div className="w-[840px]">
+                    {identity === 'personal' ? (
+                      <ShareForm
+                        onCancel={handleShareClick}
+                        selectedForSharing={selectedItems}
+                      />
+                    ) : (
+                      <AssignForm
+                        onCancel={handleShareClick}
+                        selectedForAssignment={selectedItems}
+                      />
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
-            <GridLayout
-              layouts={{
-                lg: upperGridLayout,
-                md: upperGridLayout,
-              }}
-              cols={{
-                lg: 4,
-                md: 2,
-              }}
-              breakpoints={{
-                lg: 923,
-                md: 0,
-              }}
-              margin={[40, 40]}
-              compactType={'horizontal'}
-              isResizable={false}
-              isDraggable={areGridsEditable}
-              isBounded={false}
-              rowHeight={181}
-              className="bg-gray-100"
-              onDragStart={(...args) => {
-                console.log('upperGridLayout onDragStart:', upperGridLayout);
-                console.log('lowerGridLayout onDragStart:', lowerGridLayout);
-                console.log('layout onDragStart:', args[0]);
-              }}
-              onLayoutChange={(layout) => {
-                console.log('layout onLayoutChange:', layout, grid);
-                updateUpperGridLayout(layout);
-              }}
-            >
-              {upperGridLayout.map((layout) => {
-                if (grid[layout.i].content === '') {
-                  return (
-                    <EncryptedWidget
-                      key={layout.i}
-                      size={grid[layout.i].size}
-                    />
-                  );
-                }
-                return (
-                  <Widget
-                    key={layout.i}
-                    size={grid[layout.i].size}
-                    type={grid[layout.i].type}
-                    state={
-                      isGridSplit && editedItemID === layout.i
-                        ? 'edit'
-                        : selectedForSharing.includes(layout.i) &&
-                            !areGridsEditable &&
-                            isShareFormOpen
-                          ? 'selected'
-                          : 'default'
-                    }
-                    value={grid[layout.i].content}
-                    isEditable={areGridsEditable}
-                    onDeleteClick={
-                      grid[layout.i].type !== 'new'
-                        ? () => handleDeleteGridItemClick(layout.i)
-                        : undefined
-                    }
-                    onEditClick={() => handleEditGridItemClick(layout.i)}
-                    onClick={() =>
-                      setSelectedForSharing((prev) => {
-                        if (prev.includes(layout.i)) {
-                          return prev.filter((item) => item !== layout.i);
-                        }
-                        return [...prev, layout.i];
-                      })
-                    }
-                  />
-                );
-              })}
-            </GridLayout>
-            {isGridSplit && (
-              <div className="relative left-1/2 flex w-screen -translate-x-1/2 transform justify-center bg-white py-[20px]">
-                <div className="w-[840px]">
-                  <EditItemForm
-                    // editedItemID can't be null based on handleEditGridItemClick
-                    editedItemID={editedItemID!}
-                    onCancel={handleMergeGrids}
-                    onSubmit={handleMergeGrids}
-                  />
-                </div>
-              </div>
-            )}
-            {isGridSplit && (
+              )}
               <GridLayout
                 layouts={{
-                  lg: lowerGridLayout,
-                  md: lowerGridLayout,
+                  lg: upperGridLayout,
+                  md: upperGridLayout,
                 }}
                 cols={{
                   lg: 4,
@@ -429,33 +356,122 @@ export default function IdentityPage() {
                   md: 0,
                 }}
                 margin={[40, 40]}
+                compactType={'horizontal'}
                 isResizable={false}
+                isDraggable={areGridsEditable}
                 isBounded={false}
                 rowHeight={181}
-                compactType={null}
                 className="bg-gray-100"
+                onDragStart={(...args) => {
+                  console.log('upperGridLayout onDragStart:', upperGridLayout);
+                  console.log('lowerGridLayout onDragStart:', lowerGridLayout);
+                  console.log('layout onDragStart:', args[0]);
+                }}
                 onLayoutChange={(layout) => {
-                  console.log('layout onLayoutChange:', layout);
-                  updateLowerGridLayout(layout);
+                  console.log('layout onLayoutChange:', layout, grid);
+                  updateUpperGridLayout(layout);
                 }}
               >
-                {lowerGridLayout.map((layout) => {
+                {upperGridLayout.map((layout) => {
+                  if (grid[layout.i].content === '') {
+                    return (
+                      <EncryptedWidget
+                        key={layout.i}
+                        size={grid[layout.i].size}
+                      />
+                    );
+                  }
                   return (
                     <Widget
                       key={layout.i}
                       size={grid[layout.i].size}
                       type={grid[layout.i].type}
+                      state={
+                        isGridSplit && editedItemID === layout.i
+                          ? 'edit'
+                          : selectedItems.includes(layout.i) &&
+                              !areGridsEditable &&
+                              isShareOrAssignFormOpen
+                            ? 'selected'
+                            : 'default'
+                      }
                       value={grid[layout.i].content}
                       isEditable={areGridsEditable}
-                      onDeleteClick={() => handleDeleteGridItemClick(layout.i)}
+                      onDeleteClick={
+                        grid[layout.i].type !== 'new'
+                          ? () => handleDeleteGridItemClick(layout.i)
+                          : undefined
+                      }
                       onEditClick={() => handleEditGridItemClick(layout.i)}
+                      onClick={() =>
+                        setSelectedItems((prev) => {
+                          if (prev.includes(layout.i)) {
+                            return prev.filter((item) => item !== layout.i);
+                          }
+                          return [...prev, layout.i];
+                        })
+                      }
                     />
                   );
                 })}
               </GridLayout>
-            )}
-          </div>
-        </TabsContent>
+              {isGridSplit && (
+                <div className="relative left-1/2 flex w-screen -translate-x-1/2 transform justify-center bg-white py-[20px]">
+                  <div className="w-[840px]">
+                    <EditItemForm
+                      // editedItemID can't be null based on handleEditGridItemClick
+                      editedItemID={editedItemID!}
+                      onCancel={handleMergeGrids}
+                      onSubmit={handleMergeGrids}
+                    />
+                  </div>
+                </div>
+              )}
+              {isGridSplit && (
+                <GridLayout
+                  layouts={{
+                    lg: lowerGridLayout,
+                    md: lowerGridLayout,
+                  }}
+                  cols={{
+                    lg: 4,
+                    md: 2,
+                  }}
+                  breakpoints={{
+                    lg: 923,
+                    md: 0,
+                  }}
+                  margin={[40, 40]}
+                  isResizable={false}
+                  isBounded={false}
+                  rowHeight={181}
+                  compactType={null}
+                  className="bg-gray-100"
+                  onLayoutChange={(layout) => {
+                    console.log('layout onLayoutChange:', layout);
+                    updateLowerGridLayout(layout);
+                  }}
+                >
+                  {lowerGridLayout.map((layout) => {
+                    return (
+                      <Widget
+                        key={layout.i}
+                        size={grid[layout.i].size}
+                        type={grid[layout.i].type}
+                        value={grid[layout.i].content}
+                        isEditable={areGridsEditable}
+                        onDeleteClick={() =>
+                          handleDeleteGridItemClick(layout.i)
+                        }
+                        onEditClick={() => handleEditGridItemClick(layout.i)}
+                      />
+                    );
+                  })}
+                </GridLayout>
+              )}
+            </div>
+          </TabsContent>
+        )}
         <div className="flex-grow"></div>
       </Tabs>
       {identity === 'authority' && (
@@ -511,7 +527,11 @@ export default function IdentityPage() {
                       state={
                         isBadgeGridSplit && editedBadgeID === layout.i
                           ? 'edit'
-                          : 'default'
+                          : selectedItems.includes(layout.i) &&
+                              !areGridsEditable &&
+                              isShareOrAssignFormOpen
+                            ? 'selected'
+                            : 'default'
                       }
                       value={badgeGrid[layout.i].content}
                       isEditable={areGridsEditable}
@@ -521,6 +541,14 @@ export default function IdentityPage() {
                           : undefined
                       }
                       onEditClick={() => handleEditBadgeGridItemClick(layout.i)}
+                      onClick={() =>
+                        setSelectedItems((prev) => {
+                          if (prev.includes(layout.i)) {
+                            return prev.filter((item) => item !== layout.i);
+                          }
+                          return [...prev, layout.i];
+                        })
+                      }
                     />
                   );
                 })}
