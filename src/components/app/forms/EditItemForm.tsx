@@ -5,6 +5,8 @@ import { SearchMD, Plus, Key01, TextInput, Calendar } from 'untitledui-js';
 import * as RadioGroup from '@radix-ui/react-radio-group';
 import { useState } from 'react';
 import { ReactSearchAutocomplete } from 'react-search-autocomplete';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 import { cn, saveDataToServer, getUserIdentity } from '../../../lib/utils';
 import { setFeature, getSetFeatureCost } from '../../../lib/apiClient';
@@ -12,6 +14,7 @@ import { setFeature, getSetFeatureCost } from '../../../lib/apiClient';
 import { encryptGridItemContent } from '../../../lib/crypto';
 import { useGridStore } from '../../../stores/gridStores';
 import { GridItem, GridItemType, ITEM_SIZES } from '../../../types/grid';
+import Widget from '../grid/Widget';
 import Button from '../../button/button';
 import {
   Form,
@@ -25,7 +28,6 @@ import {
 import Input from '../../input';
 import TextArea from '../../textarea';
 import Divider from '../../divider';
-import ImageBadge from '../grid/ImageBadge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../tabs';
 
 const handleSendData = async (uuid: string, content: string) => {
@@ -214,7 +216,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
       updateGridItem(editedItemID, {
         size: 'tiny',
         type: 'badge',
-        content: `/badges/${data.selectedBadge}.png`,
+        content: `https://d1nyjrmwcoi38d.cloudfront.net/${data.selectedBadge}`,
       });
     } else {
       const content =
@@ -257,6 +259,48 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
 
     setTransactionCost(await getSetFeatureCost(data, privateKey, publicKey));
   };
+
+  // TODO: reuse the function from the table
+  const fetchTransactions = async () => {
+    interface TransactionResponse {
+      id: number;
+      tx_id: string;
+      public_key: string;
+      for_public_key: string;
+      type: 'setFeature' | 'issueBadge';
+      data: string;
+      block_height: number;
+      price: string;
+      timestamp: string;
+    }
+    const { data } = await axios.get<TransactionResponse[]>(
+      'https://api.idntty.io/get-transactions',
+      { withCredentials: true },
+    );
+
+    console.log(data);
+
+    return [
+      ...new Set(
+        data
+          .filter((transaction) => transaction.type === 'issueBadge')
+          .flatMap(
+            (transaction) =>
+              (
+                JSON.parse(transaction.data) as unknown as {
+                  recipientAddress: string;
+                  ids: string[];
+                }
+              ).ids,
+          ),
+      ),
+    ];
+  };
+
+  const { data: availableBadges } = useQuery<string[], Error>({
+    queryKey: ['transactions', 'all'],
+    queryFn: () => fetchTransactions(),
+  });
 
   return (
     <Form {...form}>
@@ -578,14 +622,20 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                     defaultValue={field.value}
                     onValueChange={field.onChange}
                   >
-                    {Array.from({ length: 10 }).map((_, index) => (
-                      <FormControl key={index}>
+                    {availableBadges?.map((badge) => (
+                      <FormControl key={badge}>
                         <RadioGroup.Item
-                          value={(index + 1).toString()}
-                          id={(index + 1).toString()}
+                          value={badge}
+                          id={badge}
                           className="group cursor-pointer disabled:cursor-not-allowed"
                         >
-                          <ImageBadge imgURL={`/badges/${index + 1}.png`} />
+                          <Widget
+                            size="tiny"
+                            type="badge"
+                            state="default"
+                            value={`https://d1nyjrmwcoi38d.cloudfront.net/${badge}`}
+                            isEditable={false}
+                          />
                         </RadioGroup.Item>
                       </FormControl>
                     ))}
