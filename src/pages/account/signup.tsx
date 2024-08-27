@@ -9,6 +9,10 @@ import Header from '../../components/onboarding/Header';
 import Footer from '../../components/onboarding/Footer';
 import TextAndSupportingText from '../../components/onboarding/TextAndSupportingText';
 import Button from '../../components/button/button';
+import EncryptedWidget from '../../components/app/grid/EncryptedWidget';
+
+import { Responsive, WidthProvider } from 'react-grid-layout';
+const GridLayout = WidthProvider(Responsive);
 
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { registerWithPasskey } from '../../lib/passkeys';
@@ -19,6 +23,8 @@ import {
   createJWT,
 } from '../../lib/crypto';
 
+import { useGridStore } from '../../stores/gridStores';
+
 export default function CreateAccount() {
   const router = useRouter();
 
@@ -27,6 +33,9 @@ export default function CreateAccount() {
   const passphrase = useOnboardingStore((state) => state.passphrase);
   const privateData = useOnboardingStore((state) => state.privateData);
   const identity = useOnboardingStore((state) => state.identity);
+
+  const grid = useGridStore((state) => state.grid);
+  const upperGridLayout = useGridStore((state) => state.upperGridLayout);
 
   // FIXME: Remove later
   const setEncryptedMessage = useOnboardingStore(
@@ -142,7 +151,37 @@ export default function CreateAccount() {
         </div>
         <Footer />
       </div>
-      <div className="hidden w-[960px] self-stretch bg-gray-50 md:flex"></div>
+      <div className="relative flex flex-grow flex-col justify-between overflow-auto bg-gray-50">
+        <div className="relative mx-auto w-[482px] bg-gray-100 lg:w-[924px]">
+          <GridLayout
+            layouts={{
+              lg: upperGridLayout,
+              md: upperGridLayout,
+            }}
+            cols={{
+              lg: 4,
+              md: 2,
+            }}
+            breakpoints={{
+              lg: 923,
+              md: 0,
+            }}
+            margin={[40, 40]}
+            compactType={'horizontal'}
+            isResizable={false}
+            isDraggable={false}
+            isBounded={false}
+            rowHeight={181}
+            className="bg-gray-100"
+          >
+            {upperGridLayout.map((layout) => {
+              return (
+                <EncryptedWidget key={layout.i} size={grid[layout.i].size} />
+              );
+            })}
+          </GridLayout>
+        </div>
+      </div>
     </div>
   );
 }
