@@ -65,7 +65,8 @@ export default function Passphrase() {
       console.error('Passphrase is not set');
       return;
     }
-    generateKeysAndAddress(passphrase.join(' ')).then(
+    const path = localStorage.getItem('path') ?? "m/44'/134'/0'";
+    generateKeysAndAddress(passphrase.join(' '), path).then(
       ({ privateKey, publicKey, walletAddress }) => {
         setPrivateKey(privateKey);
         setPublicKey(publicKey);

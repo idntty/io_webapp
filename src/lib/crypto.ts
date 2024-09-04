@@ -11,9 +11,9 @@ import {
 
 const PATH = "m/44'/134'/0'";
 
-export const generateKeysAndAddress = async (phrase: string) => {
+export const generateKeysAndAddress = async (phrase: string, path?: string) => {
   const privateKey: Buffer =
-    await cryptography.ed.getPrivateKeyFromPhraseAndPath(phrase, PATH);
+    await cryptography.ed.getPrivateKeyFromPhraseAndPath(phrase, path ?? PATH);
   const publicKey: Buffer =
     cryptography.ed.getPublicKeyFromPrivateKey(privateKey);
   const address = cryptography.address.getLisk32AddressFromPublicKey(publicKey);
