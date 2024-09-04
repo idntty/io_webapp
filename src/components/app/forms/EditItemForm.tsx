@@ -213,11 +213,19 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
     onSubmit();
     console.log(data);
     if ('selectedBadge' in data) {
+      const content = `https://d1nyjrmwcoi38d.cloudfront.net/${data.selectedBadge}`;
       updateGridItem(editedItemID, {
         size: 'tiny',
         type: 'badge',
-        content: `https://d1nyjrmwcoi38d.cloudfront.net/${data.selectedBadge}`,
+        content,
       });
+      handleSendData(editedItemID, content)
+        .then(([_, { transactionId }]) => {
+          console.log('Send tx to node, id:', transactionId);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     } else {
       const content =
         data.textValue ?? data.textAreaValue ?? data.dateValue ?? '';
