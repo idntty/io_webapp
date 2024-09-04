@@ -99,7 +99,6 @@ export default function Passphrase() {
         }
         setPassphrase(words);
         console.log('Pasted the passphrase from clipboard');
-        handleGenerateKeys();
       },
       (err) => {
         console.error('Could not paste the passphrase from clipboard: ', err);
@@ -126,6 +125,9 @@ export default function Passphrase() {
     handleGenerate();
   }, [handleGenerate]);
 
+  useEffect(() => {
+    handleGenerateKeys();
+  }, [passphrase, handleGenerateKeys]);
   // 187px 61px 188px 69px
   return (
     <div className="box-border flex h-screen w-screen flex-row items-center self-stretch overflow-hidden bg-white text-base text-black">
