@@ -9,7 +9,7 @@ import Footer from '../../components/onboarding/Footer';
 import TextAndSupportingText from '../../components/onboarding/TextAndSupportingText';
 import Checkbox from '../../components/checkbox';
 import Button from '../../components/button/button';
-import { generateKeysAndAdress } from '../../lib/crypto';
+import { generateKeysAndAddress } from '../../lib/crypto';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { registerWithPasskey } from '../../lib/passkeys';
 import { saveMnemonic, createJWT } from '../../lib/crypto';
@@ -36,7 +36,7 @@ export default function LoginWithoutPasskey() {
       console.log('Pasted the passphrase from clipboard');
 
       const { privateKey, publicKey, walletAddress } =
-        await generateKeysAndAdress(passphrase);
+        await generateKeysAndAddress(passphrase);
       setPrivateKey(privateKey);
       setPublicKey(publicKey);
       setWalletAddress(walletAddress);

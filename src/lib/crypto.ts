@@ -11,7 +11,7 @@ import {
 
 const PATH = "m/44'/134'/0'";
 
-export const generateKeysAndAdress = async (phrase: string) => {
+export const generateKeysAndAddress = async (phrase: string) => {
   const privateKey: Buffer =
     await cryptography.ed.getPrivateKeyFromPhraseAndPath(phrase, PATH);
   const publicKey: Buffer =
@@ -22,7 +22,7 @@ export const generateKeysAndAdress = async (phrase: string) => {
 
 export const generatePassphraseAndKeys = async () => {
   const phrase = passphrase.Mnemonic.generateMnemonic();
-  return { passphrase: phrase, ...(await generateKeysAndAdress(phrase)) };
+  return { passphrase: phrase, ...(await generateKeysAndAddress(phrase)) };
 };
 
 export const saveMnemonic = async (
@@ -86,7 +86,7 @@ export const loadMnemonic = async (webAuthnPublicKey: string) => {
   );
 
   const phrase = Buffer.from(mnemonic).toString('utf-8');
-  const { privateKey, publicKey, walletAddress } = await generateKeysAndAdress(
+  const { privateKey, publicKey, walletAddress } = await generateKeysAndAddress(
     Buffer.from(mnemonic).toString('utf-8'),
   );
   return { phrase, privateKey, publicKey, walletAddress };

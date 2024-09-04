@@ -72,7 +72,7 @@ export default function Passphrase() {
     navigator.clipboard.readText().then(
       (text) => {
         const words = text.split(' ');
-        if (words.length !== 12) {
+        if (![12, 24].includes(words.length)) {
           console.error('Invalid passphrase');
           setIsAlertDialogOpen(true);
           return;
@@ -240,7 +240,7 @@ export default function Passphrase() {
           />
         )}
         {walletAddress && (
-          <div className="text-neutral text-lg/[27px]">
+          <div className="text-lg/[27px] text-neutral">
             Your idntty address:{' '}
             <span className="font-semibold">{walletAddress}</span>
           </div>

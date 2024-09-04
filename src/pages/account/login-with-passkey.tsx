@@ -8,7 +8,7 @@ import Footer from '../../components/onboarding/Footer';
 import Header from '../../components/onboarding/Header';
 import TextAndSupportingText from '../../components/onboarding/TextAndSupportingText';
 import {
-  generateKeysAndAdress,
+  generateKeysAndAddress,
   loadMnemonic,
   createJWT,
 } from '../../lib/crypto';
@@ -36,7 +36,7 @@ export default function LoginWithPasskey() {
       console.log('Pasted the passphrase from clipboard');
 
       const { privateKey, publicKey, walletAddress } =
-        await generateKeysAndAdress(passphrase);
+        await generateKeysAndAddress(passphrase);
       setPrivateKey(privateKey);
       setPublicKey(publicKey);
       setWalletAddress(walletAddress);

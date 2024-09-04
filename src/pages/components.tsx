@@ -13,11 +13,35 @@ import Checkbox from '../components/checkbox';
 import Divider from '../components/divider';
 
 import { getClient } from '../lib/apiClient';
+import { generateKeysAndAddress } from '../lib/crypto';
+
+const PHRASE =
+  'march unfold dizzy lyrics soap print notable brief address another begin evolve note open artist prison clerk twelve fetch course rather corn next cushion';
 
 export default function ComponentsTesting() {
   useEffect(() => {
     const run = async () => {
-      await getClient();
+      const client = await getClient();
+
+      const { privateKey, publicKey } = await generateKeysAndAddress(PHRASE);
+
+      const tx = await client.transaction.create(
+        {
+          module: 'token',
+          command: 'transfer',
+          fee: 1000000n,
+          senderPublicKey: publicKey.toString('hex'),
+          params: {
+            tokenID: 'abcdef0100000000',
+            amount: 1000000000n,
+            recipientAddress: 'lsktt8b7dm3kjzjpj2fa7exww34j4ma4h5pz4y7gh',
+            data: 'hello',
+          },
+        },
+        privateKey.toString('hex'),
+      );
+
+      await client.transaction.send(tx);
     };
 
     run().catch(console.error);
