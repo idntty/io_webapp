@@ -207,3 +207,39 @@ export const issueBadge = async (
 
   return client.transaction.send(txWithFee);
 };
+
+export const setAccountType = async (
+  data: 'personal' | 'authority',
+  privateKey: string,
+  publicKey: string,
+) => {
+  const client = await getClient();
+
+  const tx = await client.transaction.create(
+    {
+      module: 'identity',
+      command: 'setAccountType',
+      fee: '0',
+      senderPublicKey: publicKey,
+      params: {
+        isAuthority: data === 'authority',
+      },
+    },
+    privateKey,
+  );
+
+  const txWithFee = await client.transaction.create(
+    {
+      module: 'identity',
+      command: 'setAccountType',
+      fee: client.transaction.computeMinFee(tx),
+      senderPublicKey: publicKey,
+      params: {
+        isAuthority: data === 'authority',
+      },
+    },
+    privateKey,
+  );
+
+  return client.transaction.send(txWithFee);
+};

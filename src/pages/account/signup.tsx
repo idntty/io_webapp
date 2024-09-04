@@ -24,6 +24,7 @@ import {
 } from '../../lib/crypto';
 
 import { useGridStore } from '../../stores/gridStores';
+import { setAccountType } from '../../lib/apiClient';
 
 export default function CreateAccount() {
   const router = useRouter();
@@ -55,6 +56,9 @@ export default function CreateAccount() {
     if (!privateData) {
       throw new Error('Private data was not generated');
     }
+    if (!identity) {
+      throw new Error('Identity was not set');
+    }
     try {
       const response = await registerWithPasskey(
         publicKey,
@@ -82,6 +86,12 @@ export default function CreateAccount() {
       const { encryptedMessage, nonce } = await encryptMessage(
         convertedPrivateKey,
         btoa(JSON.stringify(privateData)),
+      );
+
+      await setAccountType(
+        identity,
+        privateKey.toString('hex'),
+        publicKey.toString('hex'),
       );
 
       // FIXME: Remove later
