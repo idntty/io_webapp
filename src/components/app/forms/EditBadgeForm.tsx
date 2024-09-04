@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { FileUploader } from '../FileUploader';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 import { useBadgeStore } from '../../../stores/gridStores';
@@ -28,6 +28,7 @@ import {
   SelectValue,
 } from '../../select';
 import { QueryObserverResult } from '@tanstack/react-query';
+import { createBadge, getCreateBadgeCost } from '../../../lib/apiClient';
 
 const HOST = 'api.idntty.io';
 // const HOST = 'localhost:8000';
@@ -62,12 +63,31 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
   onSubmit,
   refetch,
 }) => {
+  const [transactionCost, setTransactionCost] = useState<bigint>(0n);
+
   const badgeGrid = useBadgeStore((state) => state.grid);
   const addNewBadgeGridItem = useBadgeStore((state) => state.addNewGridItem);
   const updateBadgeGridItem = useBadgeStore((state) => state.updateGridItem);
   const removeBadgeGridItem = useBadgeStore((state) => state.removeGridItem);
 
   const publicKey = localStorage.getItem('publicKey');
+
+  const updateTransactionCost = async (uuid: string) => {
+    const publicKey = localStorage.getItem('publicKey');
+    if (!publicKey) {
+      throw new Error('Public key not found');
+    }
+    const privateKey = sessionStorage.getItem('privateKey');
+    if (!privateKey) {
+      throw new Error('Private key not found');
+    }
+
+    setTransactionCost(await getCreateBadgeCost(uuid, privateKey, publicKey));
+  };
+
+  useEffect(() => {
+    updateTransactionCost(editedBadgeID).catch(console.error);
+  }, [editedBadgeID]);
 
   const [file, setFile] = useState<File | null>(null);
   const handleFileChange = (file: File) => setFile(file);
@@ -137,6 +157,15 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
   });
 
   const onFormSubmit = (data: EditBadgeFormSchemaType) => {
+    const publicKey = localStorage.getItem('publicKey');
+    if (!publicKey) {
+      throw new Error('Public key not found');
+    }
+    const privateKey = sessionStorage.getItem('privateKey');
+    if (!privateKey) {
+      throw new Error('Private key not found');
+    }
+
     onSubmit();
     console.log(data);
     console.log(file);
@@ -151,6 +180,13 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
           if (badgeGrid[editedBadgeID].type === 'new') {
             addNewBadgeGridItem('tiny');
           }
+          createBadge(newFileName, privateKey, publicKey)
+            .then((transactionId) => {
+              console.log('Send tx to node, id:', transactionId);
+            })
+            .catch((error) => {
+              console.error(error);
+            });
           refetch()
             .then(() => {
               console.log('Refetched badge IDs');
@@ -356,7 +392,7 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
             </div>
             <div className="flex w-[512px] flex-col">
               <div className="text-5xl/[60px] font-medium -tracking-[0.96px] text-gray-500">
-                0,0176/idn
+                {`${transactionCost} IDN`}
               </div>
               {/* <div className="text-sm text-error-500">
                 Insufficient funds for{' '}
