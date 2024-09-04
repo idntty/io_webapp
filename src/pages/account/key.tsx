@@ -21,7 +21,10 @@ import {
 import Divider from '../../components/divider';
 
 import { useOnboardingStore } from '../../stores/onboardingStore';
-import { generatePassphraseAndKeys } from '../../lib/crypto';
+import {
+  generatePassphraseAndKeys,
+  generateKeysAndAddress,
+} from '../../lib/crypto';
 import { createPDF } from '../../lib/utils';
 import { generateSVGAvatar } from '../../lib/avatar';
 
@@ -57,6 +60,23 @@ export default function Passphrase() {
     );
   }, [setPassphrase, setPrivateKey, setPublicKey, setWalletAddress]);
 
+  const handleGenerateKeys = useCallback(() => {
+    if (!passphrase) {
+      console.error('Passphrase is not set');
+      return;
+    }
+    generateKeysAndAddress(passphrase.join(' ')).then(
+      ({ privateKey, publicKey, walletAddress }) => {
+        setPrivateKey(privateKey);
+        setPublicKey(publicKey);
+        setWalletAddress(walletAddress);
+      },
+      (err) => {
+        console.error('Could not generate keys from passphrase: ', err);
+      },
+    );
+  }, [passphrase, setPrivateKey, setPublicKey, setWalletAddress]);
+
   const handleCopyClick = () => {
     navigator.clipboard.writeText(passphrase.join(' ')).then(
       () => {
@@ -79,6 +99,7 @@ export default function Passphrase() {
         }
         setPassphrase(words);
         console.log('Pasted the passphrase from clipboard');
+        handleGenerateKeys();
       },
       (err) => {
         console.error('Could not paste the passphrase from clipboard: ', err);
