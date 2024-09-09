@@ -55,7 +55,7 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <header className="flex justify-between self-stretch px-[300px] py-[20px]">
       <img
-        className="h-[32px] w-[88.961px]"
+        className="h-[32px] w-[88.961px] cursor-pointer"
         alt="Logo"
         src="/logo.svg"
         onClick={() => router.push('/')}
