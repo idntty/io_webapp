@@ -55,7 +55,8 @@ const PersonalSchema = z.object({
     .email({
       message: 'Please enter a valid email address.',
     })
-    .optional(),
+    .optional()
+    .or(z.literal('')),
 });
 
 const AuthoritySchema = z.object({

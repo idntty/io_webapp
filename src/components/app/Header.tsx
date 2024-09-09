@@ -54,7 +54,12 @@ const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="flex justify-between self-stretch px-[300px] py-[20px]">
-      <img className="h-[32px] w-[88.961px]" alt="Logo" src="/logo.svg" />
+      <img
+        className="h-[32px] w-[88.961px]"
+        alt="Logo"
+        src="/logo.svg"
+        onClick={() => router.push('/')}
+      />
       <TabsList>{getTabs(tabsType)}</TabsList>
       <div className="flex items-center justify-center gap-[10px] px-0 py-[2px]">
         <button onClick={onToggleEditClick}>
