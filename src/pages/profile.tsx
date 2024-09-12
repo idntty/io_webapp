@@ -12,7 +12,7 @@ import Divider from '../components/divider';
 import { default as NotificationsTable } from '../pages/table/notifications';
 import { default as TransactionsTable } from '../pages/table/transactions';
 import { default as BillingTable } from '../pages/table/billing';
-import GetBalanceForm from '../components/app/forms/GetBalanceForm';
+import FaucetForm from '../components/app/forms/FaucetForm';
 
 export default function Profile() {
   const [isGetBalanceFormOpen, setIsGetBalanceFormOpen] = useState(false);
@@ -64,7 +64,7 @@ export default function Profile() {
           {isGetBalanceFormOpen && publicKey && (
             <div className="relative left-1/2 flex w-screen -translate-x-1/2 transform justify-center bg-white py-[20px]">
               <div className="w-[840px]">
-                <GetBalanceForm publicKey={publicKey} />
+                <FaucetForm publicKey={publicKey} />
               </div>
             </div>
           )}
