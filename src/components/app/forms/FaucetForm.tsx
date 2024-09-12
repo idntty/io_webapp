@@ -76,7 +76,7 @@ const FaucetForm: React.FC<FaucetFormProps> = ({ publicKey }) => {
         email: form.getValues('email'),
         secret: form.getValues('secret'),
       },
-      { withCredentials: true },
+      // { withCredentials: true },
     );
     console.log(response);
     if (response.status === 200) {
