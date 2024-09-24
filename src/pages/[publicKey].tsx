@@ -31,7 +31,6 @@ import AssignForm from '../components/app/forms/AssignForm';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import '../components/app/grid/placeholder.css';
 
 const GridLayout = WidthProvider(Responsive);
 export default function IdentityPage() {
