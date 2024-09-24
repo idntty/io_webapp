@@ -14,7 +14,6 @@ import {
 } from '../../lib/crypto';
 import { useOnboardingStore } from '../../stores/onboardingStore';
 import { loginWithPasskey } from '../../lib/passkeys';
-// import { getMessageFromServer } from '../lib/utils';
 
 export default function LoginWithPasskey() {
   const router = useRouter();

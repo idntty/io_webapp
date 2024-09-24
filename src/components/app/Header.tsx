@@ -10,6 +10,14 @@ import { generateSVGAvatar } from '../../lib/avatar';
 
 const getTabs = (tabsType: 'primary' | 'badges' | 'profile') => {
   switch (tabsType) {
+    case 'profile':
+      return (
+        <>
+          <TabsTrigger value="notifications">Notifications</TabsTrigger>
+          <TabsTrigger value="transactions">Transactions</TabsTrigger>
+          <TabsTrigger value="billing">Billing</TabsTrigger>
+        </>
+      );
     case 'primary':
     case 'badges':
     default:
@@ -19,14 +27,6 @@ const getTabs = (tabsType: 'primary' | 'badges' | 'profile') => {
           <TabsTrigger value="synced">Synced</TabsTrigger>
           <TabsTrigger value="validated">Validated</TabsTrigger>
           <TabsTrigger value="shared">Shared</TabsTrigger>
-        </>
-      );
-    case 'profile':
-      return (
-        <>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
-          <TabsTrigger value="transactions">Transactions</TabsTrigger>
-          <TabsTrigger value="billing">Billing</TabsTrigger>
         </>
       );
   }
@@ -54,12 +54,16 @@ const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="flex justify-between self-stretch px-[300px] py-[20px]">
-      <img
-        className="h-[32px] w-[88.961px] cursor-pointer"
-        alt="Logo"
-        src="/logo.svg"
+      <button
         onClick={() => router.push('/')}
-      />
+        className="border-none bg-transparent p-0"
+      >
+        <img
+          className="h-[32px] w-[88.961px] cursor-pointer"
+          alt="Logo"
+          src="/logo.svg"
+        />
+      </button>
       <TabsList>{getTabs(tabsType)}</TabsList>
       <div className="flex items-center justify-center gap-[10px] px-0 py-[2px]">
         <button onClick={onToggleEditClick}>

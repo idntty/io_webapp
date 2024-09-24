@@ -234,8 +234,8 @@ const AssignForm: React.FC<AssignFormProps> = ({
               </FormDescription>
             </div>
             <div className="flex items-center justify-center gap-[20px]">
-              {selectedForAssignment.map((id, index) => (
-                <Badge key={index} size="md" variant="secondary">
+              {selectedForAssignment.map((id) => (
+                <Badge key={id} size="md" variant="secondary">
                   {badgeGrid[id].type}
                 </Badge>
               ))}

@@ -10,19 +10,14 @@ import { Responsive, WidthProvider } from 'react-grid-layout';
 
 const GridLayout = WidthProvider(Responsive);
 
-// import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useGridStore } from '../../stores/gridStores';
 
 export default function PrivateData() {
-  // const privateData = useOnboardingStore((state) => state.privateData);
-
   const grid = useGridStore((state) => state.grid);
   const upperGridLayout = useGridStore((state) => state.upperGridLayout);
   const updateUpperGridLayout = useGridStore(
     (state) => state.updateUpperGridLayout,
   );
-
-  // console.log('privateData', Object.entries(privateData ?? {}));
 
   return (
     <div className="box-border flex h-screen w-screen flex-row overflow-hidden bg-white text-base">

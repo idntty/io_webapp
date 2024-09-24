@@ -25,7 +25,7 @@ import {
   generatePassphraseAndKeys,
   generateKeysAndAddress,
 } from '../../lib/crypto';
-import { createPDF } from '../../lib/utils';
+import { createPDF, uuidv4 } from '../../lib/utils';
 import { generateSVGAvatar } from '../../lib/avatar';
 
 export default function Passphrase() {
@@ -144,8 +144,8 @@ export default function Passphrase() {
             <div className="flex flex-col items-center gap-[24px] self-stretch rounded-xl">
               <Divider />
               <div className="flex flex-wrap content-center items-center justify-center gap-[20px] self-stretch">
-                {passphrase.map((word, index) => (
-                  <Badge key={index}>{word}</Badge>
+                {passphrase.map((word) => (
+                  <Badge key={uuidv4()}>{word}</Badge>
                 ))}
               </div>
               <div className="flex items-center justify-center gap-[16px] self-stretch">

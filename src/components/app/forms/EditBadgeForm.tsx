@@ -29,6 +29,7 @@ import {
 } from '../../select';
 import { QueryObserverResult } from '@tanstack/react-query';
 import { createBadge, getCreateBadgeCost } from '../../../lib/apiClient';
+import { uuidv4 } from '../../../lib/utils';
 
 const HOST = 'api.idntty.io';
 // const HOST = 'localhost:8000';
@@ -356,8 +357,8 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
                   'ABAP Programming',
                   'Classical User Interfaces',
                   'Data Types And Data Objects',
-                ].map((name, index) => (
-                  <Badge key={index} size="md" variant="primary">
+                ].map((name) => (
+                  <Badge key={uuidv4()} size="md" variant="primary">
                     {name}
                   </Badge>
                 ))}

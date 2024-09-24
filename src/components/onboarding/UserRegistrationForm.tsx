@@ -22,6 +22,7 @@ import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useGridStore } from '../../stores/gridStores';
 import { FileUploader } from '../app/FileUploader';
 import TextArea from '../textarea';
+import { uuidv4 } from '../../lib/utils';
 
 const fieldsToWidgets = {
   fullName: 'name',
@@ -282,9 +283,9 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
           }}
         />
         {showOtherFields &&
-          personalFields.slice(1).map((fieldData, index) => (
+          personalFields.slice(1).map((fieldData) => (
             <FormField
-              key={index}
+              key={uuidv4()}
               control={personalForm.control}
               // FIXME: There is probably a way to do this without the type assertion
               name={
@@ -495,9 +496,9 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
           }}
         />
         {showOtherFields &&
-          authorityFields.slice(1).map((fieldData, index) => (
+          authorityFields.slice(1).map((fieldData) => (
             <FormField
-              key={index}
+              key={uuidv4()}
               control={authorityForm.control}
               // FIXME: There is probably a way to do this without the type assertion
               name={

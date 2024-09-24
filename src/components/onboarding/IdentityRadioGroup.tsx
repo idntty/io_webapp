@@ -1,9 +1,8 @@
 import * as React from 'react';
 import * as RadioGroup from '@radix-ui/react-radio-group';
-// import * as Label from '@radix-ui/react-label';
 import { type SVGComponentProps, Check } from 'untitledui-js';
 
-import { cn } from '../../lib/utils';
+import { cn, uuidv4 } from '../../lib/utils';
 
 export interface IdentityRadioGroupProps
   extends React.ComponentPropsWithoutRef<typeof RadioGroup.Root> {
@@ -28,9 +27,9 @@ const IdentityRadioGroup: React.FC<IdentityRadioGroupProps> = ({
         className,
       )}
     >
-      {variants.map(({ type, title, description, Icon }, index) => (
+      {variants.map(({ type, title, description, Icon }) => (
         <RadioGroup.Item
-          key={index}
+          key={uuidv4()}
           value={type}
           id={type}
           className="group flex w-[343px] cursor-pointer items-start gap-[4px] rounded-lg border border-solid border-gray-200 bg-white p-[16px] text-base hover:border-brand-300 focus:border-brand-300 focus:shadow-color-focused disabled:cursor-not-allowed disabled:bg-gray-50 aria-checked:border-brand-300 aria-checked:bg-brand-50 aria-checked:hover:border-brand-500 aria-checked:disabled:border-gray-200 aria-checked:disabled:bg-gray-50"

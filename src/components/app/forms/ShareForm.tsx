@@ -297,7 +297,7 @@ const ShareForm: React.FC<ShareFormProps> = ({
                         <TextArea
                           className="self-stretch"
                           maxLength={400}
-                          placeholder="I'm a Product Designer based in Melbourne, Australia. I specialise in UX/UI design, brand strategy, and Webflow development."
+                          placeholder="I'm a Product Designer based in Melbourne, Australia. I specialize in UX/UI design, brand strategy, and Webflow development."
                           {...field}
                         />
                       </FormControl>
@@ -322,8 +322,8 @@ const ShareForm: React.FC<ShareFormProps> = ({
               </FormDescription>
             </div>
             <div className="flex items-center justify-center gap-[20px]">
-              {selectedForSharing.map((id, index) => (
-                <Badge key={index} size="md" variant="secondary">
+              {selectedForSharing.map((id) => (
+                <Badge key={id} size="md" variant="secondary">
                   {grid[id].type}
                 </Badge>
               ))}

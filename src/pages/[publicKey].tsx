@@ -31,7 +31,7 @@ import AssignForm from '../components/app/forms/AssignForm';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-// import '../components/app/grid/placeholder.css';
+import '../components/app/grid/placeholder.css';
 
 const GridLayout = WidthProvider(Responsive);
 export default function IdentityPage() {
@@ -183,7 +183,7 @@ export default function IdentityPage() {
     console.log('routePublicKey:', router.query.publicKey);
 
     let userStatus: 'anon' | 'owner' | 'guest' = 'anon';
-    let isLoggedIn = false;
+    let isLoggedIn = false; // FIXME
     if (!localStoragePublicKey) {
       userStatus = 'anon';
       isLoggedIn = false;
@@ -272,28 +272,24 @@ export default function IdentityPage() {
   }, [router.isReady]);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (!areGridsEditable && dataFetched) {
-        const filteredGrid = Object.fromEntries(
-          Object.entries(grid).filter(([_, value]) => value.type !== 'new'),
-        );
+    if (!areGridsEditable && dataFetched) {
+      const filteredGrid = Object.fromEntries(
+        Object.entries(grid).filter(([_, value]) => value.type !== 'new'),
+      );
 
-        const layout = extractLayout(filteredGrid);
+      const layout = extractLayout(filteredGrid);
 
-        const publicKey = localStorage.getItem('publicKey');
-        if (publicKey) {
-          sendLayoutToServer(publicKey, layout)
-            .then(() => {
-              console.log('Layout sent to server:', layout);
-            })
-            .catch((error) => {
-              console.error('Error sending layout to server:', error);
-            });
-        }
+      const publicKey = localStorage.getItem('publicKey');
+      if (publicKey) {
+        sendLayoutToServer(publicKey, layout)
+          .then(() => {
+            console.log('Layout sent to server:', layout);
+          })
+          .catch((error) => {
+            console.error('Error sending layout to server:', error);
+          });
       }
-    }, 2000);
-
-    return () => clearTimeout(timeout);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [areGridsEditable, dataFetched]);
 

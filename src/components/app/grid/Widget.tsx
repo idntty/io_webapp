@@ -209,7 +209,6 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
               <WidgetDelete onDeleteClick={onDeleteClick} />
             )}
             <div className="text-center text-7xl/[90px] font-bold -tracking-[1.44px] text-gray-900">
-              {/* If value is a Date, return calculateAge(value). If not, try to parse the date from date string and do the same. Otherwise, return the value (or '' if undefined) */}
               {value instanceof Date
                 ? calculateAge(value)
                 : value

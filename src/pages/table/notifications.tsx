@@ -61,11 +61,14 @@ export default function Table() {
       const dates = formattedData.map((notification) =>
         parse(notification.sharedDate, 'dd.MM.yyyy', new Date()),
       );
-      const startDate = dates.reduce((earliest, current) =>
-        isBefore(current, earliest) ? current : earliest,
+      const startDate = dates.reduce(
+        (earliest, current) =>
+          isBefore(current, earliest) ? current : earliest,
+        dates[0],
       );
-      const endDate = dates.reduce((latest, current) =>
-        isAfter(current, latest) ? current : latest,
+      const endDate = dates.reduce(
+        (latest, current) => (isAfter(current, latest) ? current : latest),
+        dates[0],
       );
       setInitialDateRange({ from: startDate, to: endDate });
       setInitialFetchCompleted(true);

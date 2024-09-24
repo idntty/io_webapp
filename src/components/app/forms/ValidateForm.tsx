@@ -17,6 +17,7 @@ import {
 } from '../../form';
 import Badge from '../../badge';
 import Divider from '../../divider';
+import { uuidv4 } from '../../../lib/utils';
 
 const FormSchema = z.object({});
 
@@ -95,9 +96,9 @@ const ValidateForm: React.FC<ValidateFormProps> = ({
             {/* Gap is 20px - 12px = 8px */}
             <div className="flex gap-[20px]">
               <div className="flex">
-                {Array.from({ length: 10 }).map((_, index) => (
+                {Array.from({ length: 10 }).map(() => (
                   <div
-                    key={index}
+                    key={uuidv4()}
                     className="mr-[-12px] h-[40px] w-[40px] rounded-full border-[1.5px] border-solid border-white bg-gray-300"
                   ></div>
                 ))}
@@ -143,8 +144,8 @@ const ValidateForm: React.FC<ValidateFormProps> = ({
               </FormDescription>
             </div>
             <div className="flex items-center justify-center gap-[20px]">
-              {selectedForValidation.map((id, index) => (
-                <Badge key={index} size="md" variant="secondary">
+              {selectedForValidation.map((id) => (
+                <Badge key={id} size="md" variant="secondary">
                   {grid[id].type}
                 </Badge>
               ))}
