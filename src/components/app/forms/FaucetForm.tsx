@@ -50,6 +50,7 @@ const FaucetForm: React.FC<FaucetFormProps> = ({ publicKey }) => {
   });
 
   const sendCode = async () => {
+    setIsCodeSent(true);
     const response = await axios.get(
       `https://ihno2sl2y3.execute-api.us-east-1.amazonaws.com/test/faucet`,
       {
@@ -61,9 +62,7 @@ const FaucetForm: React.FC<FaucetFormProps> = ({ publicKey }) => {
       },
     );
     console.log(response);
-    if (response.status === 200) {
-      setIsCodeSent(true);
-    } else {
+    if (response.status !== 200) {
       console.error('Failed to send code');
     }
   };
@@ -127,24 +126,13 @@ const FaucetForm: React.FC<FaucetFormProps> = ({ publicKey }) => {
                 </div>
                 <div className="flex w-[512px] flex-col gap-[6px]">
                   <FormControl>
-                    <div className="flex gap-[10px]">
-                      <Input
-                        className="self-stretch"
-                        placeholder="olivia@untitledui.com"
-                        type="email"
-                        Icon={Mail01}
-                        {...field}
-                      />
-                      <Button
-                        size="sm"
-                        variant="primary"
-                        onClick={() => {
-                          sendCode().catch(console.error);
-                        }}
-                      >
-                        Code
-                      </Button>
-                    </div>
+                    <Input
+                      className="self-stretch"
+                      placeholder="olivia@untitledui.com"
+                      type="email"
+                      Icon={Mail01}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage className="text-sm font-normal" />
                 </div>
@@ -195,9 +183,21 @@ const FaucetForm: React.FC<FaucetFormProps> = ({ publicKey }) => {
           )}
           <Divider />
           <div className="flex items-center justify-end gap-[12px] self-stretch">
-            <Button size="md" variant="primary" type="submit">
-              Get tokens
-            </Button>
+            {!isCodeSent ? (
+              <Button
+                size="sm"
+                variant="primary"
+                onClick={() => {
+                  sendCode().catch(console.error);
+                }}
+              >
+                Code
+              </Button>
+            ) : (
+              <Button size="md" variant="primary" type="submit">
+                Get tokens
+              </Button>
+            )}
           </div>
         </div>
       </form>

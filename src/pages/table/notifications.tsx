@@ -48,14 +48,16 @@ export default function Table() {
       'https://api.idntty.io/get-notifications',
       { params, withCredentials: true },
     );
-    const formattedData: Notification[] = data.map((notification) => ({
-      user: notification.public_key,
-      sharedDate: format(new Date(notification.timestamp), 'dd.MM.yyyy'),
-      // sharedLabels: (JSON.parse(notification.data) as { features: string[] }).features,
-      sharedLabels: ['Email', 'Phone', 'Name', 'Bio']
-        .sort(() => 0.5 - Math.random())
-        .slice(0, Math.floor(Math.random() * 4 + 1)),
-    }));
+    const formattedData: Notification[] = data
+      .map((notification) => ({
+        user: notification.public_key,
+        sharedDate: format(new Date(notification.timestamp), 'dd.MM.yyyy'),
+        // sharedLabels: (JSON.parse(notification.data) as { features: string[] }).features,
+        sharedLabels: ['Email', 'Phone', 'Name', 'Bio']
+          .sort(() => 0.5 - Math.random())
+          .slice(0, Math.floor(Math.random() * 4 + 1)),
+      }))
+      .reverse();
 
     if (!initialFetchCompleted && formattedData.length > 0) {
       const dates = formattedData.map((notification) =>

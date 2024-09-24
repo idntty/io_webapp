@@ -64,21 +64,23 @@ export default function Table() {
     );
 
     console.log(data);
-    const formattedData: Transaction[] = data.map((transaction) => ({
-      user: transaction.public_key,
-      blockHeight: transaction.block_height,
-      status: 'Validated',
-      sharedDate: format(new Date(transaction.timestamp), 'dd.MM.yyyy'),
-      // "data": "{\"features\":[{\"label\":\"test\",\"value\":\"test\"}]}"
-      sharedLabels: (
-        JSON.parse(transaction.data) as {
-          features: { label: string; value: string }[];
-        }
-      ).features.map((feature) => feature.label),
-      // sharedLabels: ['Email', 'Phone', 'Name', 'Bio']
-      //   .sort(() => 0.5 - Math.random())
-      //   .slice(0, Math.floor(Math.random() * 4 + 1)),
-    }));
+    const formattedData: Transaction[] = data
+      .map((transaction) => ({
+        user: transaction.public_key,
+        blockHeight: transaction.block_height,
+        status: 'Validated',
+        sharedDate: format(new Date(transaction.timestamp), 'dd.MM.yyyy'),
+        // "data": "{\"features\":[{\"label\":\"test\",\"value\":\"test\"}]}"
+        sharedLabels: (
+          JSON.parse(transaction.data) as {
+            features: { label: string; value: string }[];
+          }
+        ).features.map((feature) => feature.label),
+        // sharedLabels: ['Email', 'Phone', 'Name', 'Bio']
+        //   .sort(() => 0.5 - Math.random())
+        //   .slice(0, Math.floor(Math.random() * 4 + 1)),
+      }))
+      .reverse() as Transaction[];
 
     if (!initialFetchCompleted && formattedData.length > 0) {
       const dates = formattedData.map((transaction) =>
