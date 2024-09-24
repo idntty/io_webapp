@@ -64,14 +64,16 @@ export default function Table() {
     );
 
     console.log(data);
-    const formattedData: BillingEntry[] = data.map((transaction) => ({
-      txID: transaction.tx_id,
-      blockHeight: transaction.block_height,
-      transactionType: 'Validated',
-      sharedDate: format(new Date(transaction.timestamp), 'dd.MM.yyyy'),
-      price: transaction.price,
-      viewLink: '',
-    }));
+    const formattedData: BillingEntry[] = data
+      .map((transaction) => ({
+        txID: transaction.tx_id,
+        blockHeight: transaction.block_height,
+        transactionType: 'Validated',
+        sharedDate: format(new Date(transaction.timestamp), 'dd.MM.yyyy'),
+        price: transaction.price,
+        viewLink: '',
+      }))
+      .reverse() as BillingEntry[];
 
     if (!initialFetchCompleted && formattedData.length > 0) {
       const dates = formattedData.map((transaction) =>

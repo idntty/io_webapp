@@ -2,6 +2,8 @@
 
 import { Coins03, Minimize01 } from 'untitledui-js';
 import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { cryptography } from '@liskhq/lisk-client/browser';
 
 import { Tabs, TabsContent } from '../components/tabs';
 import Header from '../components/app/Header';
@@ -17,9 +19,39 @@ import FaucetForm from '../components/app/forms/FaucetForm';
 export default function Profile() {
   const [isGetBalanceFormOpen, setIsGetBalanceFormOpen] = useState(false);
   const [publicKey, setPublicKey] = useState<string | null>(null);
+  const [balance, setBalance] = useState<string | null>(null);
+  const [numberOfTransactions, setNumberOfTransactions] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
+    const publicKey = localStorage.getItem('publicKey');
+    if (!publicKey) {
+      return;
+    }
     setPublicKey(localStorage.getItem('publicKey'));
+
+    const fetchTransactionsAndBalance = async () => {
+      const { data: numberOfTransactions } = await axios.get<number>(
+        'https://api.idntty.io/get-number-of-transactions',
+        { withCredentials: true },
+      );
+      const { data: balance } = await axios.get<{ availableBalance: string }>(
+        'https://api.idntty.io/account/balance',
+        {
+          params: {
+            address: cryptography.address.getLisk32AddressFromPublicKey(
+              Buffer.from(publicKey, 'hex'),
+            ),
+          },
+          withCredentials: true,
+        },
+      );
+      setBalance(balance.availableBalance);
+      setNumberOfTransactions(numberOfTransactions.toString());
+    };
+
+    fetchTransactionsAndBalance().catch(console.error);
   }, []);
 
   return (
@@ -37,8 +69,15 @@ export default function Profile() {
         </TabsContent>
         <TabsContent className="flex flex-col gap-0 px-[300px]" value="billing">
           <div className="flex items-center gap-[24px] self-stretch">
-            <MetricItem title="Account balance" value="0" subvalue="idn" />
-            <MetricItem title="Total transactions" value="46" />
+            <MetricItem
+              title="Account balance"
+              value={balance ?? ''}
+              subvalue="idn"
+            />
+            <MetricItem
+              title="Total transactions"
+              value={numberOfTransactions ?? '0'}
+            />
           </div>
           <div className="flex h-[75px] shrink-0 items-center justify-center gap-[20px] self-stretch px-[300px] py-0">
             <Divider />
