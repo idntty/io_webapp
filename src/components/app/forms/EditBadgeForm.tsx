@@ -200,6 +200,9 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
       .catch((error) => {
         console.error(error);
       });
+    if (badgeGrid[editedBadgeID].type === 'new') {
+      addNewBadgeGridItem('tiny');
+    }
   };
 
   const handleDeleteClick = () => {
