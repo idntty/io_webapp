@@ -44,8 +44,19 @@ export default function Table() {
   const [initialFetchCompleted, setInitialFetchCompleted] = useState(false);
 
   const fetchTransactions = async (startDate?: Date, endDate?: Date) => {
-    const params: { startDate?: number; endDate?: number; amount?: number } =
-      {};
+    console.log('fetchTransactions', startDate, endDate);
+
+    const publicKey = localStorage.getItem('publicKey');
+    if (!publicKey) {
+      throw new Error('Public key not found');
+    }
+
+    const params: {
+      startDate?: number;
+      endDate?: number;
+      amount?: number;
+      publicKey: string;
+    } = { publicKey };
 
     if (!startDate) {
       params.amount = 25;
@@ -75,6 +86,8 @@ export default function Table() {
       }))
       .reverse() as BillingEntry[];
 
+    console.log('initialFetchCompleted', initialFetchCompleted);
+    console.log('formattedData', formattedData);
     if (!initialFetchCompleted && formattedData.length > 0) {
       const dates = formattedData.map((transaction) =>
         parse(transaction.sharedDate, 'dd.MM.yyyy', new Date()),
@@ -88,6 +101,7 @@ export default function Table() {
         (latest, current) => (isAfter(current, latest) ? current : latest),
         dates[0],
       );
+      console.log(startDate, endDate);
       setInitialDateRange({ from: startDate, to: endDate });
       setInitialFetchCompleted(true);
     }

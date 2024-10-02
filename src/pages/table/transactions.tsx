@@ -6,6 +6,7 @@ import * as React from 'react';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { DateRange } from 'react-day-picker';
+import { cryptography } from '@liskhq/lisk-client/browser';
 
 import {
   Transaction,
@@ -44,8 +45,27 @@ export default function Table() {
   const [initialFetchCompleted, setInitialFetchCompleted] = useState(false);
 
   const fetchTransactions = async (startDate?: Date, endDate?: Date) => {
-    const params: { startDate?: number; endDate?: number; amount?: number } =
-      {};
+    console.log('fetchTransactions', startDate, endDate);
+
+    const publicKey = localStorage.getItem('publicKey');
+    if (!publicKey) {
+      throw new Error('Public key not found');
+    }
+
+    const params: {
+      startDate?: number;
+      endDate?: number;
+      amount?: number;
+      publicKey: string;
+      forPublicKey: string;
+      or: boolean;
+    } = {
+      publicKey,
+      forPublicKey: cryptography.address.getLisk32AddressFromPublicKey(
+        Buffer.from(publicKey, 'hex'),
+      ),
+      or: true,
+    };
 
     if (!startDate) {
       params.amount = 25;
@@ -64,6 +84,7 @@ export default function Table() {
     );
 
     console.log(data);
+
     const formattedData: Transaction[] = data
       .map((transaction) => ({
         user: transaction.public_key,
@@ -71,17 +92,22 @@ export default function Table() {
         status: 'Validated',
         sharedDate: format(new Date(transaction.timestamp), 'dd.MM.yyyy'),
         // "data": "{\"features\":[{\"label\":\"test\",\"value\":\"test\"}]}"
-        sharedLabels: (
-          JSON.parse(transaction.data) as {
-            features: { label: string; value: string }[];
-          }
-        ).features.map((feature) => feature.label),
+        sharedLabels:
+          (
+            JSON.parse(transaction.data) as {
+              features?: { label: string; value: string }[];
+            }
+          ).features?.map((feature) => feature.label) ?? [],
         // sharedLabels: ['Email', 'Phone', 'Name', 'Bio']
         //   .sort(() => 0.5 - Math.random())
         //   .slice(0, Math.floor(Math.random() * 4 + 1)),
       }))
       .reverse() as Transaction[];
 
+    console.log('???');
+
+    console.log('initialFetchCompleted', initialFetchCompleted);
+    console.log('formattedData', formattedData);
     if (!initialFetchCompleted && formattedData.length > 0) {
       const dates = formattedData.map((transaction) =>
         parse(transaction.sharedDate, 'dd.MM.yyyy', new Date()),
@@ -95,6 +121,7 @@ export default function Table() {
         (latest, current) => (isAfter(current, latest) ? current : latest),
         dates[0],
       );
+      console.log(startDate, endDate);
       setInitialDateRange({ from: startDate, to: endDate });
       setInitialFetchCompleted(true);
     }

@@ -40,6 +40,8 @@ export function TransactionTable({
   setDateRange,
   initialDateRange,
 }: TransactionTableProps) {
+  console.log(initialDateRange);
+
   const table = useReactTable({
     data,
     columns,

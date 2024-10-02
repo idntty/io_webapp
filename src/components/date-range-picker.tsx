@@ -21,6 +21,16 @@ export const DatePickerWithRange: React.FC<DatePickerWithRangeProps> = ({
   date,
   setDate,
 }) => {
+  const handleDateSelect = (selectedDate: DateRange | undefined) => {
+    if (selectedDate?.to) {
+      const endOfDay = new Date(selectedDate.to);
+      endOfDay.setHours(23, 59, 59, 999);
+      setDate({ ...selectedDate, to: endOfDay });
+    } else {
+      setDate(selectedDate);
+    }
+  };
+
   return (
     <div className={cn('flex gap-[12px]', className)}>
       <Popover>
@@ -54,7 +64,7 @@ export const DatePickerWithRange: React.FC<DatePickerWithRangeProps> = ({
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={setDate}
+            onSelect={handleDateSelect}
             numberOfMonths={2}
           />
         </PopoverContent>

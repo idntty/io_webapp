@@ -40,6 +40,8 @@ export function BillingTable({
   setDateRange,
   initialDateRange,
 }: BillingTableProps) {
+  console.log(initialDateRange);
+
   const table = useReactTable({
     data,
     columns,

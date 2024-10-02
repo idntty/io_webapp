@@ -1,7 +1,7 @@
 'use client';
 
 import { Coins03, Minimize01 } from 'untitledui-js';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { cryptography } from '@liskhq/lisk-client/browser';
 
@@ -34,7 +34,7 @@ export default function Profile() {
     const fetchTransactionsAndBalance = async () => {
       const { data: numberOfTransactions } = await axios.get<number>(
         'https://api.idntty.io/get-number-of-transactions',
-        { withCredentials: true },
+        { params: { publicKey }, withCredentials: true },
       );
       const { data: balance } = await axios.get<{ availableBalance: string }>(
         'https://api.idntty.io/account/balance',
