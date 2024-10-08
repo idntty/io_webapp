@@ -1,7 +1,7 @@
 'use client';
 
 import { Responsive, WidthProvider } from 'react-grid-layout';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 
@@ -40,7 +40,6 @@ export default function IdentityPage() {
     'anon',
   );
   const [_isLoggedIn, setIsLoggedIn] = useState(false);
-  const [dataFetched, setDataFetched] = useState(false);
 
   const [identity, setIdentity] = useState<'personal' | 'authority'>(
     'personal',
@@ -168,6 +167,25 @@ export default function IdentityPage() {
     setEditedBadgeID(id);
   };
 
+  const updateLayout = () => {
+    const filteredGrid = Object.fromEntries(
+      Object.entries(grid).filter(([_, value]) => value.type !== 'new'),
+    );
+
+    const layout = extractLayout(filteredGrid);
+
+    const publicKey = localStorage.getItem('publicKey');
+    if (publicKey) {
+      sendLayoutToServer(publicKey, layout)
+        .then(() => {
+          console.log('Layout sent to server:', layout);
+        })
+        .catch((error) => {
+          console.error('Error sending layout to server:', error);
+        });
+    }
+  };
+
   useEffect(() => {
     if (!router.isReady) {
       return;
@@ -241,9 +259,11 @@ export default function IdentityPage() {
           data,
           router.query.publicKey as string,
         );
-        updateGrid(grid);
-        updateUpperGridLayout(upperGridLayout);
-        console.log('Created grid:', grid, upperGridLayout);
+        if (upperGridLayout.length !== 0) {
+          updateGrid(grid);
+          updateUpperGridLayout(upperGridLayout);
+          console.log('Created grid:', grid, upperGridLayout);
+        }
       } catch (error) {
         console.error(error);
       }
@@ -261,36 +281,24 @@ export default function IdentityPage() {
       );
       setIdentity(userIdentity.isAuthority ? 'authority' : 'personal');
       await createGrid();
-      setDataFetched(true);
     };
 
-    onLoad().catch((error) => {
-      console.error(error);
-    });
+    onLoad()
+      .then(() => {
+        updateLayout();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady]);
 
   useEffect(() => {
-    if (!areGridsEditable && dataFetched) {
-      const filteredGrid = Object.fromEntries(
-        Object.entries(grid).filter(([_, value]) => value.type !== 'new'),
-      );
-
-      const layout = extractLayout(filteredGrid);
-
-      const publicKey = localStorage.getItem('publicKey');
-      if (publicKey) {
-        sendLayoutToServer(publicKey, layout)
-          .then(() => {
-            console.log('Layout sent to server:', layout);
-          })
-          .catch((error) => {
-            console.error('Error sending layout to server:', error);
-          });
-      }
+    if (!areGridsEditable) {
+      updateLayout();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [areGridsEditable, dataFetched]);
+  }, [areGridsEditable]);
 
   useEffect(() => {
     if (badgeIDs) {
