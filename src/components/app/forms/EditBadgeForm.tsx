@@ -67,10 +67,19 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
 
   useEffect(() => {
     const fetchCollections = async () => {
+      const publicKey = localStorage.getItem('publicKey');
+      if (!publicKey) {
+        throw new Error('Public key not found');
+      }
       try {
         const response = await axios.get<string[]>(
           `https://${HOST}/get-collections`,
-          { withCredentials: true },
+          {
+            params: {
+              publicKey,
+            },
+            withCredentials: true,
+          },
         );
         if (response.status === 200) {
           setCollections(response.data);
