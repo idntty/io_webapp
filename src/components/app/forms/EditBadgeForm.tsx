@@ -4,6 +4,8 @@ import * as z from 'zod';
 import { FileUploader } from '../FileUploader';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { ReactSearchAutocomplete } from 'react-search-autocomplete';
+import { SearchMD } from 'untitledui-js';
 
 import { useBadgeStore } from '../../../stores/gridStores';
 import Button from '../../button/button';
@@ -20,13 +22,6 @@ import Input from '../../input';
 import TextArea from '../../textarea';
 import Badge from '../../badge';
 import Divider from '../../divider';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../../select';
 import { QueryObserverResult } from '@tanstack/react-query';
 import { createBadge, getCreateBadgeCost } from '../../../lib/apiClient';
 import { uuidv4 } from '../../../lib/utils';
@@ -46,7 +41,10 @@ const FormSchema = z.object({
     .max(400, {
       message: 'Please keep your badge description under 400 characters.',
     }),
-  collection: z.enum(['Partner Badges']),
+  collection: z.string({
+    required_error:
+      'Please select an existing collection or type to create a new one.',
+  }),
 });
 
 export type EditBadgeFormSchemaType = z.infer<typeof FormSchema>;
@@ -65,6 +63,33 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
   refetch,
 }) => {
   const [transactionCost, setTransactionCost] = useState<bigint>(0n);
+  const [collections, setCollections] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchCollections = async () => {
+      try {
+        const response = await axios.get<string[]>(
+          `https://${HOST}/get-collections`,
+          { withCredentials: true },
+        );
+        if (response.status === 200) {
+          setCollections(response.data);
+        } else {
+          console.error('Failed to fetch collections:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error during fetching collections:', error);
+      }
+    };
+
+    fetchCollections().catch(console.error);
+  }, []);
+
+  const searchableFieldTypes = collections.map((key, index) => ({
+    id: index,
+    name: key,
+  }));
+  type SearchableFieldType = (typeof searchableFieldTypes)[number];
 
   const badgeGrid = useBadgeStore((state) => state.grid);
   const addNewBadgeGridItem = useBadgeStore((state) => state.addNewGridItem);
@@ -157,6 +182,37 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
     mode: 'onChange',
   });
 
+  const addCollection = async (publicKey: string, collection: string) => {
+    const jwt = sessionStorage.getItem('jwt');
+    if (!jwt) {
+      throw new Error('JWT not found');
+    }
+
+    try {
+      const response = await axios.post(
+        `https://${HOST}/add-collection`,
+        {
+          publicKey,
+          collection,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        },
+      );
+      if (response.status === 200) {
+        console.log('Collection added:', collection);
+        setCollections((prevCollections) => [...prevCollections, collection]);
+      } else {
+        console.error('Failed to add collection:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error during adding collection:', error);
+    }
+  };
+
   const onFormSubmit = (data: EditBadgeFormSchemaType) => {
     const publicKey = localStorage.getItem('publicKey');
     if (!publicKey) {
@@ -200,6 +256,10 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
       .catch((error) => {
         console.error(error);
       });
+
+    if (!collections.includes(data.collection)) {
+      addCollection(publicKey, data.collection).catch(console.error);
+    }
     if (badgeGrid[editedBadgeID].type === 'new') {
       addNewBadgeGridItem('tiny');
     }
@@ -321,22 +381,45 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
                     Select the type of data to be filled
                   </FormDescription>
                 </div>
-                <div className="flex w-[512px] flex-col gap-[6px]">
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a field type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Partner Badges">
-                        Partner Badges
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="relative flex w-[512px] flex-col gap-[6px] overflow-visible">
+                  <SearchMD
+                    size="20"
+                    className="absolute left-[15px] top-[13px] z-[100] stroke-gray-500"
+                  />
+                  <FormControl>
+                    <ReactSearchAutocomplete<SearchableFieldType>
+                      items={searchableFieldTypes}
+                      onSearch={(string: string) => {
+                        field.onChange(string);
+                      }}
+                      onSelect={(item: SearchableFieldType) => {
+                        field.onChange(item.name);
+                      }}
+                      formatResult={(item: SearchableFieldType) => {
+                        return (
+                          <div className="relative flex w-full cursor-pointer select-none items-center justify-between gap-[8px] px-[14px] py-[10px] text-base outline-none data-[disabled]:pointer-events-none">
+                            {item.name}
+                          </div>
+                        );
+                      }}
+                      placeholder="Search for a field type"
+                      styling={{
+                        height: '44px',
+                        border: '1px solid #D0D5DD',
+                        borderRadius: '8px',
+                        backgroundColor: 'white',
+                        boxShadow: '0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
+                        hoverBackgroundColor: 'white',
+                        color: '#101828',
+                        fontSize: '16px',
+                        fontFamily: 'Inter',
+                        iconColor: 'white',
+                        lineColor: '#101828',
+                        placeholderColor: '#667085',
+                        searchIconMargin: '0 0 0 9px',
+                      }}
+                    />
+                  </FormControl>
                   <FormMessage className="text-sm font-normal" />
                 </div>
               </FormItem>

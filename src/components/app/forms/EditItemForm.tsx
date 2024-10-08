@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { SearchMD, Plus, Key01, TextInput, Calendar } from 'untitledui-js';
 import * as RadioGroup from '@radix-ui/react-radio-group';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { ReactSearchAutocomplete } from 'react-search-autocomplete';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -375,38 +375,40 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                         size="20"
                         className="absolute left-[15px] top-[13px] z-[100] stroke-gray-500"
                       />
-                      <ReactSearchAutocomplete<SearchableFieldType>
-                        items={searchableFieldTypes}
-                        onSearch={(string: string) => {
-                          field.onChange(string);
-                        }}
-                        onSelect={(item: SearchableFieldType) => {
-                          field.onChange(item.name);
-                        }}
-                        formatResult={(item: SearchableFieldType) => {
-                          return (
-                            <div className="relative flex w-full cursor-pointer select-none items-center justify-between gap-[8px] px-[14px] py-[10px] text-base outline-none data-[disabled]:pointer-events-none">
-                              {item.name}
-                            </div>
-                          );
-                        }}
-                        placeholder="Search for a field type"
-                        styling={{
-                          height: '44px',
-                          border: '1px solid #D0D5DD',
-                          borderRadius: '8px',
-                          backgroundColor: 'white',
-                          boxShadow: '0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
-                          hoverBackgroundColor: 'white',
-                          color: '#101828',
-                          fontSize: '16px',
-                          fontFamily: 'Inter',
-                          iconColor: 'white',
-                          lineColor: '#101828',
-                          placeholderColor: '#667085',
-                          searchIconMargin: '0 0 0 9px',
-                        }}
-                      />
+                      <FormControl>
+                        <ReactSearchAutocomplete<SearchableFieldType>
+                          items={searchableFieldTypes}
+                          onSearch={(string: string) => {
+                            field.onChange(string);
+                          }}
+                          onSelect={(item: SearchableFieldType) => {
+                            field.onChange(item.name);
+                          }}
+                          formatResult={(item: SearchableFieldType) => {
+                            return (
+                              <div className="relative flex w-full cursor-pointer select-none items-center justify-between gap-[8px] px-[14px] py-[10px] text-base outline-none data-[disabled]:pointer-events-none">
+                                {item.name}
+                              </div>
+                            );
+                          }}
+                          placeholder="Search for a field type"
+                          styling={{
+                            height: '44px',
+                            border: '1px solid #D0D5DD',
+                            borderRadius: '8px',
+                            backgroundColor: 'white',
+                            boxShadow: '0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
+                            hoverBackgroundColor: 'white',
+                            color: '#101828',
+                            fontSize: '16px',
+                            fontFamily: 'Inter',
+                            iconColor: 'white',
+                            lineColor: '#101828',
+                            placeholderColor: '#667085',
+                            searchIconMargin: '0 0 0 9px',
+                          }}
+                        />
+                      </FormControl>
                       <FormMessage className="text-sm font-normal" />
                     </div>
                   </FormItem>
