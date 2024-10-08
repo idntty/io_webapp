@@ -4,6 +4,7 @@ import { Responsive, WidthProvider } from 'react-grid-layout';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 import { loginWithPasskey } from '../lib/passkeys';
 import { loadMnemonic, createJWT } from '../lib/crypto';
@@ -31,6 +32,8 @@ import AssignForm from '../components/app/forms/AssignForm';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+
+const HOST = 'api.idntty.io';
 
 const GridLayout = WidthProvider(Responsive);
 export default function IdentityPage() {
@@ -91,6 +94,8 @@ export default function IdentityPage() {
 
   const [isBadgeGridSplit, setIsBadgeGridSplit] = useState(false);
   const [editedBadgeID, setEditedBadgeID] = useState<string | null>(null);
+
+  const [collections, setCollections] = useState<string[]>([]);
 
   const { data: badgeIDs, refetch: refetchBadgeIDs } = useQuery<
     string[],
@@ -312,6 +317,35 @@ export default function IdentityPage() {
   useEffect(() => {
     setSelectedItems([]);
   }, [isShareOrAssignFormOpen]);
+
+  useEffect(() => {
+    const fetchCollections = async () => {
+      const publicKey = localStorage.getItem('publicKey');
+      if (!publicKey) {
+        throw new Error('Public key not found');
+      }
+      try {
+        const response = await axios.get<string[]>(
+          `https://${HOST}/get-collections`,
+          {
+            params: {
+              publicKey,
+            },
+            withCredentials: true,
+          },
+        );
+        if (response.status === 200) {
+          setCollections(response.data);
+        } else {
+          console.error('Failed to fetch collections:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error during fetching collections:', error);
+      }
+    };
+
+    fetchCollections().catch(console.error);
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
@@ -619,6 +653,19 @@ export default function IdentityPage() {
                   })}
                 </GridLayout>
               )}
+            </div>
+          </TabsContent>
+          <TabsContent value="collections">
+            <div className="relative mx-auto w-[482px] bg-gray-100 lg:w-[924px]">
+              {collections.map((collection) => (
+                <Widget
+                  key={collection}
+                  size="tiny"
+                  type="other"
+                  value={collection}
+                  isEditable={false}
+                />
+              ))}
             </div>
           </TabsContent>
           <div className="flex-grow"></div>
