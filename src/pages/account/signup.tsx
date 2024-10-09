@@ -21,10 +21,12 @@ import {
   convertKeys,
   encryptMessage,
   createJWT,
+  encryptGridItemContent,
 } from '../../lib/crypto';
 
 import { useGridStore } from '../../stores/gridStores';
 import { setAccountType } from '../../lib/apiClient';
+import { saveDataToServer } from '../../lib/utils';
 
 export default function CreateAccount() {
   const router = useRouter();
@@ -42,6 +44,42 @@ export default function CreateAccount() {
   const setEncryptedMessage = useOnboardingStore(
     (state) => state.setEncryptedMessage,
   );
+
+  const handleSendData = async () => {
+    if (!publicKey) {
+      throw new Error('Public key not found');
+    }
+    if (!privateKey) {
+      throw new Error('Private key not found');
+    }
+
+    if (identity === 'authority') {
+      const data = Object.entries(grid).map(([uuid, item]) => {
+        return {
+          uuid,
+          value: item.content.toString(),
+          nonce: '',
+        };
+      });
+      console.log('Saving data to server:', data);
+      await saveDataToServer(publicKey.toString('hex'), 'public', data);
+    }
+
+    const data = await Promise.all(
+      Object.entries(grid).map(async ([uuid, item]) => {
+        const { encryptedMessage, nonce } = await encryptGridItemContent(
+          item.content.toString(),
+        );
+        return {
+          uuid,
+          value: Buffer.from(encryptedMessage).toString('hex'),
+          nonce: Buffer.from(nonce).toString('hex'),
+        };
+      }),
+    );
+    console.log('Saving data to server:', data);
+    await saveDataToServer(publicKey.toString('hex'), 'private', data);
+  };
 
   const createAccount = async () => {
     if (!publicKey) {
@@ -101,6 +139,8 @@ export default function CreateAccount() {
       // await sendMessageToServer(encryptedMessage, nonce, publicKey);
       console.log('Encrypted message: ', encryptedMessage);
       console.log('Nonce: ', nonce);
+
+      await handleSendData();
 
       router.push(`/${publicKey.toString('hex')}`);
     } catch (error) {
