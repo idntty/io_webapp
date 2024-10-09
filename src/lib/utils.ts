@@ -116,6 +116,25 @@ export const sendLayoutToServer = async (
   );
 };
 
+export const updateLayout = (
+  grid: Record<string, GridItem>,
+  publicKey: string,
+) => {
+  const filteredGrid = Object.fromEntries(
+    Object.entries(grid).filter(([_, value]) => value.type !== 'new'),
+  );
+
+  const layout = extractLayout(filteredGrid);
+
+  sendLayoutToServer(publicKey, layout)
+    .then(() => {
+      console.log('Layout sent to server:', layout);
+    })
+    .catch((error) => {
+      console.error('Error sending layout to server:', error);
+    });
+};
+
 export const getLayoutFromServer = async (publicKey: string) => {
   const layout: AxiosResponse<Record<string, Omit<GridItem, 'content'>>> =
     await axios.get(`${PROTOCOL}://${HOST}/layout?publicKey=${publicKey}`, {

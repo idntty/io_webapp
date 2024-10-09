@@ -10,8 +10,7 @@ import { loginWithPasskey } from '../lib/passkeys';
 import { loadMnemonic, createJWT } from '../lib/crypto';
 import { removeFeature } from '../lib/apiClient';
 import {
-  extractLayout,
-  sendLayoutToServer,
+  updateLayout,
   getLayoutFromServer,
   getDataFromServer,
   createGridFromLayoutAndData,
@@ -32,6 +31,7 @@ import AssignForm from '../components/app/forms/AssignForm';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+import { GridItem } from '../types/grid';
 
 const HOST = 'api.idntty.io';
 
@@ -173,25 +173,6 @@ export default function IdentityPage() {
     setEditedBadgeID(id);
   };
 
-  const updateLayout = () => {
-    const filteredGrid = Object.fromEntries(
-      Object.entries(grid).filter(([_, value]) => value.type !== 'new'),
-    );
-
-    const layout = extractLayout(filteredGrid);
-
-    const publicKey = localStorage.getItem('publicKey');
-    if (publicKey) {
-      sendLayoutToServer(publicKey, layout)
-        .then(() => {
-          console.log('Layout sent to server:', layout);
-        })
-        .catch((error) => {
-          console.error('Error sending layout to server:', error);
-        });
-    }
-  };
-
   useEffect(() => {
     if (!router.isReady) {
       return;
@@ -265,11 +246,9 @@ export default function IdentityPage() {
           data,
           router.query.publicKey as string,
         );
-        // if (upperGridLayout.length !== 0) {
         updateGrid(grid);
         updateUpperGridLayout(upperGridLayout);
         console.log('Created grid:', grid, upperGridLayout);
-        // }
       } catch (error) {
         console.error(error);
       }
@@ -298,7 +277,11 @@ export default function IdentityPage() {
 
   useEffect(() => {
     if (!areGridsEditable && dataFetched) {
-      updateLayout();
+      const publicKey = localStorage.getItem('publicKey');
+      if (!publicKey) {
+        throw new Error('Public key not found');
+      }
+      updateLayout(grid, publicKey);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [areGridsEditable, dataFetched]);
