@@ -22,7 +22,8 @@ import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useGridStore } from '../../stores/gridStores';
 import { FileUploader } from '../app/FileUploader';
 import TextArea from '../textarea';
-import { uuidv4, updateLayout } from '../../lib/utils';
+import { uuidv4, updateLayout, saveDataToServer } from '../../lib/utils';
+import { encryptGridItemContent } from '../../lib/crypto';
 
 const fieldsToWidgets = {
   fullName: 'name',
@@ -213,6 +214,44 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
     mode: 'onBlur',
   });
 
+  const handleSendData = async () => {
+    const publicKey = localStorage.getItem('publicKey');
+    if (!publicKey) {
+      throw new Error('Public key not found');
+    }
+    const privateKey = sessionStorage.getItem('privateKey');
+    if (!privateKey) {
+      throw new Error('Private key not found');
+    }
+
+    if (identity === 'authority') {
+      const data = Object.entries(grid).map(([uuid, item]) => {
+        return {
+          uuid,
+          value: item.content.toString(),
+          nonce: '',
+        };
+      });
+      console.log('Saving data to server:', data);
+      await saveDataToServer(publicKey, 'public', data);
+    }
+
+    const data = await Promise.all(
+      Object.entries(grid).map(async ([uuid, item]) => {
+        const { encryptedMessage, nonce } = await encryptGridItemContent(
+          item.content.toString(),
+        );
+        return {
+          uuid,
+          value: Buffer.from(encryptedMessage).toString('hex'),
+          nonce: Buffer.from(nonce).toString('hex'),
+        };
+      }),
+    );
+    console.log('Saving data to server:', data);
+    await saveDataToServer(publicKey, 'private', data);
+  };
+
   const onSubmit = (
     data:
       | UserRegistrationFormPersonalSchemaType
@@ -226,6 +265,13 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
       throw new Error('Public key not found');
     }
     updateLayout(grid, publicKey);
+    handleSendData()
+      .then(() => {
+        console.log('Data sent to server');
+      })
+      .catch((error) => {
+        console.error('Error sending data to server:', error);
+      });
     router.push('/account/signup');
   };
 
