@@ -15,6 +15,7 @@ export interface OnboardingState {
     | UserRegistrationFormPersonalSchemaType
     | UserRegistrationFormAuthoritySchemaType;
   isAuthenticated: boolean;
+  onboardingComplete: boolean;
 
   // FIXME: Remove later
   encryptedMessage?: string;
@@ -41,6 +42,7 @@ export interface OnboardingState {
     value: T[K],
   ): void;
   setIsAuthenticated: (isAuthenticated: boolean) => void;
+  setOnboardingComplete: (onboardingComplete: boolean) => void;
 }
 
 export const useOnboardingStore = create<OnboardingState>()(
@@ -53,6 +55,7 @@ export const useOnboardingStore = create<OnboardingState>()(
       walletAddress: undefined,
       privateData: undefined,
       isAuthenticated: false,
+      onboardingComplete: false,
 
       // FIXME: Remove later
       encryptedMessage: undefined,
@@ -82,6 +85,8 @@ export const useOnboardingStore = create<OnboardingState>()(
           };
         }),
       setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
+      setOnboardingComplete: (onboardingComplete) =>
+        set({ onboardingComplete }),
     }),
     {
       name: 'onboardingStore',

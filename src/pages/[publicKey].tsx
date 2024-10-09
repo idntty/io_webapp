@@ -24,6 +24,7 @@ import Footer from '../components/app/Footer';
 import Widget from '../components/app/grid/Widget';
 import EncryptedWidget from '../components/app/grid/EncryptedWidget';
 import { useGridStore, useBadgeStore } from '../stores/gridStores';
+import { useOnboardingStore } from '../stores/onboardingStore';
 import EditItemForm from '../components/app/forms/EditItemForm';
 import EditBadgeForm from '../components/app/forms/EditBadgeForm';
 import ShareForm from '../components/app/forms/ShareForm';
@@ -47,6 +48,13 @@ export default function IdentityPage() {
     'personal',
   );
   const [dataFetched, setDataFetched] = useState(false);
+
+  const onboardingComplete = useOnboardingStore(
+    (state) => state.onboardingComplete,
+  );
+  const setOnboardingComplete = useOnboardingStore(
+    (state) => state.setOnboardingComplete,
+  );
 
   const grid = useGridStore((state) => state.grid);
   const upperGridLayout = useGridStore((state) => state.upperGridLayout);
@@ -235,6 +243,12 @@ export default function IdentityPage() {
           router.query.publicKey as string,
         );
         console.log('Fetched layout:', layout);
+
+        if (Object.keys(layout).length === 0 && !onboardingComplete) {
+          setOnboardingComplete(true);
+          return;
+        }
+
         const data = await getDataFromServer(
           router.query.publicKey as string,
           localStoragePublicKey ?? undefined,
