@@ -120,6 +120,9 @@ export default function CreateAccount() {
       sessionStorage.setItem('jwt', jwt);
       sessionStorage.setItem('privateKey', privateKey.toString('hex'));
 
+      await handleSendData();
+      updateLayout(grid, publicKey.toString('hex'));
+
       const { convertedPrivateKey } = await convertKeys(publicKey, privateKey);
       const { encryptedMessage, nonce } = await encryptMessage(
         convertedPrivateKey,
@@ -139,9 +142,6 @@ export default function CreateAccount() {
       // await sendMessageToServer(encryptedMessage, nonce, publicKey);
       console.log('Encrypted message: ', encryptedMessage);
       console.log('Nonce: ', nonce);
-
-      await handleSendData();
-      updateLayout(grid, publicKey.toString('hex'));
 
       router.push(`/${publicKey.toString('hex')}`);
     } catch (error) {
