@@ -288,13 +288,9 @@ export default function IdentityPage() {
       await createGrid();
     };
 
-    onLoad()
-      .then(() => {
-        updateLayout();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    onLoad().catch((error) => {
+      console.error(error);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady]);
 
