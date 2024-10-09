@@ -178,6 +178,8 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
   const router = useRouter();
 
   const identity = useOnboardingStore((state) => state.identity);
+  const publicKey = useOnboardingStore((state) => state.publicKey);
+  const privateKey = useOnboardingStore((state) => state.privateKey);
   const updatePrivateData = useOnboardingStore(
     (state) => state.updatePrivateData,
   );
@@ -215,11 +217,9 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
   });
 
   const handleSendData = async () => {
-    const publicKey = localStorage.getItem('publicKey');
     if (!publicKey) {
       throw new Error('Public key not found');
     }
-    const privateKey = sessionStorage.getItem('privateKey');
     if (!privateKey) {
       throw new Error('Private key not found');
     }
@@ -233,7 +233,7 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
         };
       });
       console.log('Saving data to server:', data);
-      await saveDataToServer(publicKey, 'public', data);
+      await saveDataToServer(publicKey.toString('hex'), 'public', data);
     }
 
     const data = await Promise.all(
@@ -249,7 +249,7 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
       }),
     );
     console.log('Saving data to server:', data);
-    await saveDataToServer(publicKey, 'private', data);
+    await saveDataToServer(publicKey.toString('hex'), 'private', data);
   };
 
   const onSubmit = (
