@@ -26,7 +26,7 @@ import {
 
 import { useGridStore } from '../../stores/gridStores';
 import { setAccountType } from '../../lib/apiClient';
-import { saveDataToServer } from '../../lib/utils';
+import { saveDataToServer, updateLayout } from '../../lib/utils';
 
 export default function CreateAccount() {
   const router = useRouter();
@@ -141,6 +141,7 @@ export default function CreateAccount() {
       console.log('Nonce: ', nonce);
 
       await handleSendData();
+      updateLayout(grid, publicKey.toString('hex'));
 
       router.push(`/${publicKey.toString('hex')}`);
     } catch (error) {

@@ -22,7 +22,7 @@ import { useOnboardingStore } from '../../stores/onboardingStore';
 import { useGridStore } from '../../stores/gridStores';
 import { FileUploader } from '../app/FileUploader';
 import TextArea from '../textarea';
-import { uuidv4, updateLayout } from '../../lib/utils';
+import { uuidv4 } from '../../lib/utils';
 
 const fieldsToWidgets = {
   fullName: 'name',
@@ -177,13 +177,11 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
   const router = useRouter();
 
   const identity = useOnboardingStore((state) => state.identity);
-  const publicKey = useOnboardingStore((state) => state.publicKey);
   const updatePrivateData = useOnboardingStore(
     (state) => state.updatePrivateData,
   );
   const setPrivateData = useOnboardingStore((state) => state.setPrivateData);
 
-  const grid = useGridStore((state) => state.grid);
   const addGridItem = useGridStore((state) => state.addGridItem);
   const updateGridItem = useGridStore((state) => state.updateGridItem);
 
@@ -221,11 +219,6 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
   ) => {
     setPrivateData(data);
     console.log(data);
-
-    if (!publicKey) {
-      throw new Error('Public key not found');
-    }
-    updateLayout(grid, publicKey.toString('hex'));
     router.push('/account/signup');
   };
 
