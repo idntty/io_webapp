@@ -265,11 +265,11 @@ export default function IdentityPage() {
           data,
           router.query.publicKey as string,
         );
-        if (upperGridLayout.length !== 0) {
-          updateGrid(grid);
-          updateUpperGridLayout(upperGridLayout);
-          console.log('Created grid:', grid, upperGridLayout);
-        }
+        // if (upperGridLayout.length !== 0) {
+        updateGrid(grid);
+        updateUpperGridLayout(upperGridLayout);
+        console.log('Created grid:', grid, upperGridLayout);
+        // }
       } catch (error) {
         console.error(error);
       }
