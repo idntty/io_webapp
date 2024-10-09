@@ -260,11 +260,10 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
     setPrivateData(data);
     console.log(data);
 
-    const publicKey = localStorage.getItem('publicKey');
     if (!publicKey) {
       throw new Error('Public key not found');
     }
-    updateLayout(grid, publicKey);
+    updateLayout(grid, publicKey.toString('hex'));
     handleSendData()
       .then(() => {
         console.log('Data sent to server');
