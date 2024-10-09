@@ -47,6 +47,7 @@ export default function IdentityPage() {
   const [identity, setIdentity] = useState<'personal' | 'authority'>(
     'personal',
   );
+  const [dataFetched, setDataFetched] = useState(false);
 
   const grid = useGridStore((state) => state.grid);
   const upperGridLayout = useGridStore((state) => state.upperGridLayout);
@@ -286,6 +287,7 @@ export default function IdentityPage() {
       );
       setIdentity(userIdentity.isAuthority ? 'authority' : 'personal');
       await createGrid();
+      setDataFetched(true);
     };
 
     onLoad().catch((error) => {
@@ -295,11 +297,11 @@ export default function IdentityPage() {
   }, [router.isReady]);
 
   useEffect(() => {
-    if (!areGridsEditable) {
+    if (!areGridsEditable && dataFetched) {
       updateLayout();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [areGridsEditable]);
+  }, [areGridsEditable, dataFetched]);
 
   useEffect(() => {
     if (badgeIDs) {
