@@ -111,6 +111,7 @@ export default function IdentityPage() {
   >({
     queryKey: ['badgeIDs', router.query.publicKey],
     queryFn: () => getBadgeIDsFromServer(router.query.publicKey as string),
+    enabled: router.isReady,
   });
 
   const handleShareClick = () => {
