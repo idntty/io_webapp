@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { ReactSearchAutocomplete } from 'react-search-autocomplete';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { cryptography } from '@liskhq/lisk-client/browser';
 
 import { cn, saveDataToServer, getUserIdentity } from '../../../lib/utils';
 import { setFeature, getSetFeatureCost } from '../../../lib/apiClient';
@@ -281,9 +282,21 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
       price: string;
       timestamp: string;
     }
+    const publicKey = localStorage.getItem('publicKey');
+    if (!publicKey) {
+      throw new Error('Public key not found');
+    }
+
     const { data } = await axios.get<TransactionResponse[]>(
       'https://api.idntty.io/get-transactions',
-      { withCredentials: true },
+      {
+        params: {
+          forPublicKey: cryptography.address.getLisk32AddressFromPublicKey(
+            Buffer.from(publicKey, 'hex'),
+          ),
+        },
+        withCredentials: true,
+      },
     );
 
     console.log(data);
