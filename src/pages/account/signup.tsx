@@ -129,11 +129,12 @@ export default function CreateAccount() {
         btoa(JSON.stringify(privateData)),
       );
 
-      await setAccountType(
-        identity,
-        privateKey.toString('hex'),
-        publicKey.toString('hex'),
-      );
+      // TODO: Do this at a later stage (when?)
+      // await setAccountType(
+      //   identity,
+      //   privateKey.toString('hex'),
+      //   publicKey.toString('hex'),
+      // );
 
       // FIXME: Remove later
       setEncryptedMessage(Buffer.from(encryptedMessage).toString('hex'));
