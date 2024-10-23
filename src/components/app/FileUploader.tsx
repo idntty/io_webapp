@@ -1,31 +1,30 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { FileUploader as FileUploaderBase } from 'react-drag-drop-files';
 import { UploadCloud01, Trash01 } from 'untitledui-js';
 import { filesize } from 'filesize';
 
 export interface FileUploaderProps {
-  handleFileChange: (file: File) => void;
+  handleFileChange: (file: File | undefined) => void;
   required: boolean;
+  value: File | undefined;
 }
 
 export const FileUploader: React.FC<FileUploaderProps> = ({
   handleFileChange,
   required,
+  value,
 }) => {
-  const [file, setFile] = useState<File | null>(null);
-
-  const handleChange = (newFile: File | null) => {
+  const handleChange = (newFile: File | undefined) => {
     if (newFile === null) {
       console.log('handleChange received null, ignoring.');
       return;
     }
     console.log('handleChange called with:', newFile);
-    setFile(newFile);
     handleFileChange(newFile);
   };
 
   const removeFile = () => {
-    setFile(null);
+    handleFileChange(undefined);
   };
 
   useEffect(() => {
@@ -35,13 +34,9 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     };
   }, []);
 
-  useEffect(() => {
-    console.log('File state changed:', file);
-  }, [file]);
-
   return (
     <div className="flex flex-col items-center gap-[4px] self-stretch rounded-lg border border-solid border-gray-200 bg-white py-[16px]">
-      {file ? (
+      {value ? (
         <div className="flex w-full gap-[4px] p-[16px]">
           <div className="flex shrink-0 grow basis-0 gap-[16px]">
             <div className="flex h-[32px] w-[32px] shrink-0 items-center justify-center rounded-[28px] border-[4px] border-brand-50 bg-brand-100 p-[8px]">
@@ -49,10 +44,10 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
             </div>
             <div>
               <span className="block text-sm font-medium text-gray-700">
-                {file.name}
+                {value.name}
               </span>
               <span className="block text-sm text-gray-500">
-                {filesize(file.size)}
+                {filesize(value.size)}
               </span>
             </div>
           </div>

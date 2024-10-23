@@ -302,6 +302,7 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
                             updatePrivateData('file', file);
                           }}
                           required={false}
+                          value={field.value as File | undefined}
                         />
                       </FormControl>
                       {withErrors && (
@@ -515,6 +516,7 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
                             updatePrivateData('file', file);
                           }}
                           required={false}
+                          value={field.value as File | undefined}
                         />
                       </FormControl>
                       {withErrors && (

@@ -155,8 +155,7 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
     updateTransactionCost(editedBadgeID).catch(console.error);
   }, [editedBadgeID]);
 
-  const [file, setFile] = useState<File | null>(null);
-  const handleFileChange = (file: File) => setFile(file);
+  const [file, setFile] = useState<File | undefined>(undefined);
   const handleFileUpload = async () => {
     if (file && publicKey) {
       try {
@@ -585,10 +584,13 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
               </FormDescription>
             </div>
             <div className="flex w-[512px] flex-col">
-              <FileUploader
-                handleFileChange={handleFileChange}
-                required={badgeGrid[editedBadgeID].type === 'new'}
-              />
+              <FormControl>
+                <FileUploader
+                  handleFileChange={setFile}
+                  required={badgeGrid[editedBadgeID].type === 'new'}
+                  value={file}
+                />
+              </FormControl>
             </div>
           </FormItem>
           <Divider />
