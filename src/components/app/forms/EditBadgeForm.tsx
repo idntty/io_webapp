@@ -45,6 +45,7 @@ const FormSchema = z.object({
     required_error:
       'Please select an existing collection or type to create a new one.',
   }),
+  tags: z.string().optional(),
 });
 
 export type EditBadgeFormSchemaType = z.infer<typeof FormSchema>;
@@ -64,6 +65,8 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
 }) => {
   const [transactionCost, setTransactionCost] = useState<bigint>(0n);
   const [collections, setCollections] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchCollections = async () => {
@@ -94,11 +97,39 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
     fetchCollections().catch(console.error);
   }, []);
 
-  const searchableFieldTypes = collections.map((key, index) => ({
+  useEffect(() => {
+    const fetchTags = async () => {
+      const publicKey = localStorage.getItem('publicKey');
+      if (!publicKey) {
+        throw new Error('Public key not found');
+      }
+      try {
+        const response = await axios.get<string[]>(`https://${HOST}/get-tags`, {
+          params: { publicKey },
+          withCredentials: true,
+        });
+        if (response.status === 200) {
+          setTags(response.data);
+        }
+      } catch (error) {
+        console.error('Error during fetching tags:', error);
+      }
+    };
+
+    fetchTags().catch(console.error);
+  }, []);
+
+  const searchableCollectionTypes = collections.map((key, index) => ({
     id: index,
     name: key,
   }));
-  type SearchableFieldType = (typeof searchableFieldTypes)[number];
+  type SearchableCollectionType = (typeof searchableCollectionTypes)[number];
+
+  const searchableTagTypes = tags.map((key, index) => ({
+    id: index,
+    name: key,
+  }));
+  type SearchableTagType = (typeof searchableTagTypes)[number];
 
   const badgeGrid = useBadgeStore((state) => state.grid);
   const addNewBadgeGridItem = useBadgeStore((state) => state.addNewGridItem);
@@ -187,6 +218,7 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
       badgeName: '',
       badgeDescription: '',
       collection: 'Partner Badges',
+      tags: '',
     },
     mode: 'onChange',
   });
@@ -219,6 +251,35 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
       }
     } catch (error) {
       console.error('Error during adding collection:', error);
+    }
+  };
+
+  const addTags = async (publicKey: string, newTags: string[]) => {
+    const jwt = sessionStorage.getItem('jwt');
+    if (!jwt) {
+      throw new Error('JWT not found');
+    }
+
+    try {
+      const response = await axios.post(
+        `https://${HOST}/add-tags`,
+        {
+          publicKey,
+          tags: newTags,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        },
+      );
+      if (response.status === 200) {
+        console.log('Tags added:', newTags);
+        setTags((prevTags) => [...prevTags, ...newTags]);
+      }
+    } catch (error) {
+      console.error('Error during adding tags:', error);
     }
   };
 
@@ -269,6 +330,17 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
     if (!collections.includes(data.collection)) {
       addCollection(publicKey, data.collection).catch(console.error);
     }
+
+    if (data.tags) {
+      const newTags = data.tags
+        .split(' ')
+        .map((tag) => tag.trim())
+        .filter((tag) => !tags.includes(tag));
+      if (newTags.length > 0) {
+        addTags(publicKey, newTags).catch(console.error);
+      }
+    }
+
     if (badgeGrid[editedBadgeID].type === 'new') {
       addNewBadgeGridItem('tiny');
     }
@@ -396,15 +468,15 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
                     className="absolute left-[15px] top-[13px] z-[100] stroke-gray-500"
                   />
                   <FormControl>
-                    <ReactSearchAutocomplete<SearchableFieldType>
-                      items={searchableFieldTypes}
+                    <ReactSearchAutocomplete<SearchableCollectionType>
+                      items={searchableCollectionTypes}
                       onSearch={(string: string) => {
                         field.onChange(string);
                       }}
-                      onSelect={(item: SearchableFieldType) => {
+                      onSelect={(item: SearchableCollectionType) => {
                         field.onChange(item.name);
                       }}
-                      formatResult={(item: SearchableFieldType) => {
+                      formatResult={(item: SearchableCollectionType) => {
                         return (
                           <div className="relative flex w-full cursor-pointer select-none items-center justify-between gap-[8px] px-[14px] py-[10px] text-base outline-none data-[disabled]:pointer-events-none">
                             {item.name}
@@ -435,31 +507,74 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
             )}
           />
           <Divider />
-          <FormItem className="flex gap-[32px] self-stretch">
-            <div className="flex w-[280px] flex-col">
-              <FormLabel className="self-stretch text-sm font-medium text-gray-700">
-                Skill tags
-              </FormLabel>
-              <FormDescription className="self-stretch text-sm font-normal text-gray-500">
-                Random data for added protection
-              </FormDescription>
-            </div>
-            <div className="flex w-[512px] flex-col">
-              <div className="flex flex-wrap items-center justify-center gap-[20px]">
-                {[
-                  'ABAP Dictionary',
-                  'ABAP Objects',
-                  'ABAP Programming',
-                  'Classical User Interfaces',
-                  'Data Types And Data Objects',
-                ].map((name) => (
-                  <Badge key={uuidv4()} size="md" variant="primary">
-                    {name}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </FormItem>
+          <FormField
+            control={form.control}
+            name="tags"
+            render={({ field }) => (
+              <FormItem className="flex gap-[32px] self-stretch">
+                <div className="flex w-[280px] flex-col">
+                  <FormLabel className="self-stretch text-sm font-medium text-gray-700">
+                    Skill tags
+                  </FormLabel>
+                  <FormDescription className="self-stretch text-sm font-normal text-gray-500">
+                    Add skills related to this badge
+                  </FormDescription>
+                </div>
+                <div className="flex w-[512px] flex-col gap-[12px]">
+                  <div className="relative flex flex-col gap-[6px] overflow-visible">
+                    <SearchMD
+                      size="20"
+                      className="absolute left-[15px] top-[13px] z-[100] stroke-gray-500"
+                    />
+                    <FormControl>
+                      <ReactSearchAutocomplete<SearchableTagType>
+                        items={searchableTagTypes}
+                        onSearch={(string: string) => {
+                          field.onChange(string);
+                          setSelectedTags(string.split(' ').filter(Boolean));
+                        }}
+                        onSelect={(item: SearchableTagType) => {
+                          const words = field.value?.split(' ') ?? [];
+                          words[words.length - 1] = item.name;
+                          const newValue = words.join(' ') + ' ';
+                          field.onChange(newValue);
+                          setSelectedTags(newValue.split(' ').filter(Boolean));
+                        }}
+                        formatResult={(item: SearchableTagType) => (
+                          <div className="relative flex w-full cursor-pointer select-none items-center justify-between gap-[8px] px-[14px] py-[10px] text-base outline-none data-[disabled]:pointer-events-none">
+                            {item.name}
+                          </div>
+                        )}
+                        placeholder="Type tags separated by space"
+                        styling={{
+                          height: '44px',
+                          border: '1px solid #D0D5DD',
+                          borderRadius: '8px',
+                          backgroundColor: 'white',
+                          boxShadow: '0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
+                          hoverBackgroundColor: 'white',
+                          color: '#101828',
+                          fontSize: '16px',
+                          fontFamily: 'Inter',
+                          iconColor: 'white',
+                          lineColor: '#101828',
+                          placeholderColor: '#667085',
+                          searchIconMargin: '0 0 0 9px',
+                        }}
+                      />
+                    </FormControl>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-[8px]">
+                    {selectedTags.map((tag) => (
+                      <Badge key={uuidv4()} size="md" variant="primary">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </FormItem>
+            )}
+          />
           <FormItem className="flex gap-[32px] self-stretch">
             <div className="flex w-[280px] flex-col">
               <FormLabel className="self-stretch text-sm font-medium text-gray-700">

@@ -4,6 +4,7 @@ import { Coins03, Minimize01 } from 'untitledui-js';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { cryptography } from '@liskhq/lisk-client/browser';
+import { useRouter } from 'next/navigation';
 
 import { Tabs, TabsContent } from '../components/tabs';
 import Header from '../components/app/Header';
@@ -23,6 +24,14 @@ export default function Profile() {
   const [numberOfTransactions, setNumberOfTransactions] = useState<
     string | null
   >(null);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!sessionStorage.getItem('privateKey')) {
+      router.push('/');
+    }
+  }, [router]);
 
   useEffect(() => {
     const publicKey = localStorage.getItem('publicKey');
