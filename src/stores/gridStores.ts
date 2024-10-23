@@ -279,6 +279,14 @@ const createGridStore = () =>
       updateGridItem: (id: string, newItem: Omit<GridItem, 'layout'>) =>
         set((state) => {
           const { itemW, itemH } = sizeToDimensions(newItem.size);
+
+          const currentLayout = state.upperGridLayout.find(
+            (layout) => layout.i === id,
+          );
+          if (!currentLayout) {
+            throw new Error('Item not found in the grid');
+          }
+
           return {
             ...state,
             grid: {
@@ -288,6 +296,11 @@ const createGridStore = () =>
                 size: newItem.size,
                 type: newItem.type,
                 content: newItem.content,
+                layout: {
+                  ...currentLayout,
+                  w: itemW,
+                  h: itemH,
+                },
               },
             },
             upperGridLayout: state.upperGridLayout.map((layout) => {
