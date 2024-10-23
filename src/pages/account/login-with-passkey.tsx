@@ -40,6 +40,13 @@ export default function LoginWithPasskey() {
       setPublicKey(publicKey);
       setWalletAddress(walletAddress);
 
+      localStorage.setItem('publicKey', publicKey.toString('hex'));
+
+      const jwt = await createJWT(privateKey, publicKey.toString('hex'), {});
+
+      sessionStorage.setItem('jwt', jwt);
+      sessionStorage.setItem('privateKey', privateKey.toString('hex'));
+
       router.push(`/${publicKey.toString('hex')}`);
     } catch (error) {
       console.error(error);
