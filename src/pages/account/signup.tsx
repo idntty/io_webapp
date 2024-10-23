@@ -25,7 +25,7 @@ import {
 } from '../../lib/crypto';
 
 import { useGridStore } from '../../stores/gridStores';
-import { setAccountType } from '../../lib/apiClient';
+// import { setAccountType } from '../../lib/apiClient';
 import { saveDataToServer, updateLayout } from '../../lib/utils';
 
 export default function CreateAccount() {
