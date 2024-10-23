@@ -49,6 +49,12 @@ export default function LoginWithPasskey() {
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
+      console.log(
+        'Wrote to localStorage and sessionStorage:',
+        localStorage,
+        sessionStorage,
+      );
+
       router.push(`/${publicKey.toString('hex')}`);
     } catch (error) {
       console.error(error);
