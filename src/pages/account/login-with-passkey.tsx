@@ -47,6 +47,8 @@ export default function LoginWithPasskey() {
       sessionStorage.setItem('jwt', jwt);
       sessionStorage.setItem('privateKey', privateKey.toString('hex'));
 
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       router.push(`/${publicKey.toString('hex')}`);
     } catch (error) {
       console.error(error);
