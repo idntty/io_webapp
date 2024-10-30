@@ -332,6 +332,11 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
             console.log(errors);
           })(e);
         }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+          }
+        }}
       >
         <Tabs
           defaultValue={tab}

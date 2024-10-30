@@ -355,6 +355,11 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
           e.preventDefault();
           void form.handleSubmit(onFormSubmit)(e);
         }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+          }
+        }}
         className="flex flex-col gap-[24px] self-stretch bg-white"
       >
         <div className="flex flex-col gap-[20px] self-stretch pb-[1px]">
