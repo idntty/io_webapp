@@ -308,14 +308,19 @@ export default function IdentityPage() {
       const { badgeGrid, upperBadgeGridLayout } =
         createBadgeGridFromIDs(badgeIDs);
 
-      if (areGridsEditable) {
-        addNewBadgeGridItem('tiny');
-      }
-
       updateBadgeGrid(badgeGrid);
       updateUpperBadgeLayout(upperBadgeGridLayout);
     }
-  }, [badgeIDs, updateBadgeGrid, updateUpperBadgeLayout, addNewBadgeGridItem]);
+  }, [badgeIDs, updateBadgeGrid, updateUpperBadgeLayout]);
+
+  useEffect(() => {
+    if (
+      areGridsEditable &&
+      !Object.values(badgeGrid).some((item) => item.type === 'new')
+    ) {
+      addNewBadgeGridItem('tiny');
+    }
+  }, [areGridsEditable, badgeGrid, addNewBadgeGridItem]);
 
   useEffect(() => {
     setSelectedItems([]);
