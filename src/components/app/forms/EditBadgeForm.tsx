@@ -306,12 +306,12 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
           createBadge(newFileName, privateKey, publicKey)
             .then((transactionId) => {
               console.log('Send tx to node, id:', transactionId);
-              if (badgeGrid[editedBadgeID].type === 'new') {
-                addNewBadgeGridItem('tiny');
-              }
               refetch()
                 .then(() => {
                   console.log('Refetched badge IDs');
+                  if (badgeGrid[editedBadgeID].type === 'new') {
+                    addNewBadgeGridItem('tiny');
+                  }
                 })
                 .catch((error) => {
                   console.error(error);
