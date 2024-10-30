@@ -68,6 +68,9 @@ export default function IdentityPage() {
   const updateUpperGridLayout = useGridStore(
     (state) => state.updateUpperGridLayout,
   );
+  const updateLayoutPositions = useGridStore(
+    (state) => state.updateLayoutPositions,
+  );
   const updateLowerGridLayout = useGridStore(
     (state) => state.updateLowerGridLayout,
   );
@@ -304,10 +307,15 @@ export default function IdentityPage() {
     if (badgeIDs) {
       const { badgeGrid, upperBadgeGridLayout } =
         createBadgeGridFromIDs(badgeIDs);
+
+      if (areGridsEditable) {
+        addNewBadgeGridItem('tiny');
+      }
+
       updateBadgeGrid(badgeGrid);
       updateUpperBadgeLayout(upperBadgeGridLayout);
     }
-  }, [badgeIDs, updateBadgeGrid, updateUpperBadgeLayout]);
+  }, [badgeIDs, updateBadgeGrid, updateUpperBadgeLayout, addNewBadgeGridItem]);
 
   useEffect(() => {
     setSelectedItems([]);
@@ -408,7 +416,8 @@ export default function IdentityPage() {
                   }}
                   onLayoutChange={(layout) => {
                     console.log('layout onLayoutChange:', layout, grid);
-                    updateUpperGridLayout(layout);
+                    // updateUpperGridLayout(layout);
+                    updateLayoutPositions(layout);
                   }}
                 >
                   {upperGridLayout.map((layout) => {

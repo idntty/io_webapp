@@ -75,6 +75,7 @@ export interface GridState {
   updateGrid: (grid: Record<string, GridItem>) => void;
   updateUpperGridLayout: (layout: GridItemLayout[]) => void;
   updateLowerGridLayout: (layout: GridItemLayout[]) => void;
+  updateLayoutPositions: (newLayout: GridItemLayout[]) => void;
   mergeGrids: () => void;
   updateGridItem: (id: string, newItem: Omit<GridItem, 'layout'>) => void;
   updateItemID: (item: string, id: string) => void;
@@ -258,6 +259,24 @@ const createGridStore = () =>
             lowerGridLayout: layout,
           };
         }),
+
+      updateLayoutPositions: (newLayout: GridItemLayout[]) =>
+        set((state) => ({
+          ...state,
+          upperGridLayout: newLayout.sort(compareLayoutsFn),
+          grid: {
+            ...state.grid,
+            ...Object.fromEntries(
+              newLayout.map((layout) => [
+                layout.i,
+                {
+                  ...state.grid[layout.i],
+                  layout: layout,
+                },
+              ]),
+            ),
+          },
+        })),
 
       mergeGrids: () =>
         set((state) => {
