@@ -303,19 +303,19 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
             type: 'badge',
             content: `https://d1nyjrmwcoi38d.cloudfront.net/${newFileName}`,
           });
-          if (badgeGrid[editedBadgeID].type === 'new') {
-            addNewBadgeGridItem('tiny');
-          }
           createBadge(newFileName, privateKey, publicKey)
             .then((transactionId) => {
               console.log('Send tx to node, id:', transactionId);
-            })
-            .catch((error) => {
-              console.error(error);
-            });
-          refetch()
-            .then(() => {
-              console.log('Refetched badge IDs');
+              if (badgeGrid[editedBadgeID].type === 'new') {
+                addNewBadgeGridItem('tiny');
+              }
+              refetch()
+                .then(() => {
+                  console.log('Refetched badge IDs');
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
             })
             .catch((error) => {
               console.error(error);
@@ -338,10 +338,6 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
       if (newTags.length > 0) {
         addTags(publicKey, newTags).catch(console.error);
       }
-    }
-
-    if (badgeGrid[editedBadgeID].type === 'new') {
-      addNewBadgeGridItem('tiny');
     }
   };
 
