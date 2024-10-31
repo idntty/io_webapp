@@ -17,7 +17,7 @@ interface NotificationResponse {
   id: number;
   public_key: string;
   for_public_key: string;
-  type: 'share';
+  type: 'share' | 'issueBadge';
   data: string;
   timestamp: string;
 }
