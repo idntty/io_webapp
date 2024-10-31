@@ -227,12 +227,24 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
       identity === 'personal'
         ? personalForm.formState.touchedFields
         : authorityForm.formState.touchedFields;
+    const dirtyFields =
+      identity === 'personal'
+        ? personalForm.formState.dirtyFields
+        : authorityForm.formState.dirtyFields;
 
-    if (Object.keys(touchedFields).length === 0) return 1;
+    if (
+      Object.keys(touchedFields).length === 0 &&
+      Object.keys(dirtyFields).length === 0
+    )
+      return 1;
 
     let count = 1;
     for (let i = 0; i < fields.length - 1; i++) {
-      if (touchedFields[fields[i].name as keyof typeof touchedFields]) {
+      if (
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+        touchedFields[fields[i].name as keyof typeof touchedFields] ||
+        dirtyFields[fields[i].name as keyof typeof dirtyFields]
+      ) {
         count++;
       } else {
         break;
