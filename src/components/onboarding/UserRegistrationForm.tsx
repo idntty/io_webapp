@@ -221,12 +221,26 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
     router.push('/account/signup');
   };
 
-  const showOtherFields =
-    identity === 'personal'
-      ? personalForm.watch('fullName') &&
-        !personalForm.getFieldState('fullName').invalid
-      : authorityForm.watch('authorityName') &&
-        !authorityForm.getFieldState('authorityName').invalid;
+  const getVisibleFieldCount = () => {
+    const fields = identity === 'personal' ? personalFields : authorityFields;
+    const touchedFields =
+      identity === 'personal'
+        ? personalForm.formState.touchedFields
+        : authorityForm.formState.touchedFields;
+
+    if (Object.keys(touchedFields).length === 0) return 1;
+
+    let count = 1;
+    for (let i = 0; i < fields.length - 1; i++) {
+      if (touchedFields[fields[i].name as keyof typeof touchedFields]) {
+        count++;
+      } else {
+        break;
+      }
+    }
+
+    return count;
+  };
 
   return identity === 'personal' ? (
     <Form {...personalForm}>
@@ -281,149 +295,144 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
             );
           }}
         />
-        {showOtherFields &&
-          personalFields.slice(1).map((fieldData) => (
-            <FormField
-              key={fieldData.name}
-              control={personalForm.control}
-              // FIXME: There is probably a way to do this without the type assertion
-              name={
-                fieldData.name as keyof UserRegistrationFormPersonalSchemaType
-              }
-              render={({ field }) => {
-                if (field.name === 'file') {
-                  return (
-                    <FormItem className="flex flex-col gap-[6px] animate-in fade-in-50">
-                      {withLabels && <FormLabel>{fieldData.label}</FormLabel>}
-                      <FormControl>
-                        <FileUploader
-                          handleFileChange={(file) => {
-                            field.onChange(file);
-                            updatePrivateData('file', file);
-                          }}
-                          required={false}
-                          value={field.value as File | undefined}
-                        />
-                      </FormControl>
-                      {withErrors && (
-                        <FormMessage className="text-sm font-normal" />
-                      )}
-                    </FormItem>
-                  );
-                }
+        {personalFields.slice(1, getVisibleFieldCount()).map((fieldData) => (
+          <FormField
+            key={fieldData.name}
+            control={personalForm.control}
+            // FIXME: There is probably a way to do this without the type assertion
+            name={
+              fieldData.name as keyof UserRegistrationFormPersonalSchemaType
+            }
+            render={({ field }) => {
+              if (field.name === 'file') {
                 return (
                   <FormItem className="flex flex-col gap-[6px] animate-in fade-in-50">
                     {withLabels && <FormLabel>{fieldData.label}</FormLabel>}
                     <FormControl>
-                      {field.name === 'bio' ? (
-                        <TextArea
-                          placeholder={fieldData.placeholder}
-                          {...field}
-                          value={field.value?.toString()}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            updatePrivateData('bio', e.target.value);
-                            if (itemIDs.bio) {
-                              updateGridItem(itemIDs.bio, {
-                                size: 'long',
-                                type: fieldsToWidgets.bio,
-                                content: e.target.value,
-                              });
-                            } else {
-                              updateItemID(
-                                'bio',
-                                addGridItem({
-                                  size: 'long',
-                                  type: fieldsToWidgets.bio,
-                                  content: e.target.value,
-                                }),
-                              );
-                            }
-                          }}
-                        />
-                      ) : field.name === 'dateOfBirth' ? (
-                        <Input
-                          withHelpIcon
-                          type="date"
-                          placeholder={fieldData.placeholder}
-                          Icon={fieldData.Icon}
-                          {...field}
-                          value={field.value?.toString()}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            // @ts-expect-error ???
-                            updatePrivateData(field.name, e.target.value);
-                            if (itemIDs[field.name]) {
-                              updateGridItem(itemIDs[field.name]!, {
-                                size: 'tiny',
-                                // @ts-expect-error ???
-                                type: fieldsToWidgets[
-                                  field.name
-                                ] as GridItemType,
-                                content: e.target.value,
-                              });
-                            } else {
-                              updateItemID(
-                                field.name,
-                                addGridItem({
-                                  size: 'tiny',
-                                  // @ts-expect-error ???
-                                  type: fieldsToWidgets[
-                                    field.name
-                                  ] as GridItemType,
-                                  content: e.target.value,
-                                }),
-                              );
-                            }
-                          }}
-                        />
-                      ) : (
-                        <Input
-                          withHelpIcon
-                          placeholder={fieldData.placeholder}
-                          Icon={fieldData.Icon}
-                          {...field}
-                          value={field.value?.toString()}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            // @ts-expect-error ???
-                            updatePrivateData(field.name, e.target.value);
-                            if (itemIDs[field.name]) {
-                              updateGridItem(itemIDs[field.name]!, {
-                                size: 'tiny',
-                                // @ts-expect-error ???
-                                type: fieldsToWidgets[
-                                  field.name
-                                ] as GridItemType,
-                                content: e.target.value,
-                              });
-                            } else {
-                              updateItemID(
-                                field.name,
-                                addGridItem({
-                                  size: 'tiny',
-                                  // @ts-expect-error ???
-                                  type: fieldsToWidgets[
-                                    field.name
-                                  ] as GridItemType,
-                                  content: e.target.value,
-                                }),
-                              );
-                            }
-                          }}
-                        />
-                      )}
+                      <FileUploader
+                        handleFileChange={(file) => {
+                          field.onChange(file);
+                          updatePrivateData('file', file);
+                        }}
+                        required={false}
+                        value={field.value as File | undefined}
+                      />
                     </FormControl>
-                    {/* FIXME: Figma has a text-shadow if the input is focused
-                but I don't see it */}
                     {withErrors && (
                       <FormMessage className="text-sm font-normal" />
                     )}
                   </FormItem>
                 );
-              }}
-            />
-          ))}
+              }
+              return (
+                <FormItem className="flex flex-col gap-[6px] animate-in fade-in-50">
+                  {withLabels && <FormLabel>{fieldData.label}</FormLabel>}
+                  <FormControl>
+                    {field.name === 'bio' ? (
+                      <TextArea
+                        placeholder={fieldData.placeholder}
+                        {...field}
+                        value={field.value?.toString()}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          updatePrivateData('bio', e.target.value);
+                          if (itemIDs.bio) {
+                            updateGridItem(itemIDs.bio, {
+                              size: 'long',
+                              type: fieldsToWidgets.bio,
+                              content: e.target.value,
+                            });
+                          } else {
+                            updateItemID(
+                              'bio',
+                              addGridItem({
+                                size: 'long',
+                                type: fieldsToWidgets.bio,
+                                content: e.target.value,
+                              }),
+                            );
+                          }
+                        }}
+                      />
+                    ) : field.name === 'dateOfBirth' ? (
+                      <Input
+                        withHelpIcon
+                        type="date"
+                        placeholder={fieldData.placeholder}
+                        Icon={fieldData.Icon}
+                        {...field}
+                        value={field.value?.toString()}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          // @ts-expect-error ???
+                          updatePrivateData(field.name, e.target.value);
+                          if (itemIDs[field.name]) {
+                            updateGridItem(itemIDs[field.name]!, {
+                              size: 'tiny',
+                              // @ts-expect-error ???
+                              type: fieldsToWidgets[field.name] as GridItemType,
+                              content: e.target.value,
+                            });
+                          } else {
+                            updateItemID(
+                              field.name,
+                              addGridItem({
+                                size: 'tiny',
+                                // @ts-expect-error ???
+                                type: fieldsToWidgets[
+                                  field.name
+                                ] as GridItemType,
+                                content: e.target.value,
+                              }),
+                            );
+                          }
+                        }}
+                      />
+                    ) : (
+                      <Input
+                        withHelpIcon
+                        placeholder={fieldData.placeholder}
+                        Icon={fieldData.Icon}
+                        {...field}
+                        value={field.value?.toString()}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          // @ts-expect-error ???
+                          updatePrivateData(field.name, e.target.value);
+                          if (itemIDs[field.name]) {
+                            updateGridItem(itemIDs[field.name]!, {
+                              size: 'tiny',
+                              // @ts-expect-error ???
+                              type: fieldsToWidgets[field.name] as GridItemType,
+                              content: e.target.value,
+                            });
+                          } else {
+                            updateItemID(
+                              field.name,
+                              addGridItem({
+                                size: 'tiny',
+                                // @ts-expect-error ???
+                                type: fieldsToWidgets[
+                                  field.name
+                                ] as GridItemType,
+                                content: e.target.value,
+                              }),
+                            );
+                          }
+                        }}
+                      />
+                    )}
+                  </FormControl>
+                  {/* FIXME: Figma has a text-shadow if the input is focused
+                but I don't see it */}
+                  {withErrors && (
+                    <FormMessage className="text-sm font-normal" />
+                  )}
+                </FormItem>
+              );
+            }}
+          />
+        ))}
         <div className="flex flex-col items-start gap-[16px] self-stretch">
           {/* FIXME: Fix hardcoded width*/}
           <Button
@@ -495,113 +504,110 @@ const UserRegistrationForm: React.FC<UserRegistrationFormProps> = ({
             );
           }}
         />
-        {showOtherFields &&
-          authorityFields.slice(1).map((fieldData) => (
-            <FormField
-              key={fieldData.name}
-              control={authorityForm.control}
-              // FIXME: There is probably a way to do this without the type assertion
-              name={
-                fieldData.name as keyof UserRegistrationFormAuthoritySchemaType
-              }
-              render={({ field }) => {
-                if (field.name === 'file') {
-                  return (
-                    <FormItem className="flex flex-col gap-[6px] animate-in fade-in-100">
-                      {withLabels && <FormLabel>{fieldData.label}</FormLabel>}
-                      <FormControl>
-                        <FileUploader
-                          handleFileChange={(file) => {
-                            field.onChange(file);
-                            updatePrivateData('file', file);
-                          }}
-                          required={false}
-                          value={field.value as File | undefined}
-                        />
-                      </FormControl>
-                      {withErrors && (
-                        <FormMessage className="text-sm font-normal" />
-                      )}
-                    </FormItem>
-                  );
-                }
+        {authorityFields.slice(1, getVisibleFieldCount()).map((fieldData) => (
+          <FormField
+            key={fieldData.name}
+            control={authorityForm.control}
+            // FIXME: There is probably a way to do this without the type assertion
+            name={
+              fieldData.name as keyof UserRegistrationFormAuthoritySchemaType
+            }
+            render={({ field }) => {
+              if (field.name === 'file') {
                 return (
-                  <FormItem className="flex flex-col gap-[6px] animate-in fade-in-50">
+                  <FormItem className="flex flex-col gap-[6px] animate-in fade-in-100">
                     {withLabels && <FormLabel>{fieldData.label}</FormLabel>}
                     <FormControl>
-                      {field.name === 'bio' ? (
-                        <TextArea
-                          placeholder={fieldData.placeholder}
-                          {...field}
-                          value={field.value?.toString()}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            updatePrivateData('bio', e.target.value);
-                            if (itemIDs.bio) {
-                              updateGridItem(itemIDs.bio, {
+                      <FileUploader
+                        handleFileChange={(file) => {
+                          field.onChange(file);
+                          updatePrivateData('file', file);
+                        }}
+                        required={false}
+                        value={field.value as File | undefined}
+                      />
+                    </FormControl>
+                    {withErrors && (
+                      <FormMessage className="text-sm font-normal" />
+                    )}
+                  </FormItem>
+                );
+              }
+              return (
+                <FormItem className="flex flex-col gap-[6px] animate-in fade-in-50">
+                  {withLabels && <FormLabel>{fieldData.label}</FormLabel>}
+                  <FormControl>
+                    {field.name === 'bio' ? (
+                      <TextArea
+                        placeholder={fieldData.placeholder}
+                        {...field}
+                        value={field.value?.toString()}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          updatePrivateData('bio', e.target.value);
+                          if (itemIDs.bio) {
+                            updateGridItem(itemIDs.bio, {
+                              size: 'long',
+                              type: fieldsToWidgets.bio,
+                              content: e.target.value,
+                            });
+                          } else {
+                            updateItemID(
+                              'bio',
+                              addGridItem({
                                 size: 'long',
                                 type: fieldsToWidgets.bio,
                                 content: e.target.value,
-                              });
-                            } else {
-                              updateItemID(
-                                'bio',
-                                addGridItem({
-                                  size: 'long',
-                                  type: fieldsToWidgets.bio,
-                                  content: e.target.value,
-                                }),
-                              );
-                            }
-                          }}
-                        />
-                      ) : (
-                        <Input
-                          withHelpIcon
-                          placeholder={fieldData.placeholder}
-                          Icon={fieldData.Icon}
-                          {...field}
-                          value={field.value?.toString()}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            // @ts-expect-error ???
-                            updatePrivateData(field.name, e.target.value);
-                            if (itemIDs[field.name]) {
-                              updateGridItem(itemIDs[field.name]!, {
+                              }),
+                            );
+                          }
+                        }}
+                      />
+                    ) : (
+                      <Input
+                        withHelpIcon
+                        placeholder={fieldData.placeholder}
+                        Icon={fieldData.Icon}
+                        {...field}
+                        value={field.value?.toString()}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          // @ts-expect-error ???
+                          updatePrivateData(field.name, e.target.value);
+                          if (itemIDs[field.name]) {
+                            updateGridItem(itemIDs[field.name]!, {
+                              size: 'long',
+                              // @ts-expect-error ???
+                              type: fieldsToWidgets[field.name] as GridItemType,
+                              content: e.target.value,
+                            });
+                          } else {
+                            updateItemID(
+                              field.name,
+                              addGridItem({
                                 size: 'long',
                                 // @ts-expect-error ???
                                 type: fieldsToWidgets[
                                   field.name
                                 ] as GridItemType,
                                 content: e.target.value,
-                              });
-                            } else {
-                              updateItemID(
-                                field.name,
-                                addGridItem({
-                                  size: 'long',
-                                  // @ts-expect-error ???
-                                  type: fieldsToWidgets[
-                                    field.name
-                                  ] as GridItemType,
-                                  content: e.target.value,
-                                }),
-                              );
-                            }
-                          }}
-                        />
-                      )}
-                    </FormControl>
-                    {/* FIXME: Figma has a text-shadow if the input is focused
-                but I don't see it */}
-                    {withErrors && (
-                      <FormMessage className="text-sm font-normal" />
+                              }),
+                            );
+                          }
+                        }}
+                      />
                     )}
-                  </FormItem>
-                );
-              }}
-            />
-          ))}
+                  </FormControl>
+                  {/* FIXME: Figma has a text-shadow if the input is focused
+                but I don't see it */}
+                  {withErrors && (
+                    <FormMessage className="text-sm font-normal" />
+                  )}
+                </FormItem>
+              );
+            }}
+          />
+        ))}
         <div className="flex flex-col items-start gap-[16px] self-stretch">
           {/* FIXME: Fix hardcoded width*/}
           <Button
