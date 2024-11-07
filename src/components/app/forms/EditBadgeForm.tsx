@@ -132,7 +132,6 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
   type SearchableTagType = (typeof searchableTagTypes)[number];
 
   const badgeGrid = useBadgeStore((state) => state.grid);
-  const addNewBadgeGridItem = useBadgeStore((state) => state.addNewGridItem);
   const updateBadgeGridItem = useBadgeStore((state) => state.updateGridItem);
   const removeBadgeGridItem = useBadgeStore((state) => state.removeGridItem);
 
