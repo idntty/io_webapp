@@ -334,7 +334,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
           cancelable: true,
         }),
       );
-    }, 500);
+    }, 100);
 
     return () => clearTimeout(timer);
   }, []);
