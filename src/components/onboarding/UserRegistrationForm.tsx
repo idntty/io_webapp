@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { isURL } from 'validator';
 import { User01, MarkerPin01, Mail01, Calendar, Link03 } from 'untitledui-js';
 import { useRouter } from 'next/navigation';
 
@@ -65,9 +66,13 @@ const AuthoritySchema = z.object({
   }),
   websiteURL: z
     .string()
-    .url({
-      message: 'Please enter a valid URL.',
-    })
+    .refine(
+      (str) => {
+        if (!str) return true;
+        return isURL(str);
+      },
+      { message: 'Please enter a valid URL.' },
+    )
     .optional()
     .or(z.literal('')),
   location: z.string().optional(),
