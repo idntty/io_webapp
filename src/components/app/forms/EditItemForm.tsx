@@ -209,6 +209,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
 
   useEffect(() => {
     if (document.activeElement instanceof HTMLElement) {
+      console.log('document.activeElement:', document.activeElement);
       document.activeElement.blur();
     }
   }, []);
