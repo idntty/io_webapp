@@ -130,7 +130,7 @@ export default function IdentityPage() {
     setAreGridsEditable((prev) => {
       if (!prev) {
         addNewGridItem('tiny');
-        addNewBadgeGridItem('tiny');
+        // addNewBadgeGridItem('tiny'); // FIXME: Should be in one place
       } else {
         removeNewGridItem();
         removeNewBadgeGridItem();
