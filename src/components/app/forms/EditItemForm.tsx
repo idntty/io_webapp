@@ -113,13 +113,17 @@ const getSchemaNameOrTextValue = (fieldType: string) => {
 
 // FIXME: a (very) temporary solution
 const getDefaultValues = (editedGridItem: GridItem) => {
-  const fieldType = Object.entries(FIELDS).find(([, { widgetType }]) => {
+  console.log('Object.entries(FIELDS):', Object.entries(FIELDS));
+  const fieldTypeEntry = Object.entries(FIELDS).find(([, { widgetType }]) => {
     console.log('Comparing widget types:', {
       itemType: editedGridItem.type,
       fieldWidgetType: widgetType,
     });
     return widgetType === editedGridItem.type;
-  })?.[0] as
+  });
+  console.log('fieldTypeEntry:', fieldTypeEntry);
+  console.log('fieldTypeEntry?.[0]:', fieldTypeEntry?.[0]);
+  const fieldType = fieldTypeEntry?.[0] as
     | 'Name'
     | 'Bio'
     | 'Date of Birth'
