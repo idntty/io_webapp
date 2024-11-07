@@ -123,17 +123,12 @@ const getDefaultValues = (editedGridItem: GridItem) => {
   });
   console.log('fieldTypeEntry:', fieldTypeEntry);
   console.log('fieldTypeEntry?.[0]:', fieldTypeEntry?.[0]);
-  const fieldType = fieldTypeEntry?.[0] as
-    | 'Name'
-    | 'Bio'
-    | 'Date of Birth'
-    | 'Phone'
-    | 'Email'
-    | 'Citizenship'
-    | 'Location';
+  const fieldType = fieldTypeEntry?.[0];
   // only one of textValue, textAreaValue, dateValue should be defined, based on fieldType
   const textValue = (
-    ['Name', 'Phone', 'Email', 'Citizenship', 'Location'].includes(fieldType)
+    ['Name', 'Phone', 'Email', 'Citizenship', 'Location'].includes(
+      fieldType ?? '',
+    )
       ? editedGridItem.content
       : undefined
   ) as string | undefined;
@@ -404,6 +399,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                       <FormControl>
                         <ReactSearchAutocomplete<SearchableFieldType>
                           items={searchableFieldTypes}
+                          inputSearchString={field.value}
                           onSearch={(string: string) => {
                             field.onChange(string);
                           }}
