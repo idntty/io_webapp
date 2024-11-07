@@ -293,15 +293,18 @@ export default function IdentityPage() {
   }, [router.isReady]);
 
   useEffect(() => {
+    if (!router.isReady) {
+      return;
+    }
+
     if (!areGridsEditable && dataFetched) {
-      const publicKey = localStorage.getItem('publicKey');
-      if (!publicKey) {
-        throw new Error('Public key not found');
+      const localStoragePublicKey = localStorage.getItem('publicKey');
+      if (localStoragePublicKey === router.query.publicKey) {
+        updateLayout(grid, localStoragePublicKey);
       }
-      updateLayout(grid, publicKey);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [areGridsEditable, dataFetched]);
+  }, [router.isReady, areGridsEditable, dataFetched]);
 
   useEffect(() => {
     if (badgeIDs) {
