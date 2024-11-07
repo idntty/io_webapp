@@ -207,11 +207,9 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
 
   const [transactionCost, setTransactionCost] = useState<bigint>(0n);
 
-  const focusRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
-    if (focusRef.current) {
-      focusRef.current.focus();
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
     }
   }, []);
 
@@ -349,7 +347,6 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
           }
         }}
       >
-        <div ref={focusRef} tabIndex={-1} className="outline-none" />
         <Tabs
           defaultValue={tab}
           onValueChange={() => setTab(tab === 'private' ? 'private' : 'badge')}
