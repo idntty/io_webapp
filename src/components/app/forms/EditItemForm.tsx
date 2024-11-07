@@ -207,13 +207,6 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
 
   const [transactionCost, setTransactionCost] = useState<bigint>(0n);
 
-  useEffect(() => {
-    if (document.activeElement instanceof HTMLElement) {
-      console.log('document.activeElement:', document.activeElement);
-      document.activeElement.blur();
-    }
-  }, []);
-
   const form = useForm<EditItemFormSchemaType>({
     resolver: zodResolver(FormSchema),
     defaultValues: getDefaultValues(grid[editedItemID]),
@@ -332,6 +325,10 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
     queryKey: ['transactions', 'all'],
     queryFn: () => fetchTransactions(),
   });
+
+  useEffect(() => {
+    form.setFocus('widgetSize');
+  }, [form]);
 
   return (
     <Form {...form}>
