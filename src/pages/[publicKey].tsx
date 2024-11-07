@@ -674,7 +674,7 @@ export default function IdentityPage() {
               </div>
             </TabsContent>
             <TabsContent value="collections">
-              <div className="relative mx-auto flex w-[482px] flex-wrap gap-[40px] bg-gray-100 lg:w-[924px]">
+              <div className="relative mx-auto flex w-[482px] flex-wrap gap-[40px] bg-gray-100 p-[40px] lg:w-[924px]">
                 {collections.map((collection) => (
                   <Widget
                     key={collection}

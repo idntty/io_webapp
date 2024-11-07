@@ -203,7 +203,7 @@ export default function CreateAccount() {
         </div>
         <Footer />
       </div>
-      <div className="relative flex flex-grow flex-col justify-between overflow-auto bg-gray-50">
+      <div className="relative flex flex-grow flex-col justify-center overflow-auto bg-gray-50">
         <div className="relative mx-auto w-[482px] bg-gray-100 lg:w-[924px]">
           <GridLayout
             layouts={{
