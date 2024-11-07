@@ -122,6 +122,11 @@ export default function IdentityPage() {
   };
 
   const handleToggleEditClick = () => {
+    console.log('Toggle edit clicked:', {
+      currentState: areGridsEditable,
+      badgeGrid,
+    });
+
     setAreGridsEditable((prev) => {
       if (!prev) {
         addNewGridItem('tiny');
@@ -317,6 +322,13 @@ export default function IdentityPage() {
   }, [badgeIDs, updateBadgeGrid, updateUpperBadgeLayout]);
 
   useEffect(() => {
+    console.log('Edit mode effect triggered:', {
+      areGridsEditable,
+      hasBadgeGrid: Object.keys(badgeGrid).length > 0,
+      hasNewItem: Object.values(badgeGrid).some((item) => item.type === 'new'),
+      badgeGrid,
+    });
+
     if (
       areGridsEditable &&
       !Object.values(badgeGrid).some((item) => item.type === 'new')
