@@ -327,12 +327,16 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
   });
 
   useEffect(() => {
-    document.dispatchEvent(
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-      }),
-    );
+    const timer = setTimeout(() => {
+      document.dispatchEvent(
+        new MouseEvent('click', {
+          bubbles: true,
+          cancelable: true,
+        }),
+      );
+    }, 1000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   return (
