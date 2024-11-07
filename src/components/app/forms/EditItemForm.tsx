@@ -327,8 +327,13 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
   });
 
   useEffect(() => {
-    form.setFocus('textValue');
-  }, [form]);
+    document.dispatchEvent(
+      new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
+  }, []);
 
   return (
     <Form {...form}>
