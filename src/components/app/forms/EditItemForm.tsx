@@ -327,7 +327,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
   });
 
   useEffect(() => {
-    form.setFocus('widgetSize');
+    form.setFocus('textValue');
   }, [form]);
 
   return (
