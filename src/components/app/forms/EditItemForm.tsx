@@ -199,7 +199,9 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
   onCancel,
   onSubmit,
 }) => {
-  const [tab, setTab] = useState<'private' | 'badge'>('private');
+  const [tab, setTab] = useState<'private' | 'badge'>(() =>
+    grid[editedItemID].type === 'badge' ? 'badge' : 'private',
+  );
 
   const grid = useGridStore((state) => state.grid);
   const addNewGridItem = useGridStore((state) => state.addNewGridItem);
