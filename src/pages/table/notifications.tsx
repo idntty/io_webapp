@@ -30,8 +30,19 @@ export default function Table() {
   const [initialFetchCompleted, setInitialFetchCompleted] = useState(false);
 
   const fetchNotifications = async (startDate?: Date, endDate?: Date) => {
-    const params: { startDate?: number; endDate?: number; amount?: number } =
-      {};
+    const publicKey = localStorage.getItem('publicKey');
+    if (!publicKey) {
+      throw new Error('Public key not found');
+    }
+
+    const params: {
+      startDate?: number;
+      endDate?: number;
+      amount?: number;
+      forPublicKey: string;
+    } = {
+      forPublicKey: publicKey,
+    };
 
     if (!startDate) {
       params.amount = 25;
