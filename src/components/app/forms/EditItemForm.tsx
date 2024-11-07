@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { SearchMD, Plus, Key01, TextInput, Calendar } from 'untitledui-js';
 import * as RadioGroup from '@radix-ui/react-radio-group';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ReactSearchAutocomplete } from 'react-search-autocomplete';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -207,6 +207,14 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
 
   const [transactionCost, setTransactionCost] = useState<bigint>(0n);
 
+  const focusRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (focusRef.current) {
+      focusRef.current.focus();
+    }
+  }, []);
+
   const form = useForm<EditItemFormSchemaType>({
     resolver: zodResolver(FormSchema),
     defaultValues: getDefaultValues(grid[editedItemID]),
@@ -341,6 +349,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
           }
         }}
       >
+        <div ref={focusRef} tabIndex={-1} className="outline-none" />
         <Tabs
           defaultValue={tab}
           onValueChange={() => setTab(tab === 'private' ? 'private' : 'badge')}
@@ -400,6 +409,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                         <ReactSearchAutocomplete<SearchableFieldType>
                           items={searchableFieldTypes}
                           inputSearchString={field.value}
+                          showItemsOnFocus
                           onSearch={(string: string) => {
                             field.onChange(string);
                           }}
