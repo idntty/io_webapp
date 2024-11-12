@@ -36,7 +36,8 @@ const widgetVariants = cva(
         email: '',
         citizenship: '',
         location: '',
-        badge: '',
+        badge:
+          'data-[state=default]:border-0 data-[state=default]:hover:border hover:border-orange-500',
         other: '',
         new: 'border-[5px] border-orange-500',
       },
