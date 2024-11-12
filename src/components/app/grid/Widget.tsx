@@ -24,21 +24,20 @@ const widgetVariants = cva(
   {
     variants: {
       state: {
-        default: 'border border-brand-200 hover:border-orange-500',
+        default: '',
         edit: 'border-[5px] border-orange-500',
         selected: 'border-[5px] border-pink-500',
       },
       type: {
-        name: '',
-        bio: '',
-        age: '',
-        phone: '',
-        email: '',
-        citizenship: '',
-        location: '',
-        badge:
-          'data-[state=default]:border-0 data-[state=default]:hover:border hover:border-orange-500',
-        other: '',
+        name: 'border border-brand-200 hover:border-orange-500',
+        bio: 'border border-brand-200 hover:border-orange-500',
+        age: 'border border-brand-200 hover:border-orange-500',
+        phone: 'border border-brand-200 hover:border-orange-500',
+        email: 'border border-brand-200 hover:border-orange-500',
+        citizenship: 'border border-brand-200 hover:border-orange-500',
+        location: 'border border-brand-200 hover:border-orange-500',
+        badge: 'hover:border hover:border-orange-500',
+        other: 'border border-brand-200 hover:border-orange-500',
         new: 'border-[5px] border-orange-500',
       },
       size: {
