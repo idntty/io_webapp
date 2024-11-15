@@ -22,7 +22,7 @@ import Badge from '../../badge';
 import Divider from '../../divider';
 
 const FormSchema = z.object({
-  recipient: z.string().min(42, {
+  recipient: z.string().min(41, {
     message: "Please enter the recipient's public key.",
   }),
   message: z
