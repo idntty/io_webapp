@@ -50,6 +50,11 @@ const AssignForm: React.FC<AssignFormProps> = ({
     recipientAddress: string,
     ids: string[],
   ) => {
+    if (recipientAddress.length !== 41) {
+      setTransactionCost(0n);
+      return;
+    }
+
     const data = { recipientAddress, ids };
     const publicKey = localStorage.getItem('publicKey');
     if (!publicKey) {
@@ -60,7 +65,13 @@ const AssignForm: React.FC<AssignFormProps> = ({
       throw new Error('Private key not found');
     }
 
-    setTransactionCost(await getIssueBadgeCost(data, privateKey, publicKey));
+    try {
+      const cost = await getIssueBadgeCost(data, privateKey, publicKey);
+      setTransactionCost(cost);
+    } catch (error) {
+      console.error('Failed to get transaction cost:', error);
+      setTransactionCost(0n);
+    }
   };
 
   const badgeGrid = useBadgeStore((state) => state.grid);
