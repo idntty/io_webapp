@@ -22,7 +22,7 @@ import Badge from '../../badge';
 import Divider from '../../divider';
 
 const FormSchema = z.object({
-  recipient: z.string().min(1, {
+  recipient: z.string().min(42, {
     message: "Please enter the recipient's public key.",
   }),
   message: z
@@ -71,7 +71,7 @@ const AssignForm: React.FC<AssignFormProps> = ({
       recipient: '',
       message: '',
     },
-    mode: 'onChange',
+    mode: 'all',
   });
 
   const onSubmit = (data: AssignFormSchemaType) => {
@@ -97,12 +97,17 @@ const AssignForm: React.FC<AssignFormProps> = ({
   };
 
   useEffect(() => {
-    if (form.getValues('recipient').length == 42) {
-      updateTransactionCost(
-        form.getValues('recipient'),
-        selectedForAssignment,
-      ).catch(console.error);
-    }
+    const recipientValue = form.getValues('recipient');
+    form
+      .trigger('recipient')
+      .then((isValid) => {
+        if (isValid) {
+          updateTransactionCost(recipientValue, selectedForAssignment).catch(
+            console.error,
+          );
+        }
+      })
+      .catch(console.error);
   }, [form, selectedForAssignment]);
 
   return (
