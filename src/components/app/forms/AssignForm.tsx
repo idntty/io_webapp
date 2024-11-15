@@ -97,10 +97,12 @@ const AssignForm: React.FC<AssignFormProps> = ({
   };
 
   useEffect(() => {
-    updateTransactionCost(
-      form.getValues('recipient'),
-      selectedForAssignment,
-    ).catch(console.error);
+    if (form.getValues('recipient').length == 42) {
+      updateTransactionCost(
+        form.getValues('recipient'),
+        selectedForAssignment,
+      ).catch(console.error);
+    }
   }, [form, selectedForAssignment]);
 
   return (
