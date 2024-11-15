@@ -31,7 +31,11 @@ import TextArea from '../../textarea';
 import Divider from '../../divider';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../tabs';
 
-const handleSendData = async (uuid: string, content: string) => {
+const handleSendData = async (
+  uuid: string,
+  content: string,
+  isBadge: boolean,
+) => {
   const publicKey = localStorage.getItem('publicKey');
   if (!publicKey) {
     throw new Error('Public key not found');
@@ -42,7 +46,7 @@ const handleSendData = async (uuid: string, content: string) => {
   }
 
   const userIdentity = await getUserIdentity(publicKey);
-  if (userIdentity.isAuthority) {
+  if (userIdentity.isAuthority && isBadge) {
     const data = [
       {
         uuid,
@@ -225,7 +229,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
         type: 'badge',
         content,
       });
-      handleSendData(editedItemID, content)
+      handleSendData(editedItemID, content, true)
         .then(([_, { transactionId }]) => {
           console.log('Send tx to node, id:', transactionId);
         })
@@ -240,7 +244,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
         type: getWidgetTypeOrOther(data.fieldType),
         content,
       });
-      handleSendData(editedItemID, content.toString())
+      handleSendData(editedItemID, content.toString(), false)
         .then(([_, { transactionId }]) => {
           console.log('Send tx to node, id:', transactionId);
         })
