@@ -46,7 +46,7 @@ const handleSendData = async (
   }
 
   const userIdentity = await getUserIdentity(publicKey);
-  if (userIdentity.isAuthority && isBadge) {
+  if (userIdentity.isAuthority || isBadge) {
     const data = [
       {
         uuid,
