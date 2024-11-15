@@ -114,7 +114,8 @@ const AssignForm: React.FC<AssignFormProps> = ({
         console.error,
       );
     }
-  }, [form, selectedForAssignment]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedForAssignment]);
 
   return (
     <Form {...form}>
@@ -172,11 +173,13 @@ const AssignForm: React.FC<AssignFormProps> = ({
                       placeholder="AAAAC3NzaC1lZDI1NTE5AAAAILYAIoV2OKRSh/DcM3TicD/NK/4T"
                       {...field}
                       onChange={(e) => {
-                        updateTransactionCost(
-                          field.value,
-                          selectedForAssignment,
-                        ).catch(console.error);
                         field.onChange(e);
+                        if (e.target.value.length === 41) {
+                          updateTransactionCost(
+                            e.target.value,
+                            selectedForAssignment,
+                          ).catch(console.error);
+                        }
                       }}
                     />
                   </FormControl>
