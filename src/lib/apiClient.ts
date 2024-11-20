@@ -20,8 +20,8 @@ export const getSetFeatureCost = async (
   const client = await getClient();
 
   const features = data.map(({ uuid: label, value }) => ({
-    label: label.slice(0, 16),
-    value: value.slice(0, 32),
+    label,
+    value,
   }));
   const tx = await client.transaction.create(
     {
@@ -46,8 +46,8 @@ export const setFeature = async (
   const client = await getClient();
 
   const features = data.map(({ uuid: label, value }) => ({
-    label: label.slice(0, 16),
-    value: value.slice(0, 32),
+    label,
+    value,
   }));
   const txWithFee = await client.transaction.create(
     {
@@ -72,7 +72,7 @@ export const getRemoveFeatureCost = async (
   const client = await getClient();
 
   const features = data.map(({ uuid: label }) => ({
-    label: label.slice(0, 16),
+    label,
   }));
   const tx = await client.transaction.create(
     {
@@ -97,7 +97,7 @@ export const removeFeature = async (
   const client = await getClient();
 
   const features = data.map(({ uuid: label }) => ({
-    label: label.slice(0, 16),
+    label: label,
   }));
   const txWithFee = await client.transaction.create(
     {
