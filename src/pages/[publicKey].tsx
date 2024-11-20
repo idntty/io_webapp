@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { cryptography } from '@liskhq/lisk-client/browser';
 
 import { loginWithPasskey } from '../lib/passkeys';
 import { loadMnemonic, createJWT } from '../lib/crypto';
@@ -32,6 +33,19 @@ import AssignForm from '../components/app/forms/AssignForm';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+
+interface AccountStoreData {
+  features: {
+    label: string;
+    value: string;
+  }[];
+  verifications: {
+    label: string;
+    account: string;
+    tx: string;
+  }[];
+  isAuthority: boolean;
+}
 
 const HOST = 'api.idntty.io';
 
@@ -116,6 +130,47 @@ export default function IdentityPage() {
     queryFn: () => getBadgeIDsFromServer(router.query.publicKey as string),
     enabled: router.isReady,
   });
+
+  const { data: accountState } = useQuery<AccountStoreData, Error>({
+    queryKey: ['accountState', router.query.publicKey],
+    queryFn: async () => {
+      const response = await axios.get<AccountStoreData>(
+        `https://${HOST}/account`,
+        {
+          params: {
+            address: cryptography.address.getLisk32AddressFromPublicKey(
+              Buffer.from(router.query.publicKey as string, 'hex'),
+            ),
+          },
+          withCredentials: true,
+        },
+      );
+      return response.data;
+    },
+    enabled: router.isReady,
+  });
+
+  const getSyncedItems = () => {
+    if (!accountState?.features) return [];
+
+    const syncedLabels = new Set(accountState.features.map((f) => f.label));
+
+    return Object.entries(grid)
+      .filter(([id, item]) => syncedLabels.has(id))
+      .map(([id, item]) => ({ id, ...item }));
+  };
+
+  const getValidatedItems = () => {
+    if (!accountState?.verifications) return [];
+
+    const validatedLabels = new Set(
+      accountState.verifications.map((v) => v.label),
+    );
+
+    return Object.entries(grid)
+      .filter(([id, item]) => validatedLabels.has(id))
+      .map(([id, item]) => ({ id, ...item }));
+  };
 
   const handleShareClick = () => {
     setIsShareOrAssignFormOpen((prev) => !prev);
@@ -539,6 +594,32 @@ export default function IdentityPage() {
                 )}
               </>
             )}
+          </div>
+        </TabsContent>
+        <TabsContent value="synced">
+          <div className="relative mx-auto flex w-[482px] flex-wrap gap-[40px] bg-gray-100 p-[40px] lg:w-[924px]">
+            {getSyncedItems().map(({ id, ...item }) => (
+              <Widget
+                key={id}
+                size={item.size}
+                type={item.type}
+                value={item.content}
+                isEditable={false}
+              />
+            ))}
+          </div>
+        </TabsContent>
+        <TabsContent value="validated">
+          <div className="relative mx-auto flex w-[482px] flex-wrap gap-[40px] bg-gray-100 p-[40px] lg:w-[924px]">
+            {getValidatedItems().map(({ id, ...item }) => (
+              <Widget
+                key={id}
+                size={item.size}
+                type={item.type}
+                value={item.content}
+                isEditable={false}
+              />
+            ))}
           </div>
         </TabsContent>
         <div className="flex-grow"></div>
