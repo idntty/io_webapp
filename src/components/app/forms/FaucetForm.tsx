@@ -18,6 +18,7 @@ import {
 } from '../../form';
 import Input from '../../input';
 import Divider from '../../divider';
+import Spinner from '../../spinner';
 import { Mail01 } from 'untitledui-js';
 
 const FormSchema = z.object({
@@ -36,6 +37,8 @@ export interface FaucetFormProps {
 
 const FaucetForm: React.FC<FaucetFormProps> = ({ publicKey }) => {
   const [isCodeSent, setIsCodeSent] = useState(false);
+  const [isProcessingFaucetRequest, setIsProcessingFaucetRequest] =
+    useState(false);
 
   const form = useForm<FaucetFormSchemaType>({
     resolver: zodResolver(FormSchema),
@@ -68,6 +71,7 @@ const FaucetForm: React.FC<FaucetFormProps> = ({ publicKey }) => {
   };
 
   const getTokens = async () => {
+    setIsProcessingFaucetRequest(true);
     const response = await axios.post(
       'https://ihno2sl2y3.execute-api.us-east-1.amazonaws.com/test/faucet',
       {
@@ -83,6 +87,7 @@ const FaucetForm: React.FC<FaucetFormProps> = ({ publicKey }) => {
     } else {
       console.error('Failed to get tokens');
     }
+    setIsProcessingFaucetRequest(false);
   };
 
   const onSubmit = (data: FaucetFormSchemaType) => {
@@ -194,8 +199,14 @@ const FaucetForm: React.FC<FaucetFormProps> = ({ publicKey }) => {
                 Code
               </Button>
             ) : (
-              <Button size="md" variant="primary" type="submit">
+              <Button
+                size="md"
+                variant="primary"
+                type="submit"
+                disabled={isProcessingFaucetRequest}
+              >
                 Get tokens
+                {isProcessingFaucetRequest && <Spinner size="small" />}
               </Button>
             )}
           </div>
