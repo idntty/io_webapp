@@ -150,6 +150,33 @@ export default function IdentityPage() {
     enabled: router.isReady,
   });
 
+  interface NotificationResponse {
+    id: number;
+    public_key: string;
+    for_public_key: string;
+    type: 'share' | 'issueBadge';
+    data: string;
+    timestamp: string;
+  }
+  const { data: sharedNotifications } = useQuery<NotificationResponse[], Error>(
+    {
+      queryKey: ['sharedNotifications', router.query.publicKey],
+      queryFn: async () => {
+        const response = await axios.get<NotificationResponse[]>(
+          `https://${HOST}/get-notifications`,
+          {
+            params: {
+              publicKey: router.query.publicKey,
+            },
+            withCredentials: true,
+          },
+        );
+        return response.data;
+      },
+      enabled: router.isReady,
+    },
+  );
+
   const getSyncedItems = () => {
     if (!accountState?.features) return [];
 
@@ -169,6 +196,22 @@ export default function IdentityPage() {
 
     return Object.entries(grid)
       .filter(([id, _]) => validatedLabels.has(id))
+      .map(([id, item]) => ({ id, ...item }));
+  };
+
+  const getSharedItems = () => {
+    if (!sharedNotifications) return [];
+
+    const sharedIds = new Set(
+      sharedNotifications
+        .filter((n) => n.type === 'share')
+        .flatMap(
+          (n) => (JSON.parse(n.data) as { features: string[] }).features,
+        ),
+    );
+
+    return Object.entries(grid)
+      .filter(([id, _]) => sharedIds.has(id))
       .map(([id, item]) => ({ id, ...item }));
   };
 
@@ -601,7 +644,7 @@ export default function IdentityPage() {
             {getSyncedItems().map(({ id, ...item }) => (
               <Widget
                 key={id}
-                size={item.size}
+                size="tiny"
                 type={item.type}
                 value={item.content}
                 isEditable={false}
@@ -612,6 +655,19 @@ export default function IdentityPage() {
         <TabsContent value="validated">
           <div className="relative mx-auto flex w-[482px] flex-wrap gap-[40px] bg-gray-100 p-[40px] lg:w-[924px]">
             {getValidatedItems().map(({ id, ...item }) => (
+              <Widget
+                key={id}
+                size="tiny"
+                type={item.type}
+                value={item.content}
+                isEditable={false}
+              />
+            ))}
+          </div>
+        </TabsContent>
+        <TabsContent value="shared">
+          <div className="relative mx-auto flex w-[482px] flex-wrap gap-[40px] bg-gray-100 p-[40px] lg:w-[924px]">
+            {getSharedItems().map(({ id, ...item }) => (
               <Widget
                 key={id}
                 size={item.size}
