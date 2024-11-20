@@ -156,7 +156,7 @@ export default function IdentityPage() {
     const syncedLabels = new Set(accountState.features.map((f) => f.label));
 
     return Object.entries(grid)
-      .filter(([id, item]) => syncedLabels.has(id))
+      .filter(([id, _]) => syncedLabels.has(id))
       .map(([id, item]) => ({ id, ...item }));
   };
 
@@ -168,7 +168,7 @@ export default function IdentityPage() {
     );
 
     return Object.entries(grid)
-      .filter(([id, item]) => validatedLabels.has(id))
+      .filter(([id, _]) => validatedLabels.has(id))
       .map(([id, item]) => ({ id, ...item }));
   };
 
