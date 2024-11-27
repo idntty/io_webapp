@@ -3,7 +3,7 @@
 import { Coins03, Minimize01 } from 'untitledui-js';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { cryptography } from '@liskhq/lisk-client/browser';
+import { cryptography } from '@klayr/client/browser';
 import { useRouter } from 'next/navigation';
 
 import { Tabs, TabsContent } from '../components/tabs';
@@ -49,7 +49,7 @@ export default function Profile() {
         'https://api.idntty.io/account/balance',
         {
           params: {
-            address: cryptography.address.getLisk32AddressFromPublicKey(
+            address: cryptography.address.getKlayr32AddressFromPublicKey(
               Buffer.from(publicKey, 'hex'),
             ),
           },

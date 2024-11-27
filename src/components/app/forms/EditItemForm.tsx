@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { ReactSearchAutocomplete } from 'react-search-autocomplete';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { cryptography } from '@liskhq/lisk-client/browser';
+import { cryptography } from '@klayr/client/browser';
 
 import { cn, saveDataToServer, getUserIdentity } from '../../../lib/utils';
 import { setFeature, getSetFeatureCost } from '../../../lib/apiClient';
@@ -300,7 +300,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
       'https://api.idntty.io/get-transactions',
       {
         params: {
-          forPublicKey: cryptography.address.getLisk32AddressFromPublicKey(
+          forPublicKey: cryptography.address.getKlayr32AddressFromPublicKey(
             Buffer.from(publicKey, 'hex'),
           ),
         },

@@ -1,4 +1,4 @@
-import { passphrase, cryptography } from '@liskhq/lisk-client/browser';
+import { passphrase, cryptography } from '@klayr/client/browser';
 import _sodium from 'libsodium-wrappers-sumo';
 import { Buffer } from 'buffer';
 import {
@@ -16,7 +16,8 @@ export const generateKeysAndAddress = async (phrase: string, path?: string) => {
     await cryptography.ed.getPrivateKeyFromPhraseAndPath(phrase, path ?? PATH);
   const publicKey: Buffer =
     cryptography.ed.getPublicKeyFromPrivateKey(privateKey);
-  const address = cryptography.address.getLisk32AddressFromPublicKey(publicKey);
+  const address =
+    cryptography.address.getKlayr32AddressFromPublicKey(publicKey);
   return { privateKey, publicKey, walletAddress: address };
 };
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
 import { Mail01, User01, BriefCase01 } from 'untitledui-js';
 
 import Badge from '../components/badge';
@@ -12,40 +12,40 @@ import EncryptedWidget from '../components/app/grid/EncryptedWidget';
 import Checkbox from '../components/checkbox';
 import Divider from '../components/divider';
 
-import { getClient } from '../lib/apiClient';
-import { generateKeysAndAddress } from '../lib/crypto';
+// import { getClient } from '../lib/apiClient';
+// import { generateKeysAndAddress } from '../lib/crypto';
 
-const PHRASE =
-  'march unfold dizzy lyrics soap print notable brief address another begin evolve note open artist prison clerk twelve fetch course rather corn next cushion';
+// const PHRASE =
+//   'march unfold dizzy lyrics soap print notable brief address another begin evolve note open artist prison clerk twelve fetch course rather corn next cushion';
 
 export default function ComponentsTesting() {
-  useEffect(() => {
-    const run = async () => {
-      const client = await getClient();
+  // useEffect(() => {
+  //   const run = async () => {
+  //     const client = await getClient();
 
-      const { privateKey, publicKey } = await generateKeysAndAddress(PHRASE);
+  //     const { privateKey, publicKey } = await generateKeysAndAddress(PHRASE);
 
-      const tx = await client.transaction.create(
-        {
-          module: 'token',
-          command: 'transfer',
-          fee: 1000000n,
-          senderPublicKey: publicKey.toString('hex'),
-          params: {
-            tokenID: 'abcdef0100000000',
-            amount: 1000000000n,
-            recipientAddress: 'lsktt8b7dm3kjzjpj2fa7exww34j4ma4h5pz4y7gh',
-            data: 'hello',
-          },
-        },
-        privateKey.toString('hex'),
-      );
+  //     const tx = await client.transaction.create(
+  //       {
+  //         module: 'token',
+  //         command: 'transfer',
+  //         fee: 1000000n,
+  //         senderPublicKey: publicKey.toString('hex'),
+  //         params: {
+  //           tokenID: 'abcdef0100000000',
+  //           amount: 1000000000n,
+  //           recipientAddress: 'lsktt8b7dm3kjzjpj2fa7exww34j4ma4h5pz4y7gh',
+  //           data: 'hello',
+  //         },
+  //       },
+  //       privateKey.toString('hex'),
+  //     );
 
-      await client.transaction.send(tx);
-    };
+  //     await client.transaction.send(tx);
+  //   };
 
-    run().catch(console.error);
-  });
+  //   run().catch(console.error);
+  // });
 
   return (
     <div className="flex w-full flex-col items-center justify-center gap-10">

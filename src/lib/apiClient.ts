@@ -1,4 +1,4 @@
-import { apiClient } from '@liskhq/lisk-client/browser';
+import { apiClient } from '@klayr/client/browser';
 
 import type { DataEntry } from './utils';
 

@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { cryptography } from '@liskhq/lisk-client/browser';
+import { cryptography } from '@klayr/client/browser';
 
 import { loginWithPasskey } from '../lib/passkeys';
 import { loadMnemonic, createJWT } from '../lib/crypto';
@@ -138,7 +138,7 @@ export default function IdentityPage() {
         `https://${HOST}/account`,
         {
           params: {
-            address: cryptography.address.getLisk32AddressFromPublicKey(
+            address: cryptography.address.getKlayr32AddressFromPublicKey(
               Buffer.from(router.query.publicKey as string, 'hex'),
             ),
           },

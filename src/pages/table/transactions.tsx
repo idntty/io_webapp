@@ -6,7 +6,7 @@ import * as React from 'react';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { DateRange } from 'react-day-picker';
-import { cryptography } from '@liskhq/lisk-client/browser';
+import { cryptography } from '@klayr/client/browser';
 
 import {
   Transaction,
@@ -61,7 +61,7 @@ export default function Table() {
       or: boolean;
     } = {
       publicKey,
-      forPublicKey: cryptography.address.getLisk32AddressFromPublicKey(
+      forPublicKey: cryptography.address.getKlayr32AddressFromPublicKey(
         Buffer.from(publicKey, 'hex'),
       ),
       or: true,

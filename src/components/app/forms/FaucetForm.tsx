@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { cryptography } from '@liskhq/lisk-client/browser';
+import { cryptography } from '@klayr/client/browser';
 
 import axios from 'axios';
 import { useState } from 'react';
@@ -44,7 +44,7 @@ const FaucetForm: React.FC<FaucetFormProps> = ({ publicKey }) => {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       email: '',
-      address: cryptography.address.getLisk32AddressFromPublicKey(
+      address: cryptography.address.getKlayr32AddressFromPublicKey(
         Buffer.from(publicKey, 'hex'),
       ),
       secret: '',
