@@ -16,6 +16,7 @@ export type GridItemType =
   | 'email'
   | 'citizenship'
   | 'location'
+  | 'github'
   | 'badge'
   | 'other'
   | 'new';

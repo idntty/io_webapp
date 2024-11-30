@@ -10,6 +10,7 @@ import {
 } from 'untitledui-js';
 import lookup from 'country-code-lookup';
 import Link from 'next/link';
+import GitHubCalendar, { type Activity } from 'react-github-calendar';
 
 import { cn, calculateAge, getFlagEmoji } from '../../../lib/utils';
 import type { GridItemContent } from '../../../types/grid';
@@ -18,6 +19,22 @@ import WidgetDelete from './WidgetDelete';
 import WidgetEdit from './WidgetEdit';
 
 const countryCodes = lookup.countries.map((country) => country.iso2);
+
+const selectLastMonths = (contributions: Activity[], months: number) => {
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+
+  return contributions.filter((activity) => {
+    const date = new Date(activity.date);
+    const monthOfDay = date.getMonth();
+
+    return (
+      date.getFullYear() === currentYear &&
+      monthOfDay > currentMonth - months &&
+      monthOfDay <= currentMonth
+    );
+  });
+};
 
 const widgetVariants = cva(
   '@container group relative flex justify-center items-center shrink-0 rounded-[40px] border-solid bg-gray-25 font-widget',
@@ -36,6 +53,7 @@ const widgetVariants = cva(
         email: 'border border-brand-200 hover:border-orange-500',
         citizenship: 'border border-brand-200 hover:border-orange-500',
         location: 'border border-brand-200 hover:border-orange-500',
+        github: 'border border-brand-200 hover:border-orange-500',
         badge: 'hover:border hover:border-orange-500',
         other: 'border border-brand-200 hover:border-orange-500',
         new: 'border-[5px] border-orange-500',
@@ -253,6 +271,39 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             )}
           </div>
         );
+      case 'github':
+        return (
+          <div
+            className={cn(
+              widgetVariants({ type: 'other', size, state }),
+              isEditable && 'select-none',
+              className,
+            )}
+            ref={ref}
+            {...props}
+          >
+            {isEditable && onDeleteClick && (
+              <WidgetDelete onDeleteClick={onDeleteClick} />
+            )}
+            <GitHubCalendar
+              username={value?.toString() ?? ''}
+              colorScheme="light"
+              hideColorLegend
+              hideMonthLabels
+              hideTotalCount
+              transformData={(data) =>
+                selectLastMonths(
+                  data,
+                  size === 'tiny' || size === 'tall' ? 1 : 6,
+                )
+              }
+            />
+            {isEditable && onEditClick && (
+              <WidgetEdit onEditClick={onEditClick} />
+            )}
+          </div>
+        );
+
       case 'badge':
         return (
           <div

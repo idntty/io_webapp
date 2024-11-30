@@ -2,6 +2,7 @@
 
 // import { useEffect } from 'react';
 import { Mail01, User01, BriefCase01 } from 'untitledui-js';
+import GitHubCalendar, { type Activity } from 'react-github-calendar';
 
 import Badge from '../components/badge';
 import Button from '../components/button/button';
@@ -17,6 +18,22 @@ import Divider from '../components/divider';
 
 // const PHRASE =
 //   'march unfold dizzy lyrics soap print notable brief address another begin evolve note open artist prison clerk twelve fetch course rather corn next cushion';
+
+const selectLastMonths = (contributions: Activity[], months = 2) => {
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+
+  return contributions.filter((activity) => {
+    const date = new Date(activity.date);
+    const monthOfDay = date.getMonth();
+
+    return (
+      date.getFullYear() === currentYear &&
+      monthOfDay > currentMonth - months &&
+      monthOfDay <= currentMonth
+    );
+  });
+};
 
 export default function ComponentsTesting() {
   // useEffect(() => {
@@ -64,6 +81,15 @@ export default function ComponentsTesting() {
       >
         Disable all elements
       </Button>
+      <Divider />
+      <GitHubCalendar
+        username="jowerfwernhoo"
+        colorScheme="light"
+        hideColorLegend
+        hideMonthLabels
+        hideTotalCount
+        transformData={selectLastMonths}
+      />
       <Divider />
       {/* Labels (primary) */}
       <div className="flex w-full items-center justify-center gap-4">

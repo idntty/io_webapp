@@ -101,6 +101,11 @@ const FIELDS = {
     htmlType: 'text',
     widgetType: 'location',
   },
+  GitHub: {
+    schemaName: 'textValue',
+    htmlType: 'text',
+    widgetType: 'github',
+  },
 };
 
 // FIXME: a (very) temporary solution
@@ -517,6 +522,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                                     Email: 'johndoe@gmail.com',
                                     Citizenship: 'RU',
                                     Location: 'RU',
+                                    GitHub: '',
                                   }[form.watch('fieldType')]
                                 }
                                 type="text"
