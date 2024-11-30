@@ -135,7 +135,7 @@ const getDefaultValues = (editedGridItem: GridItem) => {
   const fieldType = fieldTypeEntry?.[0];
   // only one of textValue, textAreaValue, dateValue should be defined, based on fieldType
   const textValue = (
-    ['Name', 'Phone', 'Email', 'Citizenship', 'Location'].includes(
+    ['Name', 'Phone', 'Email', 'Citizenship', 'Location', 'GitHub'].includes(
       fieldType ?? '',
     )
       ? editedGridItem.content

@@ -19,7 +19,7 @@ import Divider from '../components/divider';
 // const PHRASE =
 //   'march unfold dizzy lyrics soap print notable brief address another begin evolve note open artist prison clerk twelve fetch course rather corn next cushion';
 
-const selectLastMonths = (contributions: Activity[], months = 2) => {
+const selectLastMonths = (contributions: Activity[], months = 1) => {
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
 

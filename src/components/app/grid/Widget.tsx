@@ -294,7 +294,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
               transformData={(data) =>
                 selectLastMonths(
                   data,
-                  size === 'tiny' || size === 'tall' ? 1 : 6,
+                  size === 'tiny' || size === 'tall' ? 1 : 3,
                 )
               }
             />
