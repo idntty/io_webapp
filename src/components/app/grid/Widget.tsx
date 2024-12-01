@@ -271,11 +271,13 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             )}
           </div>
         );
-      case 'github':
+      case 'github': {
+        const username = value?.toString() ?? '';
         return (
           <div
             className={cn(
               widgetVariants({ type: 'other', size, state }),
+              'flex flex-col gap-2 p-4',
               isEditable && 'select-none',
               className,
             )}
@@ -285,8 +287,25 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             {isEditable && onDeleteClick && (
               <WidgetDelete onDeleteClick={onDeleteClick} />
             )}
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {/* Placeholder for GitHub logo */}
+                <div className="h-6 w-6 rounded-full bg-gray-200" />
+                <span className="font-medium text-gray-900">{username}</span>
+              </div>
+              <Link
+                href={`https://github.com/${username}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-md px-2 py-1 text-sm font-medium text-gray-600 hover:bg-gray-100"
+              >
+                View Profile →
+              </Link>
+            </div>
+
             <GitHubCalendar
-              username={value?.toString() ?? ''}
+              username={username}
               colorScheme="light"
               hideColorLegend
               hideMonthLabels
@@ -298,12 +317,13 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
                 )
               }
             />
+
             {isEditable && onEditClick && (
               <WidgetEdit onEditClick={onEditClick} />
             )}
           </div>
         );
-
+      }
       case 'badge':
         return (
           <div
