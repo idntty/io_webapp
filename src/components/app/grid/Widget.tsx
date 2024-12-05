@@ -346,7 +346,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
               href={`https://www.linkedin.com/in/${username}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white"
+              className="font-medium text-white"
             >
               View LinkedIn profile ↗
             </Link>
