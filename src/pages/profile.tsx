@@ -119,7 +119,7 @@ export default function Profile() {
                 <Button
                   variant="secondary-color"
                   size="md"
-                  onClick={() => router.push('/profile')}
+                  onClick={() => router.push('/')}
                 >
                   Back to profile →
                 </Button>
@@ -147,7 +147,7 @@ export default function Profile() {
                 <Button
                   variant="secondary-color"
                   size="md"
-                  onClick={() => router.push('/profile')}
+                  onClick={() => router.push('/')}
                 >
                   Back to profile →
                 </Button>
