@@ -70,7 +70,7 @@ export function NotificationTable({
           setDate={setDateRange}
         />
       </div>
-      <div className="rounded-lg border border-gray-200 bg-white shadow-table">
+      <div className="min-h-[600px] rounded-lg border border-gray-200 bg-white shadow-table">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
