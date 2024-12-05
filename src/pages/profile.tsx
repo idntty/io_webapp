@@ -27,6 +27,12 @@ export default function Profile() {
 
   const router = useRouter();
 
+  const logout = () => {
+    sessionStorage.removeItem('jwt');
+    sessionStorage.removeItem('privateKey');
+    router.push('/');
+  };
+
   useEffect(() => {
     if (!sessionStorage.getItem('privateKey')) {
       router.push('/');
@@ -71,12 +77,87 @@ export default function Profile() {
       >
         <Header tabsType="profile" />
         <TabsContent className="px-[300px]" value="notifications">
+          <div className="flex flex-col gap-[20px] py-[25px]">
+            <div className="flex gap-[16px]">
+              <div className="flex shrink-0 grow basis-0 flex-col gap-[4px]">
+                <div className="text-lg font-medium text-gray-900">
+                  Notifications info
+                </div>
+                <div className="text-sm text-gray-500">
+                  Control your notifications
+                </div>
+              </div>
+              <div className="flex items-center gap-[12px]">
+                <Button
+                  variant="secondary-color"
+                  size="md"
+                  onClick={() => router.push('/')}
+                >
+                  Back to profile →
+                </Button>
+                <Button variant="destructive" size="md" onClick={logout}>
+                  Logout
+                </Button>
+              </div>
+            </div>
+            <Divider />
+          </div>
           <NotificationsTable />
         </TabsContent>
         <TabsContent className="px-[300px]" value="transactions">
+          <div className="flex flex-col gap-[20px] py-[25px]">
+            <div className="flex gap-[16px]">
+              <div className="flex shrink-0 grow basis-0 flex-col gap-[4px]">
+                <div className="text-lg font-medium text-gray-900">
+                  Transactions info
+                </div>
+                <div className="text-sm text-gray-500">
+                  Control your transactions
+                </div>
+              </div>
+              <div className="flex items-center gap-[12px]">
+                <Button
+                  variant="secondary-color"
+                  size="md"
+                  onClick={() => router.push('/profile')}
+                >
+                  Back to profile →
+                </Button>
+                <Button variant="destructive" size="md" onClick={logout}>
+                  Logout
+                </Button>
+              </div>
+            </div>
+            <Divider />
+          </div>
           <TransactionsTable />
         </TabsContent>
         <TabsContent className="flex flex-col gap-0 px-[300px]" value="billing">
+          <div className="flex flex-col gap-[20px] py-[25px]">
+            <div className="flex gap-[16px]">
+              <div className="flex shrink-0 grow basis-0 flex-col gap-[4px]">
+                <div className="text-lg font-medium text-gray-900">
+                  Billing info
+                </div>
+                <div className="text-sm text-gray-500">
+                  Control your billing transactions
+                </div>
+              </div>
+              <div className="flex items-center gap-[12px]">
+                <Button
+                  variant="secondary-color"
+                  size="md"
+                  onClick={() => router.push('/profile')}
+                >
+                  Back to profile →
+                </Button>
+                <Button variant="destructive" size="md" onClick={logout}>
+                  Logout
+                </Button>
+              </div>
+            </div>
+            <Divider />
+          </div>
           <div className="flex items-center gap-[24px] self-stretch">
             <MetricItem
               title="Account balance"
