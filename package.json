@@ -54,6 +54,7 @@
     "react-router-dom": "^6.21.1",
     "react-search-autocomplete": "^8.5.2",
     "react-sizeme": "^3.0.2",
+    "react-social-icons": "^6.18.0",
     "tailwind-merge": "^2.2.0",
     "untitledui-js": "^2.2.0",
     "uuid": "^9.0.1",

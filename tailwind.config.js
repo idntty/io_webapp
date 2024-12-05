@@ -85,6 +85,7 @@ export default {
           900: '#054F31',
         },
         neutral: '#2C3A4B',
+        linkedin: '#0b66c2',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

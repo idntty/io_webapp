@@ -106,6 +106,11 @@ const FIELDS = {
     htmlType: 'text',
     widgetType: 'github',
   },
+  LinkedIn: {
+    schemaName: 'textValue',
+    htmlType: 'text',
+    widgetType: 'linkedin',
+  },
 };
 
 // FIXME: a (very) temporary solution
@@ -135,9 +140,15 @@ const getDefaultValues = (editedGridItem: GridItem) => {
   const fieldType = fieldTypeEntry?.[0];
   // only one of textValue, textAreaValue, dateValue should be defined, based on fieldType
   const textValue = (
-    ['Name', 'Phone', 'Email', 'Citizenship', 'Location', 'GitHub'].includes(
-      fieldType ?? '',
-    )
+    [
+      'Name',
+      'Phone',
+      'Email',
+      'Citizenship',
+      'Location',
+      'GitHub',
+      'LinkedIn',
+    ].includes(fieldType ?? '')
       ? editedGridItem.content
       : undefined
   ) as string | undefined;
@@ -523,6 +534,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                                     Citizenship: 'RU',
                                     Location: 'RU',
                                     GitHub: '',
+                                    LinkedIn: '',
                                   }[form.watch('fieldType')]
                                 }
                                 type="text"
