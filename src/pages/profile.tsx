@@ -31,6 +31,7 @@ export default function Profile() {
     sessionStorage.removeItem('jwt');
     sessionStorage.removeItem('privateKey');
     router.push('/');
+    router.refresh();
   };
 
   useEffect(() => {
