@@ -396,7 +396,10 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             )}
           </div>
         );
-      case 'relationship':
+      case 'relationship': {
+        const internalValue = {
+          'Looking for Love': 'looking',
+        }[value?.toString() ?? 'default'];
         return (
           <div
             className={cn(
@@ -409,7 +412,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             {...props}
           >
             <img
-              src={`https://d1nyjrmwcoi38d.cloudfront.net/relationship/${(value?.toString() ?? 'default').toLowerCase()}.png`}
+              src={`https://d1nyjrmwcoi38d.cloudfront.net/relationship/${internalValue ?? 'default'}.png`}
               alt={value?.toString() ?? ''}
               className="absolute inset-0 h-full w-full object-cover"
             />
@@ -433,6 +436,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             )}
           </div>
         );
+      }
       case 'badge':
         return (
           <div
