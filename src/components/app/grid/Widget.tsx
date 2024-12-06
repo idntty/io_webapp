@@ -364,16 +364,19 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
           <div
             className={cn(
               widgetVariants({ type, size, state }),
-              'flex flex-col gap-2 bg-cover bg-center bg-no-repeat p-4',
+              'relative flex flex-col gap-2 overflow-hidden p-4',
               isEditable && 'select-none',
               className,
             )}
-            style={{
-              backgroundImage: `url(https://d1nyjrmwcoi38d.cloudfront.net/hobby/${(value?.toString() ?? 'default').toLowerCase()}.png)`,
-            }}
             ref={ref}
             {...props}
           >
+            <img
+              src={`https://d1nyjrmwcoi38d.cloudfront.net/hobby/${(value?.toString() ?? 'default').toLowerCase()}.png`}
+              alt={value?.toString() ?? ''}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+
             <WidgetIcon
               Icon={User01}
               strokeClassName="stroke-gray-900 group-hover:stroke-orange-500"
@@ -383,7 +386,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             )}
 
             {(size === 'long' || size === 'large') && (
-              <div className="text-center text-4xl/[44px] font-bold -tracking-[0.72px] text-white">
+              <div className="relative z-10 text-center font-sans text-4xl/[44px] font-bold -tracking-[0.72px] text-white">
                 {value?.toString() ?? ''}
               </div>
             )}
@@ -398,13 +401,10 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
           <div
             className={cn(
               widgetVariants({ type, size, state }),
-              'flex flex-col gap-2 bg-cover bg-center bg-no-repeat p-4',
+              'relative flex flex-col gap-2 overflow-hidden p-4',
               isEditable && 'select-none',
               className,
             )}
-            style={{
-              backgroundImage: `url(https://d1nyjrmwcoi38d.cloudfront.net/relationship/${(value?.toString() ?? '').toLowerCase()}.png)`,
-            }}
             ref={ref}
             {...props}
           >
@@ -413,7 +413,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             )}
 
             {(size === 'long' || size === 'large') && (
-              <div className="text-center text-4xl/[44px] font-bold -tracking-[0.72px] text-white">
+              <div className="relative z-10 text-center font-sans text-4xl/[44px] font-bold -tracking-[0.72px] text-white">
                 {value?.toString() ?? ''}
               </div>
             )}

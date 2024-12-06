@@ -72,6 +72,16 @@ export default function ComponentsTesting() {
         strategy="lazyOnload"
       />
       <div className="flex w-full flex-col items-center justify-center gap-10">
+        <div className="group relative flex h-[180px] w-[400px] shrink-0 flex-col items-center justify-center gap-2 overflow-hidden rounded-[40px] border border-solid border-brand-200 bg-gray-25 p-4 font-widget @container hover:border-orange-500">
+          <img
+            src="https://d1nyjrmwcoi38d.cloudfront.net/hobby/gaming.png"
+            alt="Gaming"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="relative z-10 text-center font-sans text-4xl/[44px] font-bold -tracking-[0.72px] text-white">
+            Gaming
+          </div>
+        </div>
         <Divider />
         <Button
           onClick={() => {
