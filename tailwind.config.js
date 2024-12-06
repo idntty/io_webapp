@@ -88,7 +88,7 @@ export default {
         linkedin: '#0b66c2',
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['var(--font-inter)'],
         widget: ['Aptos', 'sans-serif'],
       },
       boxShadow: {

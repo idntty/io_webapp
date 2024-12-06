@@ -18,6 +18,8 @@ export type GridItemType =
   | 'location'
   | 'github'
   | 'linkedin'
+  | 'hobby'
+  | 'relationship'
   | 'badge'
   | 'other'
   | 'new';

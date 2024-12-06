@@ -56,6 +56,8 @@ const widgetVariants = cva(
         location: 'border border-brand-200 hover:border-orange-500',
         github: 'border border-brand-200 hover:border-orange-500',
         linkedin: 'border border-brand-200 hover:border-orange-500',
+        hobby: 'border border-brand-200 hover:border-orange-500',
+        relationship: 'border border-brand-200 hover:border-orange-500',
         badge: 'hover:border hover:border-orange-500',
         other: 'border border-brand-200 hover:border-orange-500',
         new: 'border-[5px] border-orange-500',
@@ -278,7 +280,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
         return (
           <div
             className={cn(
-              widgetVariants({ type: 'other', size, state }),
+              widgetVariants({ type, size, state }),
               'flex flex-col gap-2 p-4',
               isEditable && 'select-none',
               className,
@@ -330,7 +332,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
         return (
           <div
             className={cn(
-              widgetVariants({ type: 'other', size, state }),
+              widgetVariants({ type, size, state }),
               'bg-linkedin p-4 text-white',
               isEditable && 'select-none',
               className,
@@ -357,6 +359,70 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
           </div>
         );
       }
+      case 'hobby':
+        return (
+          <div
+            className={cn(
+              widgetVariants({ type, size, state }),
+              'flex flex-col gap-2 bg-cover bg-center bg-no-repeat p-4',
+              isEditable && 'select-none',
+              className,
+            )}
+            style={{
+              backgroundImage: `url(https://d1nyjrmwcoi38d.cloudfront.net/hobby/${(value?.toString() ?? 'default').toLowerCase()}.png)`,
+            }}
+            ref={ref}
+            {...props}
+          >
+            <WidgetIcon
+              Icon={User01}
+              strokeClassName="stroke-gray-900 group-hover:stroke-orange-500"
+            />
+            {isEditable && onDeleteClick && (
+              <WidgetDelete onDeleteClick={onDeleteClick} />
+            )}
+
+            {(size === 'long' || size === 'large') && (
+              <div className="text-center text-4xl/[44px] font-bold -tracking-[0.72px] text-white">
+                {value?.toString() ?? ''}
+              </div>
+            )}
+
+            {isEditable && onEditClick && (
+              <WidgetEdit onEditClick={onEditClick} />
+            )}
+          </div>
+        );
+      case 'relationship':
+        return (
+          <div
+            className={cn(
+              widgetVariants({ type, size, state }),
+              'flex flex-col gap-2 bg-cover bg-center bg-no-repeat p-4',
+              isEditable && 'select-none',
+              className,
+            )}
+            style={{
+              backgroundImage: `url(https://d1nyjrmwcoi38d.cloudfront.net/relationship/${(value?.toString() ?? '').toLowerCase()}.png)`,
+            }}
+            ref={ref}
+            {...props}
+          >
+            {isEditable && onDeleteClick && (
+              <WidgetDelete onDeleteClick={onDeleteClick} />
+            )}
+
+            {(size === 'long' || size === 'large') && (
+              <div className="text-center text-4xl/[44px] font-bold -tracking-[0.72px] text-white">
+                {value?.toString() ?? ''}
+              </div>
+            )}
+
+            {isEditable && onEditClick && (
+              <WidgetEdit onEditClick={onEditClick} />
+            )}
+          </div>
+        );
       case 'badge':
         return (
           <div

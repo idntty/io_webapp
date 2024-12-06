@@ -111,6 +111,16 @@ const FIELDS = {
     htmlType: 'text',
     widgetType: 'linkedin',
   },
+  Hobby: {
+    schemaName: 'textValue',
+    htmlType: 'text',
+    widgetType: 'hobby',
+  },
+  Relationship: {
+    schemaName: 'textValue',
+    htmlType: 'text',
+    widgetType: 'relationship',
+  },
 };
 
 // FIXME: a (very) temporary solution
@@ -148,6 +158,8 @@ const getDefaultValues = (editedGridItem: GridItem) => {
       'Location',
       'GitHub',
       'LinkedIn',
+      'Hobby',
+      'Relationship',
     ].includes(fieldType ?? '')
       ? editedGridItem.content
       : undefined
@@ -535,6 +547,8 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                                     Location: 'RU',
                                     GitHub: '',
                                     LinkedIn: '',
+                                    Hobby: '',
+                                    Relationship: '',
                                   }[form.watch('fieldType')]
                                 }
                                 type="text"
