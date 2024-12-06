@@ -408,6 +408,16 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             ref={ref}
             {...props}
           >
+            <img
+              src={`https://d1nyjrmwcoi38d.cloudfront.net/relationship/${(value?.toString() ?? 'default').toLowerCase()}.png`}
+              alt={value?.toString() ?? ''}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+
+            <WidgetIcon
+              Icon={HeartRounded}
+              strokeClassName="stroke-gray-900 group-hover:stroke-orange-500"
+            />
             {isEditable && onDeleteClick && (
               <WidgetDelete onDeleteClick={onDeleteClick} />
             )}
