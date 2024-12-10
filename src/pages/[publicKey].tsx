@@ -644,7 +644,7 @@ export default function IdentityPage() {
             {getSyncedItems().map(({ id, ...item }) => (
               <Widget
                 key={id}
-                size="tiny"
+                size={item.size}
                 type={item.type}
                 value={item.content}
                 isEditable={false}
@@ -657,7 +657,7 @@ export default function IdentityPage() {
             {getValidatedItems().map(({ id, ...item }) => (
               <Widget
                 key={id}
-                size="tiny"
+                size={item.size}
                 type={item.type}
                 value={item.content}
                 isEditable={false}
