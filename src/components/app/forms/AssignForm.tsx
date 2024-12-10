@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { useDebounce } from '@uidotdev/usehooks';
 
 import { useBadgeStore } from '../../../stores/gridStores';
 import { getIssueBadgeCost, issueBadge } from '../../../lib/apiClient';
@@ -45,6 +46,7 @@ const AssignForm: React.FC<AssignFormProps> = ({
   selectedForAssignment,
 }) => {
   const [transactionCost, setTransactionCost] = useState<bigint>(0n);
+  const debouncedTransactionCost = useDebounce(transactionCost, 1000);
 
   const updateTransactionCost = async (
     recipientAddress: string,
@@ -231,7 +233,7 @@ const AssignForm: React.FC<AssignFormProps> = ({
             </div>
             <div className="flex w-[512px] flex-col">
               <div className="text-5xl/[60px] font-medium -tracking-[0.96px] text-gray-500">
-                {`${transactionCost} IDN`}
+                {`${debouncedTransactionCost} IDN`}
               </div>
               {/* <div className="text-sm text-error-500">
                 Insufficient funds for{' '}

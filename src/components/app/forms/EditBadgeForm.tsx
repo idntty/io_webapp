@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { ReactSearchAutocomplete } from 'react-search-autocomplete';
 import { SearchMD } from 'untitledui-js';
+import { useDebounce } from '@uidotdev/usehooks';
 
 import { useBadgeStore } from '../../../stores/gridStores';
 import Button from '../../button/button';
@@ -64,6 +65,8 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
   refetch,
 }) => {
   const [transactionCost, setTransactionCost] = useState<bigint>(0n);
+  const debouncedTransactionCost = useDebounce(transactionCost, 1000);
+
   const [collections, setCollections] = useState<string[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -605,7 +608,7 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
             </div>
             <div className="flex w-[512px] flex-col">
               <div className="text-5xl/[60px] font-medium -tracking-[0.96px] text-gray-500">
-                {`${transactionCost} IDN`}
+                {`${debouncedTransactionCost} IDN`}
               </div>
               {/* <div className="text-sm text-error-500">
                 Insufficient funds for{' '}

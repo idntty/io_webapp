@@ -8,6 +8,7 @@ import { ReactSearchAutocomplete } from 'react-search-autocomplete';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { cryptography } from '@klayr/client/browser';
+import { useDebounce } from '@uidotdev/usehooks';
 
 import { cn, saveDataToServer, getUserIdentity } from '../../../lib/utils';
 import { setFeature, getSetFeatureCost } from '../../../lib/apiClient';
@@ -240,6 +241,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
   );
 
   const [transactionCost, setTransactionCost] = useState<bigint>(0n);
+  const debouncedTransactionCost = useDebounce(transactionCost, 1000);
 
   const form = useForm<EditItemFormSchemaType>({
     resolver: zodResolver(FormSchema),
@@ -685,7 +687,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                 </div>
                 <div className="flex w-[512px] flex-col">
                   <div className="text-5xl/[60px] font-medium -tracking-[0.96px] text-gray-500">
-                    {`${transactionCost} IDN`}
+                    {`${debouncedTransactionCost} IDN`}
                   </div>
                   {/* <div className="text-sm text-error-500">
                 Insufficient funds for{' '}
