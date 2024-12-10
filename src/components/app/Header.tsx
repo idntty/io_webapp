@@ -1,7 +1,7 @@
 import { ArrowUpRight, PencilLine } from 'untitledui-js';
 import * as React from 'react';
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 
 import { Avatar, AvatarImage, AvatarFallback } from '../avatar';
 import Badge from '../badge';
@@ -55,7 +55,7 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <header className="flex justify-between self-stretch px-[300px] py-[20px]">
       <button
-        onClick={() => router.push('/')}
+        onClick={() => void router.push('/')}
         className="border-none bg-transparent p-0"
       >
         <img
@@ -65,29 +65,31 @@ const Header: React.FC<HeaderProps> = ({
         />
       </button>
       <TabsList>{getTabs(tabsType)}</TabsList>
-      <div className="flex items-center justify-center gap-[10px] px-0 py-[2px]">
-        <button onClick={onToggleEditClick}>
-          <Badge variant="secondary" size="lg">
-            <PencilLine size="12" className="stroke-gray-500" />
-          </Badge>
-        </button>
-        <button onClick={onShareClick}>
-          <Badge variant="secondary" size="lg">
-            <ArrowUpRight size="12" className="stroke-gray-500" />
-          </Badge>
-        </button>
-        <button onClick={() => router.push('/profile')}>
-          <Badge variant="secondary" size="sm" className="p-0">
-            <Avatar>
-              <AvatarImage
-                src={publicKey ? generateSVGAvatar(publicKey) : ''}
-                className=""
-              />
-              <AvatarFallback>{''}</AvatarFallback>
-            </Avatar>
-          </Badge>
-        </button>
-      </div>
+      {router.pathname !== '/profile' && (
+        <div className="flex items-center justify-center gap-[10px] px-0 py-[2px]">
+          <button onClick={onToggleEditClick}>
+            <Badge variant="secondary" size="lg">
+              <PencilLine size="12" className="stroke-gray-500" />
+            </Badge>
+          </button>
+          <button onClick={onShareClick}>
+            <Badge variant="secondary" size="lg">
+              <ArrowUpRight size="12" className="stroke-gray-500" />
+            </Badge>
+          </button>
+          <button onClick={() => void router.push('/profile')}>
+            <Badge variant="secondary" size="sm" className="p-0">
+              <Avatar>
+                <AvatarImage
+                  src={publicKey ? generateSVGAvatar(publicKey) : ''}
+                  className=""
+                />
+                <AvatarFallback>{''}</AvatarFallback>
+              </Avatar>
+            </Badge>
+          </button>
+        </div>
+      )}
     </header>
   );
 };

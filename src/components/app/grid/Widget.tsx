@@ -399,6 +399,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
       case 'relationship': {
         const internalValue = {
           'Looking for Love': 'looking',
+          default: 'default',
         }[value?.toString() ?? 'default'];
         return (
           <div
@@ -412,7 +413,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             {...props}
           >
             <img
-              src={`https://d1nyjrmwcoi38d.cloudfront.net/relationship/${internalValue ?? 'default'}.png`}
+              src={`https://d1nyjrmwcoi38d.cloudfront.net/relationship/${internalValue}.png`}
               alt={value?.toString() ?? ''}
               className="absolute inset-0 h-full w-full object-cover"
             />
