@@ -41,6 +41,8 @@ const FormSchema = z
   })
   .superRefine((data, ctx) => {
     if (data.sharingType === 'Specific user') {
+      const publicKey = localStorage.getItem('publicKey');
+
       if (!data.recipient || data.recipient.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -53,6 +55,13 @@ const FormSchema = z
           code: z.ZodIssueCode.custom,
           path: ['message'],
           message: 'Please complete your bio.',
+        });
+      }
+      if (data.recipient === publicKey) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['recipient'],
+          message: 'You cannot share data with yourself.',
         });
       }
     }
