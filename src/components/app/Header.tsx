@@ -65,31 +65,34 @@ const Header: React.FC<HeaderProps> = ({
         />
       </button>
       <TabsList>{getTabs(tabsType)}</TabsList>
-      {router.pathname !== '/profile' && (
-        <div className="flex items-center justify-center gap-[10px] px-0 py-[2px]">
-          <button onClick={onToggleEditClick}>
-            <Badge variant="secondary" size="lg">
-              <PencilLine size="12" className="stroke-gray-500" />
-            </Badge>
-          </button>
-          <button onClick={onShareClick}>
-            <Badge variant="secondary" size="lg">
-              <ArrowUpRight size="12" className="stroke-gray-500" />
-            </Badge>
-          </button>
-          <button onClick={() => void router.push('/profile')}>
-            <Badge variant="secondary" size="sm" className="p-0">
-              <Avatar>
-                <AvatarImage
-                  src={publicKey ? generateSVGAvatar(publicKey) : ''}
-                  className=""
-                />
-                <AvatarFallback>{''}</AvatarFallback>
-              </Avatar>
-            </Badge>
-          </button>
-        </div>
-      )}
+
+      <div className="flex items-center justify-center gap-[10px] px-0 py-[2px]">
+        {router.pathname !== '/profile' && (
+          <>
+            <button onClick={onToggleEditClick}>
+              <Badge variant="secondary" size="lg">
+                <PencilLine size="12" className="stroke-gray-500" />
+              </Badge>
+            </button>
+            <button onClick={onShareClick}>
+              <Badge variant="secondary" size="lg">
+                <ArrowUpRight size="12" className="stroke-gray-500" />
+              </Badge>
+            </button>
+            <button onClick={() => void router.push('/profile')}>
+              <Badge variant="secondary" size="sm" className="p-0">
+                <Avatar>
+                  <AvatarImage
+                    src={publicKey ? generateSVGAvatar(publicKey) : ''}
+                    className=""
+                  />
+                  <AvatarFallback>{''}</AvatarFallback>
+                </Avatar>
+              </Badge>
+            </button>
+          </>
+        )}
+      </div>
     </header>
   );
 };
