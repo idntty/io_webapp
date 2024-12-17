@@ -3,6 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import { text, image, barcodes } from '@pdfme/schemas';
 import { generate } from '@pdfme/generator';
 import type { Font } from '@pdfme/common';
+import { cryptography } from '@klayr/client/browser';
 import { template } from '../lib/pdfTemplate';
 import axios, { AxiosResponse } from 'axios';
 import { v4 } from 'uuid';
@@ -106,7 +107,13 @@ export const sendLayoutToServer = async (
   }
   return axios.post(
     `${PROTOCOL}://${HOST}/layout/update`,
-    { publicKey, layout },
+    {
+      publicKey,
+      address: cryptography.address.getKlayr32AddressFromPublicKey(
+        Buffer.from(publicKey, 'hex'),
+      ),
+      layout,
+    },
     {
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -135,9 +142,9 @@ export const updateLayout = (
     });
 };
 
-export const getLayoutFromServer = async (publicKey: string) => {
+export const getLayoutFromServer = async (address: string) => {
   const layout: AxiosResponse<Record<string, Omit<GridItem, 'content'>>> =
-    await axios.get(`${PROTOCOL}://${HOST}/layout?publicKey=${publicKey}`, {
+    await axios.get(`${PROTOCOL}://${HOST}/layout?address=${address}`, {
       withCredentials: true,
     });
   return layout.data;
@@ -197,25 +204,29 @@ export const saveDataToServer = async (
 };
 
 export const getDataFromServer = async (
-  forPublicKey: string, // Public key of the user whose data is being fetched
+  forAddress: string, // Address of the user whose data is being fetched
   ownPublicKey?: string, // Public key of the user who is fetching the data
 ) => {
   console.log(
-    'Calling getDataFromServer with forPublicKey: ',
-    forPublicKey,
+    'Calling getDataFromServer with forAddress: ',
+    forAddress,
     ' ownPublicKey: ',
     ownPublicKey,
   );
   const publicData: AxiosResponse<DataEntry[]> = await axios.get(
     `${PROTOCOL}://${HOST}/data/public`,
     {
-      params: { publicKey: forPublicKey },
+      params: { address: forAddress },
     },
   );
 
   if (!ownPublicKey) {
     return { public: publicData.data };
   }
+
+  const ownAddress = cryptography.address.getKlayr32AddressFromPublicKey(
+    Buffer.from(ownPublicKey, 'hex'),
+  );
 
   const jwt = sessionStorage.getItem('jwt');
   if (!jwt) {
@@ -225,7 +236,11 @@ export const getDataFromServer = async (
   const sharedData: AxiosResponse<DataEntry[]> = await axios.get(
     `${PROTOCOL}://${HOST}/data/shared`,
     {
-      params: { publicKey: forPublicKey, forPublicKey: ownPublicKey },
+      params: {
+        address: forAddress,
+        forPublicKey: ownPublicKey,
+        publicKey: ownPublicKey,
+      },
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
@@ -233,14 +248,14 @@ export const getDataFromServer = async (
     },
   );
 
-  if (forPublicKey !== ownPublicKey) {
+  if (forAddress !== ownAddress) {
     return { public: publicData.data, shared: sharedData.data };
   }
 
   const privateData: AxiosResponse<DataEntry[]> = await axios.get(
     `${PROTOCOL}://${HOST}/data/private`,
     {
-      params: { publicKey: forPublicKey },
+      params: { publicKey: ownPublicKey },
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
@@ -255,11 +270,11 @@ export const getDataFromServer = async (
   };
 };
 
-export const getUserIdentity = async (publicKey: string) => {
+export const getUserIdentity = async (address: string) => {
   const response = await axios.get<{ isAuthority: boolean }>(
     `${PROTOCOL}://${HOST}/get-user-idntty`,
     {
-      params: { publicKey },
+      params: { address },
       withCredentials: true,
     },
   );

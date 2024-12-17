@@ -26,7 +26,7 @@ export const notificationColumns: ColumnDef<Notification>[] = [
             <AvatarImage src={generateSVGAvatar(publicKey)} />
             <AvatarFallback>{`${publicKey.slice(0, 1)}..${publicKey.slice(-1)}`}</AvatarFallback>
           </Avatar>
-          {`${publicKey.slice(0, 4)} **** **** ${publicKey.slice(-4)}`}
+          {`${publicKey.slice(0, 6)}****${publicKey.slice(-3)}`}
         </div>
       );
     },

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Shield01 } from 'untitledui-js';
 import { Buffer } from 'buffer';
+import { cryptography } from '@klayr/client/browser';
 
 import Header from '../../components/onboarding/Header';
 import Footer from '../../components/onboarding/Footer';
@@ -143,7 +144,10 @@ export default function CreateAccount() {
       // await sendMessageToServer(encryptedMessage, nonce, publicKey);
       console.log('Encrypted message: ', encryptedMessage);
 
-      router.push(`/${publicKey.toString('hex')}`);
+      const address =
+        cryptography.address.getKlayr32AddressFromPublicKey(publicKey);
+
+      router.push(`/${address}`);
     } catch (error) {
       console.error(error);
     }

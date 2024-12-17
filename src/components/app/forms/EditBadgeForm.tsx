@@ -7,6 +7,7 @@ import axios from 'axios';
 import { ReactSearchAutocomplete } from 'react-search-autocomplete';
 import { SearchMD } from 'untitledui-js';
 import { useDebounce } from '@uidotdev/usehooks';
+import { cryptography } from '@klayr/client/browser';
 
 import { useBadgeStore } from '../../../stores/gridStores';
 import Button from '../../button/button';
@@ -82,7 +83,9 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
           `https://${HOST}/get-collections`,
           {
             params: {
-              publicKey,
+              address: cryptography.address.getKlayr32AddressFromPublicKey(
+                Buffer.from(publicKey, 'hex'),
+              ),
             },
             withCredentials: true,
           },

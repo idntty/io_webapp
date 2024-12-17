@@ -55,7 +55,7 @@ export default function LoginWithPasskey() {
         sessionStorage,
       );
 
-      router.push(`/${publicKey.toString('hex')}`);
+      router.push(`/${walletAddress}`);
     } catch (error) {
       console.error(error);
     }
@@ -126,7 +126,7 @@ export default function LoginWithPasskey() {
       // setPrivateData(privateData);
       // console.log('privateData: ', privateData, '(empty for now)');
 
-      router.push(`/${publicKey.toString('hex')}`);
+      router.push(`/${walletAddress}`);
     } catch (error) {
       console.error(error);
     }

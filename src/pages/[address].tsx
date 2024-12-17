@@ -126,21 +126,19 @@ export default function IdentityPage() {
     string[],
     Error
   >({
-    queryKey: ['badgeIDs', router.query.publicKey],
-    queryFn: () => getBadgeIDsFromServer(router.query.publicKey as string),
+    queryKey: ['badgeIDs', router.query.address],
+    queryFn: () => getBadgeIDsFromServer(router.query.address as string),
     enabled: router.isReady,
   });
 
   const { data: accountState } = useQuery<AccountStoreData, Error>({
-    queryKey: ['accountState', router.query.publicKey],
+    queryKey: ['accountState', router.query.address],
     queryFn: async () => {
       const response = await axios.get<AccountStoreData>(
         `https://${HOST}/account`,
         {
           params: {
-            address: cryptography.address.getKlayr32AddressFromPublicKey(
-              Buffer.from(router.query.publicKey as string, 'hex'),
-            ),
+            address: router.query.address,
           },
           withCredentials: true,
         },
@@ -160,13 +158,13 @@ export default function IdentityPage() {
   }
   const { data: sharedNotifications } = useQuery<NotificationResponse[], Error>(
     {
-      queryKey: ['sharedNotifications', router.query.publicKey],
+      queryKey: ['sharedNotifications', router.query.address],
       queryFn: async () => {
         const response = await axios.get<NotificationResponse[]>(
           `https://${HOST}/get-notifications`,
           {
             params: {
-              publicKey: router.query.publicKey,
+              address: router.query.address,
             },
             withCredentials: true,
           },
@@ -298,7 +296,7 @@ export default function IdentityPage() {
     const sessionStoragePrivateKey = sessionStorage.getItem('privateKey');
     console.log('localStoragePublicKey:', localStoragePublicKey);
     console.log('sessionStoragePrivateKey:', sessionStoragePrivateKey);
-    console.log('routePublicKey:', router.query.publicKey);
+    console.log('address:', router.query.address);
 
     let userStatus: 'anon' | 'owner' | 'guest' = 'anon';
     let isLoggedIn = false; // FIXME
@@ -306,7 +304,11 @@ export default function IdentityPage() {
       userStatus = 'anon';
       isLoggedIn = false;
       console.log('anon, not logged in');
-    } else if (localStoragePublicKey === router.query.publicKey) {
+    } else if (
+      cryptography.address.getKlayr32AddressFromPublicKey(
+        Buffer.from(localStoragePublicKey, 'hex'),
+      ) === router.query.address
+    ) {
       userStatus = 'owner';
       isLoggedIn = sessionStoragePrivateKey !== null;
       console.log(isLoggedIn ? 'owner, logged in' : 'owner, not logged in');
@@ -347,7 +349,7 @@ export default function IdentityPage() {
     const createGrid = async () => {
       try {
         const layout = await getLayoutFromServer(
-          router.query.publicKey as string,
+          router.query.address as string,
         );
         console.log('Fetched layout:', layout);
 
@@ -357,7 +359,7 @@ export default function IdentityPage() {
         }
 
         const data = await getDataFromServer(
-          router.query.publicKey as string,
+          router.query.address as string,
           localStoragePublicKey ?? undefined,
         );
         console.log('Fetched data:', data);
@@ -381,7 +383,7 @@ export default function IdentityPage() {
         setIsLoggedIn(isLoggedIn);
       }
       const userIdentity = await getUserIdentity(
-        router.query.publicKey as string,
+        router.query.address as string,
       );
       setIdentity(userIdentity.isAuthority ? 'authority' : 'personal');
       await createGrid();
@@ -401,7 +403,12 @@ export default function IdentityPage() {
 
     if (!areGridsEditable && dataFetched) {
       const localStoragePublicKey = localStorage.getItem('publicKey');
-      if (localStoragePublicKey === router.query.publicKey) {
+      if (
+        localStoragePublicKey &&
+        cryptography.address.getKlayr32AddressFromPublicKey(
+          Buffer.from(localStoragePublicKey, 'hex'),
+        ) === router.query.address
+      ) {
         updateLayout(grid, localStoragePublicKey);
       }
     }
@@ -449,7 +456,7 @@ export default function IdentityPage() {
           `https://${HOST}/get-collections`,
           {
             params: {
-              publicKey: router.query.publicKey,
+              address: router.query.address,
             },
             withCredentials: true,
           },

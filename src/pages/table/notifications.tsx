@@ -6,6 +6,7 @@ import * as React from 'react';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { DateRange } from 'react-day-picker';
+import { cryptography } from '@klayr/client/browser';
 
 import { NotificationTable } from '../../components/table/notification/NotificationTable';
 import {
@@ -39,9 +40,11 @@ export default function Table() {
       startDate?: number;
       endDate?: number;
       amount?: number;
-      forPublicKey: string;
+      forAddress: string;
     } = {
-      forPublicKey: publicKey,
+      forAddress: cryptography.address.getKlayr32AddressFromPublicKey(
+        Buffer.from(publicKey, 'hex'),
+      ),
     };
 
     if (!startDate) {

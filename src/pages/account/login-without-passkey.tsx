@@ -68,7 +68,7 @@ export default function LoginWithoutPasskey() {
         }
         await saveMnemonic(passphrase.split(' '), webAuthnPublicKey);
       }
-      router.push(`/${publicKey.toString('hex')}`);
+      router.push(`/${walletAddress}`);
     } catch (error) {
       console.error(error);
     }

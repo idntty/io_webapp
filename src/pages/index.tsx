@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { cryptography } from '@klayr/client/browser';
 
 export default function RootPage() {
   const router = useRouter();
@@ -17,7 +18,10 @@ export default function RootPage() {
     if (!localStoragePublicKey) {
       void router.push('/account/type');
     } else {
-      void router.push(`/${localStoragePublicKey}`);
+      const address = cryptography.address.getKlayr32AddressFromPublicKey(
+        Buffer.from(localStoragePublicKey, 'hex'),
+      );
+      void router.push(`/${address}`);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
