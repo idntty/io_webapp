@@ -3,6 +3,7 @@
 import { RefreshCW02, Copy01, Edit05, AlertTriangle } from 'untitledui-js';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
+import { cryptography } from '@klayr/client/browser';
 
 import Header from '../../components/onboarding/Header';
 import TextAndSupportingText from '../../components/onboarding/TextAndSupportingText';
@@ -259,7 +260,9 @@ export default function Passphrase() {
       <div className="hidden shrink-0 grow basis-0 flex-col items-center gap-[50px] self-stretch bg-gray-50 pb-[188px] pl-[69px] pr-[61px] pt-[187px] md:flex">
         {publicKey && (
           <img
-            src={generateSVGAvatar(publicKey.toString('hex'))}
+            src={generateSVGAvatar(
+              cryptography.address.getKlayr32AddressFromPublicKey(publicKey),
+            )}
             alt="Avatar"
           />
         )}

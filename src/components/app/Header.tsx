@@ -2,6 +2,7 @@ import { ArrowUpRight, PencilLine } from 'untitledui-js';
 import * as React from 'react';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { cryptography } from '@klayr/client/browser';
 
 import { Avatar, AvatarImage, AvatarFallback } from '../avatar';
 import Badge from '../badge';
@@ -83,7 +84,15 @@ const Header: React.FC<HeaderProps> = ({
               <Badge variant="secondary" size="sm" className="p-0">
                 <Avatar>
                   <AvatarImage
-                    src={publicKey ? generateSVGAvatar(publicKey) : ''}
+                    src={
+                      publicKey
+                        ? generateSVGAvatar(
+                            cryptography.address.getKlayr32AddressFromPublicKey(
+                              Buffer.from(publicKey, 'hex'),
+                            ),
+                          )
+                        : ''
+                    }
                     className=""
                   />
                   <AvatarFallback>{''}</AvatarFallback>

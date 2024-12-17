@@ -1,3 +1,5 @@
+import { sha256 } from 'js-sha256';
+
 interface BlobOptions {
   numPoints: number;
   centerX: number;
@@ -44,10 +46,12 @@ function createBlob(options: BlobOptions): string {
   return path + 'z';
 }
 
-export function generateSVGAvatar(pubKey: string, raw = false): string {
+export function generateSVGAvatar(address: string, raw = false) {
   const particles: string[] = [];
   const gradients: string[] = ['#000000'];
   const defs: string[] = [];
+
+  const addressHash = sha256(address);
 
   for (let a = 0; a < 64; a += 8) {
     const blob = createBlob({
@@ -55,12 +59,12 @@ export function generateSVGAvatar(pubKey: string, raw = false): string {
       centerX: 256,
       centerY: 256 - a * 4,
       radius: 16,
-      subkey: pubKey.substring(a, a + 8),
+      subkey: addressHash.substring(a, a + 8),
     });
 
-    const color = '#' + pubKey.substring(a + 2, a + 8);
-    const width = Number('0x' + pubKey.substring(a, a + 1));
-    const opacity = Number('0x' + pubKey.substring(a + 1, a + 2)) / 8;
+    const color = '#' + addressHash.substring(a + 2, a + 8);
+    const width = Number('0x' + addressHash.substring(a, a + 1));
+    const opacity = Number('0x' + addressHash.substring(a + 1, a + 2)) / 8;
 
     gradients.push(color);
     defs.push(
@@ -72,10 +76,10 @@ export function generateSVGAvatar(pubKey: string, raw = false): string {
   }
 
   let ph = '';
-  const off = 4 + Number('0x' + pubKey.substring(0, 1));
+  const off = 4 + Number('0x' + addressHash.substring(0, 1));
   let rotate = 0;
   for (let i = 0; i < off; i++) {
-    ph += `<use xlink:href="#pattern-${pubKey}" mask="url(#mask)" class="segment" style="transform-origin:center center;transform: scaleY(1) rotate(${rotate}deg)"></use>\n`;
+    ph += `<use xlink:href="#pattern-${addressHash}" mask="url(#mask)" class="segment" style="transform-origin:center center;transform: scaleY(1) rotate(${rotate}deg)"></use>\n`;
     rotate += 360 / off;
   }
 
@@ -88,10 +92,10 @@ export function generateSVGAvatar(pubKey: string, raw = false): string {
     '</radialGradient>',
     defs.join('\n'),
     '</defs>',
-    `<symbol id="pattern-${pubKey}">`,
+    `<symbol id="pattern-${addressHash}">`,
     particles.join(''),
     '</symbol>',
-    `<g style="transform-origin:center center; transform: rotate(${pubKey}deg)">`,
+    `<g style="transform-origin:center center; transform: rotate(${addressHash}deg)">`,
     ph,
     '</g>',
     '</svg>',
