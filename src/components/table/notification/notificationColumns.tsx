@@ -1,7 +1,6 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { cryptography } from '@klayr/client/browser';
 
 import { Avatar, AvatarImage, AvatarFallback } from '../../avatar';
 import Badge from '../../badge';
@@ -19,18 +18,15 @@ export const notificationColumns: ColumnDef<Notification>[] = [
     header: 'User',
     cell: ({ row }) => {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-      const publicKey = row.getValue('user') as string;
-      const address = cryptography.address.getKlayr32AddressFromPublicKey(
-        Buffer.from(publicKey, 'hex'),
-      );
+      const address = row.getValue('user') as string;
 
       return (
         <div className="flex items-center gap-[12px]">
           <Avatar>
             <AvatarImage src={generateSVGAvatar(address)} />
-            <AvatarFallback>{`${publicKey.slice(0, 1)}..${publicKey.slice(-1)}`}</AvatarFallback>
+            <AvatarFallback>{`${address.slice(0, 1)}..${address.slice(-1)}`}</AvatarFallback>
           </Avatar>
-          {`${publicKey.slice(0, 6)}****${publicKey.slice(-3)}`}
+          {`${address.slice(0, 6)}****${address.slice(-3)}`}
         </div>
       );
     },
