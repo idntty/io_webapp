@@ -67,13 +67,13 @@ export default function CreateAccount() {
 
     const data = await Promise.all(
       Object.entries(grid).map(async ([uuid, item]) => {
-        const { encryptedMessage, nonce } = await encryptGridItemContent(
+        const encryptedMessage = await encryptGridItemContent(
           item.content.toString(),
         );
         return {
           uuid,
           value: Buffer.from(encryptedMessage).toString('hex'),
-          nonce: Buffer.from(nonce).toString('hex'),
+          nonce: '',
         };
       }),
     );
@@ -123,9 +123,9 @@ export default function CreateAccount() {
       await handleSendData();
       updateLayout(grid, publicKey.toString('hex'));
 
-      const { convertedPrivateKey } = await convertKeys(publicKey, privateKey);
-      const { encryptedMessage, nonce } = await encryptMessage(
-        convertedPrivateKey,
+      const { convertedPublicKey } = await convertKeys(publicKey, privateKey);
+      const encryptedMessage = await encryptMessage(
+        convertedPublicKey,
         btoa(JSON.stringify(privateData)),
       );
 
@@ -142,7 +142,6 @@ export default function CreateAccount() {
       // FIXME: Do smth with the data, used to post to /message/send
       // await sendMessageToServer(encryptedMessage, nonce, publicKey);
       console.log('Encrypted message: ', encryptedMessage);
-      console.log('Nonce: ', nonce);
 
       router.push(`/${publicKey.toString('hex')}`);
     } catch (error) {

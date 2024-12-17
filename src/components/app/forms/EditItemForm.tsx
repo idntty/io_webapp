@@ -62,12 +62,12 @@ const handleSendData = async (
     ]);
   }
 
-  const { encryptedMessage, nonce } = await encryptGridItemContent(content);
+  const encryptedMessage = await encryptGridItemContent(content);
   const data = [
     {
       uuid,
       value: Buffer.from(encryptedMessage).toString('hex'),
-      nonce: Buffer.from(nonce).toString('hex'),
+      nonce: '',
     },
   ];
   console.log('Saving data to server:', data);
@@ -288,12 +288,12 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
   };
 
   const updateTransactionCost = async (uuid: string, content: string) => {
-    const { encryptedMessage, nonce } = await encryptGridItemContent(content);
+    const encryptedMessage = await encryptGridItemContent(content);
     const data = [
       {
         uuid,
         value: Buffer.from(encryptedMessage).toString('hex'),
-        nonce: Buffer.from(nonce).toString('hex'),
+        nonce: '',
       },
     ];
     const publicKey = localStorage.getItem('publicKey');

@@ -117,15 +117,14 @@ const ShareForm: React.FC<ShareFormProps> = ({
     if (sharedWith) {
       const encryptedData = await Promise.all(
         selectedForSharing.map(async (id) => {
-          const { encryptedMessage: value, nonce } =
-            await encryptGridItemContent(
-              grid[id].content.toString(),
-              sharedWith,
-            );
+          const value = await encryptGridItemContent(
+            grid[id].content.toString(),
+            sharedWith,
+          );
           return {
             uuid: id,
             value: Buffer.from(value).toString('hex'),
-            nonce: Buffer.from(nonce).toString('hex'),
+            nonce: '',
           };
         }),
       );

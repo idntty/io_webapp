@@ -364,7 +364,6 @@ export default function IdentityPage() {
         const { grid, upperGridLayout } = await createGridFromLayoutAndData(
           layout,
           data,
-          router.query.publicKey as string,
         );
         updateGrid(grid);
         updateUpperGridLayout(upperGridLayout);

@@ -130,70 +130,30 @@ export const convertPrivateKey = async (privateKey: Buffer) => {
 };
 
 export const encryptMessage = async (
-  convertedPrivateKey: Uint8Array,
-  messageToEncrypt: string,
-) => {
-  await _sodium.ready;
-  const sodium = _sodium;
-
-  const nonce = sodium.randombytes_buf(sodium.crypto_secretbox_NONCEBYTES);
-  const encryptedMessage = sodium.crypto_secretbox_easy(
-    Buffer.from(messageToEncrypt),
-    nonce,
-    convertedPrivateKey,
-  );
-  return { encryptedMessage, nonce };
-};
-
-export const decryptMessage = async (
-  encryptedMessage: Buffer,
-  nonce: Buffer,
-  convertedPrivateKey: Buffer,
-) => {
-  await _sodium.ready;
-  const sodium = _sodium;
-
-  const message = sodium.crypto_secretbox_open_easy(
-    encryptedMessage,
-    nonce,
-    convertedPrivateKey,
-  );
-
-  return Buffer.from(message).toString('utf-8');
-};
-
-const encryptSharedMessage = async (
-  convertedPrivateKey: Uint8Array,
   convertedRecepientPublicKey: Uint8Array,
   messageToEncrypt: string,
 ) => {
   await _sodium.ready;
   const sodium = _sodium;
 
-  const nonce = sodium.randombytes_buf(sodium.crypto_box_NONCEBYTES);
-  const encryptedMessage = sodium.crypto_box_easy(
+  const encryptedMessage = sodium.crypto_box_seal(
     Buffer.from(messageToEncrypt),
-    nonce,
     convertedRecepientPublicKey,
-    convertedPrivateKey,
   );
-
-  return { encryptedMessage, nonce };
+  return encryptedMessage;
 };
 
-const decryptSharedMessage = async (
+export const decryptMessage = async (
   encryptedMessage: Buffer,
-  nonce: Buffer,
   convertedPrivateKey: Buffer,
-  convertedSenderPublicKey: Buffer,
+  convertedPublicKey: Buffer,
 ) => {
   await _sodium.ready;
   const sodium = _sodium;
 
-  const message = sodium.crypto_box_open_easy(
+  const message = sodium.crypto_box_seal_open(
     encryptedMessage,
-    nonce,
-    convertedSenderPublicKey,
+    convertedPublicKey,
     convertedPrivateKey,
   );
 
@@ -212,7 +172,7 @@ export const encryptGridItemContent = async (
   if (!privateKey) {
     throw new Error('Private key was not found');
   }
-  const { convertedPrivateKey } = await convertKeys(
+  const { convertedPublicKey } = await convertKeys(
     Buffer.from(publicKey, 'hex'),
     Buffer.from(privateKey, 'hex'),
   );
@@ -221,27 +181,19 @@ export const encryptGridItemContent = async (
     const recepientPublicKey = Buffer.from(sharedWith, 'hex');
     const { convertedPublicKey: convertedRecepientPublicKey } =
       await convertPublicKey(recepientPublicKey);
-    const { encryptedMessage, nonce } = await encryptSharedMessage(
-      convertedPrivateKey,
+    const encryptedMessage = await encryptMessage(
       convertedRecepientPublicKey,
       content,
     );
-    return { encryptedMessage, nonce };
+    return encryptedMessage;
   }
 
-  const { encryptedMessage, nonce } = await encryptMessage(
-    convertedPrivateKey,
-    content,
-  );
+  const encryptedMessage = await encryptMessage(convertedPublicKey, content);
 
-  return { encryptedMessage, nonce };
+  return encryptedMessage;
 };
 
-export const decryptGridItemContent = async (
-  encryptedMessage: Buffer,
-  nonce: Buffer,
-  sharedBy?: string,
-) => {
+export const decryptGridItemContent = async (encryptedMessage: Buffer) => {
   const publicKey = localStorage.getItem('publicKey');
   const privateKey = sessionStorage.getItem('privateKey');
   if (!publicKey) {
@@ -250,24 +202,16 @@ export const decryptGridItemContent = async (
   if (!privateKey) {
     throw new Error('Private key was not found');
   }
-  const { convertedPrivateKey } = await convertKeys(
+  const { convertedPublicKey, convertedPrivateKey } = await convertKeys(
     Buffer.from(publicKey, 'hex'),
     Buffer.from(privateKey, 'hex'),
   );
 
-  if (sharedBy) {
-    const senderPublicKey = Buffer.from(sharedBy, 'hex');
-    const { convertedPublicKey: convertedSenderPublicKey } =
-      await convertPublicKey(senderPublicKey);
-    return decryptSharedMessage(
-      encryptedMessage,
-      nonce,
-      convertedPrivateKey,
-      convertedSenderPublicKey,
-    );
-  }
-
-  return decryptMessage(encryptedMessage, nonce, convertedPrivateKey);
+  return decryptMessage(
+    encryptedMessage,
+    convertedPrivateKey,
+    convertedPublicKey,
+  );
 };
 
 export async function _createJWT(

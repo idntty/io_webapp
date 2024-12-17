@@ -273,7 +273,6 @@ export const createGridFromLayoutAndData = async (
     shared?: DataEntry[];
     private?: DataEntry[];
   },
-  pageOwnerPublicKey: string,
 ) => {
   console.log('createGridFromLayoutAndData called with layout: ', layout);
   console.log('createGridFromLayoutAndData called with data: ', data);
@@ -287,7 +286,6 @@ export const createGridFromLayoutAndData = async (
       try {
         const decrypted = await decryptGridItemContent(
           Buffer.from(entry.value, 'hex'),
-          Buffer.from(entry.nonce, 'hex'),
         );
         privateData[entry.uuid] = decrypted;
       } catch (e) {
@@ -304,8 +302,6 @@ export const createGridFromLayoutAndData = async (
       try {
         const decrypted = await decryptGridItemContent(
           Buffer.from(entry.value, 'hex'),
-          Buffer.from(entry.nonce, 'hex'),
-          pageOwnerPublicKey,
         );
         sharedData[entry.uuid] = decrypted;
       } catch (e) {
