@@ -46,7 +46,11 @@ const handleSendData = async (
     throw new Error('Private key not found');
   }
 
-  const userIdentity = await getUserIdentity(publicKey);
+  const userIdentity = await getUserIdentity(
+    cryptography.address.getKlayr32AddressFromPublicKey(
+      Buffer.from(publicKey, 'hex'),
+    ),
+  );
   if (userIdentity.isAuthority || isBadge) {
     const data = [
       {
