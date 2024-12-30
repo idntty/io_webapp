@@ -32,7 +32,7 @@ export const transactionColumns: ColumnDef<Transaction>[] = [
             <AvatarImage src={generateSVGAvatar(address)} />
             <AvatarFallback>{`${publicKey.slice(0, 1)}..${publicKey.slice(-1)}`}</AvatarFallback>
           </Avatar>
-          {`${publicKey.slice(0, 4)} **** **** ${publicKey.slice(-4)}`}
+          {`${publicKey.slice(0, 4)} **** ${publicKey.slice(-4)}`}
         </div>
       );
     },
