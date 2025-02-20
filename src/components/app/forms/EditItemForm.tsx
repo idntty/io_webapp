@@ -9,6 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { cryptography } from '@klayr/client/browser';
 import { useDebounce } from '@uidotdev/usehooks';
+import dynamic from 'next/dynamic';
 
 import { cn, saveDataToServer, getUserIdentity } from '../../../lib/utils';
 import { setFeature, getSetFeatureCost } from '../../../lib/apiClient';
@@ -31,6 +32,10 @@ import Input from '../../input';
 import TextArea from '../../textarea';
 import Divider from '../../divider';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../tabs';
+
+const SearchBox = dynamic(() => import('../../mapbox-searchbox'), {
+  ssr: false,
+});
 
 const handleSendData = async (
   uuid: string,
@@ -246,6 +251,8 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
 
   const [transactionCost, setTransactionCost] = useState<bigint>(0n);
   const debouncedTransactionCost = useDebounce(transactionCost, 1000);
+
+  const [mapboxSearchValue, setMapboxSearchValue] = useState('');
 
   const form = useForm<EditItemFormSchemaType>({
     resolver: zodResolver(FormSchema),
@@ -541,33 +548,52 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                                 }}
                               />
                             ) : field.name === 'textValue' ? (
-                              // @ts-expect-error - TS doesn't know that field.name is 'textValue'
-                              <Input
-                                className="self-stretch"
-                                placeholder={
-                                  {
-                                    Name: 'John Doe',
-                                    Phone: '+12223334444',
-                                    Email: 'johndoe@gmail.com',
-                                    Citizenship: 'RU',
-                                    Location: 'RU',
-                                    GitHub: '',
-                                    LinkedIn: '',
-                                    Hobby: '',
-                                    Relationship: '',
-                                  }[form.watch('fieldType')]
-                                }
-                                type="text"
-                                Icon={TextInput}
-                                {...field}
-                                onChange={(e) => {
-                                  updateTransactionCost(
-                                    editedItemID,
-                                    field.value?.toString() ?? '',
-                                  ).catch(console.error);
-                                  field.onChange(e);
-                                }}
-                              />
+                              form.watch('fieldType') === 'Location' ? (
+                                <SearchBox
+                                  value={mapboxSearchValue}
+                                  onChange={setMapboxSearchValue}
+                                  accessToken="pk.eyJ1IjoiYWxleGFqYXgiLCJhIjoiY2xpNWRkZThmMXR1dzNwbXYxZjl0Y211OCJ9.NTosCJOTjWY3mjFtW1OaGw"
+                                  onRetrieve={(res) => {
+                                    const coordinates =
+                                      res.features[0].geometry.coordinates.join(
+                                        ',',
+                                      );
+                                    field.onChange(coordinates);
+                                    updateTransactionCost(
+                                      editedItemID,
+                                      coordinates,
+                                    ).catch(console.error);
+                                  }}
+                                />
+                              ) : (
+                                // @ts-expect-error - TS doesn't know that field.name is 'textValue'
+                                <Input
+                                  className="self-stretch"
+                                  placeholder={
+                                    {
+                                      Name: 'John Doe',
+                                      Phone: '+12223334444',
+                                      Email: 'johndoe@gmail.com',
+                                      Citizenship: 'RU',
+                                      Location: 'RU',
+                                      GitHub: '',
+                                      LinkedIn: '',
+                                      Hobby: '',
+                                      Relationship: '',
+                                    }[form.watch('fieldType')]
+                                  }
+                                  type="text"
+                                  Icon={TextInput}
+                                  {...field}
+                                  onChange={(e) => {
+                                    updateTransactionCost(
+                                      editedItemID,
+                                      field.value?.toString() ?? '',
+                                    ).catch(console.error);
+                                    field.onChange(e);
+                                  }}
+                                />
+                              )
                             ) : null
                           }
                         </FormControl>

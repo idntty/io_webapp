@@ -64,8 +64,8 @@ const widgetVariants = cva(
       },
       size: {
         tiny: 'w-[180px] h-[180px]',
-        long: 'w-[180px] h-[400px]',
-        tall: 'w-[400px] h-[180px]',
+        long: 'w-[400px] h-[180px]',
+        tall: 'w-[180px] h-[400px]',
         large: 'w-[400px] h-[400px]',
       },
     },
@@ -279,9 +279,9 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
           size === 'tiny'
             ? '180x180'
             : size === 'long'
-              ? '180x400'
+              ? '400x180'
               : size === 'tall'
-                ? '400x180'
+                ? '180x400'
                 : '400x400';
         return (
           <div
