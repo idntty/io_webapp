@@ -101,6 +101,11 @@ const FIELDS = {
   },
   Phone: { schemaName: 'textValue', htmlType: 'tel', widgetType: 'phone' },
   Email: { schemaName: 'textValue', htmlType: 'email', widgetType: 'email' },
+  WhatsApp: {
+    schemaName: 'textValue',
+    htmlType: 'tel',
+    widgetType: 'whatsapp',
+  },
   Citizenship: {
     schemaName: 'textValue',
     htmlType: 'text',
@@ -169,6 +174,7 @@ const getDefaultValues = (editedGridItem: GridItem) => {
       'Name',
       'Phone',
       'Email',
+      'WhatsApp',
       'Citizenship',
       'Location',
       'GitHub',
@@ -585,6 +591,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                                       Name: 'John Doe',
                                       Phone: '+12223334444',
                                       Email: 'johndoe@gmail.com',
+                                      WhatsApp: '+12223334444',
                                       Citizenship: 'RU',
                                       Location: 'RU',
                                       GitHub: '',

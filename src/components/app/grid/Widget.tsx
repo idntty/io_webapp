@@ -60,6 +60,7 @@ const widgetVariants = cva(
         hobby: 'border border-brand-200 hover:border-orange-500',
         relationship: 'border border-brand-200 hover:border-orange-500',
         website: 'border border-brand-200 hover:border-orange-500',
+        whatsapp: 'border border-brand-200 hover:border-orange-500',
         badge: 'hover:border hover:border-orange-500 overflow-hidden',
         other: 'border border-brand-200 hover:border-orange-500',
         new: 'border-[5px] border-orange-500',
@@ -548,6 +549,39 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             )}
           </div>
         );
+      case 'whatsapp': {
+        const phone = (value?.toString() ?? '').replace('+', '');
+        const whatsappUrl = `https://wa.me/${phone}`;
+        return (
+          <div
+            className={cn(
+              widgetVariants({ type, size, state }),
+              isEditable && 'select-none',
+              className,
+            )}
+            ref={ref}
+            {...props}
+          >
+            {isEditable && onDeleteClick && (
+              <WidgetDelete onDeleteClick={onDeleteClick} />
+            )}
+            <div className="text-center text-3xl/[38px] font-bold -tracking-[0.2px] text-gray-900">
+              <SocialIcon
+                url={whatsappUrl}
+                network="whatsapp"
+                style={{
+                  height: size !== 'tiny' && size !== 'tall' ? 48 : 24,
+                  width: size !== 'tiny' && size !== 'tall' ? 48 : 24,
+                }}
+                target="_blank"
+              />
+            </div>
+            {isEditable && onEditClick && (
+              <WidgetEdit onEditClick={onEditClick} />
+            )}
+          </div>
+        );
+      }
     }
   },
 );
