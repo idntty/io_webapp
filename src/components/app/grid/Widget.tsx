@@ -570,8 +570,8 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
                 url={whatsappUrl}
                 network="whatsapp"
                 style={{
-                  height: size !== 'tiny' && size !== 'tall' ? 48 : 24,
-                  width: size !== 'tiny' && size !== 'tall' ? 48 : 24,
+                  height: size !== 'tiny' && size !== 'tall' ? 64 : 48,
+                  width: size !== 'tiny' && size !== 'tall' ? 64 : 48,
                 }}
                 target="_blank"
               />
