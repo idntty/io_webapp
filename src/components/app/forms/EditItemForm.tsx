@@ -252,7 +252,12 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
   const [transactionCost, setTransactionCost] = useState<bigint>(0n);
   const debouncedTransactionCost = useDebounce(transactionCost, 1000);
 
-  const [mapboxSearchValue, setMapboxSearchValue] = useState('');
+  const [mapboxSearchValue, setMapboxSearchValue] = useState(() => {
+    const defaultValues = getDefaultValues(grid[editedItemID]);
+    return defaultValues.fieldType === 'Location' && defaultValues.textValue
+      ? '(Previously selected location)'
+      : '';
+  });
 
   const form = useForm<EditItemFormSchemaType>({
     resolver: zodResolver(FormSchema),
