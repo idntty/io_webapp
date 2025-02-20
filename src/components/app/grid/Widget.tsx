@@ -7,6 +7,7 @@ import {
   Flag01,
   Phone,
   Mail01,
+  Link01,
 } from 'untitledui-js';
 import lookup from 'country-code-lookup';
 import Link from 'next/link';
@@ -58,6 +59,7 @@ const widgetVariants = cva(
         linkedin: 'border border-brand-200 hover:border-orange-500',
         hobby: 'border border-brand-200 hover:border-orange-500',
         relationship: 'border border-brand-200 hover:border-orange-500',
+        website: 'border border-brand-200 hover:border-orange-500',
         badge: 'hover:border hover:border-orange-500',
         other: 'border border-brand-200 hover:border-orange-500',
         new: 'border-[5px] border-orange-500',
@@ -155,6 +157,41 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             )}
           </div>
         );
+      case 'website': {
+        const url = value?.toString() ?? '';
+        const displayUrl = url.replace(/^https?:\/\/(www\.)?/, '');
+        return (
+          <div
+            className={cn(
+              widgetVariants({ type, size, state }),
+              isEditable && 'select-none',
+              className,
+            )}
+            ref={ref}
+            {...props}
+          >
+            <WidgetIcon
+              Icon={Link01}
+              strokeClassName="stroke-gray-900 group-hover:stroke-orange-500"
+            />
+            {isEditable && onDeleteClick && (
+              <WidgetDelete onDeleteClick={onDeleteClick} />
+            )}
+            <div className="text-center text-3xl/[38px] font-bold -tracking-[0.2px] text-gray-900">
+              <Link
+                href={url.startsWith('http') ? url : `https://${url}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {size !== 'tiny' && size !== 'tall' ? displayUrl : '🔗'}
+              </Link>
+            </div>
+            {isEditable && onEditClick && (
+              <WidgetEdit onEditClick={onEditClick} />
+            )}
+          </div>
+        );
+      }
       case 'phone':
       case 'email':
         return (

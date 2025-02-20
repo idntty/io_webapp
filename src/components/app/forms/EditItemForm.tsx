@@ -121,6 +121,11 @@ const FIELDS = {
     htmlType: 'text',
     widgetType: 'linkedin',
   },
+  Website: {
+    schemaName: 'textValue',
+    htmlType: 'url',
+    widgetType: 'website',
+  },
   Hobby: {
     schemaName: 'textValue',
     htmlType: 'text',
@@ -168,6 +173,7 @@ const getDefaultValues = (editedGridItem: GridItem) => {
       'Location',
       'GitHub',
       'LinkedIn',
+      'Website',
       'Hobby',
       'Relationship',
     ].includes(fieldType ?? '')
@@ -583,6 +589,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                                       Location: 'RU',
                                       GitHub: '',
                                       LinkedIn: '',
+                                      Website: 'example.com',
                                       Hobby: '',
                                       Relationship: '',
                                     }[form.watch('fieldType')]

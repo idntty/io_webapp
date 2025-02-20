@@ -21,6 +21,7 @@ export type GridItemType =
   | 'hobby'
   | 'relationship'
   | 'badge'
+  | 'website'
   | 'other'
   | 'new';
 export interface GridItem {
