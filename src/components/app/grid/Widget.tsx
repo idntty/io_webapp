@@ -60,7 +60,7 @@ const widgetVariants = cva(
         hobby: 'border border-brand-200 hover:border-orange-500',
         relationship: 'border border-brand-200 hover:border-orange-500',
         website: 'border border-brand-200 hover:border-orange-500',
-        badge: 'hover:border hover:border-orange-500',
+        badge: 'hover:border hover:border-orange-500 overflow-hidden',
         other: 'border border-brand-200 hover:border-orange-500',
         new: 'border-[5px] border-orange-500',
       },
