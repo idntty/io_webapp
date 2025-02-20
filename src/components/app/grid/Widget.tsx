@@ -246,7 +246,6 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
           </div>
         );
       case 'citizenship':
-      case 'location':
         return (
           <div
             className={cn(
@@ -275,6 +274,43 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             )}
           </div>
         );
+      case 'location': {
+        const sizeParam =
+          size === 'tiny'
+            ? '180x180'
+            : size === 'long'
+              ? '180x400'
+              : size === 'tall'
+                ? '400x180'
+                : '400x400';
+        return (
+          <div
+            className={cn(
+              widgetVariants({ type, size, state }),
+              className,
+              'overflow-hidden',
+            )}
+            ref={ref}
+            {...props}
+          >
+            <WidgetIcon
+              Icon={Flag01}
+              strokeClassName="stroke-gray-900 group-hover:stroke-orange-500"
+            />
+            {isEditable && onDeleteClick && (
+              <WidgetDelete onDeleteClick={onDeleteClick} />
+            )}
+            <img
+              src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/${value?.toString()},10,0,50/${sizeParam}@2x?access_token=pk.eyJ1IjoiYWxleGFqYXgiLCJhIjoiY2xpNWRkZThmMXR1dzNwbXYxZjl0Y211OCJ9.NTosCJOTjWY3mjFtW1OaGw`}
+              alt="Map"
+              className="object-cover"
+            />
+            {isEditable && onEditClick && (
+              <WidgetEdit onEditClick={onEditClick} />
+            )}
+          </div>
+        );
+      }
       case 'github': {
         const username = value?.toString() ?? '';
         return (

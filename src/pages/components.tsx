@@ -3,7 +3,11 @@
 // import { useEffect } from 'react';
 import { Mail01, User01, BriefCase01 } from 'untitledui-js';
 import GitHubCalendar, { type Activity } from 'react-github-calendar';
-import Script from 'next/script';
+import { useState } from 'react';
+import dynamic from 'next/dynamic';
+const SearchBox = dynamic(() => import('../components/mapbox-searchbox'), {
+  ssr: false,
+});
 
 import Badge from '../components/badge';
 import Button from '../components/button/button';
@@ -65,13 +69,22 @@ export default function ComponentsTesting() {
   //   run().catch(console.error);
   // });
 
+  const [value, setValue] = useState('');
+  const [coordinates, setCoordinates] = useState<string | undefined>('');
+
   return (
     <>
-      <Script
-        src="https://platform.linkedin.com/badges/js/profile.js"
-        strategy="lazyOnload"
-      />
       <div className="flex w-full flex-col items-center justify-center gap-10">
+        <Widget type="location" size="tall" value={coordinates ?? '0,0'} />
+        <SearchBox
+          value={value}
+          onChange={setValue}
+          accessToken="pk.eyJ1IjoiYWxleGFqYXgiLCJhIjoiY2xpNWRkZThmMXR1dzNwbXYxZjl0Y211OCJ9.NTosCJOTjWY3mjFtW1OaGw"
+          onRetrieve={(res) => {
+            console.log(res);
+            setCoordinates(res.features[0].geometry.coordinates.join(','));
+          }}
+        />
         <div className="group relative flex h-[180px] w-[400px] shrink-0 flex-col items-center justify-center gap-2 overflow-hidden rounded-[40px] border border-solid border-brand-200 bg-gray-25 p-4 font-widget @container hover:border-orange-500">
           <img
             src="https://d1nyjrmwcoi38d.cloudfront.net/hobby/gaming.png"
