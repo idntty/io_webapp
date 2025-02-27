@@ -227,12 +227,15 @@ const FieldsSchema = z
     }),
     widgetSize: z.enum(ITEM_SIZES),
   })
-  // one of the fields is required
-  // FIXME: path is not working
-  .refine((data) => data.textValue ?? data.textAreaValue ?? data.dateValue, {
-    message: 'Please enter a value.',
-    path: ['textValue', 'textAreaValue', 'dateValue'],
-  });
+  .refine(
+    (data) => {
+      return data.textValue ?? data.textAreaValue ?? data.dateValue;
+    },
+    {
+      message: 'Please enter a value.',
+      path: ['textValue', 'textAreaValue', 'dateValue'],
+    },
+  );
 
 const BadgeSchema = z.object({
   selectedBadge: z.string(),
@@ -283,6 +286,16 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
     defaultValues: getDefaultValues(grid[editedItemID]),
     mode: 'onChange',
   });
+
+  // Calculate initial field type based on grid item type
+  useEffect(() => {
+    if (grid[editedItemID]?.type === 'image') {
+      // For image type, set the field type to 'Image'
+      form.setValue('fieldType', 'Image');
+      // Initialize with placeholder to pass validation
+      form.setValue('textValue', 'image-placeholder');
+    }
+  }, [editedItemID, grid, form]);
 
   const handleFileUpload = async () => {
     if (file) {
@@ -495,6 +508,14 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
     return () => clearTimeout(timer);
   }, []);
 
+  // Set default textValue for Image field type
+  useEffect(() => {
+    const fieldType = form.watch('fieldType');
+    if (fieldType === 'Image') {
+      form.setValue('textValue', 'image-placeholder');
+    }
+  }, [form]);
+
   return (
     <Form {...form}>
       <form
@@ -621,7 +642,13 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                       <div className="flex w-[512px] flex-col">
                         <FormControl>
                           <FileUploader
-                            handleFileChange={setFile}
+                            handleFileChange={(newFile) => {
+                              setFile(newFile);
+                              // Set a placeholder value for textValue to satisfy form validation
+                              if (newFile) {
+                                form.setValue('textValue', 'image-placeholder');
+                              }
+                            }}
                             required={
                               grid[editedItemID].type === 'new' ||
                               !grid[editedItemID].content
@@ -629,6 +656,12 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                             value={file}
                           />
                         </FormControl>
+                        {/* Hidden field to pass validation */}
+                        <input
+                          type="hidden"
+                          {...form.register('textValue')}
+                          value="image-placeholder"
+                        />
                       </div>
                     </FormItem>
                   ) : (

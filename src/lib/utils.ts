@@ -68,9 +68,9 @@ export const createPDF = async (
 
   const font: Font = {
     FallingSky: {
-      data: await fetch(
-        'https://d1ub87pewhnkr8.cloudfront.net/fonts/FallingSky.otf',
-      ).then((r) => r.arrayBuffer()),
+      data: await fetch('https://my.idntty.io/fonts/FallingSky.otf').then((r) =>
+        r.arrayBuffer(),
+      ),
       fallback: true,
     },
   };
