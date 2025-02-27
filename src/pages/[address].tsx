@@ -127,7 +127,10 @@ export default function IdentityPage() {
     Error
   >({
     queryKey: ['badgeIDs', router.query.address],
-    queryFn: () => getBadgeIDsFromServer(router.query.address as string),
+    queryFn: () => {
+      console.log('Fetching badge IDs for address:', router.query.address);
+      return getBadgeIDsFromServer(router.query.address as string);
+    },
     enabled: router.isReady,
   });
 
@@ -417,6 +420,7 @@ export default function IdentityPage() {
 
   useEffect(() => {
     if (badgeIDs) {
+      console.log('Badge IDs received:', badgeIDs);
       const { badgeGrid, upperBadgeGridLayout } =
         createBadgeGridFromIDs(badgeIDs);
 

@@ -360,11 +360,11 @@ export const createGridFromLayoutAndData = async (
   return { grid, upperGridLayout };
 };
 
-export const getBadgeIDsFromServer = async (publicKey: string) => {
+export const getBadgeIDsFromServer = async (address: string) => {
   const response = await axios.get<string[]>(
     `${PROTOCOL}://${HOST}/get-uploaded-images`,
     {
-      params: { publicKey },
+      params: { address },
       withCredentials: true,
     },
   );
