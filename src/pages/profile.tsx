@@ -30,8 +30,7 @@ export default function Profile() {
   const logout = () => {
     sessionStorage.removeItem('jwt');
     sessionStorage.removeItem('privateKey');
-    router.push('/');
-    router.refresh();
+    router.push('/account/type');
   };
 
   useEffect(() => {
