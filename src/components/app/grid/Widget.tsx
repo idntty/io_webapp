@@ -62,6 +62,7 @@ const widgetVariants = cva(
         website: 'border border-brand-200 hover:border-orange-500',
         whatsapp: 'border border-brand-200 hover:border-orange-500',
         badge: 'hover:border hover:border-orange-500 overflow-hidden',
+        image: 'hover:border hover:border-orange-500 overflow-hidden',
         other: 'border border-brand-200 hover:border-orange-500',
         new: 'border-[5px] border-orange-500',
       },
@@ -526,6 +527,26 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
               src={value?.toString() ?? ''}
               alt="badge"
               className="object-cover"
+            />
+            {isEditable && onEditClick && (
+              <WidgetEdit onEditClick={onEditClick} />
+            )}
+          </div>
+        );
+      case 'image':
+        return (
+          <div
+            className={cn(widgetVariants({ type, size, state }), className)}
+            ref={ref}
+            {...props}
+          >
+            {isEditable && onDeleteClick && (
+              <WidgetDelete onDeleteClick={onDeleteClick} />
+            )}
+            <img
+              src={value?.toString() ?? ''}
+              alt="custom image"
+              className="h-full w-full object-cover"
             />
             {isEditable && onEditClick && (
               <WidgetEdit onEditClick={onEditClick} />

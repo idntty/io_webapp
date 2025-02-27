@@ -32,6 +32,7 @@ import Input from '../../input';
 import TextArea from '../../textarea';
 import Divider from '../../divider';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../tabs';
+import { FileUploader } from '../FileUploader';
 
 const SearchBox = dynamic(() => import('../../mapbox-searchbox'), {
   ssr: false,
@@ -140,6 +141,11 @@ const FIELDS = {
     schemaName: 'textValue',
     htmlType: 'text',
     widgetType: 'relationship',
+  },
+  Image: {
+    schemaName: 'textValue',
+    htmlType: 'file',
+    widgetType: 'image',
   },
 };
 
@@ -263,6 +269,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
 
   const [transactionCost, setTransactionCost] = useState<bigint>(0n);
   const debouncedTransactionCost = useDebounce(transactionCost, 1000);
+  const [file, setFile] = useState<File | undefined>(undefined);
 
   const [mapboxSearchValue, setMapboxSearchValue] = useState(() => {
     const defaultValues = getDefaultValues(grid[editedItemID]);
@@ -276,6 +283,65 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
     defaultValues: getDefaultValues(grid[editedItemID]),
     mode: 'onChange',
   });
+
+  const handleFileUpload = async () => {
+    if (file) {
+      const publicKey = localStorage.getItem('publicKey');
+      if (!publicKey) {
+        throw new Error('Public key not found');
+      }
+      try {
+        const jwt = sessionStorage.getItem('jwt');
+        if (!jwt) {
+          throw new Error('JWT not found');
+        }
+        const urlResponse = await axios.post<{
+          url: string;
+          newFileName: string;
+        }>(
+          'https://api.idntty.io/get-upload-url',
+          {
+            publicKey,
+            fileName: file.name,
+            contentType: file.type,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+            withCredentials: true,
+          },
+        );
+        if (urlResponse.status === 200) {
+          const { url, newFileName } = urlResponse.data;
+
+          const uploadResponse = await axios.put(url, file, {
+            headers: {
+              'Content-Type': file.type,
+            },
+          });
+
+          if (uploadResponse.status === 200) {
+            console.log('File uploaded to S3');
+          } else {
+            console.error(
+              'Failed to upload file to S3:',
+              uploadResponse.statusText,
+            );
+          }
+
+          return newFileName;
+        } else {
+          console.error('Failed to get presigned URL:', urlResponse.statusText);
+        }
+      } catch (error) {
+        console.error('Error during file upload:', error);
+      }
+    } else {
+      console.error('File not found');
+    }
+    return null;
+  };
 
   const onFormSubmit = (data: EditItemFormSchemaType) => {
     onSubmit();
@@ -295,20 +361,46 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
           console.error(error);
         });
     } else {
-      const content =
-        data.textValue ?? data.textAreaValue ?? data.dateValue ?? '';
-      updateGridItem(editedItemID, {
-        size: data.widgetSize,
-        type: getWidgetTypeOrOther(data.fieldType),
-        content,
-      });
-      handleSendData(editedItemID, content.toString(), false)
-        .then(([_, { transactionId }]) => {
-          console.log('Send tx to node, id:', transactionId);
-        })
-        .catch((error) => {
-          console.error(error);
+      if (data.fieldType === 'Image' && file) {
+        // Handle image upload
+        handleFileUpload()
+          .then((newFileName) => {
+            if (newFileName) {
+              const imageUrl = `https://d1nyjrmwcoi38d.cloudfront.net/${newFileName}`;
+              updateGridItem(editedItemID, {
+                size: data.widgetSize,
+                type: 'image',
+                content: imageUrl,
+              });
+              handleSendData(editedItemID, imageUrl, false)
+                .then(([_, { transactionId }]) => {
+                  console.log('Send tx to node, id:', transactionId);
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } else {
+        // Handle regular fields
+        const content =
+          data.textValue ?? data.textAreaValue ?? data.dateValue ?? '';
+        updateGridItem(editedItemID, {
+          size: data.widgetSize,
+          type: getWidgetTypeOrOther(data.fieldType),
+          content,
         });
+        handleSendData(editedItemID, content.toString(), false)
+          .then(([_, { transactionId }]) => {
+            console.log('Send tx to node, id:', transactionId);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
     }
     if (grid[editedItemID].type === 'new') {
       addNewGridItem('tiny');
@@ -515,112 +607,139 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                 )}
               />
               {form.watch('fieldType') !== '' && (
-                <FormField
-                  control={form.control}
-                  // want to use the value of fieldType to determine which field to show
-                  name={getSchemaNameOrTextValue(form.watch('fieldType'))}
-                  render={({ field }) => (
+                <>
+                  {form.watch('fieldType') === 'Image' ? (
                     <FormItem className="flex gap-[32px] self-stretch">
                       <div className="flex w-[280px] flex-col">
                         <FormLabel className="self-stretch text-sm font-medium text-gray-700">
-                          Value
+                          Image
                         </FormLabel>
                         <FormDescription className="self-stretch text-sm font-normal text-gray-500">
-                          Your very private data
+                          Upload an image to display on your profile
                         </FormDescription>
                       </div>
-                      <div className="flex w-[512px] flex-col gap-[6px]">
+                      <div className="flex w-[512px] flex-col">
                         <FormControl>
-                          {
-                            // FIXME: Help TS with understanding types
-                            field.name === 'dateValue' ? (
-                              // @ts-expect-error - TS doesn't know that field.name is 'dateValue'
-                              <Input
-                                className="self-stretch"
-                                type="date"
-                                Icon={Calendar}
-                                {...field}
-                                onChange={(e) => {
-                                  updateTransactionCost(
-                                    editedItemID,
-                                    field.value?.toString() ?? '',
-                                  ).catch(console.error);
-                                  field.onChange(e);
-                                }}
-                              />
-                            ) : field.name === 'textAreaValue' ? (
-                              // @ts-expect-error - TS doesn't know that field.name is 'textAreaValue'
-                              <TextArea
-                                type="text"
-                                className="self-stretch"
-                                placeholder="I'm a Product Designer based in Melbourne, Australia. I specialise in UX/UI design, brand strategy, and Webflow development."
-                                maxLength={400}
-                                {...field}
-                                onChange={(e) => {
-                                  updateTransactionCost(
-                                    editedItemID,
-                                    field.value?.toString() ?? '',
-                                  ).catch(console.error);
-                                  field.onChange(e);
-                                }}
-                              />
-                            ) : field.name === 'textValue' ? (
-                              form.watch('fieldType') === 'Location' ? (
-                                <SearchBox
-                                  value={mapboxSearchValue}
-                                  onChange={setMapboxSearchValue}
-                                  accessToken="pk.eyJ1IjoiYWxleGFqYXgiLCJhIjoiY2xpNWRkZThmMXR1dzNwbXYxZjl0Y211OCJ9.NTosCJOTjWY3mjFtW1OaGw"
-                                  onRetrieve={(res) => {
-                                    const coordinates =
-                                      res.features[0].geometry.coordinates.join(
-                                        ',',
-                                      );
-                                    field.onChange(coordinates);
-                                    updateTransactionCost(
-                                      editedItemID,
-                                      coordinates,
-                                    ).catch(console.error);
-                                  }}
-                                />
-                              ) : (
-                                // @ts-expect-error - TS doesn't know that field.name is 'textValue'
-                                <Input
-                                  className="self-stretch"
-                                  placeholder={
-                                    {
-                                      Name: 'John Doe',
-                                      Phone: '+12223334444',
-                                      Email: 'johndoe@gmail.com',
-                                      WhatsApp: '+12223334444',
-                                      Citizenship: 'RU',
-                                      Location: 'RU',
-                                      GitHub: '',
-                                      LinkedIn: '',
-                                      Website: 'example.com',
-                                      Hobby: '',
-                                      Relationship: '',
-                                    }[form.watch('fieldType')]
-                                  }
-                                  type="text"
-                                  Icon={TextInput}
-                                  {...field}
-                                  onChange={(e) => {
-                                    updateTransactionCost(
-                                      editedItemID,
-                                      field.value?.toString() ?? '',
-                                    ).catch(console.error);
-                                    field.onChange(e);
-                                  }}
-                                />
-                              )
-                            ) : null
-                          }
+                          <FileUploader
+                            handleFileChange={setFile}
+                            required={
+                              grid[editedItemID].type === 'new' ||
+                              !grid[editedItemID].content
+                            }
+                            value={file}
+                          />
                         </FormControl>
-                        <FormMessage className="text-sm font-normal" />
                       </div>
                     </FormItem>
+                  ) : (
+                    <FormField
+                      control={form.control}
+                      name={getSchemaNameOrTextValue(form.watch('fieldType'))}
+                      render={({ field }) => (
+                        <FormItem className="flex gap-[32px] self-stretch">
+                          <div className="flex w-[280px] flex-col">
+                            <FormLabel className="self-stretch text-sm font-medium text-gray-700">
+                              Value
+                            </FormLabel>
+                            <FormDescription className="self-stretch text-sm font-normal text-gray-500">
+                              Your very private data
+                            </FormDescription>
+                          </div>
+                          <div className="flex w-[512px] flex-col gap-[6px]">
+                            <FormControl>
+                              {
+                                // FIXME: Help TS with understanding types
+                                field.name === 'dateValue' ? (
+                                  // @ts-expect-error - TS doesn't know that field.name is 'dateValue'
+                                  <Input
+                                    className="self-stretch"
+                                    type="date"
+                                    Icon={Calendar}
+                                    {...field}
+                                    onChange={(e) => {
+                                      updateTransactionCost(
+                                        editedItemID,
+                                        field.value?.toString() ?? '',
+                                      ).catch(console.error);
+                                      field.onChange(e);
+                                    }}
+                                  />
+                                ) : field.name === 'textAreaValue' ? (
+                                  // @ts-expect-error - TS doesn't know that field.name is 'textAreaValue'
+                                  <TextArea
+                                    type="text"
+                                    className="self-stretch"
+                                    placeholder="I'm a Product Designer based in Melbourne, Australia. I specialise in UX/UI design, brand strategy, and Webflow development."
+                                    maxLength={400}
+                                    {...field}
+                                    onChange={(e) => {
+                                      updateTransactionCost(
+                                        editedItemID,
+                                        field.value?.toString() ?? '',
+                                      ).catch(console.error);
+                                      field.onChange(e);
+                                    }}
+                                  />
+                                ) : field.name === 'textValue' ? (
+                                  form.watch('fieldType') === 'Location' ? (
+                                    <SearchBox
+                                      value={mapboxSearchValue}
+                                      onChange={setMapboxSearchValue}
+                                      accessToken="pk.eyJ1IjoiYWxleGFqYXgiLCJhIjoiY2xpNWRkZThmMXR1dzNwbXYxZjl0Y211OCJ9.NTosCJOTjWY3mjFtW1OaGw"
+                                      onRetrieve={(res) => {
+                                        const coordinates =
+                                          res.features[0].geometry.coordinates.join(
+                                            ',',
+                                          );
+                                        field.onChange(coordinates);
+                                        updateTransactionCost(
+                                          editedItemID,
+                                          coordinates,
+                                        ).catch(console.error);
+                                      }}
+                                    />
+                                  ) : (
+                                    // @ts-expect-error - TS doesn't know that field.name is 'textValue'
+                                    <Input
+                                      className="self-stretch"
+                                      placeholder={
+                                        {
+                                          Name: 'John Doe',
+                                          Phone: '+12223334444',
+                                          Email: 'johndoe@gmail.com',
+                                          WhatsApp: '+12223334444',
+                                          Citizenship: 'RU',
+                                          Location: 'RU',
+                                          GitHub: '',
+                                          LinkedIn: '',
+                                          Website: 'example.com',
+                                          Hobby: '',
+                                          Relationship: '',
+                                          Image: '',
+                                        }[form.watch('fieldType')]
+                                      }
+                                      type="text"
+                                      Icon={TextInput}
+                                      {...field}
+                                      onChange={(e) => {
+                                        updateTransactionCost(
+                                          editedItemID,
+                                          field.value?.toString() ?? '',
+                                        ).catch(console.error);
+                                        field.onChange(e);
+                                      }}
+                                    />
+                                  )
+                                ) : null
+                              }
+                            </FormControl>
+                            <FormMessage className="text-sm font-normal" />
+                          </div>
+                        </FormItem>
+                      )}
+                    />
                   )}
-                />
+                </>
               )}
               <FormField
                 control={form.control}
