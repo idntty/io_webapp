@@ -7,7 +7,9 @@ import Link from 'next/link';
 const Footer: React.FC<React.ComponentPropsWithoutRef<'footer'>> = () => {
   return (
     <footer className="flex h-[60px] shrink-0 items-center justify-between self-stretch bg-gray-50 px-[300px] py-[20px]">
-      <div className="text-sm text-gray-500">© Untitled UI 2077</div>
+      <div className="text-sm text-gray-500">
+        Copyright © IDNTTY 2025. All rights reserved.
+      </div>
       <div className="flex items-center gap-[8px]">
         <Mail01 size="16" className="stroke-gray-500" />
         <Link
