@@ -1,7 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { SearchMD, Plus, Key01, TextInput, Calendar } from 'untitledui-js';
+import {
+  SearchMD,
+  Plus,
+  Key01,
+  TextInput,
+  Calendar,
+  Link01,
+} from 'untitledui-js';
 import * as RadioGroup from '@radix-ui/react-radio-group';
 import React, { useState, useEffect } from 'react';
 import { ReactSearchAutocomplete } from 'react-search-autocomplete';
@@ -146,6 +153,11 @@ const FIELDS = {
     schemaName: 'textValue',
     htmlType: 'file',
     widgetType: 'image',
+  },
+  'Link Image': {
+    schemaName: 'textValue',
+    htmlType: 'file-link',
+    widgetType: 'link-image',
   },
 };
 
@@ -294,6 +306,27 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
       form.setValue('fieldType', 'Image');
       // Initialize with placeholder to pass validation
       form.setValue('textValue', 'image-placeholder');
+    } else if (grid[editedItemID]?.type === 'link-image') {
+      // For link-image type, set the field type to 'Link Image'
+      form.setValue('fieldType', 'Link Image');
+
+      // Initialize form values from existing content
+      const content = grid[editedItemID].content;
+      if (content) {
+        form.setValue(
+          'textValue',
+          typeof content === 'string' ? content : JSON.stringify(content),
+        );
+      } else {
+        // Initialize with empty JSON structure
+        form.setValue(
+          'textValue',
+          JSON.stringify({
+            linkUrl: '',
+            imageUrl: 'pending-upload',
+          }),
+        );
+      }
     }
   }, [editedItemID, grid, form]);
 
@@ -386,6 +419,52 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                 content: imageUrl,
               });
               handleSendData(editedItemID, imageUrl, false)
+                .then(([_, { transactionId }]) => {
+                  console.log('Send tx to node, id:', transactionId);
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      } else if (data.fieldType === 'Link Image' && file) {
+        // Handle link image upload
+        handleFileUpload()
+          .then((newFileName) => {
+            if (newFileName) {
+              const imageUrl = `https://d1nyjrmwcoi38d.cloudfront.net/${newFileName}`;
+              // Parse the textValue as a LinkImageContent object
+              interface LinkImageContent {
+                linkUrl: string;
+                imageUrl: string;
+              }
+              const parsedValue = (() => {
+                try {
+                  return JSON.parse(data.textValue ?? '{}') as LinkImageContent;
+                } catch (e) {
+                  return { linkUrl: '', imageUrl: '' } as LinkImageContent;
+                }
+              })();
+
+              updateGridItem(editedItemID, {
+                size: data.widgetSize,
+                type: 'link-image',
+                content: JSON.stringify({
+                  linkUrl: parsedValue.linkUrl,
+                  imageUrl,
+                }),
+              });
+              handleSendData(
+                editedItemID,
+                JSON.stringify({
+                  linkUrl: parsedValue.linkUrl,
+                  imageUrl,
+                }),
+                false,
+              )
                 .then(([_, { transactionId }]) => {
                   console.log('Send tx to node, id:', transactionId);
                 })
@@ -664,6 +743,118 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                         />
                       </div>
                     </FormItem>
+                  ) : form.watch('fieldType') === 'Link Image' ? (
+                    <>
+                      <FormItem className="flex gap-[32px] self-stretch">
+                        <div className="flex w-[280px] flex-col">
+                          <FormLabel className="self-stretch text-sm font-medium text-gray-700">
+                            Image
+                          </FormLabel>
+                          <FormDescription className="self-stretch text-sm font-normal text-gray-500">
+                            Upload an image that links to a URL
+                          </FormDescription>
+                        </div>
+                        <div className="flex w-[512px] flex-col">
+                          <FormControl>
+                            <FileUploader
+                              handleFileChange={(newFile) => {
+                                setFile(newFile);
+                                // Update the JSON string in textValue with the new image info
+                                if (newFile) {
+                                  // Keep the existing link URL if it exists
+                                  const currentValue =
+                                    form.getValues('textValue') ?? '{}';
+                                  try {
+                                    // Define interface for type safety
+                                    interface LinkImageContent {
+                                      linkUrl: string;
+                                      imageUrl: string;
+                                    }
+                                    const parsedValue = JSON.parse(
+                                      currentValue === 'image-placeholder'
+                                        ? '{}'
+                                        : currentValue,
+                                    ) as LinkImageContent;
+                                    form.setValue(
+                                      'textValue',
+                                      JSON.stringify({
+                                        linkUrl: parsedValue.linkUrl ?? '',
+                                        imageUrl: 'pending-upload', // Will be replaced after upload
+                                      }),
+                                    );
+                                  } catch (e) {
+                                    form.setValue(
+                                      'textValue',
+                                      JSON.stringify({
+                                        linkUrl: '',
+                                        imageUrl: 'pending-upload',
+                                      }),
+                                    );
+                                  }
+                                }
+                              }}
+                              required={
+                                grid[editedItemID].type === 'new' ||
+                                !grid[editedItemID].content
+                              }
+                              value={file}
+                            />
+                          </FormControl>
+                        </div>
+                      </FormItem>
+                      <FormItem className="flex gap-[32px] self-stretch">
+                        <div className="flex w-[280px] flex-col">
+                          <FormLabel className="self-stretch text-sm font-medium text-gray-700">
+                            Link URL
+                          </FormLabel>
+                          <FormDescription className="self-stretch text-sm font-normal text-gray-500">
+                            URL to navigate to when the image is clicked
+                          </FormDescription>
+                        </div>
+                        <div className="flex w-[512px] flex-col gap-[6px]">
+                          <Input
+                            className="self-stretch"
+                            placeholder="https://example.com"
+                            type="url"
+                            Icon={Link01}
+                            onChange={(e) => {
+                              // Update the JSON string in textValue with the new URL
+                              const linkUrl = e.target.value;
+                              const currentValue =
+                                form.getValues('textValue') ?? '{}';
+                              // Define interface for type safety
+                              interface LinkImageContent {
+                                linkUrl: string;
+                                imageUrl: string;
+                              }
+                              try {
+                                const parsedValue = JSON.parse(
+                                  currentValue === 'image-placeholder'
+                                    ? '{}'
+                                    : currentValue,
+                                ) as LinkImageContent;
+                                form.setValue(
+                                  'textValue',
+                                  JSON.stringify({
+                                    linkUrl,
+                                    imageUrl:
+                                      parsedValue.imageUrl ?? 'pending-upload',
+                                  }),
+                                );
+                              } catch (e) {
+                                form.setValue(
+                                  'textValue',
+                                  JSON.stringify({
+                                    linkUrl,
+                                    imageUrl: 'pending-upload',
+                                  }),
+                                );
+                              }
+                            }}
+                          />
+                        </div>
+                      </FormItem>
+                    </>
                   ) : (
                     <FormField
                       control={form.control}

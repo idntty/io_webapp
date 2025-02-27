@@ -23,6 +23,7 @@ export type GridItemType =
   | 'badge'
   | 'website'
   | 'image'
+  | 'link-image'
   | 'other'
   | 'new';
 export interface GridItem {

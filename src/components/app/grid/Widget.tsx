@@ -63,6 +63,7 @@ const widgetVariants = cva(
         whatsapp: 'border border-brand-200 hover:border-orange-500',
         badge: 'hover:border hover:border-orange-500 overflow-hidden',
         image: 'hover:border hover:border-orange-500 overflow-hidden',
+        'link-image': 'hover:border hover:border-orange-500 overflow-hidden',
         other: 'border border-brand-200 hover:border-orange-500',
         new: 'border-[5px] border-orange-500',
       },
@@ -553,6 +554,61 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             )}
           </div>
         );
+      case 'link-image':
+        try {
+          const content = value?.toString() ?? '{}';
+          // Define interface for the parsed content
+          interface LinkImageContent {
+            imageUrl: string;
+            linkUrl: string;
+          }
+          const { imageUrl, linkUrl } = JSON.parse(content) as LinkImageContent;
+          return (
+            <div
+              className={cn(widgetVariants({ type, size, state }), className)}
+              ref={ref}
+              {...props}
+            >
+              {isEditable && onDeleteClick && (
+                <WidgetDelete onDeleteClick={onDeleteClick} />
+              )}
+              <Link
+                href={linkUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="h-full w-full"
+              >
+                <img
+                  src={imageUrl}
+                  alt="clickable image"
+                  className="h-full w-full object-cover"
+                />
+              </Link>
+              {isEditable && onEditClick && (
+                <WidgetEdit onEditClick={onEditClick} />
+              )}
+            </div>
+          );
+        } catch (error) {
+          console.error('Error parsing link-image content', error);
+          return (
+            <div
+              className={cn(widgetVariants({ type, size, state }), className)}
+              ref={ref}
+              {...props}
+            >
+              {isEditable && onDeleteClick && (
+                <WidgetDelete onDeleteClick={onDeleteClick} />
+              )}
+              <div className="flex h-full w-full items-center justify-center p-4 text-center text-gray-500">
+                Invalid image link format
+              </div>
+              {isEditable && onEditClick && (
+                <WidgetEdit onEditClick={onEditClick} />
+              )}
+            </div>
+          );
+        }
       case 'new':
         return (
           <div
