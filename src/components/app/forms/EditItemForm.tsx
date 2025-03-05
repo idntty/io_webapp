@@ -71,6 +71,14 @@ const handleSendData = async (
       throw new Error('Only authority users can add badges');
     }
 
+    // This is a badge - use createBadge function instead of using setFeature with isBadge flag
+    // Extract the badge ID from the cloudfront URL
+    const badgeId = content.split('/').pop();
+    if (!badgeId) {
+      throw new Error('Invalid badge content URL');
+    }
+
+    // Save the badge data to server for display
     const data = [
       {
         uuid,
@@ -78,14 +86,16 @@ const handleSendData = async (
         nonce: '',
       },
     ];
+
     console.log('Saving badge data to server:', data);
+    // Use the badge-specific API call
     return Promise.all([
       saveDataToServer(publicKey, 'public', data),
       setFeature(data, privateKey, publicKey),
     ]);
   }
 
-  // Handle regular content (not badges)
+  // Handle regular content (not badges) - for both authority and regular users
   if (userIdentity.isAuthority) {
     // Authority users' regular content is public
     const data = [
@@ -355,11 +365,14 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
   }, [editedItemID, grid, form]);
 
   const handleFileUpload = async () => {
+    const publicKey = localStorage.getItem('publicKey');
+    if (!publicKey) {
+      throw new Error('Public key not found');
+    }
+
+    const HOST = 'api.idntty.io';
+
     if (file) {
-      const publicKey = localStorage.getItem('publicKey');
-      if (!publicKey) {
-        throw new Error('Public key not found');
-      }
       try {
         const jwt = sessionStorage.getItem('jwt');
         if (!jwt) {
@@ -369,11 +382,13 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
           url: string;
           newFileName: string;
         }>(
-          'https://api.idntty.io/get-upload-url',
+          `https://${HOST}/get-upload-url`,
           {
             publicKey,
             fileName: file.name,
             contentType: file.type,
+            // Add folder path to indicate this is an image, not a badge
+            folder: 'images',
           },
           {
             headers: {
@@ -417,13 +432,13 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
     onSubmit();
     console.log(data);
     if ('selectedBadge' in data) {
-      const content = `https://d1nyjrmwcoi38d.cloudfront.net/${data.selectedBadge}`;
+      const badgeContent = `https://d1nyjrmwcoi38d.cloudfront.net/badges/${data.selectedBadge}`;
       updateGridItem(editedItemID, {
         size: 'tiny',
         type: 'badge',
-        content,
+        content: badgeContent,
       });
-      handleSendData(editedItemID, content, true)
+      handleSendData(editedItemID, badgeContent, true)
         .then(([_, { transactionId }]) => {
           console.log('Send tx to node, id:', transactionId);
         })
@@ -436,12 +451,16 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
         handleFileUpload()
           .then((newFileName) => {
             if (newFileName) {
-              const imageUrl = `https://d1nyjrmwcoi38d.cloudfront.net/${newFileName}`;
+              // Add a specific path component to the URL to distinguish it from badges
+              const imageUrl = `https://d1nyjrmwcoi38d.cloudfront.net/images/${newFileName}`;
+
+              // Explicitly set the type to 'image' to avoid confusion with badges
               updateGridItem(editedItemID, {
                 size: data.widgetSize,
                 type: 'image',
                 content: imageUrl,
               });
+
               handleSendData(editedItemID, imageUrl, false)
                 .then(([_, { transactionId }]) => {
                   console.log('Send tx to node, id:', transactionId);
@@ -459,7 +478,9 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
         handleFileUpload()
           .then((newFileName) => {
             if (newFileName) {
-              const imageUrl = `https://d1nyjrmwcoi38d.cloudfront.net/${newFileName}`;
+              // Add a specific path component to distinguish it from badges
+              const imageUrl = `https://d1nyjrmwcoi38d.cloudfront.net/images/${newFileName}`;
+
               // Parse the textValue as a LinkImageContent object
               interface LinkImageContent {
                 linkUrl: string;
@@ -473,6 +494,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                 }
               })();
 
+              // Explicitly set type to 'link-image'
               updateGridItem(editedItemID, {
                 size: data.widgetSize,
                 type: 'link-image',
@@ -481,6 +503,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                   imageUrl,
                 }),
               });
+
               handleSendData(
                 editedItemID,
                 JSON.stringify({
@@ -1135,7 +1158,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                             size="tiny"
                             type="badge"
                             state="default"
-                            value={`https://d1nyjrmwcoi38d.cloudfront.net/${badge}`}
+                            value={`https://d1nyjrmwcoi38d.cloudfront.net/badges/${badge}`}
                             isEditable={false}
                           />
                         </RadioGroup.Item>

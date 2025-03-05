@@ -177,6 +177,7 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
             publicKey,
             fileName: file.name,
             contentType: file.type,
+            folder: 'badges',
           },
           {
             headers: {
@@ -303,11 +304,14 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
     handleFileUpload()
       .then((newFileName) => {
         if (newFileName) {
+          const badgeUrl = `https://d1nyjrmwcoi38d.cloudfront.net/badges/${newFileName}`;
+
           updateBadgeGridItem(editedBadgeID, {
             size: 'tiny',
             type: 'badge',
-            content: `https://d1nyjrmwcoi38d.cloudfront.net/${newFileName}`,
+            content: badgeUrl,
           });
+
           createBadge(newFileName, privateKey, publicKey)
             .then((transactionId) => {
               console.log('Send tx to node, id:', transactionId);

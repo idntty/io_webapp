@@ -534,7 +534,25 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             )}
           </div>
         );
-      case 'image':
+      case 'image': {
+        // Ensure this is truly an image, not a badge with incorrect type
+        const imageUrl = value?.toString() ?? '';
+        const isBadgeUrl =
+          imageUrl &&
+          !imageUrl.includes('/images/') &&
+          (imageUrl.includes('/badges/') ||
+            (imageUrl.startsWith('https://d1nyjrmwcoi38d.cloudfront.net/') &&
+              !imageUrl.includes('/')));
+
+        // If it appears to be a badge URL but has image type, still render as an image
+        // but log a warning for debugging
+        if (isBadgeUrl) {
+          console.warn(
+            'Image widget has a URL that looks like a badge URL:',
+            imageUrl,
+          );
+        }
+
         return (
           <div
             className={cn(widgetVariants({ type, size, state }), className)}
@@ -545,7 +563,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
               <WidgetDelete onDeleteClick={onDeleteClick} />
             )}
             <img
-              src={value?.toString() ?? ''}
+              src={imageUrl}
               alt="custom image"
               className="h-full w-full object-cover"
             />
@@ -554,6 +572,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             )}
           </div>
         );
+      }
       case 'link-image':
         try {
           const content = value?.toString() ?? '{}';
