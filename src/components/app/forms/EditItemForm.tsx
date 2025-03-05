@@ -381,6 +381,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
         const urlResponse = await axios.post<{
           url: string;
           newFileName: string;
+          fileName?: string; // Add support for the new response format
         }>(
           `https://${HOST}/get-upload-url`,
           {
@@ -451,8 +452,9 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
         handleFileUpload()
           .then((newFileName) => {
             if (newFileName) {
-              // Add a specific path component to the URL to distinguish it from badges
-              const imageUrl = `https://d1nyjrmwcoi38d.cloudfront.net/images/${newFileName}`;
+              // The newFileName now includes the full path with folder
+              // No need to add 'images/' prefix anymore
+              const imageUrl = `https://d1nyjrmwcoi38d.cloudfront.net/${newFileName}`;
 
               // Explicitly set the type to 'image' to avoid confusion with badges
               updateGridItem(editedItemID, {
@@ -478,8 +480,9 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
         handleFileUpload()
           .then((newFileName) => {
             if (newFileName) {
-              // Add a specific path component to distinguish it from badges
-              const imageUrl = `https://d1nyjrmwcoi38d.cloudfront.net/images/${newFileName}`;
+              // The newFileName now includes the full path with folder
+              // No need to add 'images/' prefix anymore
+              const imageUrl = `https://d1nyjrmwcoi38d.cloudfront.net/${newFileName}`;
 
               // Parse the textValue as a LinkImageContent object
               interface LinkImageContent {

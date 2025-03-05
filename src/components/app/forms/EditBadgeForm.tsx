@@ -171,6 +171,7 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
         const urlResponse = await axios.post<{
           url: string;
           newFileName: string;
+          fileName?: string;
         }>(
           `https://${HOST}/get-upload-url`,
           {
@@ -304,7 +305,7 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
     handleFileUpload()
       .then((newFileName) => {
         if (newFileName) {
-          const badgeUrl = `https://d1nyjrmwcoi38d.cloudfront.net/badges/${newFileName}`;
+          const badgeUrl = `https://d1nyjrmwcoi38d.cloudfront.net/${newFileName}`;
 
           updateBadgeGridItem(editedBadgeID, {
             size: 'tiny',
@@ -312,7 +313,11 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
             content: badgeUrl,
           });
 
-          createBadge(newFileName, privateKey, publicKey)
+          const fileName = newFileName.includes('/')
+            ? (newFileName.split('/').pop() ?? newFileName)
+            : newFileName;
+
+          createBadge(fileName, privateKey, publicKey)
             .then((transactionId) => {
               console.log('Send tx to node, id:', transactionId);
               refetch()
