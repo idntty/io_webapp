@@ -562,11 +562,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             {isEditable && onDeleteClick && (
               <WidgetDelete onDeleteClick={onDeleteClick} />
             )}
-            <img
-              src={imageUrl}
-              alt="custom image"
-              className="h-full w-full object-cover"
-            />
+            <img src={imageUrl} alt="custom image" className="object-cover" />
             {isEditable && onEditClick && (
               <WidgetEdit onEditClick={onEditClick} />
             )}
@@ -600,7 +596,7 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
                 <img
                   src={imageUrl}
                   alt="clickable image"
-                  className="h-full w-full object-cover"
+                  className="object-cover"
                 />
               </Link>
               {isEditable && onEditClick && (
