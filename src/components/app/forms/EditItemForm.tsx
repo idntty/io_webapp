@@ -452,8 +452,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
         handleFileUpload()
           .then((newFileName) => {
             if (newFileName) {
-              // The newFileName now includes the full path with folder
-              // No need to add 'images/' prefix anymore
+              // The backend returns the full path in newFileName, so we use it directly
               const imageUrl = `https://d1nyjrmwcoi38d.cloudfront.net/${newFileName}`;
 
               // Explicitly set the type to 'image' to avoid confusion with badges
@@ -480,8 +479,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
         handleFileUpload()
           .then((newFileName) => {
             if (newFileName) {
-              // The newFileName now includes the full path with folder
-              // No need to add 'images/' prefix anymore
+              // The backend returns the full path in newFileName, so we use it directly
               const imageUrl = `https://d1nyjrmwcoi38d.cloudfront.net/${newFileName}`;
 
               // Parse the textValue as a LinkImageContent object
@@ -1161,7 +1159,11 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                             size="tiny"
                             type="badge"
                             state="default"
-                            value={`https://d1nyjrmwcoi38d.cloudfront.net/badges/${badge}`}
+                            value={
+                              badge.includes('/')
+                                ? `https://d1nyjrmwcoi38d.cloudfront.net/${badge}`
+                                : `https://d1nyjrmwcoi38d.cloudfront.net/badges/${badge}`
+                            }
                             isEditable={false}
                           />
                         </RadioGroup.Item>

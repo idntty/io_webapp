@@ -514,7 +514,31 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
           </div>
         );
       }
-      case 'badge':
+      case 'badge': {
+        // Ensure badge URLs always include the '/badges/' path
+        const badgeUrl = (() => {
+          const url = value?.toString() ?? '';
+          // If URL already has '/badges/' path, use it as is
+          if (url.includes('/badges/')) {
+            return url;
+          }
+          // For backward compatibility with old URLs that may contain just the filename
+          // or URLs returned from the backend without the badges/ folder
+          if (url.startsWith('https://d1nyjrmwcoi38d.cloudfront.net/')) {
+            // Extract the last part after the domain
+            const path = url.split('https://d1nyjrmwcoi38d.cloudfront.net/')[1];
+            // If path contains slashes but not '/badges/', likely a full path like 'badges/something'
+            if (path.includes('/') && !path.includes('badges/')) {
+              return url; // It has a different path structure, leave it alone
+            }
+            // Add badges/ prefix if it's just a filename with no folder
+            if (!path.includes('/')) {
+              return `https://d1nyjrmwcoi38d.cloudfront.net/badges/${path}`;
+            }
+          }
+          return url;
+        })();
+
         return (
           <div
             className={cn(widgetVariants({ type, size, state }), className)}
@@ -524,16 +548,13 @@ const Widget = React.forwardRef<HTMLDivElement, WidgetProps>(
             {isEditable && onDeleteClick && (
               <WidgetDelete onDeleteClick={onDeleteClick} />
             )}
-            <img
-              src={value?.toString() ?? ''}
-              alt="badge"
-              className="object-cover"
-            />
+            <img src={badgeUrl} alt="badge" className="object-cover" />
             {isEditable && onEditClick && (
               <WidgetEdit onEditClick={onEditClick} />
             )}
           </div>
         );
+      }
       case 'image': {
         // Ensure this is truly an image, not a badge with incorrect type
         const imageUrl = value?.toString() ?? '';

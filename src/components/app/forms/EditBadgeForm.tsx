@@ -317,6 +317,10 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
             ? (newFileName.split('/').pop() ?? newFileName)
             : newFileName;
 
+          console.log('Creating badge with filename:', fileName);
+          console.log('Full badge path was:', newFileName);
+          console.log('Badge URL is:', badgeUrl);
+
           createBadge(fileName, privateKey, publicKey)
             .then((transactionId) => {
               console.log('Send tx to node, id:', transactionId);
