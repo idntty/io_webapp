@@ -64,7 +64,13 @@ const handleSendData = async (
       Buffer.from(publicKey, 'hex'),
     ),
   );
-  if (userIdentity.isAuthority || isBadge) {
+
+  // Handle badge content - only authority users can add badges
+  if (isBadge) {
+    if (!userIdentity.isAuthority) {
+      throw new Error('Only authority users can add badges');
+    }
+
     const data = [
       {
         uuid,
@@ -72,13 +78,31 @@ const handleSendData = async (
         nonce: '',
       },
     ];
-    console.log('Saving data to server:', data);
+    console.log('Saving badge data to server:', data);
     return Promise.all([
       saveDataToServer(publicKey, 'public', data),
       setFeature(data, privateKey, publicKey),
     ]);
   }
 
+  // Handle regular content (not badges)
+  if (userIdentity.isAuthority) {
+    // Authority users' regular content is public
+    const data = [
+      {
+        uuid,
+        value: content,
+        nonce: '',
+      },
+    ];
+    console.log('Saving authority user data to server:', data);
+    return Promise.all([
+      saveDataToServer(publicKey, 'public', data),
+      setFeature(data, privateKey, publicKey),
+    ]);
+  }
+
+  // Regular users' content is encrypted
   const encryptedMessage = await encryptGridItemContent(content);
   const data = [
     {
@@ -87,7 +111,7 @@ const handleSendData = async (
       nonce: '',
     },
   ];
-  console.log('Saving data to server:', data);
+  console.log('Saving encrypted data to server:', data);
   return Promise.all([
     saveDataToServer(publicKey, 'private', data),
     setFeature(data, privateKey, publicKey),
