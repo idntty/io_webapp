@@ -746,6 +746,7 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
                             lineColor: '#101828',
                             placeholderColor: '#667085',
                             searchIconMargin: '0 0 0 9px',
+                            zIndex: 9999,
                           }}
                         />
                       </FormControl>
