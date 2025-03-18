@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { ReactSearchAutocomplete } from 'react-search-autocomplete';
 import { SearchMD } from 'untitledui-js';
+import { Loader2 } from 'lucide-react';
 import { useDebounce } from '@uidotdev/usehooks';
 import { cryptography } from '@klayr/client/browser';
 
@@ -71,6 +72,8 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
 }) => {
   const [transactionCost, setTransactionCost] = useState<bigint>(0n);
   const debouncedTransactionCost = useDebounce(transactionCost, 1000);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingStatus, setLoadingStatus] = useState('');
 
   const [collections, setCollections] = useState<string[]>([]);
   const [tags, setTags] = useState<string[]>([]);
@@ -303,9 +306,13 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
       throw new Error('Private key not found');
     }
 
-    onSubmit();
+    setIsLoading(true);
+    setLoadingStatus('Preparing to upload badge...');
+
     console.log(data);
     console.log(file);
+
+    setLoadingStatus('Uploading badge image...');
     handleFileUpload()
       .then((newFileName) => {
         if (newFileName) {
@@ -325,27 +332,40 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
           console.log('Full badge path was:', newFileName);
           console.log('Badge URL is:', badgeUrl);
 
+          setLoadingStatus('Creating badge on blockchain...');
           createBadge(fileName, privateKey, publicKey)
             .then((transactionId) => {
               console.log('Send tx to node, id:', transactionId);
+              setLoadingStatus('Finalizing...');
               refetch()
                 .then(() => {
                   console.log('Refetched badge IDs');
                   // if (badgeGrid[editedBadgeID].type === 'new') {
                   //   addNewBadgeGridItem('tiny');
                   // }
+                  setIsLoading(false);
+                  onSubmit();
                 })
                 .catch((error) => {
                   console.error(error);
+                  setIsLoading(false);
+                  onSubmit();
                 });
             })
             .catch((error) => {
               console.error(error);
+              setIsLoading(false);
+              onSubmit();
             });
+        } else {
+          setIsLoading(false);
+          onSubmit();
         }
       })
       .catch((error) => {
         console.error(error);
+        setIsLoading(false);
+        onSubmit();
       });
 
     if (!collections.includes(data.collection)) {
@@ -365,6 +385,9 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
 
   const handleDeleteClick = () => {
     if (badgeGrid[editedBadgeID].type !== 'new') {
+      setIsLoading(true);
+      setLoadingStatus('Deleting badge...');
+
       removeBadgeGridItem(editedBadgeID);
 
       const publicKey = localStorage.getItem('publicKey');
@@ -387,22 +410,26 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
       archiveBadge([fileName], privateKey, publicKey)
         .then(() => {
           console.log('Badge archived on blockchain');
+          setLoadingStatus('Removing from storage...');
+          // Remove from server storage
+          return removeBadgeFromServer(fileName);
         })
-        .catch((error) => {
-          console.error('Error archiving badge on blockchain:', error);
-        });
-
-      // Remove from server storage
-      removeBadgeFromServer(fileName)
         .then(() => {
           console.log('Badge removed from server storage');
-          refetch().catch(console.error);
+          return refetch();
+        })
+        .then(() => {
+          setIsLoading(false);
+          onCancel();
         })
         .catch((error) => {
-          console.error('Error removing badge from server storage:', error);
+          console.error('Error during badge deletion:', error);
+          setIsLoading(false);
+          onCancel();
         });
+    } else {
+      onCancel();
     }
-    onCancel();
   };
 
   return (
@@ -430,18 +457,42 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
               </div>
             </div>
             <div className="flex items-center gap-[12px]">
-              <Button onClick={onCancel} size="md" variant="secondary-gray">
+              {isLoading && (
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>{loadingStatus}</span>
+                </div>
+              )}
+              <Button
+                onClick={onCancel}
+                size="md"
+                variant="secondary-gray"
+                disabled={isLoading}
+              >
                 Cancel
               </Button>
               <Button
                 onClick={handleDeleteClick}
                 size="md"
                 variant="destructive"
+                disabled={isLoading}
               >
                 Delete
               </Button>
-              <Button type="submit" size="md" variant="primary">
-                Update
+              <Button
+                type="submit"
+                size="md"
+                variant="primary"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Processing...</span>
+                  </div>
+                ) : (
+                  'Update'
+                )}
               </Button>
             </div>
           </div>
