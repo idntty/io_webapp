@@ -5,6 +5,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { cryptography } from '@klayr/client/browser';
 import { useRouter } from 'next/navigation';
+import { useGridStore } from '../stores/gridStores';
+import { useBadgeStore } from '../stores/gridStores';
+import { useOnboardingStore } from '../stores/onboardingStore';
 
 import { Tabs, TabsContent } from '../components/tabs';
 import Header from '../components/app/Header';
@@ -25,11 +28,50 @@ export default function Profile() {
     string | null
   >(null);
 
+  const updateGrid = useGridStore((state) => state.updateGrid);
+  const updateUpperGridLayout = useGridStore(
+    (state) => state.updateUpperGridLayout,
+  );
+  const updateLowerGridLayout = useGridStore(
+    (state) => state.updateLowerGridLayout,
+  );
+
+  const updateBadgeGrid = useBadgeStore((state) => state.updateGrid);
+  const updateUpperBadgeLayout = useBadgeStore(
+    (state) => state.updateUpperGridLayout,
+  );
+  const updateLowerBadgeLayout = useBadgeStore(
+    (state) => state.updateLowerGridLayout,
+  );
+
+  const setOnboardingComplete = useOnboardingStore(
+    (state) => state.setOnboardingComplete,
+  );
+  const setIsAuthenticated = useOnboardingStore(
+    (state) => state.setIsAuthenticated,
+  );
+
   const router = useRouter();
 
   const logout = () => {
+    // Clear session storage
     sessionStorage.removeItem('jwt');
     sessionStorage.removeItem('privateKey');
+
+    // Reset grid states
+    updateGrid({});
+    updateUpperGridLayout([]);
+    updateLowerGridLayout([]);
+
+    // Reset badge grid states
+    updateBadgeGrid({});
+    updateUpperBadgeLayout([]);
+    updateLowerBadgeLayout([]);
+
+    // Reset onboarding state
+    setOnboardingComplete(false);
+    setIsAuthenticated(false);
+
     router.push('/account/type');
   };
 
