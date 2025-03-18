@@ -383,11 +383,17 @@ export const removeBadgeFromServer = async (badgeFileName: string) => {
     throw new Error('JWT not found');
   }
 
+  const publicKey = localStorage.getItem('publicKey');
+  if (!publicKey) {
+    throw new Error('Public key not found');
+  }
+
   try {
     const response = await axios.post<RemoveBadgeResponse>(
       `${PROTOCOL}://${HOST}/remove-uploaded-image`,
       {
         fileName: badgeFileName,
+        publicKey,
       },
       {
         headers: {
