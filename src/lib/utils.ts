@@ -371,6 +371,38 @@ export const getBadgeIDsFromServer = async (address: string) => {
   return response.data;
 };
 
+interface RemoveBadgeResponse {
+  success: boolean;
+  message: string;
+  deletedCount?: number;
+}
+
+export const removeBadgeFromServer = async (badgeFileName: string) => {
+  const jwt = sessionStorage.getItem('jwt');
+  if (!jwt) {
+    throw new Error('JWT not found');
+  }
+
+  try {
+    const response = await axios.post<RemoveBadgeResponse>(
+      `${PROTOCOL}://${HOST}/remove-uploaded-image`,
+      {
+        fileName: badgeFileName,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+        withCredentials: true,
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error removing badge from server:', error);
+    throw error;
+  }
+};
+
 export const createBadgeGridFromIDs = (badgeIDs: string[]) => {
   const badgeGrid: Record<string, GridItem> = {};
   const upperBadgeGridLayout: GridItemLayout[] = [];

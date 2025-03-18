@@ -9,7 +9,7 @@ import { cryptography } from '@klayr/client/browser';
 
 import { loginWithPasskey } from '../lib/passkeys';
 import { loadMnemonic, createJWT } from '../lib/crypto';
-import { removeFeature } from '../lib/apiClient';
+import { removeFeature, archiveBadge } from '../lib/apiClient';
 import {
   updateLayout,
   getLayoutFromServer,
@@ -18,6 +18,7 @@ import {
   getUserIdentity,
   getBadgeIDsFromServer,
   createBadgeGridFromIDs,
+  removeBadgeFromServer,
 } from '../lib/utils';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/tabs';
 import Header from '../components/app/Header';
@@ -30,6 +31,7 @@ import EditItemForm from '../components/app/forms/EditItemForm';
 import EditBadgeForm from '../components/app/forms/EditBadgeForm';
 import ShareForm from '../components/app/forms/ShareForm';
 import AssignForm from '../components/app/forms/AssignForm';
+import ValidateForm from '../components/app/forms/ValidateForm';
 
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -53,7 +55,7 @@ const GridLayout = WidthProvider(Responsive);
 export default function IdentityPage() {
   const router = useRouter();
 
-  const [_userStatus, setUserStatus] = useState<'anon' | 'owner' | 'guest'>(
+  const [userStatus, setUserStatus] = useState<'anon' | 'owner' | 'guest'>(
     'anon',
   );
   const [_isLoggedIn, setIsLoggedIn] = useState(false);
@@ -109,7 +111,7 @@ export default function IdentityPage() {
   const updateBadgeGrid = useBadgeStore((state) => state.updateGrid);
   const mergeBadgeGrids = useBadgeStore((state) => state.mergeGrids);
 
-  const [isShareOrAssignFormOpen, setIsShareOrAssignFormOpen] = useState(false);
+  const [isActionFormOpen, setIsActionFormOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   const [areGridsEditable, setAreGridsEditable] = useState(false);
@@ -216,8 +218,8 @@ export default function IdentityPage() {
       .map(([id, item]) => ({ id, ...item }));
   };
 
-  const handleShareClick = () => {
-    setIsShareOrAssignFormOpen((prev) => !prev);
+  const handleToggleFormClick = () => {
+    setIsActionFormOpen((prev) => !prev);
   };
 
   const handleToggleEditClick = () => {
@@ -286,6 +288,45 @@ export default function IdentityPage() {
     splitBadgeGridAtID(id);
     setIsBadgeGridSplit(true);
     setEditedBadgeID(id);
+  };
+
+  const handleDeleteBadgeGridItemClick = (id: string) => {
+    removeBadgeGridItem(id);
+
+    const publicKey = localStorage.getItem('publicKey');
+    if (!publicKey) {
+      throw new Error('Public key not found');
+    }
+    const privateKey = sessionStorage.getItem('privateKey');
+    if (!privateKey) {
+      throw new Error('Private key not found');
+    }
+
+    // Extract filename from the URL
+    const badgeUrl = badgeGrid[id].content as string;
+    const fileName =
+      typeof badgeUrl === 'string' && badgeUrl.includes('/')
+        ? (badgeUrl.split('/').pop() ?? badgeUrl)
+        : badgeUrl;
+
+    // Remove from blockchain
+    archiveBadge([fileName], privateKey, publicKey)
+      .then(() => {
+        console.log('Badge archived on blockchain');
+      })
+      .catch((error) => {
+        console.error('Error archiving badge on blockchain:', error);
+      });
+
+    // Remove from server storage
+    removeBadgeFromServer(fileName)
+      .then(() => {
+        console.log('Badge removed from server storage');
+        refetchBadgeIDs().catch(console.error);
+      })
+      .catch((error) => {
+        console.error('Error removing badge from server storage:', error);
+      });
   };
 
   useEffect(() => {
@@ -447,7 +488,7 @@ export default function IdentityPage() {
 
   useEffect(() => {
     setSelectedItems([]);
-  }, [isShareOrAssignFormOpen]);
+  }, [isActionFormOpen]);
 
   useEffect(() => {
     if (!router.isReady) {
@@ -487,29 +528,40 @@ export default function IdentityPage() {
         <Header
           tabsType="primary"
           onToggleEditClick={handleToggleEditClick}
-          onShareClick={handleShareClick}
+          onShareClick={handleToggleFormClick}
         />
         <div className="flex-grow"></div>
         <TabsContent value="all">
           <div className="relative mx-auto w-[482px] bg-gray-100 lg:w-[924px]">
-            {isShareOrAssignFormOpen && (
+            {isActionFormOpen && (
               <div className="relative left-1/2 flex w-screen -translate-x-1/2 transform justify-center bg-white py-[20px]">
                 <div className="w-[840px]">
-                  {identity === 'personal' ? (
-                    <ShareForm
-                      onCancel={handleShareClick}
-                      selectedForSharing={selectedItems}
-                    />
+                  {userStatus === 'owner' ? (
+                    identity === 'personal' ? (
+                      <ShareForm
+                        onCancel={handleToggleFormClick}
+                        selectedForSharing={selectedItems}
+                      />
+                    ) : (
+                      <AssignForm
+                        onCancel={handleToggleFormClick}
+                        selectedForAssignment={selectedItems}
+                      />
+                    )
                   ) : (
-                    <AssignForm
-                      onCancel={handleShareClick}
-                      selectedForAssignment={selectedItems}
+                    <ValidateForm
+                      onCancel={handleToggleFormClick}
+                      selectedForValidation={selectedItems}
                     />
                   )}
                 </div>
               </div>
             )}
-            {!(identity === 'authority' && isShareOrAssignFormOpen) && (
+            {!(
+              isActionFormOpen &&
+              userStatus === 'owner' &&
+              identity === 'authority'
+            ) && (
               <>
                 <GridLayout
                   layouts={{
@@ -565,9 +617,7 @@ export default function IdentityPage() {
                         state={
                           isGridSplit && editedItemID === layout.i
                             ? 'edit'
-                            : selectedItems.includes(layout.i) &&
-                                !areGridsEditable &&
-                                isShareOrAssignFormOpen
+                            : selectedItems.includes(layout.i)
                               ? 'selected'
                               : 'default'
                         }
@@ -579,14 +629,16 @@ export default function IdentityPage() {
                             : undefined
                         }
                         onEditClick={() => handleEditGridItemClick(layout.i)}
-                        onClick={() =>
-                          setSelectedItems((prev) => {
-                            if (prev.includes(layout.i)) {
-                              return prev.filter((item) => item !== layout.i);
-                            }
-                            return [...prev, layout.i];
-                          })
-                        }
+                        onClick={() => {
+                          if (!areGridsEditable) {
+                            setSelectedItems((prev) => {
+                              if (prev.includes(layout.i)) {
+                                return prev.filter((item) => item !== layout.i);
+                              }
+                              return [...prev, layout.i];
+                            });
+                          }
+                        }}
                       />
                     );
                   })}
@@ -750,9 +802,7 @@ export default function IdentityPage() {
                         state={
                           isBadgeGridSplit && editedBadgeID === layout.i
                             ? 'edit'
-                            : selectedItems.includes(layout.i) &&
-                                !areGridsEditable &&
-                                isShareOrAssignFormOpen
+                            : selectedItems.includes(layout.i)
                               ? 'selected'
                               : 'default'
                         }
@@ -760,20 +810,22 @@ export default function IdentityPage() {
                         isEditable={areGridsEditable}
                         onDeleteClick={
                           badgeGrid[layout.i].type !== 'new'
-                            ? () => removeBadgeGridItem(layout.i)
+                            ? () => handleDeleteBadgeGridItemClick(layout.i)
                             : undefined
                         }
                         onEditClick={() =>
                           handleEditBadgeGridItemClick(layout.i)
                         }
-                        onClick={() =>
-                          setSelectedItems((prev) => {
-                            if (prev.includes(layout.i)) {
-                              return prev.filter((item) => item !== layout.i);
-                            }
-                            return [...prev, layout.i];
-                          })
-                        }
+                        onClick={() => {
+                          if (!areGridsEditable) {
+                            setSelectedItems((prev) => {
+                              if (prev.includes(layout.i)) {
+                                return prev.filter((item) => item !== layout.i);
+                              }
+                              return [...prev, layout.i];
+                            });
+                          }
+                        }}
                       />
                     );
                   })}
@@ -824,7 +876,9 @@ export default function IdentityPage() {
                           type={badgeGrid[layout.i].type}
                           value={badgeGrid[layout.i].content}
                           isEditable={areGridsEditable}
-                          onDeleteClick={() => removeBadgeGridItem(layout.i)}
+                          onDeleteClick={() =>
+                            handleDeleteBadgeGridItemClick(layout.i)
+                          }
                           onEditClick={() =>
                             handleEditBadgeGridItemClick(layout.i)
                           }

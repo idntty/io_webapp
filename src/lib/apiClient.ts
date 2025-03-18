@@ -16,6 +16,7 @@ export const getSetFeatureCost = async (
   data: DataEntry[],
   privateKey: string,
   publicKey: string,
+  userType: 'personal' | 'authority' = 'personal',
 ) => {
   const client = await getClient();
 
@@ -35,13 +36,20 @@ export const getSetFeatureCost = async (
     },
     privateKey,
   );
-  return client.transaction.computeMinFee(tx);
+  const calculatedFee = client.transaction.computeMinFee(tx);
+
+  // Apply minimum fees based on user type
+  const minimumFee = userType === 'authority' ? '1999000000' : '99000000';
+  return BigInt(calculatedFee) > BigInt(minimumFee)
+    ? calculatedFee
+    : minimumFee;
 };
 
 export const setFeature = async (
   data: DataEntry[],
   privateKey: string,
   publicKey: string,
+  userType: 'personal' | 'authority' = 'personal',
 ) => {
   const client = await getClient();
 
@@ -53,7 +61,7 @@ export const setFeature = async (
     {
       module: 'identity',
       command: 'setFeature',
-      fee: await getSetFeatureCost(data, privateKey, publicKey),
+      fee: await getSetFeatureCost(data, privateKey, publicKey, userType),
       senderPublicKey: publicKey,
       params: {
         features,
@@ -160,6 +168,52 @@ export const createBadge = async (
   return client.transaction.send(txWithFee);
 };
 
+export const getArchiveBadgeCost = async (
+  data: string[],
+  privateKey: string,
+  publicKey: string,
+) => {
+  const client = await getClient();
+
+  const tx = await client.transaction.create(
+    {
+      module: 'badge',
+      command: 'archiveBadge',
+      fee: '0',
+      senderPublicKey: publicKey,
+      params: {
+        ids: data,
+      },
+    },
+    privateKey,
+  );
+
+  return client.transaction.computeMinFee(tx);
+};
+
+export const archiveBadge = async (
+  data: string[],
+  privateKey: string,
+  publicKey: string,
+) => {
+  const client = await getClient();
+
+  const txWithFee = await client.transaction.create(
+    {
+      module: 'badge',
+      command: 'archiveBadge',
+      fee: await getArchiveBadgeCost(data, privateKey, publicKey),
+      senderPublicKey: publicKey,
+      params: {
+        ids: data,
+      },
+    },
+    privateKey,
+  );
+
+  return client.transaction.send(txWithFee);
+};
+
 export const getIssueBadgeCost = async (
   data: { recipientAddress: string; ids: string[] },
   privateKey: string,
@@ -236,6 +290,66 @@ export const setAccountType = async (
       senderPublicKey: publicKey,
       params: {
         isAuthority: data === 'authority',
+      },
+    },
+    privateKey,
+  );
+
+  return client.transaction.send(txWithFee);
+};
+
+export const getValidateFeatureCost = async (
+  data: {
+    recipientAddress: string;
+    features: { label: string; value: string }[];
+  },
+  privateKey: string,
+  publicKey: string,
+) => {
+  const client = await getClient();
+
+  const tx = await client.transaction.create(
+    {
+      module: 'identity',
+      command: 'validateFeature',
+      fee: '0',
+      senderPublicKey: publicKey,
+      params: {
+        recipientAddress: data.recipientAddress,
+        features: data.features,
+      },
+    },
+    privateKey,
+  );
+
+  const calculatedFee = client.transaction.computeMinFee(tx);
+
+  // Apply minimum fee for validateFeature
+  const minimumFee = '499000000';
+  return BigInt(calculatedFee) > BigInt(minimumFee)
+    ? calculatedFee
+    : minimumFee;
+};
+
+export const validateFeature = async (
+  data: {
+    recipientAddress: string;
+    features: { label: string; value: string }[];
+  },
+  privateKey: string,
+  publicKey: string,
+) => {
+  const client = await getClient();
+
+  const txWithFee = await client.transaction.create(
+    {
+      module: 'identity',
+      command: 'validateFeature',
+      fee: await getValidateFeatureCost(data, privateKey, publicKey),
+      senderPublicKey: publicKey,
+      params: {
+        recipientAddress: data.recipientAddress,
+        features: data.features,
       },
     },
     privateKey,

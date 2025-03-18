@@ -2,8 +2,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Plus } from 'untitledui-js';
+import { useRouter } from 'next/router';
+import { useState, useEffect } from 'react';
 
 import { useGridStore } from '../../../stores/gridStores';
+import {
+  validateFeature,
+  getValidateFeatureCost,
+} from '../../../lib/apiClient';
+import { uuidv4 } from '../../../lib/utils';
 
 import Button from '../../button/button';
 import {
@@ -17,7 +24,7 @@ import {
 } from '../../form';
 import Badge from '../../badge';
 import Divider from '../../divider';
-import { uuidv4 } from '../../../lib/utils';
+import Spinner from '../../spinner';
 
 const FormSchema = z.object({});
 
@@ -32,7 +39,12 @@ const ValidateForm: React.FC<ValidateFormProps> = ({
   onCancel,
   selectedForValidation,
 }) => {
+  const router = useRouter();
+  const recipientAddress = router.query.address as string;
   const grid = useGridStore((state) => state.grid);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [transactionCost, setTransactionCost] = useState<bigint | null>(null);
 
   const form = useForm<ValidateFormSchemaType>({
     resolver: zodResolver(FormSchema),
@@ -40,8 +52,83 @@ const ValidateForm: React.FC<ValidateFormProps> = ({
     mode: 'onChange',
   });
 
-  const onSubmit = (data: ValidateFormSchemaType) => {
-    console.log(data);
+  // Calculate transaction cost when component mounts or selectedForValidation changes
+  useEffect(() => {
+    const calculateCost = async () => {
+      try {
+        const publicKey = localStorage.getItem('publicKey');
+        const privateKey = sessionStorage.getItem('privateKey');
+
+        if (!publicKey || !privateKey || !recipientAddress) {
+          return;
+        }
+
+        const features = selectedForValidation.map((id) => {
+          const item = grid[id];
+          return {
+            label: item.layout.i,
+            value:
+              typeof item.content === 'string'
+                ? item.content
+                : item.content.toISOString(),
+          };
+        });
+
+        const cost = await getValidateFeatureCost(
+          { recipientAddress, features },
+          privateKey,
+          publicKey,
+        );
+
+        setTransactionCost(typeof cost === 'string' ? BigInt(cost) : cost);
+      } catch (err: unknown) {
+        console.error('Failed to calculate transaction cost', err);
+      }
+    };
+
+    void calculateCost();
+  }, [selectedForValidation, recipientAddress, grid]);
+
+  const onSubmit = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const publicKey = localStorage.getItem('publicKey');
+      const privateKey = sessionStorage.getItem('privateKey');
+
+      if (!publicKey || !privateKey) {
+        throw new Error('Keys not found');
+      }
+
+      if (!recipientAddress) {
+        throw new Error('Recipient address not found');
+      }
+
+      const features = selectedForValidation.map((id) => {
+        const item = grid[id];
+        return {
+          label: item.layout.i,
+          value:
+            typeof item.content === 'string'
+              ? item.content
+              : item.content.toISOString(),
+        };
+      });
+
+      await validateFeature(
+        { recipientAddress, features },
+        privateKey,
+        publicKey,
+      );
+    } catch (err: unknown) {
+      console.error('Failed to validate features', err);
+      setError(
+        err instanceof Error ? err.message : 'Failed to validate features',
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCancel = () => {
@@ -73,16 +160,26 @@ const ValidateForm: React.FC<ValidateFormProps> = ({
                 type="button"
                 size="md"
                 variant="secondary-gray"
+                disabled={isLoading}
               >
                 Cancel
               </Button>
-              <Button type="submit" size="md" variant="primary">
-                Share
+              <Button
+                type="submit"
+                size="md"
+                variant="primary"
+                disabled={isLoading}
+              >
+                {isLoading ? <Spinner size="small" className="mr-2" /> : null}
+                Validate
               </Button>
             </div>
           </div>
           <Divider />
         </div>
+        {error && (
+          <div className="text-sm font-medium text-error-500">{error}</div>
+        )}
         <div className="flex flex-col gap-[20px] self-stretch">
           <FormItem className="flex gap-[32px] self-stretch">
             <div className="flex w-[280px] flex-col">
@@ -107,7 +204,10 @@ const ValidateForm: React.FC<ValidateFormProps> = ({
                 </div>
               </div>
             </div>
-            <button className="flex h-[40px] w-[40px] items-center justify-center rounded-full border border-dashed border-gray-300 bg-white p-[8px]">
+            <button
+              type="button"
+              className="flex h-[40px] w-[40px] items-center justify-center rounded-full border border-dashed border-gray-300 bg-white p-[8px]"
+            >
               <div className="flex items-center justify-center rounded-xl p-[4px]">
                 <Plus size="16" className="stroke-gray-400" />
               </div>
@@ -125,7 +225,7 @@ const ValidateForm: React.FC<ValidateFormProps> = ({
             </div>
             <div className="flex w-[512px] flex-col">
               <div className="text-5xl/[60px] font-medium -tracking-[0.96px] text-gray-500">
-                0,0176/idn
+                {transactionCost ? `${transactionCost} idn` : 'Calculating...'}
               </div>
               {/* <div className="text-sm text-error-500">
                 Insufficient funds for{' '}

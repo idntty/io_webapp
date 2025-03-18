@@ -91,7 +91,7 @@ const handleSendData = async (
     // Use the badge-specific API call
     return Promise.all([
       saveDataToServer(publicKey, 'public', data),
-      setFeature(data, privateKey, publicKey),
+      setFeature(data, privateKey, publicKey, 'authority'),
     ]);
   }
 
@@ -108,7 +108,7 @@ const handleSendData = async (
     console.log('Saving authority user data to server:', data);
     return Promise.all([
       saveDataToServer(publicKey, 'public', data),
-      setFeature(data, privateKey, publicKey),
+      setFeature(data, privateKey, publicKey, 'authority'),
     ]);
   }
 
@@ -124,7 +124,12 @@ const handleSendData = async (
   console.log('Saving encrypted data to server:', data);
   return Promise.all([
     saveDataToServer(publicKey, 'private', data),
-    setFeature(data, privateKey, publicKey),
+    setFeature(
+      data,
+      privateKey,
+      publicKey,
+      userIdentity.isAuthority ? 'authority' : 'personal',
+    ),
   ]);
 };
 
@@ -565,7 +570,19 @@ const EditItemForm: React.FC<EditItemFormProps> = ({
       throw new Error('Private key not found');
     }
 
-    setTransactionCost(await getSetFeatureCost(data, privateKey, publicKey));
+    const userIdentity = await getUserIdentity(
+      cryptography.address.getKlayr32AddressFromPublicKey(
+        Buffer.from(publicKey, 'hex'),
+      ),
+    );
+
+    const cost = await getSetFeatureCost(
+      data,
+      privateKey,
+      publicKey,
+      userIdentity.isAuthority ? 'authority' : 'personal',
+    );
+    setTransactionCost(typeof cost === 'string' ? BigInt(cost) : cost);
   };
 
   // TODO: reuse the function from the table

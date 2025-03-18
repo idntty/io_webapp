@@ -25,8 +25,12 @@ import TextArea from '../../textarea';
 import Badge from '../../badge';
 import Divider from '../../divider';
 import { QueryObserverResult } from '@tanstack/react-query';
-import { createBadge, getCreateBadgeCost } from '../../../lib/apiClient';
-import { uuidv4 } from '../../../lib/utils';
+import {
+  createBadge,
+  getCreateBadgeCost,
+  archiveBadge,
+} from '../../../lib/apiClient';
+import { uuidv4, removeBadgeFromServer } from '../../../lib/utils';
 
 const HOST = 'api.idntty.io';
 // const HOST = 'localhost:8000';
@@ -362,6 +366,41 @@ const EditBadgeForm: React.FC<EditBadgeFormProps> = ({
   const handleDeleteClick = () => {
     if (badgeGrid[editedBadgeID].type !== 'new') {
       removeBadgeGridItem(editedBadgeID);
+
+      const publicKey = localStorage.getItem('publicKey');
+      if (!publicKey) {
+        throw new Error('Public key not found');
+      }
+      const privateKey = sessionStorage.getItem('privateKey');
+      if (!privateKey) {
+        throw new Error('Private key not found');
+      }
+
+      // Extract filename from the URL
+      const badgeUrl = badgeGrid[editedBadgeID].content as string;
+      const fileName =
+        typeof badgeUrl === 'string' && badgeUrl.includes('/')
+          ? (badgeUrl.split('/').pop() ?? badgeUrl)
+          : badgeUrl;
+
+      // Remove from blockchain
+      archiveBadge([fileName], privateKey, publicKey)
+        .then(() => {
+          console.log('Badge archived on blockchain');
+        })
+        .catch((error) => {
+          console.error('Error archiving badge on blockchain:', error);
+        });
+
+      // Remove from server storage
+      removeBadgeFromServer(fileName)
+        .then(() => {
+          console.log('Badge removed from server storage');
+          refetch().catch(console.error);
+        })
+        .catch((error) => {
+          console.error('Error removing badge from server storage:', error);
+        });
     }
     onCancel();
   };
